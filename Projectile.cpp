@@ -1,5 +1,6 @@
 #include "Projectile.h"
 #include <iostream>
+#include "TextManager.h" 
 
 using namespace std;
 
@@ -10,9 +11,14 @@ namespace projectileConstants {
 	const float GRAVITY = 0.002f;
 	const float GRAVITY_CAP = 0.8f;
 
+	double BULLET_DMG = 1.0;
+
 	bool active = false;
 
 	int count = 0;
+
+	float enemyX = 0;
+	float enemyY = 0;
 }
 
 Projectile::Projectile()
@@ -238,6 +244,23 @@ void Projectile::draw(Graphics & graphics, Player & player)
 	}
 }
 
+void Projectile::drawDmgText(Graphics & graphics)
+{
+	if (projectileConstants::active == true && (projectileConstants::enemyY && projectileConstants::enemyX != 0)) {
+		TextManager txt;
+		txt.drawDmg(graphics, projectileConstants::enemyX, projectileConstants::enemyY, projectileConstants::BULLET_DMG);
+	}
+	
+}
+
+void Projectile::updateDmgText(float ElapsedTime) {
+	this->_timeElapsed += ElapsedTime;
+	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ remove text?
+		this->_timeElapsed -= this->_timeToUpdate;
+		projectileConstants::enemyX = 0;
+	}
+}
+
 bool Projectile::isActive()
 {
 	if (projectileConstants::active == true) {
@@ -248,9 +271,15 @@ bool Projectile::isActive()
 	}
 }
 
-void Projectile::handleProjectileCollisions(std::vector<Enemy*> &others) {
-	for (int i = 0; i < others.size(); i++) {
-		others.at(i)->bulletHit();
+void Projectile::handleProjectileCollisions(std::vector<Enemy*> &others, Graphics &graphics) {
+	for (int i = 0; i < others.size(); i++) { 
+		others.at(i)->bulletHit(projectileConstants::BULLET_DMG);
+
+		projectileConstants::enemyX = others.at(i)->getX();
+		projectileConstants::enemyY = others.at(i)->getY();
+		//this->drawDmgText(graphics, enemyX, enemyY, projectileConstants::BULLET_DMG);
+		//this->drawDmgText(graphics);
+
 		if (bulletUp.size() > 0) {
 			bulletUp[i].x = 0;
 			bulletUp[i].y = 0;
@@ -291,8 +320,16 @@ void Projectile::handleProjectileCollisions(std::vector<Enemy*> &others) {
 			this->updateBullet(bulletLeft[i].x, bulletLeft[i].y, bulletLeft[i].w, bulletLeft[i].h);
 			bulletLeft.erase(bulletLeft.begin() + i);
 		}
-
 	}
+}
+
+void Projectile::setDmg(double dmg) {
+	projectileConstants::BULLET_DMG = dmg;
+	cout << "Dmg = " << projectileConstants::BULLET_DMG << endl;
+}
+
+double Projectile::checkDmg() {
+	return projectileConstants::BULLET_DMG;
 }
 
 const float Projectile::getX() const

@@ -13,6 +13,8 @@ using namespace std;
 
 //using namespace QuickSDL;
 
+class TextManager;
+
 class Projectile : public Sprite
 {
 public:
@@ -33,9 +35,13 @@ public:
 	void drawLeft(Graphics & graphics, Player & player);
 	int checkBullets(vector<int> bVec);
 	void draw(Graphics &graphics, Player &player);
+	void drawDmgText(Graphics & graphics);
+	void updateDmgText(float ElapsedTime);
 	bool isActive();
 
-	void handleProjectileCollisions(std::vector<Enemy*>& others);
+	void handleProjectileCollisions(std::vector<Enemy*>& others, Graphics & graphics);
+	void setDmg(double dmg);
+	double checkDmg();
 
 	const float getX() const;
 	const float getY() const; //getting variables not changes const make sure it doesnt
@@ -51,5 +57,9 @@ private:
 	std::map<int, vector<SDL_Rect>> _bulletMap;
 	//std::map<std::string, std::vector<SDL_Rect>> _animation;
 	std::map<int, int> _bulletTime;
+
+	double _timeElapsed = 0; //for timer
+protected:
+	double _timeToUpdate = 1400;
 };
 

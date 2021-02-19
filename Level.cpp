@@ -493,10 +493,11 @@ std::vector<Door> Level::checkDoorCollisions(const Rectangle &other) {
 	return others;
 }
 
-void Level::checkEnemyHP() {
+void Level::checkEnemyHP(Player & player) {
 	for (int i = 0; i < this->_enemies.size(); i++) {
 		if (this->_enemies.at(i)->getCurrentHealth() <= -150) {
 			_enemies.erase(_enemies.begin() + i);
+			player.addKillCount(1);
 		}
 	}
 }

@@ -31,7 +31,7 @@ public:
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
 	std::vector<Door> checkDoorCollisions(const Rectangle &other);
-	void checkEnemyHP();
+	void checkEnemyHP(Player & player);
 	std::vector<Enemy*> checkEnemyCollisions(const Rectangle &other);
 
 	std::vector<Enemy*> checkBulletCollisions(const Rectangle & other);
