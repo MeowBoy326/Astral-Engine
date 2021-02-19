@@ -20,6 +20,11 @@ void Enemy::update(int elapsedTime, Player &player) {
 	AnimatedSprite::update(elapsedTime);
 }
 
+void Enemy::bulletHit(float dmg) {
+	this->_currentHealth -= dmg;
+	cout << "hit! HP = " << this->_currentHealth << endl;
+}
+
 void Enemy::playDeath() {
 	if (deathCreated == false) {
 
@@ -76,27 +81,28 @@ void Bat::setupAnimations() {
 	this->addAnimation(5, 6, 32, "BatDie", 19, 16, Vector2(0, 0));
 }
 
-void Bat::bulletHit() {
+/*void Bat::bulletHit() {
 	this->_currentHealth += -1; 
-
 	cout << "hit! HP = " << this->_currentHealth << endl;
-}
+}*/
 
 void Bat::playDeath() {
 	this->playAnimation("BatDie", true);
 }
 
 void Bat::touchPlayer(Player* player) {
+	//if (hasHit == false) {
+		player->gainHealth(-1.0f);
+	//	hasHit = true;
+	//}
 
-	if (hasHit == false) {
-		player->gainHealth(-0.01f);
-	}
-
-	else if (hasHit == true) {
-		cout << "Cannot hit again!" << endl;
-	}
-
-
+	//else if (hasHit == true) {
+	//	cout << "Cannot hit again!" << endl;
+	//	iFrameCount++;
+	//	if (iFrameCount >= 500) {
+			//hasHit = false;
+	//	}
+	//}
 }
 
 void Bat::setTimer() {

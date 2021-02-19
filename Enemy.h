@@ -16,12 +16,13 @@ public:
 	virtual void update(int elapsedTime, Player &player);
 	virtual void draw(Graphics &graphics);
 	virtual void touchPlayer(Player* player) = 0; //pure virtual implement in derived classes
-	virtual void bulletHit() = 0;
 	virtual void setTimer() = 0;
 	virtual void playDeath() = 0;
 
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
+
+	void bulletHit(float dmg);
 protected:
 	Direction _direction;
 
@@ -42,7 +43,7 @@ public:
 	void setTimer();
 	Uint32 setHit(Uint32 interval, void* param);
 	bool canHit();
-	void bulletHit();
+	//void bulletHit();
 
 	void playDeath();
 
@@ -52,4 +53,5 @@ private:
 	float _startingX, _startingY;
 	bool _shouldMoveUp; //keep track of if bat should move
 	bool hasHit = false;
+	int iFrameCount = 0;
 };
