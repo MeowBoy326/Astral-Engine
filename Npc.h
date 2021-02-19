@@ -56,7 +56,7 @@ protected:
 	std::string _script;
 	std::queue<std::string> speech;
 	//!< Circular queue of everything this Sprite says.
-	//TTF_Font *fonts = TTF_OpenFont("ClearSans-Light.ttf", 20);
+	//TTF_Font *fonts = TTF_OpenFont("Arcadia.ttf", 20);
 	std::string name;
 	//!< Font the Sprite uses to 'speak'.
 	

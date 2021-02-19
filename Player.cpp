@@ -339,6 +339,11 @@ int Player::getKillCount() {
 	return this->killCount;
 }
 
+Direction Player::facingDir()
+{
+	return this->_facing;
+}
+
 void Player::update(float elapsedTime) {
 	//Apply gravity
 	if (this->_dy <= player_constants::GRAVITY_CAP) {

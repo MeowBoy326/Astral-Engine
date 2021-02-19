@@ -19,7 +19,7 @@ Npc::Npc(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int
 	
 	
 {
-	//font = TTF_OpenFont("ClearSans-Light.ttf", 20);
+	//font = TTF_OpenFont("Arcadia.ttf", 20);
 	//cout << "font is: " << fonts << endl;
 	this->_txtBox = Sprite(graphics, "npcTextBox.png", 0, 0, 76, 24, 505, 499);
 	graphics.loadImage("npcTextBox.png"); //loads sprite sheet in
@@ -235,8 +235,8 @@ Clock::Clock(Graphics &graphics, Vector2 spawnPoint, std::string name) :
 	this->setupScripts();
 	this->playAnimation("clock");
 	cout << "prep npc" << endl;
-	//fonts = TTF_OpenFont("ClearSans-Light.ttf", 20);
-	//this->fonts = TTF_OpenFont("ClearSans-Light.ttf", 20);
+	//fonts = TTF_OpenFont("Arcadia.ttf", 20);
+	//this->fonts = TTF_OpenFont("Arcadia.ttf", 20);
 	this->_script = "clock.txt";
 	if (!this->_script.empty()) {
 		cout << "writing in script..." << endl;

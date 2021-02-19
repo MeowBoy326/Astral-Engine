@@ -78,10 +78,13 @@ public:
 	int getKillCount();
 	int killCount = 0;
 
+	Direction facingDir();
+	Direction _facing;
+
 private:
 	float _dx, _dy; //(dx (delta x) is change in x postition during frame)
 
-	Direction _facing;
+	
 
 	bool _grounded; //true if we are, false if we are in the air
 

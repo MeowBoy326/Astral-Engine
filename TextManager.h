@@ -34,7 +34,6 @@ public:
 	void drawTest(Graphics & graphics);
 	void drawNpcText(Graphics & graphics, int x, int y, const std::string &str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
 	void drawItemQuantity(Graphics & graphics, int x, int y, const std::string & str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
-	void drawDmgLines(Graphics & graphics, int x, int y, const std::string & str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
 	void drawDmg(Graphics & graphics, int x, int y, double dmg);
 
 	SDL_Texture* renderText(Graphics &graphics, TTF_Font *font,
@@ -81,7 +80,7 @@ private:
 	//std::map<int, SDL_Rect> _bulletMap;
 	//std::vector<SDL_Rect> pRect;
 	Sprite _chatBox;
-	TTF_Font *font = TTF_OpenFont("ClearSans-Light.ttf", 20);
+	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 20);
 };
 
 

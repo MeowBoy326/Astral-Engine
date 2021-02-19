@@ -35,6 +35,7 @@ public:
 	void drawLeft(Graphics & graphics, Player & player);
 	int checkBullets(vector<int> bVec);
 	void draw(Graphics &graphics, Player &player);
+	void drawGun(Graphics &graphics, Player &player);
 	void drawDmgText(Graphics & graphics);
 	void updateDmgText(float ElapsedTime);
 	bool isActive();
@@ -48,6 +49,7 @@ public:
 	
 private:
 	Sprite _bullet;
+	Sprite _Gun;
 	float _shootDx, _shootDy; //(dx (delta x) is change in x postition during frame)
 	vector<int> bulletList;
 	vector<SDL_Rect> bulletVec; //right

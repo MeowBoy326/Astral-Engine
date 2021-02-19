@@ -61,7 +61,6 @@ void Inventory::draw(Graphics & graphics, Player & player)
 		if (inventoryConstants::inventory.at(i)->type == HEALTH_POT) {
 			this->_hpPot.draw(graphics, player.getX() - 120, player.getY() - 110);
 			this->drawQuantity(graphics, player.getX() - 110, player.getY() - 100, i + 1);
-			cout << "quantity draw" << endl;
 		}
 	}
 }

@@ -34,6 +34,9 @@ Projectile::Projectile(Graphics & graphics, Player & player)
 	cout << "sprite added" << endl;
 	graphics.loadImage("Bullet.png"); //loads sprite sheet in
 	cout << "sprite loaded" << endl;
+
+	this->_Gun = Sprite(graphics, "Arms.png", 52, 10, 10, 5, (posx - 10), (posy + 10));
+	graphics.loadImage("Arms.png");
 }
 
 Projectile::~Projectile()
@@ -57,7 +60,7 @@ void Projectile::shootBullet(Graphics & graphics, Player & player)
 
 	*/
 
-	SDL_Rect newRect = { player.getX(), player.getY(), 16, 16 };
+	SDL_Rect newRect = { player.getX() + 20, player.getY() + 14, 16, 16 };
 	bulletVec.push_back(newRect);
 
 	
@@ -86,7 +89,7 @@ void Projectile::shootDown(Graphics &graphics, Player &player) {
 void Projectile::shootLeft(Graphics &graphics, Player &player) {
 	projectileConstants::active = true;
 
-	SDL_Rect newRect = { player.getX(), player.getY(), 16, 16 };
+	SDL_Rect newRect = { player.getX(), player.getY() + 10, 16, 16 };
 	bulletLeft.push_back(newRect);
 
 	this->drawLeft(graphics, player);
@@ -242,6 +245,48 @@ void Projectile::draw(Graphics & graphics, Player & player)
 			//this->_bullet.drawBullet(graphics, this->_x, this->_y, bulletID);
 		} */
 	}
+}
+
+void Projectile::drawGun(Graphics & graphics, Player & player) {
+
+	if (player.lookingLeft() && !player.lookingUp() && !player.lookingDown()) {
+		_Gun.setSourceRectX(52);
+		_Gun.setSourceRectY(10);
+		this->_Gun.draw(graphics, player.getX() - 8, player.getY() + 14);
+	}
+	else if (player.lookingRight() && !player.lookingUp() && !player.lookingDown()) {
+		_Gun.setSourceRectX(57);
+		_Gun.setSourceRectY(26);
+		_Gun.setSourceRectH(6);
+		this->_Gun.draw(graphics, player.getX() + 19, player.getY() + 16);
+	}
+	else if ((player.lookingUp() == true) && (player._facing == RIGHT)) {
+		_Gun.setSourceRectX(57);
+		_Gun.setSourceRectY(34);
+		this->_Gun.draw(graphics, player.getX() + 19, player.getY() + 16);
+	}
+	else if ((player.lookingUp() == true) && (player._facing == LEFT)) {
+		_Gun.setSourceRectX(57);
+		_Gun.setSourceRectY(50);
+		this->_Gun.draw(graphics, player.getX() - 1, player.getY() + 14);
+	}
+	else if ((player.lookingDown() == true) && (player._facing == LEFT)) {
+		_Gun.setSourceRectX(59);
+		_Gun.setSourceRectY(70);
+		_Gun.setSourceRectH(10);
+		this->_Gun.draw(graphics, player.getX() - 4, player.getY() + 14);
+	}
+	else if ((player.lookingDown() == true) && (player._facing == RIGHT)) {
+		_Gun.setSourceRectX(54);
+		_Gun.setSourceRectY(86);
+		_Gun.setSourceRectH(10);
+		this->_Gun.draw(graphics, player.getX() + 20, player.getY() + 14);
+	}
+
+
+	
+	
+	
 }
 
 void Projectile::drawDmgText(Graphics & graphics)

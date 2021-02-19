@@ -9,14 +9,7 @@
 using namespace std;
 
 namespace textConstants {
-	const float BULLET_VELOCITY = 0.6f;
-	const float JUMP_DISTANCE = 0.7f;
-
-	const float GRAVITY = 0.002f;
-	const float GRAVITY_CAP = 0.8f;
-
 	bool activeText = false;
-
 	int count = 0;
 }
 
@@ -181,31 +174,11 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 		exit(2);
 	} 
 	
-	TTF_Font *font = TTF_OpenFont("ClearSans-Light.ttf", 18);
+	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
 	SDL_Surface *surface;
 
 	surface = TTF_RenderText_Solid(font, str.c_str(), color);
-	SDL_Rect destinationRectangle = { posX - 260 , posY + 85, surface->w, surface->h }; //where on screen we will be drawing
-	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
-	//graphics.blitSurface(tex, NULL, &dest);
-
-	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
-	TTF_CloseFont(font);
-	SDL_DestroyTexture(tex);
-}
-
-void TextManager::drawDmgLines(Graphics &graphics, int x, int y, const std::string &str, int posX, int posY, SDL_Color color) {
-	//TTF_Init();
-	if (TTF_Init() == -1) {
-		printf("TTF_Init: %s\n", TTF_GetError());
-		exit(2);
-	}
-
-	SDL_Surface *surface;
-	TTF_Font *iFont = TTF_OpenFont("ClearSans-Light.ttf", 12);
-	surface = TTF_RenderText_Solid(iFont, str.c_str(), color);
-	SDL_Rect destinationRectangle = { posX, posY, surface->w, surface->h }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { posX - 260 , posY + 105, surface->w, surface->h }; //where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 	//graphics.blitSurface(tex, NULL, &dest);
 
@@ -226,7 +199,7 @@ void TextManager::drawDmg(Graphics & graphics, int x, int y, double dmg)
 	int precisionVal = 2;
 	//std::string dmgNum = std::to_string(dmg);
 	std::string dmgNum = std::to_string(dmg).substr(0, std::to_string(dmg).find(".") + precisionVal + 1);
-	TTF_Font *iFont = TTF_OpenFont("ClearSans-Light.ttf", 18);
+	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 18);
 	surface = TTF_RenderText_Solid(iFont, dmgNum.c_str(), color);
 
 	SDL_Rect destinationRectangle = { x, y - 30, surface->w, surface->h }; //where on screen we will be drawing
@@ -247,7 +220,7 @@ void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::
 	}
 
 	SDL_Surface *surface;
-	TTF_Font *iFont = TTF_OpenFont("ClearSans-Light.ttf", 12);
+	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 12);
 	surface = TTF_RenderText_Solid(iFont, str.c_str(), color);
 	SDL_Rect destinationRectangle = { posX, posY, surface->w, surface->h }; //where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);

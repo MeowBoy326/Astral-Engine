@@ -41,7 +41,7 @@ Game::Game() { //constructor
 		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 		
 	}
-	//TTF_Font *font = TTF_OpenFont("ClearSans-Light.ttf", 24);
+	//TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 24);
 	this->gameLoop(); //start game
 }
 
@@ -217,7 +217,7 @@ void Game::gameLoop() {
 			cout << "Quitting Game..." << endl;
 			return; //quit game if ESC was pressed
 		}
-		else if (input.isKeyHeld(SDL_SCANCODE_A) == true) { 
+		else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true) { 
 			if (activeTalk == false) {
 				this->_player.moveLeft();
 			}
@@ -226,7 +226,7 @@ void Game::gameLoop() {
 			}
 			 
 		}
-		else if (input.isKeyHeld(SDL_SCANCODE_D) == true) {
+		else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true) {
 			if (activeTalk == false) {
 				this->_player.moveRight();
 			}
@@ -236,16 +236,16 @@ void Game::gameLoop() {
 			
 		}
 
-		if (input.isKeyHeld(SDL_SCANCODE_W) == true) {
+		if (input.isKeyHeld(SDL_SCANCODE_UP) == true) {
 			this->_player.lookUp();
 		}
-		else if (input.isKeyHeld(SDL_SCANCODE_S) == true) {
+		else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true) {
 			this->_player.lookDown();
 		}
-		if (input.wasKeyReleased(SDL_SCANCODE_W) == true) {
+		if (input.wasKeyReleased(SDL_SCANCODE_UP) == true) {
 			this->_player.stopLookingUp();
 		}
-		if (input.wasKeyReleased(SDL_SCANCODE_S) == true) {
+		if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true) {
 			this->_player.stopLookingDown();
 		}
 
@@ -258,7 +258,7 @@ void Game::gameLoop() {
 			}
 			
 		}
-		if (!input.isKeyHeld(SDL_SCANCODE_A) && !input.isKeyHeld(SDL_SCANCODE_D)) { //if player isnt moving left or right(at all) do stopMoving function
+		if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT)) { //if player isnt moving left or right(at all) do stopMoving function
 			this->_player.stopMoving();
 		}
 		//bullet
@@ -420,6 +420,7 @@ void Game::draw(Graphics &graphics) {
 	this->_bullet.drawUp(graphics, this->_player);
 	this->_bullet.drawDown(graphics, this->_player);
 	this->_bullet.drawLeft(graphics, this->_player);
+	this->_bullet.drawGun(graphics, this->_player);
 	this->_chatBox.drawChatBox(graphics, this->_player);
 	//this->_chatBox.drawTest(graphics);
 	this->_bullet.drawDmgText(graphics);
