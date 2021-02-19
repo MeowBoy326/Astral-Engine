@@ -4,12 +4,9 @@
 
 #include "Input.h"
 
-
-
 using namespace std;
 
 SDL_Keysym stateQuit;
-
 
 void loadKey() {
 #ifdef __APPLE__
