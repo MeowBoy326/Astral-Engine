@@ -35,6 +35,7 @@ public:
 	void drawNpcText(Graphics & graphics, int x, int y, const std::string &str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
 	void drawItemQuantity(Graphics & graphics, int x, int y, const std::string & str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
 	void drawDmgLines(Graphics & graphics, int x, int y, const std::string & str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
+	void drawDmg(Graphics & graphics, int x, int y, double dmg);
 
 	SDL_Texture* renderText(Graphics &graphics, TTF_Font *font,
 		const string &str, SDL_Color color = { 255, 255, 255, 255 });

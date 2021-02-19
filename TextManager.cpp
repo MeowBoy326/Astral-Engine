@@ -91,7 +91,7 @@ void TextManager::drawTest(Graphics &graphics) {
 	SDL_Surface *surface;
 	SDL_Color color = { 255, 255, 255, 255 };
 
-	surface = TTF_RenderText_Solid(font, "TEST", color);
+	surface = TTF_RenderText_Solid(font, "test text", color);
 	SDL_Rect src = { 0, 0, 100, 100 };
 	SDL_Rect dest = { 200, 200, 100, 100 };
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -209,6 +209,30 @@ void TextManager::drawDmgLines(Graphics &graphics, int x, int y, const std::stri
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 	//graphics.blitSurface(tex, NULL, &dest);
 
+	graphics.blitSurface(tex, NULL, &destinationRectangle);
+	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	TTF_CloseFont(font);
+	SDL_DestroyTexture(tex);
+}
+
+void TextManager::drawDmg(Graphics & graphics, int x, int y, double dmg)
+{
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(2);
+	}
+	SDL_Surface *surface;
+	SDL_Color color = { 255, 0, 0, 255 };
+	int precisionVal = 2;
+	//std::string dmgNum = std::to_string(dmg);
+	std::string dmgNum = std::to_string(dmg).substr(0, std::to_string(dmg).find(".") + precisionVal + 1);
+	TTF_Font *iFont = TTF_OpenFont("ClearSans-Light.ttf", 18);
+	surface = TTF_RenderText_Solid(iFont, dmgNum.c_str(), color);
+
+	SDL_Rect destinationRectangle = { x, y - 30, surface->w, surface->h }; //where on screen we will be drawing
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+	//cout << "drawDMG called!" << endl;
+	//cout << "destRect: " << destinationRectangle.x << "," << destinationRectangle.y << "," << destinationRectangle.w << "," << destinationRectangle.h << endl;
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
 	TTF_CloseFont(font);
