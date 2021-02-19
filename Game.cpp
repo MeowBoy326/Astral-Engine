@@ -348,9 +348,18 @@ void Game::gameLoop() {
 			cout << "game: useItem called" << endl;
 		}
 
+		if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
+			if (_bullet.checkDmg() == 1) {
+				_bullet.setDmg(2);
+			}
+			else if (_bullet.checkDmg() == 2) {
+				_bullet.setDmg(1);
+			}
+		}
+
 		const int CURRENT_TIME_MS = SDL_GetTicks();
 		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
-
+		//cout << "Elapsed Time: " << ELAPSED_TIME_MS << endl;
 		this->_graphics = graphics; //updated graphics
 		this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics); //take standard min : elapsed time ms and max frame time
 																 //if (this->_bullet.isActive() == true) {
@@ -358,7 +367,7 @@ void Game::gameLoop() {
 																 //}
 																 //this->updateBullet(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
 		LAST_UPDATE_TIME = CURRENT_TIME_MS; //loop will go again and current time - new last update will tell us how long next frame will take
-
+		//cout << "last update Time: " << LAST_UPDATE_TIME << endl;
 		this->draw(graphics);
 		/*if (activeTalk == true) {
 			this->drawNpcChat(graphics);
@@ -370,75 +379,7 @@ void Game::gameLoop() {
 
 }
 
-void Game::drawNpcChat(Graphics &graphics) {
 
-	Input input;
-	SDL_Event event;
-	input.beginNewFrame();
-	int lineCount = 0;
-	int numOfLines;
-	while (activeTalk == true) {
-
-		if (SDL_PollEvent(&event)) {
-			if (event.type == SDL_KEYDOWN) {
-				if (event.key.repeat == 0) {
-					input.keyDownEvent(event); //if we are holding key start keydown event
-				}
-			}
-			else if (event.type == SDL_KEYUP) { // if key was released
-				input.keyUpEvent(event);
-			}
-			else if (event.type == SDL_QUIT) {
-				return; //when the game ends or user exits
-			}
-		}
-		if (input.wasKeyPressed(SDL_SCANCODE_RETURN)) {
-			lineCount++;
-		}
-		if (input.wasKeyPressed(SDL_SCANCODE_Q)) {
-			activeTalk = false;
-			this->_chatBox.setTextStatus(false);
-		}
-		std::vector<Npc*> otherNpc;
-		switch (lineCount) {
-		case 0:
-			if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
-				this->_player.handleNpcCollisions(otherNpc, graphics, lineCount);
-			}
-			
-			numOfLines = this->_npc.getLineAmount();
-			break;
-		case 1:
-			graphics.clear();
-			this->draw(graphics);
-			if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
-				this->_player.handleNpcCollisions(otherNpc, graphics, lineCount);
-			}
-			cout << numOfLines << " vs. " << lineCount << endl;
-			if (lineCount == numOfLines) {
-				activeTalk = false;
-				this->_chatBox.setTextStatus(false);
-			}
-			break;
-		case 2:
-			cout << "max reached" << endl;
-			graphics.clear();
-			this->draw(graphics);
-			if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
-				this->_player.handleNpcCollisions(otherNpc, graphics, lineCount);
-			}
-			cout << numOfLines << " vs. " << lineCount << endl;
-			if (lineCount == numOfLines) {
-				activeTalk = false;
-				this->_chatBox.setTextStatus(false);
-			}
-			break;
-		}
-		//below is the npc collison check which calls for that npc script to be loaded for npc chatting
-
-		graphics.flip();
-	}
-}
 
 void Game::drawBullet(Graphics &graphics) {
 	this->_bullet.draw(graphics, this->_player);
@@ -481,7 +422,7 @@ void Game::draw(Graphics &graphics) {
 	this->_bullet.drawLeft(graphics, this->_player);
 	this->_chatBox.drawChatBox(graphics, this->_player);
 	//this->_chatBox.drawTest(graphics);
-
+	this->_bullet.drawDmgText(graphics);
 	//draw hud last because we want it on top of everything
 	if (activeTalk == true && nextLine == false) {
 		this->_npc.runScript(npcName, graphics, this->_player.getX(), this->_player.getY());
@@ -506,9 +447,9 @@ void Game::updateBullet(float elapsedTime) {
 void Game::update(float elapsedTime, Graphics &graphics) {
 	//cout << npcName << endl;
 	this->_player.update(elapsedTime); //update player
-	if (this->_player.getCurrentHealth() <= 0) {
-		GAMEOVER = true;
-	}
+	//if (this->_player.getCurrentHealth() <= 0) {
+	//	GAMEOVER = true;
+	//}
 	this->_camera.Update(elapsedTime, this->_player);
 	//Camera::Update(elapsedTime);
 	this->_level.update(elapsedTime, this->_player); //update level
@@ -519,6 +460,8 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	this->_bullet.updateUp(elapsedTime, this->_player);
 	this->_bullet.updateDown(elapsedTime, this->_player);
 	this->_bullet.updateLeft(elapsedTime, this->_player);
+
+	this->_bullet.updateDmgText(elapsedTime);
 
 	this->_hud.update(elapsedTime, this->_player); //you already know :^)
 	//this->_camera.Update(elapsedTime);
@@ -567,9 +510,9 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	std::vector<Enemy*> projectileHit;
 	//cout << this->_bullet.getBoundingBox().getCenterX() << " + " << this->_bullet.getBoundingBox().getCenterY() << " + " << this->_bullet.getBoundingBox().getHeight() << endl;
 	if ((projectileHit = this->_level.checkEnemyCollisions(this->_bullet.getProjectileBBox())).size() > 0) {
-		this->_bullet.handleProjectileCollisions(projectileHit);
+		this->_bullet.handleProjectileCollisions(projectileHit, graphics);
 	}
-	this->_level.checkEnemyHP();
+	this->_level.checkEnemyHP(this->_player);
 	if (pickUp == true) {
 	std:vector<Items*> itemPickUp;
 		std::vector<std::string*> dropPick;

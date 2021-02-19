@@ -66,7 +66,18 @@ public:
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
 
+	int getMaxExp();
+	int getCurrentExp();
+	int getLevel();
+	void setLevel(int num);
+	void addLevel(int num);
+
 	//void gainHealth(float amount);
+	void addKillCount(int num);
+	void setKillCount(int num);
+	int getKillCount();
+	int killCount = 0;
+
 private:
 	float _dx, _dy; //(dx (delta x) is change in x postition during frame)
 
@@ -82,7 +93,13 @@ private:
 	float _maxHealth;
 	float _currentHealth;
 
+	int _playerLevel = 0;
+
 	int mPosX, mPosY;
+	double _timeElapsed = 0; //for timer
+
+protected:
+	double _timeToUpdate = 2500;
 };
 
 #endif

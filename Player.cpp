@@ -12,6 +12,7 @@ namespace player_constants {
 	const float GRAVITY = 0.002f;
 	const float GRAVITY_CAP = 0.8f;
 
+	bool iFrame = false;
 	std::string mapName = "";
 }
 
@@ -295,14 +296,47 @@ void Player::setIFrame(bool condition) {
 }
 
 void Player::gainHealth(float amount) {
-	if (amount < 0) {
+	if (amount < 0 && player_constants::iFrame == false) {
 		this->_currentHealth += amount; //can be used to take away hp as well
 		cout << "lost " << _currentHealth << endl;
+		player_constants::iFrame = true;
 	}
 	else if (amount > 0) {
 		this->_currentHealth += amount; //can be used to take away hp as well
 		cout << "gained " << _currentHealth << endl;
 	}
+}
+
+int Player::getCurrentExp()
+{
+
+	return 0;
+}
+
+int Player::getLevel()
+{
+	return this->_playerLevel;
+}
+
+void Player::setLevel(int num) {
+	this->_playerLevel = num;
+}
+
+void Player::addLevel(int num) {
+	this->_playerLevel += num;
+}
+
+void Player::addKillCount(int num) {
+	this->killCount += num;
+	cout << this->getKillCount() << endl;
+}
+
+void Player::setKillCount(int num) {
+	this->killCount = num;
+}
+
+int Player::getKillCount() {
+	return this->killCount;
 }
 
 void Player::update(float elapsedTime) {
@@ -318,6 +352,22 @@ void Player::update(float elapsedTime) {
 	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
 
 	//cout << this->_x << " , " << this->_y << endl;
+
+	this->_timeElapsed += elapsedTime;
+	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ remove text?
+		this->_timeElapsed -= this->_timeToUpdate;
+		player_constants::iFrame = false;
+	}
+
+	if ((this->getKillCount() >= 3 && this->getKillCount() < 4) && this->getLevel() == 0) {
+		this->addLevel(1);
+		cout << "leveled up to: " << this->getLevel() << endl;
+	}
+
+	else if (this->getKillCount() >= 4 && this->getKillCount() < 8 && this->getLevel() == 1) {
+		this->addLevel(1);
+		cout << "leveled up to: " << this->getLevel() << endl;
+	}
 
 	AnimatedSprite::update(elapsedTime);
 }

@@ -1,5 +1,6 @@
 #include "HUD.h"
 #include "Graphics.h"
+#include <iostream>
 
 HUD::HUD() {}
 
@@ -10,7 +11,7 @@ HUD::HUD(Graphics &graphics, Player &player) {
 	this->_currentHealthBar = Sprite(graphics, "Textbox.png", 0, 25, 39, 5, 83, 72);
 	this->_lvWord = Sprite(graphics, "TextBox.png", 81, 81, 11, 7, 38, 55);
 	this->_lvNumber = Sprite(graphics, "TextBox.png", 0, 56, 8, 8, 66, 52);
-	this->_expBar = Sprite(graphics, "TextBox.png", 0, 72, 40, 8, 83, 52);
+	this->_expBar = Sprite(graphics, "TextBox.png", 0, 31, 1, 8, 83, 52);
 	this->_slash = Sprite(graphics, "TextBox.png", 72, 48, 8, 8, 100, 36);
 	this->_dashes = Sprite(graphics, "TextBox.png", 81, 51, 15, 11, 132, 26);
 }
@@ -24,6 +25,14 @@ void HUD::update(int ElapsedTime, Player &player) {
 	//Cast to float because int 0 division wil lhappen and we will get 0 everytime.
 	float num = (float)this->_player.getCurrentHealth() / this->_player.getMaxHealth();
 	this->_currentHealthBar.setSourceRectW(std::floor(num * 39));
+
+	//Update player Level
+	int expNum = (int)this->_player.getKillCount();
+	this->_expBar.setSourceRectW(expNum * 10 + 1);
+
+		this->_lvNumber.setSourceRectX(8 * this->_player.getLevel());
+		//this->_expBar.setSourceRectW(1);
+
 }
 
 void HUD::draw(Graphics &graphics, Player &player) {
