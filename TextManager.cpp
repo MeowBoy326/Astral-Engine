@@ -217,31 +217,39 @@ void TextManager::drawMapName(Graphics & graphics, std::string &mapName, int x, 
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
 	}
+	SDL_Surface *backGround;
 	SDL_Surface *surface;
-	SDL_Color color = { 255, 0, 0, 255 };
+	SDL_Color color = { 255, 255, 255, 255 };
 
 	int fontSize = 52;
 	if (mapName.length() > 8) {
 		fontSize -= mapName.length() * 1.2;
 	}
 	std::transform(mapName.begin(), mapName.end(), mapName.begin(), ::toupper);
-	
 	TTF_Font *iFont = TTF_OpenFont("OptimusPrinceps.ttf", fontSize);
+
+	//Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
 	surface = TTF_RenderText_Solid(iFont, mapName.c_str(), color);
+	backGround = SDL_CreateRGBSurface(0, surface->w + 20, surface->h + 20, 32, 0, 0, 0, 0);
+	
+	SDL_FillRect(backGround, NULL, SDL_MapRGB(backGround->format, 41, 40, 40));
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+	SDL_Texture *bgTex = SDL_CreateTextureFromSurface(graphics.getRenderer(), backGround);
+	SDL_SetTextureAlphaMod(bgTex, 128); //50% opacity (255/2)
+	SDL_SetTextureBlendMode(bgTex, SDL_BLENDMODE_BLEND);
 
 	SDL_Rect destinationRectangle = { x - 120, y - 200, surface->w, surface->h }; //where on screen we will be drawing
-
 	if (mapName.length() < 8) {
-		destinationRectangle = { x - 50, y - 200, surface->w, surface->h }; //where on screen we will be drawing
+		destinationRectangle = { x - 50, y - 200, surface->w, surface->h };
 	}
 
-	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
-	//cout << "drawDMG called!" << endl;
-	//cout << "destRect: " << destinationRectangle.x << "," << destinationRectangle.y << "," << destinationRectangle.w << "," << destinationRectangle.h << endl;
+	graphics.blitSurface(bgTex, NULL, &destinationRectangle);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(backGround);
 	TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
+	SDL_DestroyTexture(bgTex);
 }
 
 void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::string &str, int posX, int posY, SDL_Color color) {
