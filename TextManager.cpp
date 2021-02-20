@@ -212,6 +212,38 @@ void TextManager::drawDmg(Graphics & graphics, int x, int y, double dmg)
 	SDL_DestroyTexture(tex);
 }
 
+void TextManager::drawMapName(Graphics & graphics, std::string &mapName, int x, int y) {
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(2);
+	}
+	SDL_Surface *surface;
+	SDL_Color color = { 255, 0, 0, 255 };
+
+	int fontSize = 52;
+	if (mapName.length() > 8) {
+		fontSize -= mapName.length() * 1.2;
+	}
+	std::transform(mapName.begin(), mapName.end(), mapName.begin(), ::toupper);
+	
+	TTF_Font *iFont = TTF_OpenFont("OptimusPrinceps.ttf", fontSize);
+	surface = TTF_RenderText_Solid(iFont, mapName.c_str(), color);
+
+	SDL_Rect destinationRectangle = { x - 120, y - 200, surface->w, surface->h }; //where on screen we will be drawing
+
+	if (mapName.length() < 8) {
+		destinationRectangle = { x - 50, y - 200, surface->w, surface->h }; //where on screen we will be drawing
+	}
+
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+	//cout << "drawDMG called!" << endl;
+	//cout << "destRect: " << destinationRectangle.x << "," << destinationRectangle.y << "," << destinationRectangle.w << "," << destinationRectangle.h << endl;
+	graphics.blitSurface(tex, NULL, &destinationRectangle);
+	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	TTF_CloseFont(font);
+	SDL_DestroyTexture(tex);
+}
+
 void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::string &str, int posX, int posY, SDL_Color color) {
 	//TTF_Init();
 	if (TTF_Init() == -1) {

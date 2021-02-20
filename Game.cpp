@@ -8,7 +8,6 @@
 #include "game.h"
 #include "Graphics.h"
 #include "Input.h"
-#include "Weapon.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -437,6 +436,8 @@ void Game::draw(Graphics &graphics) {
 	if (activeInventory == true) {
 		this->_inventory.draw(graphics, this->_player);
 	}
+
+	this->_player.drawCurrentMapName(graphics);
 
 	graphics.flip(); //draw main character
 }

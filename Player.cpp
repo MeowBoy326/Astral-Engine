@@ -4,6 +4,7 @@
 #include "Door.h"
 #include "Npc.h"
 #include "Items.h"
+#include "TextManager.h"
 
 namespace player_constants {
 	const float WALK_SPEED = 0.2f;
@@ -13,6 +14,8 @@ namespace player_constants {
 	const float GRAVITY_CAP = 0.8f;
 
 	bool iFrame = false;
+	bool showMapName = false;
+
 	std::string mapName = "";
 }
 
@@ -246,6 +249,7 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 			player_constants::mapName = others.at(i).getDestination();
 			this->_x = level.getPlayerSpawnPoint().x;
 			this->_y = level.getPlayerSpawnPoint().y;
+			player_constants::showMapName = true;
 		}
 	}
 }
@@ -358,10 +362,13 @@ void Player::update(float elapsedTime) {
 
 	//cout << this->_x << " , " << this->_y << endl;
 
-	this->_timeElapsed += elapsedTime;
-	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ remove text?
-		this->_timeElapsed -= this->_timeToUpdate;
-		player_constants::iFrame = false;
+	//iFrame timer
+	if (player_constants::iFrame == true) {
+		this->_timeElapsed += elapsedTime;
+		if (this->_timeElapsed > this->_timeToUpdate) {
+			this->_timeElapsed -= this->_timeToUpdate;
+			player_constants::iFrame = false;
+		}
 	}
 
 	if ((this->getKillCount() >= 3 && this->getKillCount() < 4) && this->getLevel() == 0) {
@@ -374,9 +381,26 @@ void Player::update(float elapsedTime) {
 		cout << "leveled up to: " << this->getLevel() << endl;
 	}
 
+	//Show map name timer
+	if (player_constants::showMapName == true) {
+		this->_mapTimeElapsed += elapsedTime;
+		if (this->_mapTimeElapsed > this->_timeForMapName) {
+			this->_mapTimeElapsed -= this->_timeForMapName;
+			player_constants::showMapName = false;
+		}
+	}
+
+
 	AnimatedSprite::update(elapsedTime);
 }
 
 void Player::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
+}
+
+void Player::drawCurrentMapName(Graphics &graphics) {
+	if (player_constants::showMapName == true) {
+		TextManager txt;
+		txt.drawMapName(graphics, player_constants::mapName, this->getX(), this->getY());
+	}
 }

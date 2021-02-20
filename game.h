@@ -6,7 +6,6 @@
 #include "HUD.h"
 #include "Graphics.h"
 #include "Camera.h"
-#include "Weapon.h"
 #include "Projectile.h"
 #include "Title.h"
 #include "TextManager.h"

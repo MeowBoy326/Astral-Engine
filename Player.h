@@ -19,6 +19,7 @@ public:
 	Player();
 	Player(Graphics &graphics, Vector2 spawnPoint);
 	void draw(Graphics &graphics);
+	void drawCurrentMapName(Graphics &graphics);
 	void update(float elapsedTime);
 
 	//Move player left by -dx
@@ -100,9 +101,11 @@ private:
 
 	int mPosX, mPosY;
 	double _timeElapsed = 0; //for timer
+	double _mapTimeElapsed = 0;
 
 protected:
 	double _timeToUpdate = 2500;
+	double _timeForMapName = 3000;
 };
 
 #endif

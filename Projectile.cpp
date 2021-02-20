@@ -293,12 +293,7 @@ void Projectile::drawGun(Graphics & graphics, Player & player) {
 		_Gun.setSourceRectY(86);
 		_Gun.setSourceRectH(10);
 		this->_Gun.draw(graphics, player.getX() + 20, player.getY() + 14);
-	}
-
-
-	
-	
-	
+	}	
 }
 
 void Projectile::drawDmgText(Graphics & graphics)
