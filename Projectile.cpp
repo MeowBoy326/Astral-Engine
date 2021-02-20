@@ -29,7 +29,7 @@ Projectile::Projectile(Graphics & graphics, Player & player)
 {
 	int posx = player.getX();
 	int posy = player.getY();
-	this->_bullet = Sprite(graphics, "Bullet.png", 0, 6, 8, 8, posx, posy);
+	this->_bullet = Sprite(graphics, "Bullet.png", 66, 0, 12, 11, posx, posy);
 	//	this->_currentHealthBar = Sprite(graphics, "Textbox.png", 0, 25, 39, 5, 83, 72);
 	cout << "sprite added" << endl;
 	graphics.loadImage("Bullet.png"); //loads sprite sheet in
@@ -180,6 +180,9 @@ void Projectile::drawUp(Graphics & graphics, Player & player) {
 	if (projectileConstants::active == true && bulletUp.size() != 0) {
 		for (int i = 0; i < bulletUp.size(); ++i) {
 			SDL_Rect src = { bulletUp[i].x, bulletUp[i].y - 30, bulletUp[i].w, bulletUp[i].h };
+			this->_bullet.setSourceRectX(86);
+			this->_bullet.setSourceRectW(6);
+			this->_bullet.setSourceRectH(15);
 			this->_bullet.drawProjectile(graphics, src);
 		}
 	}
@@ -189,6 +192,9 @@ void Projectile::drawDown(Graphics & graphics, Player & player) {
 	if (projectileConstants::active == true && bulletDown.size() != 0) {
 		for (int i = 0; i < bulletDown.size(); ++i) {
 			SDL_Rect src = { bulletDown[i].x, bulletDown[i].y + 30, bulletDown[i].w, bulletDown[i].h };
+			this->_bullet.setSourceRectX(117);
+			this->_bullet.setSourceRectW(6);
+			this->_bullet.setSourceRectH(15);
 			this->_bullet.drawProjectile(graphics, src);
 		}
 	}
@@ -198,6 +204,9 @@ void Projectile::drawLeft(Graphics & graphics, Player & player) {
 	if (projectileConstants::active == true && bulletLeft.size() != 0) {
 		for (int i = 0; i < bulletLeft.size(); ++i) {
 			SDL_Rect src = { bulletLeft[i].x - 30, bulletLeft[i].y, bulletLeft[i].w, bulletLeft[i].h };
+			this->_bullet.setSourceRectX(66);
+			this->_bullet.setSourceRectW(12);
+			this->_bullet.setSourceRectH(11);
 			this->_bullet.drawProjectile(graphics, src);
 		}
 	}
@@ -208,6 +217,9 @@ void Projectile::draw(Graphics & graphics, Player & player)
 	if (projectileConstants::active == true && bulletVec.size() != 0) {
 	for (int i = 0; i < bulletVec.size(); ++i) {
 		SDL_Rect src = { bulletVec[i].x, bulletVec[i].y, bulletVec[i].w, bulletVec[i].h };
+		this->_bullet.setSourceRectX(97);
+		this->_bullet.setSourceRectW(12);
+		this->_bullet.setSourceRectH(11);
 		this->_bullet.drawProjectile(graphics, src);
 	}
 
