@@ -16,13 +16,17 @@ public:
 	virtual void update(int elapsedTime, Player &player);
 	virtual void draw(Graphics &graphics);
 	virtual void touchPlayer(Player* player) = 0; //pure virtual implement in derived classes
-	virtual void setTimer() = 0;
 	virtual void playDeath() = 0;
+	virtual int enemyExpAmount();
 
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
+	virtual bool isRemoveable();
+	virtual void setRemoveable();
 
 	void bulletHit(float dmg);
+
+	bool removeEnemy = false;
 protected:
 	Direction _direction;
 
@@ -40,18 +44,17 @@ public:
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
 	void touchPlayer(Player* player);
-	void setTimer();
-	Uint32 setHit(Uint32 interval, void* param);
-	bool canHit();
-	//void bulletHit();
-
 	void playDeath();
-
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
+
+	bool isRemoveable();
+
+	int enemyExpAmount();
 private:
 	float _startingX, _startingY;
 	bool _shouldMoveUp; //keep track of if bat should move
 	bool hasHit = false;
 	int iFrameCount = 0;
+	int batExp = 10;
 };

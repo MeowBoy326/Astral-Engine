@@ -7,7 +7,6 @@ namespace globals {
 
 	const float SPRITE_SCALE = 2.0f; //will make it 2x
 	const float PROJECTILE_SCALE = 1.2f; 
-
 }
 
 namespace sides {

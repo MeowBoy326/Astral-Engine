@@ -2,12 +2,17 @@
 #include <iostream>
 #include "SDL_timer.h"
 #include "TextManager.h"
+#include "Player.h"
 
 using namespace std;
 
 TextManager txt;
 //Base enemy class
 Enemy::Enemy() {}
+
+namespace enemyConstants {
+	//bool removeEnemy = false;
+}
 
 Enemy::Enemy(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int width, int height, Vector2 spawnPoint, int timeToUpdate) :
 	AnimatedSprite(graphics, filePath, sourceX, sourceY, width, height, spawnPoint.x, spawnPoint.y, timeToUpdate),
@@ -33,6 +38,20 @@ void Enemy::playDeath() {
 
 void Enemy::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
+}
+
+bool Enemy::isRemoveable() {
+	return removeEnemy;
+}
+
+void Enemy::setRemoveable() {
+	if (removeEnemy == true) {
+		removeEnemy = false;
+	}
+}
+
+int Enemy::enemyExpAmount() {
+	return 0;
 }
 
 //Bat class
@@ -61,7 +80,6 @@ void Bat::update(int elapsedTime, Player &player) {
 	
 	else if (this->getCurrentHealth() <= 0) {
 		this->playAnimation("BatDie", true);
-		this->_currentHealth--;
 	}
 
 	Enemy::update(elapsedTime, player);
@@ -72,13 +90,15 @@ void Bat::draw(Graphics &graphics) {
 }
 
 void Bat::animationDone(std::string currentAnimation) {
-
+	if (this->getCurrentHealth() <= 0) {
+		this->removeEnemy = true;
+	}
 }
 
 void Bat::setupAnimations() {
 	this->addAnimation(3, 2, 32, "FlyLeft", 16, 16, Vector2(0, 0));
 	this->addAnimation(3, 2, 48, "FlyRight", 16, 16, Vector2(0, 0));
-	this->addAnimation(5, 6, 32, "BatDie", 19, 16, Vector2(0, 0));
+	this->addAnimation(7, 6, 32, "BatDie", 16, 16, Vector2(0, 0));
 }
 
 /*void Bat::bulletHit() {
@@ -91,39 +111,19 @@ void Bat::playDeath() {
 }
 
 void Bat::touchPlayer(Player* player) {
-	//if (hasHit == false) {
 		player->gainHealth(-1.0f);
-	//	hasHit = true;
-	//}
-
-	//else if (hasHit == true) {
-	//	cout << "Cannot hit again!" << endl;
-	//	iFrameCount++;
-	//	if (iFrameCount >= 500) {
-			//hasHit = false;
-	//	}
-	//}
 }
 
-void Bat::setTimer() {
-	hasHit = true;
-	//SDL_TimerID timerID = SDL_AddTimer(2 * 1000, Bat::setHit, "yes");
-	SDL_Delay(2 * 1000);
-	hasHit = false;
+
+bool Bat::isRemoveable() {
+	return removeEnemy;
 }
 
-Uint32 Bat::setHit(Uint32 interval, void* param) {
-	return 0;
+int Bat::enemyExpAmount() {
+	return Bat::batExp;
 }
 
-bool Bat::canHit() {
-	if (hasHit == true) {
-		return false;
-	}
-	else if (hasHit == false) {
-		return true;
-	}
-}
+
 /*
 void Bat::lockDamage(std::vector<Enemy*> &others) {
 	for (int i = 0; i < others.size(); i++) {

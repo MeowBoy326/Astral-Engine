@@ -358,7 +358,6 @@ void Game::gameLoop() {
 
 		const int CURRENT_TIME_MS = SDL_GetTicks();
 		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
-		//cout << "Elapsed Time: " << ELAPSED_TIME_MS << endl;
 		this->_graphics = graphics; //updated graphics
 		this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics); //take standard min : elapsed time ms and max frame time
 																 //if (this->_bullet.isActive() == true) {
@@ -421,9 +420,8 @@ void Game::draw(Graphics &graphics) {
 	this->_bullet.drawLeft(graphics, this->_player);
 	this->_bullet.drawGun(graphics, this->_player);
 	this->_chatBox.drawChatBox(graphics, this->_player);
-	//this->_chatBox.drawTest(graphics);
 	this->_bullet.drawDmgText(graphics);
-	//draw hud last because we want it on top of everything
+
 	if (activeTalk == true && nextLine == false) {
 		this->_npc.runScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 	}
@@ -439,7 +437,7 @@ void Game::draw(Graphics &graphics) {
 
 	this->_player.drawCurrentMapName(graphics);
 
-	graphics.flip(); //draw main character
+	graphics.flip(); //Render everything above
 }
 
 void Game::updateBullet(float elapsedTime) {
@@ -447,27 +445,19 @@ void Game::updateBullet(float elapsedTime) {
 }
 
 void Game::update(float elapsedTime, Graphics &graphics) {
-	//cout << npcName << endl;
-	this->_player.update(elapsedTime); //update player
+	this->_player.update(elapsedTime); 
 	//if (this->_player.getCurrentHealth() <= 0) {
 	//	GAMEOVER = true;
 	//}
 	this->_camera.Update(elapsedTime, this->_player);
-	//Camera::Update(elapsedTime);
-	this->_level.update(elapsedTime, this->_player); //update level
-	//this->_bullet.update(elapsedTime, this->_player);
-
-
+	this->_level.update(elapsedTime, this->_player);
 	this->_bullet.update(elapsedTime, this->_player);
 	this->_bullet.updateUp(elapsedTime, this->_player);
 	this->_bullet.updateDown(elapsedTime, this->_player);
 	this->_bullet.updateLeft(elapsedTime, this->_player);
-
 	this->_bullet.updateDmgText(elapsedTime);
-
-	this->_hud.update(elapsedTime, this->_player); //you already know :^)
-	//this->_camera.Update(elapsedTime);
-	//Camera::Update(elapsedTime);
+    //hud goes on top of everything
+	this->_hud.update(elapsedTime, this->_player);
 
 	std::vector<Npc*> otherNpc;
 	if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
@@ -510,11 +500,11 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	}
 
 	std::vector<Enemy*> projectileHit;
-	//cout << this->_bullet.getBoundingBox().getCenterX() << " + " << this->_bullet.getBoundingBox().getCenterY() << " + " << this->_bullet.getBoundingBox().getHeight() << endl;
 	if ((projectileHit = this->_level.checkEnemyCollisions(this->_bullet.getProjectileBBox())).size() > 0) {
 		this->_bullet.handleProjectileCollisions(projectileHit, graphics);
 	}
 	this->_level.checkEnemyHP(this->_player);
+
 	if (pickUp == true) {
 	std:vector<Items*> itemPickUp;
 		std::vector<std::string*> dropPick;
@@ -522,7 +512,6 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		}
 		pickUp = false; 
 	}
-
 
 	/*
 	std::vector<Npc*> otherNpc;

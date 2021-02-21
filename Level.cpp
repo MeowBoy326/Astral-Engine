@@ -495,9 +495,13 @@ std::vector<Door> Level::checkDoorCollisions(const Rectangle &other) {
 
 void Level::checkEnemyHP(Player & player) {
 	for (int i = 0; i < this->_enemies.size(); i++) {
-		if (this->_enemies.at(i)->getCurrentHealth() <= -150) {
-			_enemies.erase(_enemies.begin() + i);
-			player.addKillCount(1);
+		if (this->_enemies.at(i)->getCurrentHealth() <= 0) {
+			if (this->_enemies.at(i)->isRemoveable() == true) {
+				this->_enemies.at(i)->setRemoveable();
+				player.gainExp(this->_enemies.at(i)->enemyExpAmount());
+				player.addKillCount(1);
+				this->_enemies.erase(this->_enemies.begin() + i);
+			}
 		}
 	}
 }
@@ -528,10 +532,6 @@ std::vector<Enemy*> Level::checkBulletCollisions(const Rectangle &other) {
 	for (int i = 0; i < this->_enemies.size(); i++) {
 		if (this->_enemies.at(i)->getBoundingBox().collidesWith(other)) {
 			others.push_back(this->_enemies.at(i));
-		}
-		if (this->_enemies.at(i)->getCurrentHealth() <= 0) {
-			_enemies.erase(_enemies.begin() + i);
-			cout << "Enemy removed" << endl;
 		}
 	}
 	return others;

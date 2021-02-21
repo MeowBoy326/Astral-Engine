@@ -17,6 +17,8 @@ namespace player_constants {
 	bool showMapName = false;
 
 	std::string mapName = "";
+
+	int expTable[10] = {30, 60, 120, 500, 1600, 3700, 7950, 14000, 20000, 30000};
 }
 
 Player::Player() {}
@@ -309,6 +311,11 @@ void Player::gainHealth(float amount) {
 		this->_currentHealth += amount; //can be used to take away hp as well
 		cout << "gained " << _currentHealth << endl;
 	}
+}
+
+void Player::gainExp(int exp) {
+	this->_exp += exp;
+	cout << "current exp = " << this->_exp << endl;
 }
 
 int Player::getCurrentExp()

@@ -67,6 +67,7 @@ public:
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
 
+	void gainExp(int exp);
 	int getMaxExp();
 	int getCurrentExp();
 	int getLevel();
@@ -97,6 +98,7 @@ private:
 	float _maxHealth;
 	float _currentHealth;
 
+	int _exp = 0;
 	int _playerLevel = 0;
 
 	int mPosX, mPosY;

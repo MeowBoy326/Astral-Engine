@@ -22,7 +22,6 @@ public:
 	~Game();
 private:
 	void gameLoop();
-	void drawNpcChat(Graphics & graphics);
 	void draw(Graphics &graphics);
 	void drawBullet(Graphics &graphics);
 	void drawTitle(Graphics & graphics);
@@ -53,7 +52,6 @@ private:
 	Npc _npc;
 
 	Clock _clock;
-
 
 	Graphics _graphics; //store graphics object
 };
