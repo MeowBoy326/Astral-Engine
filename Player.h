@@ -62,14 +62,15 @@ public:
 	const float getX() const;
 	const float getY() const; //getting variables not changes const make sure it doesnt
 
-	void render(int camX, int camY);
+	//void render(int camX, int camY);
 
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
 
-	void gainExp(int exp);
-	int getMaxExp();
-	int getCurrentExp();
+	void gainExp(float exp);
+	float getCurrentExp();
+	void setCurrentExp(float exp);
+	float getRequiredExp();
 	int getLevel();
 	void setLevel(int num);
 	void addLevel(int num);
@@ -78,6 +79,7 @@ public:
 	void addKillCount(int num);
 	void setKillCount(int num);
 	int getKillCount();
+	int getRequiredKills();
 	int killCount = 0;
 
 	Direction facingDir();
@@ -98,7 +100,8 @@ private:
 	float _maxHealth;
 	float _currentHealth;
 
-	int _exp = 0;
+	float _exp = 0;
+	int _requiredExp;
 	int _playerLevel = 0;
 
 	int mPosX, mPosY;

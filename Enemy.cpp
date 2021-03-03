@@ -50,7 +50,7 @@ void Enemy::setRemoveable() {
 	}
 }
 
-int Enemy::enemyExpAmount() {
+float Enemy::enemyExpAmount() {
 	return 0;
 }
 
@@ -119,7 +119,7 @@ bool Bat::isRemoveable() {
 	return removeEnemy;
 }
 
-int Bat::enemyExpAmount() {
+float Bat::enemyExpAmount() {
 	return Bat::batExp;
 }
 

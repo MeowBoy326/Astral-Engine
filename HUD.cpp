@@ -22,15 +22,17 @@ void HUD::update(int ElapsedTime, Player &player) {
 
 	//Calculate the width of the health bar
 	//100% = 39px
-	//Cast to float because int 0 division wil lhappen and we will get 0 everytime.
+	//Cast to float because int 0 division will happen and we will get 0 everytime.
 	float num = (float)this->_player.getCurrentHealth() / this->_player.getMaxHealth();
 	this->_currentHealthBar.setSourceRectW(std::floor(num * 39));
 
-	//Update player Level
-	int expNum = (int)this->_player.getKillCount();
-	this->_expBar.setSourceRectW(expNum * 10 + 1);
+	float expNum = (float)this->_player.getCurrentExp();
 
-		this->_lvNumber.setSourceRectX(8 * this->_player.getLevel());
+	//Update player Level
+	int expKillNum = (int)this->_player.getKillCount();
+	this->_expBar.setSourceRectW(expKillNum * 10 + 1);
+
+	this->_lvNumber.setSourceRectX(8 * this->_player.getLevel());
 		//this->_expBar.setSourceRectW(1);
 
 }

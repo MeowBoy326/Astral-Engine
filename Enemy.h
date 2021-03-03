@@ -17,7 +17,7 @@ public:
 	virtual void draw(Graphics &graphics);
 	virtual void touchPlayer(Player* player) = 0; //pure virtual implement in derived classes
 	virtual void playDeath() = 0;
-	virtual int enemyExpAmount();
+	virtual float enemyExpAmount();
 
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
@@ -50,11 +50,11 @@ public:
 
 	bool isRemoveable();
 
-	int enemyExpAmount();
+	float enemyExpAmount();
 private:
 	float _startingX, _startingY;
 	bool _shouldMoveUp; //keep track of if bat should move
 	bool hasHit = false;
 	int iFrameCount = 0;
-	int batExp = 10;
+	float batExp = 10;
 };

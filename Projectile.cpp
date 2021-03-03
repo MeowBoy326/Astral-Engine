@@ -308,7 +308,7 @@ void Projectile::drawDmgText(Graphics & graphics)
 void Projectile::updateDmgText(float ElapsedTime) {
 	this->_timeElapsed += ElapsedTime;
 	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ remove text?
-		this->_timeElapsed -= this->_timeToUpdate;
+		this->_timeElapsed -= this->_timeToUpdate; 
 		projectileConstants::enemyX = 0;
 	}
 }

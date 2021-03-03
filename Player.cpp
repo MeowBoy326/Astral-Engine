@@ -18,7 +18,13 @@ namespace player_constants {
 
 	std::string mapName = "";
 
-	int expTable[10] = {30, 60, 120, 500, 1600, 3700, 7950, 14000, 20000, 30000};
+	/*
+	* Index 0 = the exp needed from lvl 0 (starting level) to level 1.
+	* So, to get to level 1 you need 20 exp. Level 2 needs 40 exp. With every new level exp is set to 0 
+	*/
+	std::vector<float> expTable = {20, 40, 60, 80, 100, 120, 140, 160, 180, 200};
+	std::vector<float> dmgTable = { 5, 10, 15, 20, 25, 30, 35, 40 }; 
+	// same as above but with kills. this increased damage per kill needed
 }
 
 Player::Player() {}
@@ -313,16 +319,30 @@ void Player::gainHealth(float amount) {
 	}
 }
 
-void Player::gainExp(int exp) {
+void Player::gainExp(float exp) {
 	this->_exp += exp;
 	cout << "current exp = " << this->_exp << endl;
+	cout << "required exp for level " << this->getLevel() << " is:" << this->_requiredExp << endl;
 }
 
-int Player::getCurrentExp()
+float Player::getCurrentExp()
 {
-
-	return 0;
+	return this->_exp;
 }
+
+void Player::setCurrentExp(float exp) {
+	this->_exp = exp;
+}
+
+float Player::getRequiredExp() { 
+	for (int i = 0; i < this->getLevel() + 1; i++) {
+		if (this->getLevel() == i) {
+			this->_requiredExp = player_constants::expTable[i];
+		}
+	}
+	return this->_requiredExp; 
+}
+
 
 int Player::getLevel()
 {
@@ -348,6 +368,10 @@ void Player::setKillCount(int num) {
 
 int Player::getKillCount() {
 	return this->killCount;
+}
+
+int Player::getRequiredKills() {
+//TODO
 }
 
 Direction Player::facingDir()
@@ -378,15 +402,13 @@ void Player::update(float elapsedTime) {
 		}
 	}
 
-	if ((this->getKillCount() >= 3 && this->getKillCount() < 4) && this->getLevel() == 0) {
+	if (this->getCurrentExp() >= this->getRequiredExp()) {
 		this->addLevel(1);
-		cout << "leveled up to: " << this->getLevel() << endl;
+		this->setCurrentExp(0);
+		cout << "Level up to: " << this->getLevel() << endl;
 	}
 
-	else if (this->getKillCount() >= 4 && this->getKillCount() < 8 && this->getLevel() == 1) {
-		this->addLevel(1);
-		cout << "leveled up to: " << this->getLevel() << endl;
-	}
+
 
 	//Show map name timer
 	if (player_constants::showMapName == true) {
@@ -396,8 +418,6 @@ void Player::update(float elapsedTime) {
 			player_constants::showMapName = false;
 		}
 	}
-
-
 	AnimatedSprite::update(elapsedTime);
 }
 
