@@ -74,6 +74,10 @@ public:
 	int getLevel();
 	void setLevel(int num);
 	void addLevel(int num);
+	int getSoulLevel();
+	void setSoulLevel(int num);
+	void addSoulLevel(int num);
+	double getDmgMod();
 
 	//void gainHealth(float amount);
 	void addKillCount(int num);
@@ -103,6 +107,10 @@ private:
 	float _exp = 0;
 	int _requiredExp;
 	int _playerLevel = 0;
+	int _soulLevel = 0;
+	int _requiredKill;
+	double _soulStrength = 1;
+	double _dmgMod = 0;
 
 	int mPosX, mPosY;
 	double _timeElapsed = 0; //for timer

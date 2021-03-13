@@ -5,6 +5,7 @@
 #include "Npc.h"
 #include "Items.h"
 #include "TextManager.h"
+#include <time.h>
 
 namespace player_constants {
 	const float WALK_SPEED = 0.2f;
@@ -23,7 +24,7 @@ namespace player_constants {
 	* So, to get to level 1 you need 20 exp. Level 2 needs 40 exp. With every new level exp is set to 0 
 	*/
 	std::vector<float> expTable = {20, 40, 60, 80, 100, 120, 140, 160, 180, 200};
-	std::vector<float> dmgTable = { 5, 10, 15, 20, 25, 30, 35, 40 }; 
+	std::vector<float> dmgTable = { 6, 20, 67, 150, 222, 437, 700, 1000 }; 
 	// same as above but with kills. this increased damage per kill needed
 }
 
@@ -144,8 +145,6 @@ void Player::jump() {
 		this->_dy -= player_constants::JUMP_DISTANCE;
 		this->_grounded = false;
 	}
-	
-	
 }
 
 /*bool Player::isGrounded() {
@@ -343,6 +342,14 @@ float Player::getRequiredExp() {
 	return this->_requiredExp; 
 }
 
+int Player::getRequiredKills() {
+	for (int i = 0; i < this->getSoulLevel() + 1; i++) {
+		if (this->getSoulLevel() == i) {
+			this->_requiredKill = player_constants::dmgTable[i];
+		}
+	}
+	return this->_requiredKill;
+}
 
 int Player::getLevel()
 {
@@ -355,6 +362,17 @@ void Player::setLevel(int num) {
 
 void Player::addLevel(int num) {
 	this->_playerLevel += num;
+}
+
+int Player::getSoulLevel() {
+	return this->_soulLevel;
+}
+
+void Player::setSoulLevel(int num) {
+	this->_soulLevel = num;
+}
+void Player::addSoulLevel(int num) {
+	this->_soulLevel += num;
 }
 
 void Player::addKillCount(int num) {
@@ -370,9 +388,10 @@ int Player::getKillCount() {
 	return this->killCount;
 }
 
-int Player::getRequiredKills() {
-//TODO
+double Player::getDmgMod() {
+	return this->_dmgMod;
 }
+
 
 Direction Player::facingDir()
 {
@@ -408,7 +427,15 @@ void Player::update(float elapsedTime) {
 		cout << "Level up to: " << this->getLevel() << endl;
 	}
 
-
+	if (this->getKillCount() >= this->getRequiredKills()) {
+		this->addSoulLevel(1);
+		this->_soulStrength += 1;
+		srand((unsigned)time(NULL));
+		this->_dmgMod = this->_soulStrength + ((double)(rand() % 90 + 10) / 100);
+		cout << "damage mod is: " << this->_dmgMod << endl;
+		//cout << "damage mod is: " << this->dmgMod;
+		cout << "Soul Level increased to: " << this->getSoulLevel() << endl;
+	}
 
 	//Show map name timer
 	if (player_constants::showMapName == true) {
