@@ -24,12 +24,10 @@ private:
 	//Exp Sprites
 	Sprite _lvWord;
 	Sprite _lvNumber;
+	Sprite _expBarValue;
 	Sprite _expBar;
 
 	//Gun Sprite
 	Sprite _slash;
 	Sprite _dashes;
-
-	//Bullet Sprite
-
 };

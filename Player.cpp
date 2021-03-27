@@ -308,12 +308,12 @@ void Player::setIFrame(bool condition) {
 
 void Player::gainHealth(float amount) {
 	if (amount < 0 && player_constants::iFrame == false) {
-		this->_currentHealth += amount; //can be used to take away hp as well
+		this->_currentHealth += amount;
 		cout << "lost " << _currentHealth << endl;
 		player_constants::iFrame = true;
 	}
 	else if (amount > 0) {
-		this->_currentHealth += amount; //can be used to take away hp as well
+		this->_currentHealth += amount;
 		cout << "gained " << _currentHealth << endl;
 	}
 }

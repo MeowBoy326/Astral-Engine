@@ -42,6 +42,8 @@ private:
 	//Health Sprites
 	Sprite _iMenu;
 	Sprite _hpPot;
+
+	int hpToGain;
 protected:
 	
 };

@@ -42,9 +42,16 @@ void Inventory::useItem(int type, Player &player) {
 		}
 		for (int i = 0; i < inventoryConstants::inventory.size(); i++) {
 			if (inventoryConstants::inventory.at(i)->type == HEALTH_POT) {
-				player.gainHealth(3.0f);
-				cout << "player gained 5 hp!" << endl;
-				inventoryConstants::inventory.erase(inventoryConstants::inventory.begin() + i);
+				if (player.getCurrentHealth() < player.getMaxHealth()) {
+					this->hpToGain = player.getMaxHealth() - player.getCurrentHealth();
+					player.gainHealth(hpToGain);
+					cout << "player gained " << hpToGain << " hp" << endl;
+					inventoryConstants::inventory.erase(inventoryConstants::inventory.begin() + i);
+				}
+				else {
+					std::cout << "HP is already full!" << std::endl;
+					return;
+				}
 			}
 			else if (!(inventoryConstants::inventory.at(i)->type == HEALTH_POT)) {
 				cout << "you do not have any health pots!" << endl;
