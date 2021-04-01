@@ -40,7 +40,6 @@ void Items::addToInventory(int type) {
 	}
 }
 
-
 Items::~Items()
 {
 }
@@ -84,4 +83,32 @@ void HealthPotion::animationDone(std::string currentAnimation)
 void HealthPotion::setupAnimations()
 {
 	this->addAnimation(2, 2, 84, "Blink", 16, 16, Vector2(0, 0));
+}
+
+PermHP::PermHP() {};
+
+PermHP::PermHP(Graphics &graphics, Vector2 spawnPoint) :
+	Items(graphics, "NpcSym.png", 288, 1, 14, 15, spawnPoint, 140),
+	maxHPgain(1)
+{
+	graphics.loadImage("NpcSym.png"); //loads sprite sheet in
+	//this->addToInventory();
+	this->setupAnimations();
+	this->playAnimation("Blink");
+}
+
+void PermHP::update(int elapsedTime, Player & player) {
+	this->playAnimation("Blink");
+	Items::update(elapsedTime, player);
+}
+
+void PermHP::draw(Graphics & graphics) {
+	Items::draw(graphics);
+}
+
+void PermHP::animationDone(std::string currentAnimation) {
+}
+
+void PermHP::setupAnimations() {
+	this->addAnimation(2, 2, 101, "Blink", 16, 16, Vector2(0, 0));
 }

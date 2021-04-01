@@ -318,6 +318,12 @@ void Player::gainHealth(float amount) {
 	}
 }
 
+void Player::gainMaxHealth(float amount) { 
+	this->_maxHealth += amount; 
+	this->_currentHealth += _maxHealth - _currentHealth;
+	std::cout << "Max health is now: " << this->_maxHealth << endl;
+}
+
 void Player::gainExp(float exp) {
 	this->_exp += exp;
 	cout << "current exp = " << this->_exp << endl;

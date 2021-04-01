@@ -508,7 +508,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	if (pickUp == true) {
 	std:vector<Items*> itemPickUp;
 		std::vector<std::string*> dropPick;
-		if ((itemPickUp = this->_level.checkItemCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
+		if ((itemPickUp = this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics)).size() > 0) {
 		}
 		pickUp = false; 
 	}

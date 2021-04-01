@@ -393,6 +393,11 @@ void Level::loadMap(std::string mapName, Graphics &graphics) {
 							cout << x << ", " << y << endl;
 
 						}
+						else if (ss.str() == "permHP") {
+							this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
+							this->itemType.push_back(1);
+							cout << "permHP added!" << endl;
+						}
 
 						pObject = pObject->NextSiblingElement("object");
 					}
@@ -417,6 +422,7 @@ void Level::update(int elapsedTime, Player &player) {
 	for (int i = 0; i < this->_items.size(); i++) {
 		this->_items.at(i)->update(elapsedTime, player);
 	}
+
 }
 
 void Level::draw(Graphics &graphics) {
@@ -558,20 +564,22 @@ std::vector<Npc*> Level::checkNpcCollisions(const Rectangle &other, Graphics &gr
 
 }
 
-std::vector<Items*> Level::checkItemCollisions(const Rectangle &other, Graphics &graphics) {
+std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle &other, Graphics &graphics) {
 	std::vector<Items*> others;
 	for (int i = 0; i < this->_items.size(); i++) {
 		if (this->_items.at(i)->getBoundingBox().collidesWith(other)) {
 			int type;
 			type = itemType.at(i);
-			cout << "type = " << type << endl;
-			_items.at(i)->addToInventory(type);
 
-			//std::string tmp = this->_npcs.at(i)->getName();
-			//this->_npcs.at(i)->runScript(tmp, graphics);
+			if (type == 1) { //Permanent HP+1 item
+				player.gainMaxHealth(1);
+			}
+			else {
+				_items.at(i)->addToInventory(type);
+			}
+			cout << "type = " << type << endl;
 			others.push_back(this->_items.at(i));
 			_items.erase(_items.begin() + i);
-			//cout << "debug: NPC touch" << endl;
 		}
 	}
 	return others;
