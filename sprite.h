@@ -29,6 +29,7 @@ public:
 	void drawiMenu(Graphics & graphics, int x, int y);
 	void drawChat(Graphics & graphics, int x, int y);
 	void drawTitle(Graphics & graphics, int x, int y);
+	void drawSelectionBox(Graphics & graphics, int x, int y);
 	void drawBullet(Graphics &graphics, int x, int y, int bulletID);
 
 	void addProjectile(int x, int y, int width, int height, int bulletID);

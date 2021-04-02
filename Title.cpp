@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include "Input.h"
+#include <stdlib.h>
 
 using namespace std;
 
@@ -16,11 +17,10 @@ Title::Title()
 
 }
 
-Title::Title(Graphics &graphics) :
+Title::Title(Graphics &graphics, Input &input, SDL_Event &event) :
 //graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
 AnimatedSprite(graphics, "dark_clouds.png", 0, 0, 640, 480, 0, 0, 140)
 {
-
 	graphics.loadImage("dark_clouds.png"); //loads sprite sheet in
 
 	this->setupAnimations();
@@ -31,14 +31,71 @@ AnimatedSprite(graphics, "dark_clouds.png", 0, 0, 640, 480, 0, 0, 140)
 	cout << "sprite added" << endl;
 	graphics.loadImage("title.png"); //loads sprite sheet in
 
-	this->_startGame = Sprite(graphics, "startGame.png", 0, 7, 213, 51, 210, 400);
+	this->_startGame = Sprite(graphics, "startGame.png", 0, 84, 213, 40, 110, 270);
 	graphics.loadImage("startGame.png");
 
-}
+	this->_loadGame = Sprite(graphics, "startGame.png", 0, 148, 213, 40, 340, 270);
 
+
+	graphics.loadImage("npcTextBox.png");
+	this->_selectionBox = Sprite(graphics, "npcTextBox.png", 0, 147, 46, 18, 140, 250);
+}
 
 Title::~Title()
 {
+
+}
+
+bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
+{
+
+	bool menuLoop = true;
+	int LAST_UPDATE_TIME = SDL_GetTicks();
+
+	while (menuLoop == true) {
+		input.beginNewFrame(); //resets our released key pressed keys first time around doesnt matter already set to false but good to reset anyway
+
+		const int CURRENT_TIME_MS = SDL_GetTicks();
+		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
+
+		if (SDL_PollEvent(&event)) {
+			if (event.type == SDL_KEYDOWN) {
+				if (event.key.repeat == 0) {
+					input.keyDownEvent(event); //if we are holding key start keydown event
+				}
+			}
+			else if (event.type == SDL_KEYUP) { // if key was released
+				input.keyUpEvent(event);
+			}
+			else if (event.type == SDL_QUIT) {
+				exit(0);
+			}
+		}
+		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+			menuLoop = false;
+		}
+		else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
+			this->selectX = this->_loadGame.getX();
+			menuChoice = 1;
+		}
+		else if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
+			this->selectX = this->_startGame.getX();
+			menuChoice = 0;
+		}
+		else if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {
+			exit(0);
+		}
+
+		this->Title::update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
+		LAST_UPDATE_TIME = CURRENT_TIME_MS; //loop will go again and current time - new last update will tell us how long next frame will take
+		this->Title::draw(graphics);
+	}
+	return false;
+}
+
+int Title::getMenuChoice() {
+	std::cout << "Menu Choice = " << this->menuChoice << std::endl;
+	return this->menuChoice;
 }
 
 void Title::playNext(int num) {
@@ -61,11 +118,6 @@ void Title::playNext(int num) {
 	}
 }
 
-void Title::Start()
-{
-
-}
-
 void Title::animationDone(std::string currentAnimation) {}
 
 void Title::setupAnimations() {
@@ -74,14 +126,6 @@ void Title::setupAnimations() {
 	this->addAnimation(1, 643, 1, "two", 640, 480, Vector2(0, 0)); //# of frames, x, y, name(RunLeft), height, width, offset (no so empty vector)
 	this->addAnimation(1, 643, 483, "three", 640, 480, Vector2(0, 0));
 	this->addAnimation(1, 1, 965, "four", 640, 480, Vector2(0, 0));
-	/*
-	this->addAnimation(1, 3, 16, "IdleRightUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(3, 3, 0, "RunLeftUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(3, 3, 16, "RunRightUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 6, 0, "LookDownLeft", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 6, 16, "LookDownRight", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 7, 0, "LookBackwardsLeft", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 7, 16, "LookBackwardsRight", 16, 16, Vector2(0, 0));*/
 }
 
 void Title::update(float elapsedTime) {
@@ -89,7 +133,13 @@ void Title::update(float elapsedTime) {
 }
 
 void Title::draw(Graphics &graphics) {
+	graphics.clear(); //clear any drawings MUST do
+
 	AnimatedSprite::drawTitle(graphics, this->_x, this->_y);
 	this->_title.drawTitle(graphics, 210, 50);
-	this->_startGame.drawTitle(graphics, 210, 360);
+	this->_startGame.drawTitle(graphics, 110, 270);
+	this->_loadGame.drawTitle(graphics, 340, 270);
+	this->_selectionBox.drawSelectionBox(graphics, selectX, selectY);
+
+	graphics.flip();
 }

@@ -20,16 +20,12 @@ _y(posY)
 	this->_sourceRect.w = width;
 	this->_sourceRect.h = height;
 
-	//cout << "_sourceRect w/h = " << _sourceRect.w << " , " << _sourceRect.h << endl;
-
 	this->_spriteSheet = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(filePath)); //take a render and surface will give us surface if not load then give us
 	if (this->_spriteSheet == NULL) { //if spritesheet is null that means there was an error while loading image
 		printf("\nError: Unable to load image \n");
 	}
 
 	this->_boundingBox = Rectangle(this->_x, this->_y, width * globals::SPRITE_SCALE, height * globals::SPRITE_SCALE);
-	//cout << "_sourceRect w/h = " << _sourceRect.w << " , " << _sourceRect.h << endl;
-	//cout << "_boundingBox w/h = " << width << " , " << height << endl;
 }
 
 Sprite::~Sprite() {
@@ -39,28 +35,31 @@ Sprite::~Sprite() {
 void Sprite::draw(Graphics &graphics, int x, int y) { //this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE }; //where on screen we will be drawing
 	//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
-	//cout << "\ns::draw x,y,h,w = " << destinationRectangle.x << ", " << destinationRectangle.y << ", " << destinationRectangle.h << ", " << destinationRectangle.w << endl;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle); 
 	}
 
 void Sprite::drawiMenu(Graphics &graphics, int x, int y) { //this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 7, this->_sourceRect.h * 7 }; //where on screen we will be drawing
-																																		//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
-																																		//cout << "\ns::draw x,y,h,w = " << destinationRectangle.x << ", " << destinationRectangle.y << ", " << destinationRectangle.h << ", " << destinationRectangle.w << endl;
+	//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawChat(Graphics &graphics, int x, int y) { //this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
-	//SDL_Rect destinationRectangle = { x - 50, y - 80, this->_sourceRect.w * 4 * globals::SPRITE_SCALE, this->_sourceRect.h * 2 * globals::SPRITE_SCALE * 2 }; //where on screen we will be drawing
 	SDL_Rect destinationRectangle = {x -300, y +55, this->_sourceRect.w * 4 * globals::SPRITE_SCALE, this->_sourceRect.h * 2 * globals::SPRITE_SCALE * 2 };																														
 
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
+void Sprite::drawSelectionBox(Graphics &graphics, int x, int y) {
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 5, this->_sourceRect.h * 4 }; //where on screen we will be drawing
+	//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made
+
+	graphics.windowBlitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
+}
+
 void Sprite::drawTitle(Graphics &graphics, int x, int y) { //this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w, this->_sourceRect.h }; //where on screen we will be drawing
-																																		//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
-																																		//cout << "\ns::draw x,y,h,w = " << destinationRectangle.x << ", " << destinationRectangle.y << ", " << destinationRectangle.h << ", " << destinationRectangle.w << endl;
+	//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made
 	graphics.windowBlitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 

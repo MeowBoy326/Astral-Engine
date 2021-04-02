@@ -17,7 +17,7 @@ namespace player_constants {
 	bool iFrame = false;
 	bool showMapName = false;
 
-	std::string mapName = "";
+	std::string mapName = "CAVE";
 
 	/*
 	* Index 0 = the exp needed from lvl 0 (starting level) to level 1.
