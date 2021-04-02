@@ -25,9 +25,9 @@ Npc::Npc(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int
 	graphics.loadImage("npcTextBox.png"); //loads sprite sheet in
 	this->_script = "clock.txt";
 	if (!this->_script.empty()) {
-		cout << "writing in script..." << endl;
-		ifstream script(_script);
-		string ln;
+		std::cout << "writing in script..." << std::endl;
+		std::ifstream script(_script);
+		std::string ln;
 		while (script.good()) {
 			getline(script, ln);
 			speech.push(ln);
@@ -64,7 +64,7 @@ void Npc::draw(Graphics &graphics) {
 	AnimatedSprite::drawNpc(graphics, this->_x, this->_y);
 }
 
-void Npc::drawTxt(Graphics &graphics, const string &str) {
+void Npc::drawTxt(Graphics &graphics, const std::string &str) {
 	//AnimatedSprite::drawTextBox(graphics, str, fonts);
 }
 
@@ -102,7 +102,7 @@ void Npc::playNextScript(std::string name, Graphics &graphics, int posX, int pos
 	}*/
 
 	std::string line;
-	ifstream script(_script);
+	std::ifstream script(_script);
 	for (int i = 0; i < currentLine; ++i) {
 		getline(script, line);
 	}
@@ -134,11 +134,11 @@ void Npc::runScript(std::string name, Graphics &graphics, int posX, int posY) {
 	speech.empty();
 	this->_script = name + ".txt";
 	//cout << "runScript: script name is: " << _script;
-	ifstream script(_script);
+	std::ifstream script(_script);
 	if (!this->_script.empty()) {
 		//cout << "runScript: writing in script..." << endl;
 		
-		string ln;
+		std::string ln;
 		
 			getline(script, ln);
 			speech.push(ln);
@@ -151,7 +151,7 @@ void Npc::runScript(std::string name, Graphics &graphics, int posX, int posY) {
 
 	//cout << str << endl;
 	this->drawNpcText(graphics, 100, 100, str, posX, posY);
-	string lines;
+	std::string lines;
 	int count = 0;
 	while (getline(script, lines)) {
 		count++;
@@ -205,15 +205,15 @@ void Npc::rendScript(Graphics &graphics, const std::string & str, int posX, int 
 void Npc::say(Graphics &graphics, int posX, int posY)
 {
 	for (int i = 0; i < speech.size(); ++i) {
-		cout << speech.front() << endl;
+		std::cout << speech.front() << std::endl;
 	}
 	if (speech.empty()) {
-		cout << "empty speech" << endl;
+		std::cout << "empty speech" << std::endl;
 		rendScript(graphics, "I have nothing more to say.", posX, posY);
 	}
 	else
 	{
-		cout << "speech not empty..";
+		std::cout << "speech not empty..";
 		std::string str = speech.front();
 		speech.pop();
 		rendScript(graphics, str, posX, posY);
@@ -234,14 +234,14 @@ Clock::Clock(Graphics &graphics, Vector2 spawnPoint, std::string name) :
 	this->setupAnimations();
 	this->setupScripts();
 	this->playAnimation("clock");
-	cout << "prep npc" << endl;
+	std::cout << "prep npc" << std::endl;
 	//fonts = TTF_OpenFont("Arcadia.ttf", 20);
 	//this->fonts = TTF_OpenFont("Arcadia.ttf", 20);
 	this->_script = "clock.txt";
 	if (!this->_script.empty()) {
-		cout << "writing in script..." << endl;
-		ifstream script(_script);
-		string ln;
+		std::cout << "writing in script..." << std::endl;
+		std::ifstream script(_script);
+		std::string ln;
 		while (script.good()) {
 			getline(script, ln);
 			speech.push(ln);
@@ -283,7 +283,7 @@ void Clock::setupAnimations() {
 
 void Clock::bulletHit() {
 	this->_currentHealth += -1;
-	cout << "hit! HP = " << this->_currentHealth << endl;
+	std::cout << "hit! HP = " << this->_currentHealth << std::endl;
 }
 
 void Clock::touchPlayer(Player* player) {

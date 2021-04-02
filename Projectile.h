@@ -9,8 +9,6 @@
 #include <map>
 #include <string>
 
-using namespace std;
-
 //using namespace QuickSDL;
 
 class TextManager;
@@ -33,7 +31,7 @@ public:
 	void drawUp(Graphics & graphics, Player & player);
 	void drawDown(Graphics & graphics, Player & player);
 	void drawLeft(Graphics & graphics, Player & player);
-	int checkBullets(vector<int> bVec);
+	int checkBullets(std::vector<int> bVec);
 	void draw(Graphics &graphics, Player &player);
 	void drawGun(Graphics &graphics, Player &player);
 	void drawDmgText(Graphics & graphics);
@@ -51,12 +49,12 @@ private:
 	Sprite _bullet;
 	Sprite _Gun;
 	float _shootDx, _shootDy; //(dx (delta x) is change in x postition during frame)
-	vector<int> bulletList;
-	vector<SDL_Rect> bulletVec; //right
-	vector<SDL_Rect> bulletUp;
-	vector<SDL_Rect> bulletDown;
-	vector<SDL_Rect> bulletLeft;
-	std::map<int, vector<SDL_Rect>> _bulletMap;
+	std::vector<int> bulletList;
+	std::vector<SDL_Rect> bulletVec; //right
+	std::vector<SDL_Rect> bulletUp;
+	std::vector<SDL_Rect> bulletDown;
+	std::vector<SDL_Rect> bulletLeft;
+	std::map<int, std::vector<SDL_Rect>> _bulletMap;
 	//std::map<std::string, std::vector<SDL_Rect>> _animation;
 	std::map<int, int> _bulletTime;
 

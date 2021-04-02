@@ -2,8 +2,6 @@
 #include <iostream>
 #include "TextManager.h" 
 
-using namespace std;
-
 namespace projectileConstants {
 	const float BULLET_VELOCITY = 0.6f;
 	const float JUMP_DISTANCE = 0.7f;
@@ -31,9 +29,9 @@ Projectile::Projectile(Graphics & graphics, Player & player)
 	int posy = player.getY();
 	this->_bullet = Sprite(graphics, "Bullet.png", 66, 0, 12, 11, posx, posy);
 	//	this->_currentHealthBar = Sprite(graphics, "Textbox.png", 0, 25, 39, 5, 83, 72);
-	cout << "sprite added" << endl;
+	std::cout << "sprite added" << std::endl;
 	graphics.loadImage("Bullet.png"); //loads sprite sheet in
-	cout << "sprite loaded" << endl;
+	std::cout << "sprite loaded" << std::endl;
 
 	this->_Gun = Sprite(graphics, "Arms.png", 52, 10, 10, 5, (posx - 10), (posy + 10));
 	graphics.loadImage("Arms.png");
@@ -380,7 +378,7 @@ void Projectile::handleProjectileCollisions(std::vector<Enemy*> &others, Graphic
 
 void Projectile::setDmg(double dmg) {
 	projectileConstants::BULLET_DMG = dmg;
-	cout << "Dmg = " << projectileConstants::BULLET_DMG << endl;
+	std::cout << "Dmg = " << projectileConstants::BULLET_DMG << std::endl;
 }
 
 double Projectile::checkDmg() {

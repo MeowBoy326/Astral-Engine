@@ -38,7 +38,7 @@ public:
 	void drawMapName(Graphics & graphics, std::string &mapName, int x, int y);
 
 	SDL_Texture* renderText(Graphics &graphics, TTF_Font *font,
-		const string &str, SDL_Color color = { 255, 255, 255, 255 });
+		const std::string &str, SDL_Color color = { 255, 255, 255, 255 });
 	//!< Renders text into a picture. Text is white by default.
 	std::string renderTextbox(Graphics &graphics, const std::string &str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
 	//!< Draws a textbox with text on the screen. Text is white by default.

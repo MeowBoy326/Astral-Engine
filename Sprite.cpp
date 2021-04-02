@@ -3,8 +3,6 @@
 #include "Global.h"
 #include <iostream>
 
-using namespace std;
-
 Sprite::Sprite() {
 
 }
@@ -69,7 +67,7 @@ void Sprite::addProjectile(int x, int y, int width, int height, int bulletID) {
 	SDL_Rect newRect = { x, y, width, height };
 	rectangles.push_back(newRect);
 	//pRect.push_back(newRect);
-	cout << "debug: add bulletID# " << bulletID << endl;
+	std::cout << "debug: add bulletID# " << bulletID << std::endl;
 	this->_bulletMap.insert({ bulletID, newRect });
 	this->_projectiles.insert(std::pair<int, std::vector<SDL_Rect> >(bulletID, rectangles));
 	//this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
@@ -89,18 +87,18 @@ void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) {
 	//cout << this->pRect.at(bulletID).x << endl;
 	//cout << "debug: draw BulletID# " << bulletID << endl;
 	for (int i = 0; i > _bulletMap.size(); ++i) {
-		cout << "debug: for int i: " << _bulletMap[i].x << endl;
+		std::cout << "debug: for int i: " << _bulletMap[i].x << std::endl;
 	}
 
 	auto it = _bulletMap.find(bulletID);
 	if (it != _bulletMap.end()) {
-		cout << " debug auto it: " << it->second.x << endl;
-		cout << it->first << endl;
+		std::cout << " debug auto it: " << it->second.x << std::endl;
+		std::cout << it->first << std::endl;
 		
 
 		SDL_Rect sourceRect = { it->second.x, it->second.y, it->second.w, it->second.h };
 		//cout << sourceRect.x << ", " << sourceRect.y << ", " << sourceRect.w << ", " << sourceRect.h << endl;
-		cout << " blitting" << endl;
+		std::cout << " blitting" << std::endl;
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 	else {

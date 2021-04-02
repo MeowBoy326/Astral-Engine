@@ -3,8 +3,6 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
-
 static SDL_Rect m_rect;
 
 void Camera::Init()

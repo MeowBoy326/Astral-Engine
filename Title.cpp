@@ -4,7 +4,6 @@
 #include "Input.h"
 #include <stdlib.h>
 
-using namespace std;
 
 namespace {
 	const int FPS = 50;
@@ -28,7 +27,7 @@ AnimatedSprite(graphics, "dark_clouds.png", 0, 0, 640, 480, 0, 0, 140)
 
 	this->_title = Sprite(graphics, "title.png", 2, 0, 241, 68, 300, 100);
 	//x, y, width, height, screen pos x, screen pos y
-	cout << "sprite added" << endl;
+	std::cout << "sprite added" << std::endl;
 	graphics.loadImage("title.png"); //loads sprite sheet in
 
 	this->_startGame = Sprite(graphics, "startGame.png", 0, 84, 213, 40, 110, 270);

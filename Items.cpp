@@ -3,8 +3,6 @@
 #include "Graphics.h"
 #include <iostream>
 
-using namespace std;
-
 namespace itemConstants {
 	Inventory::InventoryItem* hPot = new Inventory::InventoryItem;
 }
@@ -32,11 +30,11 @@ void Items::addToInventory(int type) {
 	if (type == 0) {
 		itemConstants::hPot->type = HEALTH_POT;
 		this->addItem(itemConstants::hPot);
-		cout << "Items::addTo success!" << endl;
+		std::cout << "Items::addTo success!" << std::endl;
 	}
 
 	if (itemConstants::hPot->type != NULL) {
-		cout << "null..." << endl;
+		std::cout << "null..." << std::endl;
 	}
 }
 
@@ -63,7 +61,7 @@ void HealthPotion::addToInventory() {
 	hPot->type = HEALTH_POT;
 	hPot->imagePath = "";
 	//hPot.type = HEALTH_POT;
-	cout << "add Item: hPot" << endl;
+	std::cout << "add Item: hPot" << std::endl;
 	//this->addItem(hPot);
 }
 

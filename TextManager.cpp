@@ -5,9 +5,6 @@
 #include "Global.h"
 #include <string>
 
-
-using namespace std;
-
 namespace textConstants {
 	bool activeText = false;
 	int count = 0;
@@ -22,9 +19,9 @@ TextManager::TextManager(Graphics & graphics, Player & player)  {
 	int posy = player.getY();
 	this->_chatBox = Sprite(graphics, "npcTextBox.png", 0, 0, 243, 23, posx, posy);
 	//	this->_currentHealthBar = Sprite(graphics, "Textbox.png", 0, 25, 39, 5, 83, 72);
-	cout << "chatBox added" << endl;
+	std::cout << "chatBox added" << std::endl;
 	graphics.loadImage("npcTextBox.png"); //loads sprite sheet in
-	cout << "chatBox loaded" << endl;
+	std::cout << "chatBox loaded" << std::endl;
 
 	this->drawChatBox(graphics, player);
 
@@ -43,7 +40,7 @@ TextManager::TextManager(Graphics &graphics, const std::string &filePath, int so
 	this->_textSourceRect.w = width;
 	this->_textSourceRect.h = height;
 
-	cout << "_sourceRect w/h = " << _textSourceRect.w << " , " << _textSourceRect.h << endl;
+	std::cout << "_sourceRect w/h = " << _textSourceRect.w << " , " << _textSourceRect.h << std::endl;
 
 	this->_textSheet = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(filePath)); //take a render and surface will give us surface if not load then give us
 	if (this->_textSheet == NULL) { //if spritesheet is null that means there was an error while loading image
@@ -51,8 +48,8 @@ TextManager::TextManager(Graphics &graphics, const std::string &filePath, int so
 	}
 
 	this->_TboundingBox = Rectangle(this->_textX, this->_textY, width * globals::SPRITE_SCALE, height * globals::SPRITE_SCALE);
-	cout << "_sourceRect w/h = " << _textSourceRect.w << " , " << _textSourceRect.h << endl;
-	cout << "_boundingBox w/h = " << width << " , " << height << endl;
+	std::cout << "_sourceRect w/h = " << _textSourceRect.w << " , " << _textSourceRect.h << std::endl;
+	std::cout << "_boundingBox w/h = " << width << " , " << height << std::endl;
 }
 
 void TextManager::setTextStatus(bool status) {
@@ -142,7 +139,7 @@ std::string TextManager::renderTextboxLine(Graphics &graphics, SDL_Color color, 
 	SDL_Texture* text;
 	int lineH = TTF_FontLineSkip(font);
 	int boxH = 100;  // magic number: textbox 1/5 of screen tall.
-	string excess;
+	std::string excess;
 	excess.clear();
 
 	while (!line.empty() && line[0] == ' ')

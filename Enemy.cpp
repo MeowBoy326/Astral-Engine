@@ -4,8 +4,6 @@
 #include "TextManager.h"
 #include "Player.h"
 
-using namespace std;
-
 TextManager txt;
 //Base enemy class
 Enemy::Enemy() {}
@@ -27,7 +25,7 @@ void Enemy::update(int elapsedTime, Player &player) {
 
 void Enemy::bulletHit(float dmg) {
 	this->_currentHealth -= dmg;
-	cout << "hit! HP = " << this->_currentHealth << endl;
+	std::cout << "hit! HP = " << this->_currentHealth << std::endl;
 }
 
 void Enemy::playDeath() {

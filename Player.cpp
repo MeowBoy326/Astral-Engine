@@ -73,7 +73,7 @@ bool Player::lookingUp() {
 	if (this->_lookingUp == true) {
 		return true;
 	}
-	else if (this->_lookingUp == false) {
+	else  {
 		return false;
 	}
 }
@@ -82,7 +82,7 @@ bool Player::lookingDown() {
 	if (this->_lookingDown == true) {
 		return true;
 	}
-	else if (this->_lookingDown == false) {
+	else  {
 		return false;
 	}
 
@@ -92,7 +92,7 @@ bool Player::lookingRight() {
 	if (this->_facing == RIGHT) {
 		return true;
 	}
-	else if (this->_facing == LEFT) {
+	else  {
 		return false;
 	}
 }
@@ -101,7 +101,7 @@ bool Player::lookingLeft() {
 	if (this->_facing == LEFT) {
 		return true;
 	}
-	else if (this->_facing == RIGHT) {
+	else  {
 		return false;
 	}
 }
@@ -303,31 +303,31 @@ std::string Player::getNpcName(std::vector<Npc*> &others, Graphics &graphics) {
 
 void Player::setIFrame(bool condition) {
 	iFrame = condition;
-	cout << "player iFrame = " << condition << endl;
+	std::cout << "player iFrame = " << condition << std::endl;
 }
 
 void Player::gainHealth(float amount) {
 	if (amount < 0 && player_constants::iFrame == false) {
 		this->_currentHealth += amount;
-		cout << "lost " << _currentHealth << endl;
+		std::cout << "lost " << _currentHealth << std::endl;
 		player_constants::iFrame = true;
 	}
 	else if (amount > 0) {
 		this->_currentHealth += amount;
-		cout << "gained " << _currentHealth << endl;
+		std::cout << "gained " << _currentHealth << std::endl;
 	}
 }
 
 void Player::gainMaxHealth(float amount) { 
 	this->_maxHealth += amount; 
 	this->_currentHealth += _maxHealth - _currentHealth;
-	std::cout << "Max health is now: " << this->_maxHealth << endl;
+	std::cout << "Max health is now: " << this->_maxHealth << std::endl;
 }
 
 void Player::gainExp(float exp) {
 	this->_exp += exp;
-	cout << "current exp = " << this->_exp << endl;
-	cout << "required exp for level " << this->getLevel() << " is:" << this->_requiredExp << endl;
+	std::cout << "current exp = " << this->_exp << std::endl;
+	std::cout << "required exp for level " << this->getLevel() << " is:" << this->_requiredExp << std::endl;
 }
 
 float Player::getCurrentExp()
@@ -383,7 +383,7 @@ void Player::addSoulLevel(int num) {
 
 void Player::addKillCount(int num) {
 	this->killCount += num;
-	cout << this->getKillCount() << endl;
+	std::cout << this->getKillCount() << std::endl;
 }
 
 void Player::setKillCount(int num) {
@@ -430,7 +430,7 @@ void Player::update(float elapsedTime) {
 	if (this->getCurrentExp() >= this->getRequiredExp()) {
 		this->addLevel(1);
 		this->setCurrentExp(0);
-		cout << "Level up to: " << this->getLevel() << endl;
+		std::cout << "Level up to: " << this->getLevel() << std::endl;
 	}
 
 	if (this->getKillCount() >= this->getRequiredKills()) {
@@ -438,9 +438,9 @@ void Player::update(float elapsedTime) {
 		this->_soulStrength += 1;
 		srand((unsigned)time(NULL));
 		this->_dmgMod = this->_soulStrength + ((double)(rand() % 90 + 10) / 100);
-		cout << "damage mod is: " << this->_dmgMod << endl;
+		std::cout << "damage mod is: " << this->_dmgMod << std::endl;
 		//cout << "damage mod is: " << this->dmgMod;
-		cout << "Soul Level increased to: " << this->getSoulLevel() << endl;
+		std::cout << "Soul Level increased to: " << this->getSoulLevel() << std::endl;
 	}
 
 	//Show map name timer

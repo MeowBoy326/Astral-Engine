@@ -14,8 +14,6 @@
 struct SDL_Window; //
 struct SDL_Renderer;
 
-using namespace std;
-
 class Graphics {
 public:
 	Graphics();

@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-using namespace std;
-
 namespace inventoryConstants {
 	std::vector<Inventory::InventoryItem*> inventory;
 }
@@ -25,7 +23,7 @@ void Inventory::addItem(struct Inventory::InventoryItem *item) {
 	//this->inventory.push_back(hPot);
 	//inventoryConstants::inventory.push_back(hPot);
 	inventoryConstants::inventory.push_back(item);
-	cout << "size of inventory: " << inventoryConstants::inventory.size() << endl;
+	std::cout << "size of inventory: " << inventoryConstants::inventory.size() << std::endl;
 }
 
 void Inventory::update(int elapsedTime, Player & player)
@@ -37,7 +35,7 @@ void Inventory::update(int elapsedTime, Player & player)
 void Inventory::useItem(int type, Player &player) {
 	if (type == 0) { //hpPot
 		if (inventoryConstants::inventory.size() == 0) {
-			cout << "you do not have anything in your inventory!" << endl;
+			std::cout << "you do not have anything in your inventory!" << std::endl;
 			return;
 		}
 		for (int i = 0; i < inventoryConstants::inventory.size(); i++) {
@@ -45,7 +43,7 @@ void Inventory::useItem(int type, Player &player) {
 				if (player.getCurrentHealth() < player.getMaxHealth()) {
 					this->hpToGain = player.getMaxHealth() - player.getCurrentHealth();
 					player.gainHealth(hpToGain);
-					cout << "player gained " << hpToGain << " hp" << endl;
+					std::cout << "player gained " << hpToGain << " hp" << std::endl;
 					inventoryConstants::inventory.erase(inventoryConstants::inventory.begin() + i);
 				}
 				else {
@@ -54,7 +52,7 @@ void Inventory::useItem(int type, Player &player) {
 				}
 			}
 			else if (!(inventoryConstants::inventory.at(i)->type == HEALTH_POT)) {
-				cout << "you do not have any health pots!" << endl;
+				std::cout << "you do not have any health pots!" << std::endl;
 			}
 		}
 
@@ -75,7 +73,7 @@ void Inventory::draw(Graphics & graphics, Player & player)
 void Inventory::drawQuantity(Graphics & graphics, int x, int y, int quantity)
 {
 	TextManager txt;
-	std::string str = to_string(quantity);
+	std::string str = std::to_string(quantity);
 	this->drawItemQuantity(graphics, 100, 100, str, x, y);
 }
 

@@ -3,8 +3,6 @@
 #include <algorithm>
 #include "Input.h"
 
-using namespace std;
-
 namespace {
 	const int FPS = 50;
 	// remove *5
@@ -28,7 +26,7 @@ AnimatedSprite(graphics, "endGame.png", 0, 0, 640, 480, 0, 0, 340)
 
 	this->_defeat = Sprite(graphics, "title.png", 2, 0, 241, 68, 300, 100);
 	//x, y, width, height, screen pos x, screen pos y
-	cout << "sprite added" << endl;
+	std::cout << "sprite added" << std::endl;
 	graphics.loadImage("title.png"); //loads sprite sheet in
 
 	this->_endGame = Sprite(graphics, "startGame.png", 0, 7, 213, 51, 210, 400);

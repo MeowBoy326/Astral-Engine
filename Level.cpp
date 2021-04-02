@@ -8,14 +8,11 @@
 #include "Enemy.h"
 #include "Npc.h"
 #include "Items.h"
-
 #include <SDL.h>
 #include <sstream> //string stream
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-
-using namespace std;
 
 using namespace tinyxml2; //all tinyxml2 is in a namespace because we will use so many features dont wanna write tinyxml:: all the time :D
 
@@ -367,7 +364,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics) {
 						if (ss.str() == "clock") {
 							this->_npcs.push_back(new Clock(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE), ss.str()));
-							cout << "clock added!" << endl;
+							std::cout << "clock added!" << std::endl;
 							
 						}
 
@@ -389,14 +386,14 @@ void Level::loadMap(std::string mapName, Graphics &graphics) {
 							this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE)));
 							this->itemType.push_back(0);
-							cout << "Item HP added!" << endl;
-							cout << x << ", " << y << endl;
+							std::cout << "Item HP added!" << std::endl;
+							std::cout << x << ", " << y << std::endl;
 
 						}
 						else if (ss.str() == "permHP") {
 							this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
 							this->itemType.push_back(1);
-							cout << "permHP added!" << endl;
+							std::cout << "permHP added!" << std::endl;
 						}
 
 						pObject = pObject->NextSiblingElement("object");
@@ -577,7 +574,7 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 			else {
 				_items.at(i)->addToInventory(type);
 			}
-			cout << "type = " << type << endl;
+			std::cout << "type = " << type << std::endl;
 			others.push_back(this->_items.at(i));
 			_items.erase(_items.begin() + i);
 		}

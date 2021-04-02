@@ -12,7 +12,6 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
 
 bool activeProjectile = false;
 
@@ -72,7 +71,7 @@ void Game::gameLoop() {
 	//Mix_PlayMusic(gMusic, -1); uncomment to play music
 
 	//Load savefile
-	ifstream data;
+	std::ifstream data;
 	int x, y;
 	Vector2 spawn;
 	std::string mapname;
@@ -123,7 +122,7 @@ void Game::gameLoop() {
 		if (title == true) {
 			title = _title.Start(graphics, input, event);
 			if (_title.getMenuChoice() == 0) {
-				cout << "No save data found...Starting new game!" << endl;
+				std::cout << "No save data found...Starting new game!" << std::endl;
 				this->_level = Level("cave", graphics); //intialize level: Map name , spawn point, graphics
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				std::ofstream ofs("savefile1.txt", std::ios::out | std::ios::trunc);
@@ -134,16 +133,16 @@ void Game::gameLoop() {
 				data.open("savefile1.txt");
 				if (!data.peek() == data.eof()) {
 					while (data >> x >> y >> mapname) {
-						cout << "data: " << x << " , " << y << " " << mapname << endl;
+						std::cout << "data: " << x << " , " << y << " " << mapname << std::endl;
 						this->_level = Level(mapname, graphics); //intialize level: Map name , spawn point, graphics
 						spawn = Vector2(std::ceil(x), std::ceil(y));
 						this->_player = Player(graphics, spawn);
-						cout << "data retrieved successfully!" << endl;
+						std::cout << "data retrieved successfully!" << std::endl;
 						data.close();
 					}
 				}
 				else {
-					cout << "No save data found...Starting new game!" << endl;
+					std::cout << "No save data found...Starting new game!" << std::endl;
 					this->_level = Level("cave", graphics); //intialize level: Map name , spawn point, graphics
 					this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				}
@@ -226,7 +225,7 @@ void Game::gameLoop() {
 			}
 		}
 		if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {
-			ofstream saveFile;
+			std::ofstream saveFile;
 			int x, y, saveNum;
 			std::string mapName;
 
@@ -236,15 +235,15 @@ void Game::gameLoop() {
 
 			if (saveFile.good()) {
 				saveFile.open("savefile1.txt");
-				saveFile << x << endl << y << endl << mapName;
+				saveFile << x << std::endl << y << std::endl << mapName;
 				saveFile.close();
-				cout << "Save file succesfully overwritten!" << endl;
+				std::cout << "Save file succesfully overwritten!" << std::endl;
 			}
 			else if (!saveFile.good()) {
-				cout << "Save file not found!" << endl;
+				std::cout << "Save file not found!" << std::endl;
 			}
 
-			cout << "Quitting Game..." << endl;
+			std::cout << "Quitting Game..." << std::endl;
 			return; //quit game if ESC was pressed
 		}
 		else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true) { 
@@ -252,7 +251,7 @@ void Game::gameLoop() {
 				this->_player.moveLeft();
 			}
 			else if (activeTalk == true) {
-				cout << "impaired action" << endl;
+				std::cout << "impaired action" << std::endl;
 			}
 			 
 		}
@@ -261,7 +260,7 @@ void Game::gameLoop() {
 				this->_player.moveRight();
 			}
 			else if (activeTalk == true) {
-				cout << "impaired action" << endl;
+				std::cout << "impaired action" << std::endl;
 			}
 			
 		}
@@ -284,7 +283,7 @@ void Game::gameLoop() {
 				this->_player.jump();
 			}
 			else if (activeTalk == true) {
-				cout << "impaired action" << endl;
+				std::cout << "impaired action" << std::endl;
 			}
 			
 		}
@@ -313,21 +312,21 @@ void Game::gameLoop() {
 			}
 			
 			else if (activeTalk == true) {
-				cout << "impaired action" << endl;
+				std::cout << "impaired action" << std::endl;
 			}
 		}
 
 		if (input.wasKeyPressed(SDL_SCANCODE_Q) == true) {
 			if (activeTalk == false && npcName != ""){
 				activeTalk = true;
-				cout << "status of talk: " << activeTalk << endl;
+				std::cout << "status of talk: " << activeTalk << std::endl;
 				this->_chatBox.setTextStatus(true);
 				this->_chatBox.drawChatBox(graphics, this->_player);
 				this->_npc.runScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 			}
 			else if (activeTalk == true) {
 				activeTalk = false;
-				cout << "status of talk: " << activeTalk << endl;
+				std::cout << "status of talk: " << activeTalk << std::endl;
 				this->_chatBox.setTextStatus(false);
 
 			}
@@ -336,8 +335,8 @@ void Game::gameLoop() {
 		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && activeTalk == true) {
 			lineNum = _npc.getLineAmount();
 			currentLine++;
-			cout << "lineNum: " << lineNum << endl;
-			cout << "currentLine: " << currentLine << endl;
+			std::cout << "lineNum: " << lineNum << std::endl;
+			std::cout << "currentLine: " << currentLine << std::endl;
 			if (currentLine < lineNum) {
 				this->_npc.playNextScript(npcName, graphics, this->_player.getX(), this->_player.getY(), currentLine);
 				nextLine = true;
@@ -347,7 +346,7 @@ void Game::gameLoop() {
 				activeTalk = false;
 				this->_chatBox.setTextStatus(false);
 				this->_npc.setEmpty();
-				cout << "ran out of lines" << endl;
+				std::cout << "ran out of lines" << std::endl;
 				currentLine = 0;
 			}
 		}
@@ -375,7 +374,7 @@ void Game::gameLoop() {
 		}
 		if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
 			_inventory.useItem(0, this->_player);
-			cout << "game: useItem called" << endl;
+			std::cout << "game: useItem called" << std::endl;
 		}
 
 		if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
@@ -537,7 +536,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	this->_level.checkEnemyHP(this->_player);
 
 	if (pickUp == true) {
-	std:vector<Items*> itemPickUp;
+		std::vector<Items*> itemPickUp;
 		std::vector<std::string*> dropPick;
 		if ((itemPickUp = this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics)).size() > 0) {
 		}
