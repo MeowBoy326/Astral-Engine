@@ -75,11 +75,11 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 			menuLoop = false;
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
-			this->selectX = this->_loadGame.getX();
+			this->selectX = this->_loadGame.getX() - 6;
 			menuChoice = 1;
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
-			this->selectX = this->_startGame.getX();
+			this->selectX = this->_startGame.getX() - 6;
 			menuChoice = 0;
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {

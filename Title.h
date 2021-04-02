@@ -28,7 +28,7 @@ private:
 	Sprite _loadGame;
 	Sprite _selectionBox;
 
-	int selectX = 110;
+	int selectX = 104;
 	int selectY = 250;
 	int menuChoice = 0;
 };
