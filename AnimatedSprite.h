@@ -37,6 +37,7 @@ public:
 	*/
 
 	void update(int elapsedTime);
+	void updateBoss(int elapstedTime, int y);
 	void updateScript(int elapsedTime);
 	//void updateBullet(int elapsedTime);
 
@@ -44,6 +45,7 @@ public:
 	Draws the sprite to the screen
 	*/
 	void draw(Graphics &graphics, int x, int y);
+	void drawBoss(Graphics &graphics, int x, int y);
 	//void drawTextBox(Graphics & graphics, std::string speech, TTF_Font *font);
 	void drawNpc(Graphics & graphics, int x, int y);
 	void drawTitle(Graphics & graphics, int x, int y);

@@ -476,9 +476,9 @@ void Game::updateBullet(float elapsedTime) {
 
 void Game::update(float elapsedTime, Graphics &graphics) {
 	this->_player.update(elapsedTime); 
-	//if (this->_player.getCurrentHealth() <= 0) {
-	//	GAMEOVER = true;
-	//}
+	/*if (this->_player.getCurrentHealth() <= 0) {
+		GAMEOVER = true;
+	}*/
 	this->_camera.Update(elapsedTime, this->_player);
 	this->_level.update(elapsedTime, this->_player);
 	this->_bullet.update(elapsedTime, this->_player);

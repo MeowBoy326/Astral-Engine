@@ -121,6 +121,24 @@ void AnimatedSprite::update(int elapsedTime) { //timer checks when to go to next
 	}
 }
 
+void AnimatedSprite::updateBoss(int elapsedTime, int y) {
+	Sprite::updateBoss(y); //since we extend we can call like this
+
+	this->_timeElapsed += elapsedTime;
+	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ change frame
+		this->_timeElapsed -= this->_timeToUpdate;
+		if (this->_frameIndex < this->_animation[this->_currentAnimation].size() - 1) {
+			this->_frameIndex++; //increment by 1
+		}
+		else {
+			if (this->_currentAnimationOnce == true) {
+				this->setVisible(false);
+			}
+			this->stopAnimation();
+		}
+	}
+}
+
 void AnimatedSprite::updateScript(int elapsedTime) { //timer checks when to go to next frame in animation
 	Sprite::update(); //since we extend we can call like this
 
@@ -149,6 +167,20 @@ void AnimatedSprite::draw(Graphics &graphics, int x, int y) {
 		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
 		destinationRectangle.w = this->_sourceRect.w * globals::SPRITE_SCALE;
 		destinationRectangle.h = this->_sourceRect.h * globals::SPRITE_SCALE;
+
+		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
+		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
+	}
+}
+
+void AnimatedSprite::drawBoss(Graphics &graphics, int x, int y) {
+	if (this->_visible) { //only draw when visible
+		SDL_Rect destinationRectangle; //temp where we draw on screen
+		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
+		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
+		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
+		destinationRectangle.w = this->_sourceRect.w * globals::SPRITE_SCALE * 2;
+		destinationRectangle.h = this->_sourceRect.h * globals::SPRITE_SCALE * 2;
 
 		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);

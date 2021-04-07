@@ -346,6 +346,10 @@ void Level::loadMap(std::string mapName, Graphics &graphics) {
 							this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE)));
 						}
+						else if (ss.str() == "shade") {
+							this->_enemies.push_back(new Shade(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+								std::floor(y) * globals::SPRITE_SCALE)));
+						}
 
 						pObject = pObject->NextSiblingElement("object");
 					}
@@ -383,11 +387,14 @@ void Level::loadMap(std::string mapName, Graphics &graphics) {
 						std::stringstream ss;
 						ss << name;
 						if (ss.str() == "HP") {
-							this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
-							this->itemType.push_back(0);
-							std::cout << "Item HP added!" << std::endl;
-							std::cout << x << ", " << y << std::endl;
+							if (isItemLooted() == false) {
+								this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE)));
+								this->itemType.push_back(0);
+								std::cout << "Item HP added!" << std::endl;
+								std::cout << x << ", " << y << std::endl;
+							}
+							
 
 						}
 						else if (ss.str() == "permHP") {
@@ -404,6 +411,21 @@ void Level::loadMap(std::string mapName, Graphics &graphics) {
 			pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
 		}
 	}
+}
+
+bool Level::isItemLooted() {
+	std::cout << "_lootedItemMap size = " << _lootedItemMap.size() << std::endl;
+	for (int i = 0; i < _lootedItemMap.size(); i++) {
+		if (this->_mapName == _lootedItemMap[i]) {
+			for (int i = 0; i < _lootedItems.size(); i++) {
+				if (this->itemType.at(i) == 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	return false;
 }
 
 void Level::update(int elapsedTime, Player &player) {
@@ -575,6 +597,14 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 				_items.at(i)->addToInventory(type);
 			}
 			std::cout << "type = " << type << std::endl;
+			//this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
+			//this->_animation.insert(std::pair<std::string, std::vector<SDL_Rect> >(name, rectangles));
+			//this->_drops.insert(std::pair<std::string, std::vector<Items*> >(_mapName, _items));
+			this->_lootedItems.push_back(this->_items.at(i));
+			this->_lootedItemMap.push_back(this->_mapName);
+
+			std::cout << "checkItemColl - _lootedItemMap size: " << this->_lootedItemMap.size() << std::endl;
+
 			others.push_back(this->_items.at(i));
 			_items.erase(_items.begin() + i);
 		}

@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <queue>
 
 #include "Global.h"
 #include "Tile.h"
@@ -63,13 +65,17 @@ private:
 	std::vector<Enemy*> _enemies; //polymorphism to call the update and draw for the bat and not Enemy's functions, so needs to be a pointer for poly to work
 	std::vector<Npc*> _npcs;
 	std::vector<Items*> _items;
-	std::vector<std::string*> dropList;
+	std::vector<Items*> _lootedItems;
+	std::vector<std::string> _lootedItemMap;
 	std::vector<int> itemType;
 
+	std::map<std::string, std::vector<Items*>> _drops;
 	//Private loads a map only call level within level class
 	void loadMap(std::string mapName, Graphics &graphics); //wont need size or spawn because it will be parsed out of the xml within this function later
 
 	Vector2 getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileHeight);
+
+	bool isItemLooted();
 };
 
 //Tileset structure. Struct by default is public

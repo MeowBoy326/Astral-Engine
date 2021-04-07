@@ -24,6 +24,7 @@ public:
 	virtual ~Sprite();
 	virtual void update();
 	virtual void updateBullet(int bX, int bY, int bW, int bH);
+	virtual void updateBoss(int y);
 	const Rectangle getProjectileBBox() const;
 	void draw(Graphics &graphics, int x, int y);
 	void drawiMenu(Graphics & graphics, int x, int y);
@@ -41,11 +42,17 @@ public:
 
 	const inline float getX() const { return this->_x; }
 	const inline float getY() const { return this->_y; }
+	inline void setX(float newX) { this->_x = newX; }
+	inline void setY(float newY) { this->_y = newY; }
+	inline void addX(float newX) { this->_x += newX; }
+	inline void addY(float newY) { this->_y += newY; }
 
 	void setSourceRectX(int value);
 	void setSourceRectY(int value);
 	void setSourceRectW(int value);
 	void setSourceRectH(int value);
+
+	float _x, _y; //x,y pos of sprite
 protected:
 	SDL_Rect _sourceRect; //where on the spritesheet to get the sprite from
 	SDL_Texture* _spriteSheet; //the sprite sheet that holds the specific sprite
@@ -53,14 +60,14 @@ protected:
 	Rectangle _boundingBox; //rectangle around player is bounding box. Every sprite will get it.
 	Rectangle _projectileBBox;
 
-	float _x, _y; //x,y pos of sprite
-
 	int _currentProjectile;
 	int _bulletNum;
 private:
 	std::map<int, std::vector<SDL_Rect>> _projectiles;
 	std::map<int, SDL_Rect> _bulletMap;
 	std::vector<SDL_Rect> pRect;
+
+	
 };
 
 

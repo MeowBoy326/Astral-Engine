@@ -24,9 +24,10 @@ public:
 	virtual bool isRemoveable();
 	virtual void setRemoveable();
 
-	void bulletHit(float dmg);
+	virtual void bulletHit(float dmg);
 
 	bool removeEnemy = false;
+
 protected:
 	Direction _direction;
 
@@ -47,8 +48,17 @@ public:
 	void playDeath();
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
+	void dropLoot();
+	void playAttack();
+
+	void bulletHit(float dmg);
+	const inline int getMaxHealth() const { return this->_maxHealth; }
+	const inline int getCurrentHealth() const { return this->_currentHealth; }
 
 	bool isRemoveable();
+	void setRemoveable();
+
+	bool removeEnemy = false;
 
 	float enemyExpAmount();
 private:
@@ -57,4 +67,55 @@ private:
 	bool hasHit = false;
 	int iFrameCount = 0;
 	float batExp = 10;
+	Sprite _fireBall;
+	float _fireX, _fireY;
+
+protected:
+	Direction _direction;
+
+	int _maxHealth;
+	int _currentHealth;
+
+	bool deathCreated = false;
+};
+
+class Shade : public Enemy {
+public:
+	Shade();
+	Shade(Graphics &graphics, Vector2 spawnPoint);
+
+	void update(int elapsedTime, Player &player);
+	void draw(Graphics &graphics);
+	void touchPlayer(Player* player);
+	void playDeath();
+	void animationDone(std::string currentAnimation);
+	void setupAnimations();
+	void dropLoot();
+	void playAttack();
+
+	void bulletHit(float dmg);
+	const inline int getMaxHealth() const { return this->_maxHealth; }
+	const inline int getCurrentHealth() const { return this->_currentHealth; }
+
+	bool isRemoveable();
+	void setRemoveable();
+
+	bool removeEnemy = false;
+	float enemyExpAmount();
+private:
+	float _startingX, _startingY;
+	bool _shouldMoveUp; //keep track of if bat should move
+	bool hasHit = false;
+	int iFrameCount = 0;
+	float shadeExp = 100;
+	Sprite _shadeBall;
+	//float _fireX, _fireY;
+
+protected:
+	Direction _direction;
+
+	int _maxHealth;
+	int _currentHealth;
+
+	bool deathCreated = false;
 };
