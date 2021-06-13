@@ -244,7 +244,7 @@ void TextManager::drawMapName(Graphics & graphics, std::string &mapName, int x, 
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
-	TTF_CloseFont(font);
+	TTF_CloseFont(iFont); //previously TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 	SDL_DestroyTexture(bgTex);
 }

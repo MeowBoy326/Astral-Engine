@@ -1,7 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-
 #include "AnimatedSprite.h"
 #include "Global.h"
 #include "Slope.h"
@@ -9,7 +8,7 @@
 #include "Enemy.h"
 
 //#include "Npc.h"
-
+class TextManager;
 class Graphics;
 class Npc;
 class Items;
@@ -106,6 +105,7 @@ private:
 	double _timeElapsed = 0; //for timer
 	double _mapTimeElapsed = 0;
 
+	TextManager* _txt;
 	Sprite _statMenu;
 protected:
 	double _timeToUpdate = 2500;

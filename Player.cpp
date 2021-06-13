@@ -1,10 +1,11 @@
+#pragma once
+#include "TextManager.h"
 #include "Player.h"
 #include "Graphics.h"
 #include "Slope.h"
 #include "Door.h"
 #include "Npc.h"
 #include "Items.h"
-#include "TextManager.h"
 #include <time.h>
 
 namespace player_constants {
@@ -466,7 +467,6 @@ void Player::drawStatMenu(Graphics &graphics, Player &player) {
 
 void Player::drawCurrentMapName(Graphics &graphics) {
 	if (player_constants::showMapName == true) {
-		TextManager txt;
-		txt.drawMapName(graphics, player_constants::mapName, this->getX(), this->getY());
+		this->_txt->drawMapName(graphics, player_constants::mapName, this->getX(), this->getY());
 	}
 }

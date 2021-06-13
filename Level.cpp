@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "TextManager.h"
 #include "Enemy.h"
 #include "Npc.h"
 #include "Items.h"
@@ -585,11 +586,6 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 			std::cout << "type = " << type << std::endl;
 			//this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
 			//this->_animation.insert(std::pair<std::string, std::vector<SDL_Rect> >(name, rectangles));
-			//this->_drops.insert(std::pair<std::string, std::vector<Items*> >(_mapName, _items));
-			this->_lootedItems.push_back(this->_items.at(i));
-			this->_lootedItemMap.push_back(this->_mapName);
-
-			std::cout << "checkItemColl - _lootedItemMap size: " << this->_lootedItemMap.size() << std::endl;
 
 			others.push_back(this->_items.at(i));
 			_items.erase(_items.begin() + i);
