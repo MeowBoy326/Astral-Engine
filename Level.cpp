@@ -18,18 +18,18 @@ using namespace tinyxml2; //all tinyxml2 is in a namespace because we will use s
 
 Level::Level() {}
 
-Level::Level(std::string mapName, Graphics &graphics) :
+Level::Level(std::string mapName, Graphics &graphics, Inventory &invent) :
 	_mapName(mapName),
 	_size(Vector2(0,0))
 {
-	this->loadMap(mapName, graphics);
+	this->loadMap(mapName, graphics, invent);
 }
 
 Level::~Level() {
 
 }
 
-void Level::loadMap(std::string mapName, Graphics &graphics) {
+void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) {
 	//parse the .tmx file
 	XMLDocument doc; //represents entire xml document
 	std::stringstream ss;
@@ -387,20 +387,20 @@ void Level::loadMap(std::string mapName, Graphics &graphics) {
 						std::stringstream ss;
 						ss << name;
 						if (ss.str() == "HP") {
-							if (isItemLooted() == false) {
+							if (invent.isLooted(mapName, 0) == false) {
 								this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 									std::floor(y) * globals::SPRITE_SCALE)));
 								this->itemType.push_back(0);
 								std::cout << "Item HP added!" << std::endl;
 								std::cout << x << ", " << y << std::endl;
 							}
-							
-
 						}
 						else if (ss.str() == "permHP") {
-							this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
-							this->itemType.push_back(1);
-							std::cout << "permHP added!" << std::endl;
+							if (invent.isLooted(mapName, 1) == false) {
+								this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
+								this->itemType.push_back(1);
+								std::cout << "permHP added!" << std::endl;
+							}
 						}
 
 						pObject = pObject->NextSiblingElement("object");
@@ -411,21 +411,6 @@ void Level::loadMap(std::string mapName, Graphics &graphics) {
 			pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
 		}
 	}
-}
-
-bool Level::isItemLooted() {
-	std::cout << "_lootedItemMap size = " << _lootedItemMap.size() << std::endl;
-	for (int i = 0; i < _lootedItemMap.size(); i++) {
-		if (this->_mapName == _lootedItemMap[i]) {
-			for (int i = 0; i < _lootedItems.size(); i++) {
-				if (this->itemType.at(i) == 0) {
-					return true;
-				}
-			}
-			return false;
-		}
-	}
-	return false;
 }
 
 void Level::update(int elapsedTime, Player &player) {
@@ -583,7 +568,7 @@ std::vector<Npc*> Level::checkNpcCollisions(const Rectangle &other, Graphics &gr
 
 }
 
-std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle &other, Graphics &graphics) {
+std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle &other, Graphics &graphics, Inventory &invent) {
 	std::vector<Items*> others;
 	for (int i = 0; i < this->_items.size(); i++) {
 		if (this->_items.at(i)->getBoundingBox().collidesWith(other)) {
@@ -596,6 +581,7 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 			else {
 				_items.at(i)->addToInventory(type);
 			}
+			invent.addInstancedLoot(this->_mapName, type);
 			std::cout << "type = " << type << std::endl;
 			//this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
 			//this->_animation.insert(std::pair<std::string, std::vector<SDL_Rect> >(name, rectangles));

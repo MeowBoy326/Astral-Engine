@@ -20,8 +20,9 @@ public:
 	void addToInventory(int type);
 	Items(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int width, int height, Vector2 spawnPoint, int timeToUpdate);
 	~Items();
-protected:
-
+private:
+	//std::vector<std::vector<int>> lootTable;
+	std::vector<std::pair<std::string, int>> lootTable;
 };
 
 class HealthPotion : public Items {
@@ -44,7 +45,7 @@ private:
 class PermHP : public Items {
 public:
 	PermHP();
-	PermHP(Graphics &graphics, Vector2 spawPoint);
+	PermHP(Graphics &graphics, Vector2 spawnPoint);
 
 	void update(int elapsedTime, Player & player);
 	void draw(Graphics & graphics);
@@ -53,4 +54,18 @@ public:
 	void setupAnimations();
 private:
 	int maxHPgain;
+};
+
+class Key : public Items {
+public:
+	Key();
+	Key(Graphics &graphics, Vector2 spawnPoint);
+
+	void draw(Graphics &graphics);
+	void update(int elapsedTime, Player & player);
+
+	void animationDone(std::string currentAnimation);
+	void setupAnimations();
+private:
+	std::string keyName;
 };

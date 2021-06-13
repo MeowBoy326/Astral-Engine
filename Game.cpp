@@ -123,7 +123,7 @@ void Game::gameLoop() {
 			title = _title.Start(graphics, input, event);
 			if (_title.getMenuChoice() == 0) {
 				std::cout << "No save data found...Starting new game!" << std::endl;
-				this->_level = Level("cave", graphics); //intialize level: Map name , spawn point, graphics
+				this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				std::ofstream ofs("savefile1.txt", std::ios::out | std::ios::trunc);
 				ofs.close();
@@ -134,7 +134,7 @@ void Game::gameLoop() {
 				if (!data.peek() == data.eof()) {
 					while (data >> x >> y >> mapname) {
 						std::cout << "data: " << x << " , " << y << " " << mapname << std::endl;
-						this->_level = Level(mapname, graphics); //intialize level: Map name , spawn point, graphics
+						this->_level = Level(mapname, graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
 						spawn = Vector2(std::ceil(x), std::ceil(y));
 						this->_player = Player(graphics, spawn);
 						std::cout << "data retrieved successfully!" << std::endl;
@@ -143,7 +143,7 @@ void Game::gameLoop() {
 				}
 				else {
 					std::cout << "No save data found...Starting new game!" << std::endl;
-					this->_level = Level("cave", graphics); //intialize level: Map name , spawn point, graphics
+					this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
 					this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				}
 			}
@@ -195,7 +195,7 @@ void Game::gameLoop() {
 				}
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true) {
-				this->_level = Level("cave", graphics); //intialize level: Map name , spawn point, graphics
+				this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				GAMEOVER = false;
 			}
@@ -520,7 +520,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	//Check doors
 	std::vector<Door> otherDoors;
 	if ((otherDoors = this->_level.checkDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics);
+		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory);
 	}
 
 	//Check enemies
@@ -538,7 +538,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	if (pickUp == true) {
 		std::vector<Items*> itemPickUp;
 		std::vector<std::string*> dropPick;
-		if ((itemPickUp = this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics)).size() > 0) {
+		if ((itemPickUp = this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics, this->_inventory)).size() > 0) {
 		}
 		pickUp = false; 
 	}

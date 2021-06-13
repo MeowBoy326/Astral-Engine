@@ -18,7 +18,8 @@ public:
 	void useItem(int type, Player & player);
 	void draw(Graphics &graphics, Player &player);
 	void drawQuantity(Graphics &graphics, int x, int y, int quantity);
-
+	void addInstancedLoot(std::string mapName, int type);
+	bool isLooted(std::string map, int iType);
 
 	enum ItemType {
 		HEALTH_POT,
@@ -44,6 +45,8 @@ private:
 	Sprite _hpPot;
 
 	int hpToGain;
+
+	std::vector<std::pair<std::string, int>> lootTable;
 protected:
 	
 };

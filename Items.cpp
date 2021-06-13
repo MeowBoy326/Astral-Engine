@@ -26,6 +26,8 @@ void Items::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
 }
 
+
+
 void Items::addToInventory(int type) {
 	if (type == 0) {
 		itemConstants::hPot->type = HEALTH_POT;
@@ -41,6 +43,10 @@ void Items::addToInventory(int type) {
 Items::~Items()
 {
 }
+
+/*
+*	Health Potion Item
+*/
 
 HealthPotion::HealthPotion()
 {
@@ -83,6 +89,9 @@ void HealthPotion::setupAnimations()
 	this->addAnimation(2, 2, 84, "Blink", 16, 16, Vector2(0, 0));
 }
 
+/*
+*	Permenant HP Item
+*/
 PermHP::PermHP() {};
 
 PermHP::PermHP(Graphics &graphics, Vector2 spawnPoint) :
@@ -110,3 +119,35 @@ void PermHP::animationDone(std::string currentAnimation) {
 void PermHP::setupAnimations() {
 	this->addAnimation(2, 2, 101, "Blink", 16, 16, Vector2(0, 0));
 }
+
+/*
+*	Key Item
+*/
+
+Key::Key() {};
+
+Key::Key(Graphics &graphics, Vector2 spawnPoint) :
+	Items(graphics, "NpcSym.png", 288, 1, 14, 15, spawnPoint, 140)
+{
+	graphics.loadImage("NpcSym.png"); //loads sprite sheet in
+	//this->addToInventory();
+	this->setupAnimations();
+	this->playAnimation("Blink");
+}
+
+void Key::draw(Graphics &graphics) {
+
+}
+
+void Key::update(int elapsedTime, Player & player) {
+
+}
+
+void Key::animationDone(std::string currentAnimation) {
+
+}
+
+void Key::setupAnimations() {
+
+}
+

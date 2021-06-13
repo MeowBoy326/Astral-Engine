@@ -18,7 +18,6 @@ namespace player_constants {
 	bool showMapName = false;
 
 	std::string mapName = "CAVE";
-
 	/*
 	* Index 0 = the exp needed from lvl 0 (starting level) to level 1.
 	* So, to get to level 1 you need 20 exp. Level 2 needs 40 exp. With every new level exp is set to 0 
@@ -46,6 +45,8 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 
 	this->setupAnimations();
 	this->playAnimation("RunRight");
+
+	//graphics.loadImage("")
 }
 
 void Player::setupAnimations() {
@@ -246,13 +247,13 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 	}
 }
 
-void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics) {
+void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent) {
 	//Check if the player is grounded and holding the down arrow
 	//If so, go through the door
 	//If not, do nothing
 	for (int i = 0; i < others.size(); i++) {
 		if (this->_grounded == true && this->_lookingDown == true) {
-			level = Level(others.at(i).getDestination(), graphics);
+			level = Level(others.at(i).getDestination(), graphics, invent);
 			player_constants::mapName = others.at(i).getDestination();
 			this->_x = level.getPlayerSpawnPoint().x;
 			this->_y = level.getPlayerSpawnPoint().y;
@@ -430,6 +431,7 @@ void Player::update(float elapsedTime) {
 	if (this->getCurrentExp() >= this->getRequiredExp()) {
 		this->addLevel(1);
 		this->setCurrentExp(0);
+		this->_statPoints += 2;
 		std::cout << "Level up to: " << this->getLevel() << std::endl;
 	}
 
@@ -456,6 +458,10 @@ void Player::update(float elapsedTime) {
 
 void Player::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
+}
+
+void Player::drawStatMenu(Graphics &graphics, Player &player) {
+	_statMenu.draw(graphics, this->_x - 50, this->_y - 50);
 }
 
 void Player::drawCurrentMapName(Graphics &graphics) {

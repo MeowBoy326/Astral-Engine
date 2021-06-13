@@ -77,6 +77,24 @@ void Inventory::drawQuantity(Graphics & graphics, int x, int y, int quantity)
 	this->drawItemQuantity(graphics, 100, 100, str, x, y);
 }
 
+void Inventory::addInstancedLoot(std::string mapName, int type)
+{
+	this->lootTable.push_back(std::make_pair(mapName, type));
+}
+
+bool Inventory::isLooted(std::string map, int iType)
+{
+	for (auto iter = this->lootTable.begin(); iter != this->lootTable.end(); iter++) {
+		auto first = iter->first;
+		auto second = iter->second;
+		if (iter->first == map && iter->second == iType) {
+			std::cout << "Loot Table: " << iter->first << " , " << iter->second << std::endl;
+			return true;
+		}
+	}
+	return false;
+}
+
 Inventory::~Inventory()
 {
 }

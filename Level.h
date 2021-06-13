@@ -17,6 +17,7 @@ class Graphics; //foward decalre
 class Enemy;
 class Npc;
 class Player;
+class Inventory;
 class Items;
 struct SDL_Texture; //foward declare
 struct SDL_Rect;
@@ -25,7 +26,7 @@ struct Tileset;
 class Level {
 public:
 	Level();
-	Level(std::string mapName, Graphics &graphics);
+	Level(std::string mapName, Graphics &graphics, Inventory &invent);
 	~Level();
 
 	void update(int elapsedTime, Player &player);
@@ -38,8 +39,7 @@ public:
 	std::vector<Enemy*> checkEnemyCollisions(const Rectangle &other);
 	std::vector<Enemy*> checkBulletCollisions(const Rectangle & other);
 	std::vector<Npc*> checkNpcCollisions(const Rectangle & other, Graphics &graphics);
-	std::vector<Items*> checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics);
-	std::vector<std::string*> checkDrops();
+	std::vector<Items*> checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
 
 	const Vector2 getPlayerSpawnPoint() const;
 	//debug
@@ -71,11 +71,9 @@ private:
 
 	std::map<std::string, std::vector<Items*>> _drops;
 	//Private loads a map only call level within level class
-	void loadMap(std::string mapName, Graphics &graphics); //wont need size or spawn because it will be parsed out of the xml within this function later
+	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); //wont need size or spawn because it will be parsed out of the xml within this function later
 
 	Vector2 getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileHeight);
-
-	bool isItemLooted();
 };
 
 //Tileset structure. Struct by default is public

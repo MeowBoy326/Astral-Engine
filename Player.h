@@ -13,12 +13,14 @@
 class Graphics;
 class Npc;
 class Items;
+class Inventory;
 
 class Player : public AnimatedSprite {
 public:
 	Player();
 	Player(Graphics &graphics, Vector2 spawnPoint);
 	void draw(Graphics &graphics);
+	void drawStatMenu(Graphics &graphics, Player &player);
 	void drawCurrentMapName(Graphics &graphics);
 	void update(float elapsedTime);
 
@@ -44,7 +46,7 @@ public:
 	//Event handling
 	void handleTileCollisions(std::vector<Rectangle> &others);
 	void handleSlopeCollisions(std::vector<Slope> &others);
-	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics);
+	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
 	void handleItemCollisions(std::vector<std::string*>& others);
 	void handleNpcCollisions(std::vector<Npc*>& others, Graphics &graphics, int lineCount);
@@ -83,6 +85,9 @@ private:
 	float _maxHealth;
 	float _currentHealth;
 	float _exp = 0;
+	float STAT_AGIL = 1;
+	float STAT_STR = 1;
+	float STAT_AVOID = 1;
 
 	bool _grounded; //true if we are, false if we are in the air
 	bool _lookingUp;
@@ -90,6 +95,7 @@ private:
 	bool iFrame;
 
 	int _requiredExp;
+	int _statPoints = 0;
 	int _playerLevel = 0;
 	int _soulLevel = 0;
 	int _requiredKill;
@@ -99,6 +105,8 @@ private:
 	double _dmgMod = 0;
 	double _timeElapsed = 0; //for timer
 	double _mapTimeElapsed = 0;
+
+	Sprite _statMenu;
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;
