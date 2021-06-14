@@ -46,6 +46,7 @@ public:
 	const float getY() const; //getting variables not changes const make sure it doesnt
 	
 private:
+	TextManager* _txt;
 	Sprite _bullet;
 	Sprite _Gun;
 	float _shootDx, _shootDy; //(dx (delta x) is change in x postition during frame)

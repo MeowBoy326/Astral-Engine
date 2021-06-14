@@ -194,18 +194,16 @@ void TextManager::drawDmg(Graphics & graphics, int x, int y, double dmg)
 	SDL_Surface *surface;
 	SDL_Color color = { 255, 0, 0, 255 };
 	int precisionVal = 2;
-	//std::string dmgNum = std::to_string(dmg);
 	std::string dmgNum = std::to_string(dmg).substr(0, std::to_string(dmg).find(".") + precisionVal + 1);
 	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 18);
 	surface = TTF_RenderText_Solid(iFont, dmgNum.c_str(), color);
 
 	SDL_Rect destinationRectangle = { x, y - 30, surface->w, surface->h }; //where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
-	//cout << "drawDMG called!" << endl;
-	//cout << "destRect: " << destinationRectangle.x << "," << destinationRectangle.y << "," << destinationRectangle.w << "," << destinationRectangle.h << endl;
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
-	TTF_CloseFont(font);
+	//TTF_CloseFont(font);
+	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }
 

@@ -300,8 +300,7 @@ void Projectile::drawGun(Graphics & graphics, Player & player) {
 void Projectile::drawDmgText(Graphics & graphics)
 {
 	if (projectileConstants::active == true && (projectileConstants::enemyY && projectileConstants::enemyX != 0)) {
-		TextManager txt;
-		txt.drawDmg(graphics, projectileConstants::enemyX, projectileConstants::enemyY, projectileConstants::BULLET_DMG);
+		this->_txt->drawDmg(graphics, projectileConstants::enemyX, projectileConstants::enemyY, projectileConstants::BULLET_DMG);
 	}
 	
 }
