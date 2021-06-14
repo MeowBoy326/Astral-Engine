@@ -72,7 +72,6 @@ void Inventory::draw(Graphics & graphics, Player & player)
 
 void Inventory::drawQuantity(Graphics & graphics, int x, int y, int quantity)
 {
-	TextManager txt;
 	std::string str = std::to_string(quantity);
 	this->drawItemQuantity(graphics, 100, 100, str, x, y);
 }
