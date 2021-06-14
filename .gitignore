@@ -410,3 +410,4 @@ Source.cpp
 Source1.cpp
 *.tsx
 *.ttf
+*.diagsession
