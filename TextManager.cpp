@@ -247,6 +247,49 @@ void TextManager::drawMapName(Graphics & graphics, std::string &mapName, int x, 
 	SDL_DestroyTexture(bgTex);
 }
 
+void TextManager::drawStats(Graphics & graphics, int posX, int posY, int hPoints, int dmgPoints, int defPoints, int available, SDL_Color color) {
+	//TTF_Init();
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(2);
+	}
+	std::string number = std::to_string(hPoints);
+	SDL_Surface *surface, *dmgSurface, *defSurface, *availableSurface;
+	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 24);
+	surface = TTF_RenderText_Solid(iFont, number.c_str(), color);
+	dmgSurface = TTF_RenderText_Solid(iFont, std::to_string(dmgPoints).c_str(), color);
+	defSurface = TTF_RenderText_Solid(iFont, std::to_string(defPoints).c_str(), color);
+	availableSurface = TTF_RenderText_Solid(iFont, std::to_string(available).c_str(), color);
+	SDL_Rect destinationRectangle = { posX, posY, surface->w, surface->h }; //where on screen we will be drawing
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+	SDL_Texture *dTex = SDL_CreateTextureFromSurface(graphics.getRenderer(), dmgSurface);
+	SDL_Texture *defTex = SDL_CreateTextureFromSurface(graphics.getRenderer(), defSurface);
+	SDL_Texture *aTex = SDL_CreateTextureFromSurface(graphics.getRenderer(), availableSurface);
+
+	graphics.blitSurface(tex, NULL, &destinationRectangle);
+	destinationRectangle = { posX - 10, posY + 50, surface->w, surface->h };
+	graphics.blitSurface(dTex, NULL, &destinationRectangle);
+	destinationRectangle = { posX - 4, posY + 100, surface->w, surface->h };
+	graphics.blitSurface(defTex, NULL, &destinationRectangle);
+	destinationRectangle = { posX - 30, posY + 145, surface->w, surface->h };
+	graphics.blitSurface(aTex, NULL, &destinationRectangle);
+	//number = std::to_string(dmgPoints);
+	//surface = TTF_RenderText_Solid(iFont, number.c_str(), color);
+	//destinationRectangle = { posX, posY + 25, surface->w, surface->h };
+	//tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+	//graphics.blitSurface(tex, NULL, &destinationRectangle);
+
+	SDL_FreeSurface(dmgSurface);
+	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(defSurface);
+	SDL_FreeSurface(availableSurface);
+	TTF_CloseFont(iFont);
+	SDL_DestroyTexture(tex);
+	SDL_DestroyTexture(dTex);
+	SDL_DestroyTexture(defTex);
+	SDL_DestroyTexture(aTex);
+}
+
 void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::string &str, int posX, int posY, SDL_Color color) {
 	//TTF_Init();
 	if (TTF_Init() == -1) {

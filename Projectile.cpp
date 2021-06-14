@@ -171,9 +171,7 @@ void Projectile::update(float ElapsedTime, Player &player)
 			}
 		}
 	}
-	if (player.getSoulLevel() >= 1) {
 		projectileConstants::BULLET_DMG = player.getDmgMod();
-	}
 }
 
 

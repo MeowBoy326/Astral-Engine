@@ -19,7 +19,7 @@ public:
 	Player();
 	Player(Graphics &graphics, Vector2 spawnPoint);
 	void draw(Graphics &graphics);
-	void drawStatMenu(Graphics &graphics, Player &player);
+	void drawStatMenu(Graphics &graphics, Player &player, int selection);
 	void drawCurrentMapName(Graphics &graphics);
 	void update(float elapsedTime);
 
@@ -79,6 +79,11 @@ public:
 	int getKillCount();
 	int getRequiredKills();
 	int killCount = 0;
+
+	//Stat menu
+	void statChoice(int selection);
+	int selectX = 0;
+	int selectY = 0;
 private:
 	float _dx, _dy; //(dx (delta x) is change in x postition during frame)
 	float _maxHealth;
@@ -94,19 +99,21 @@ private:
 	bool iFrame;
 
 	int _requiredExp;
-	int _statPoints = 0;
+	int _statPoints = 1;
 	int _playerLevel = 0;
 	int _soulLevel = 0;
 	int _requiredKill;
 	int mPosX, mPosY;
 
 	double _soulStrength = 1;
-	double _dmgMod = 0;
+	double _defense = 1;
+	double _dmgMod = 1;
 	double _timeElapsed = 0; //for timer
 	double _mapTimeElapsed = 0;
 
 	TextManager* _txt;
 	Sprite _statMenu;
+	Sprite _statSelection;
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;

@@ -27,7 +27,8 @@ Level::Level(std::string mapName, Graphics &graphics, Inventory &invent) :
 }
 
 Level::~Level() {
-
+	/*for (auto ptr : this->_enemies)
+		delete ptr;*/
 }
 
 void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) {
@@ -344,6 +345,10 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						std::stringstream ss;
 						ss << name;
 						if (ss.str() == "bat") {
+							/*Bat* batObj = new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+								std::floor(y) * globals::SPRITE_SCALE));
+							this->_enemies.push_back(batObj);
+							delete batObj;*/
 							this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE)));
 						}
@@ -388,7 +393,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						std::stringstream ss;
 						ss << name;
 						if (ss.str() == "HP") {
-							if (invent.isLooted(mapName, 0) == false) {
+							if (!invent.isLooted(mapName, 0)) {
 								this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 									std::floor(y) * globals::SPRITE_SCALE)));
 								this->itemType.push_back(0);
@@ -397,7 +402,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							}
 						}
 						else if (ss.str() == "permHP") {
-							if (invent.isLooted(mapName, 1) == false) {
+							if (!invent.isLooted(mapName, 1)) {
 								this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
 								this->itemType.push_back(1);
 								std::cout << "permHP added!" << std::endl;

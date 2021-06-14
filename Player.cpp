@@ -47,6 +47,9 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	this->setupAnimations();
 	this->playAnimation("RunRight");
 
+	this->_statMenu = Sprite(graphics, "npcTextBox.png", 40, 88, 71, 52, this->_x, (this->_y - 10));
+	this->_statSelection = Sprite(graphics, "npcTextBox.png", 0, 147, 46, 18, 15, 15);
+	graphics.loadImage("npcTextBox.png");
 	//graphics.loadImage("")
 }
 
@@ -359,6 +362,23 @@ int Player::getRequiredKills() {
 	return this->_requiredKill;
 }
 
+void Player::statChoice(int selection)
+{
+	if (selection == 1 && this->_statPoints > 0) {
+		this->_maxHealth += 1;
+		this->_statPoints--;
+	}
+	else if (selection == 2 && this->_statPoints > 0) {
+		this->_dmgMod += 1.02;
+		this->_statPoints--;
+		//
+	}
+	else if (selection == 3 && this->_statPoints > 0) {
+		this->_defense += 1.25;
+		this->_statPoints--;
+	}
+}
+
 int Player::getLevel()
 {
 	return this->_playerLevel;
@@ -440,7 +460,7 @@ void Player::update(float elapsedTime) {
 		this->addSoulLevel(1);
 		this->_soulStrength += 1;
 		srand((unsigned)time(NULL));
-		this->_dmgMod = this->_soulStrength + ((double)(rand() % 90 + 10) / 100);
+		this->_dmgMod += this->_soulStrength + ((double)(rand() % 90 + 10) / 100);
 		std::cout << "damage mod is: " << this->_dmgMod << std::endl;
 		//cout << "damage mod is: " << this->dmgMod;
 		std::cout << "Soul Level increased to: " << this->getSoulLevel() << std::endl;
@@ -461,8 +481,15 @@ void Player::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
 }
 
-void Player::drawStatMenu(Graphics &graphics, Player &player) {
-	_statMenu.draw(graphics, this->_x - 50, this->_y - 50);
+void Player::drawStatMenu(Graphics &graphics, Player &player, int selection) {
+	_statMenu.drawStatMenu(graphics, this->_x - 300, this->_y - 80);
+	if (selection == 1)
+		_statSelection.drawStatSelection(graphics, this->_x - 285, this->_y - 70);
+	if (selection == 2)
+		_statSelection.drawStatSelection(graphics, this->_x - 285, this->_y - 25);
+	if (selection == 3)
+		_statSelection.drawStatSelection(graphics, this->_x - 285, this->_y - -25);
+	this->_txt->drawStats(graphics, this->_x - 115, this->_y - 65, (int)this->_maxHealth, (int)this->_dmgMod, (int)this->_defense, this->_statPoints);
 }
 
 void Player::drawCurrentMapName(Graphics &graphics) {

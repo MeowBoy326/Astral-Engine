@@ -33,6 +33,7 @@ public:
 	void drawChatBox(Graphics & graphics, Player & player);
 	void drawTest(Graphics & graphics);
 	void drawNpcText(Graphics & graphics, int x, int y, const std::string &str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
+	void drawStats(Graphics & graphics, int posX, int posY, int hPoints, int dmgPoints, int defPoints, int available, SDL_Color color = { 255, 255, 255, 255 });
 	void drawItemQuantity(Graphics & graphics, int x, int y, const std::string & str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
 	void drawDmg(Graphics & graphics, int x, int y, double dmg);
 	void drawMapName(Graphics & graphics, std::string &mapName, int x, int y);

@@ -23,6 +23,8 @@ namespace {
 	bool GAMEOVER = false;
 	bool activeTalk = false;
 	bool activeInventory = false;
+	bool activeStatMenu = false;
+	int selection = 1;
 	bool pickUp = false;
 	bool nextLine = false;
 	std::string npcName;
@@ -247,7 +249,7 @@ void Game::gameLoop() {
 			return; //quit game if ESC was pressed
 		}
 		else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true) { 
-			if (activeTalk == false) {
+			if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 				this->_player.moveLeft();
 			}
 			else if (activeTalk == true) {
@@ -256,7 +258,7 @@ void Game::gameLoop() {
 			 
 		}
 		else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true) {
-			if (activeTalk == false) {
+			if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 				this->_player.moveRight();
 			}
 			else if (activeTalk == true) {
@@ -266,20 +268,24 @@ void Game::gameLoop() {
 		}
 
 		if (input.isKeyHeld(SDL_SCANCODE_UP) == true) {
-			this->_player.lookUp();
+			if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+				this->_player.lookUp();
 		}
 		else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true) {
-			this->_player.lookDown();
+			if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+				this->_player.lookDown();
 		}
 		if (input.wasKeyReleased(SDL_SCANCODE_UP) == true) {
-			this->_player.stopLookingUp();
+			if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+				this->_player.stopLookingUp();
 		}
 		if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true) {
-			this->_player.stopLookingDown();
+			if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+				this->_player.stopLookingDown();
 		}
 
 		if (input.wasKeyPressed(SDL_SCANCODE_SPACE) == true){ //IF is imporannt make sure not to do else if otherwise u cannot move and jump!
-			if (activeTalk == false) {
+			if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 				this->_player.jump();
 			}
 			else if (activeTalk == true) {
@@ -292,7 +298,7 @@ void Game::gameLoop() {
 		}
 		//bullet
 		if (input.wasKeyPressed(SDL_SCANCODE_E) == true) {
-			if (activeTalk == false) {
+			if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 
 				if (_player.lookingUp() == true) {
 					this->_bullet.shootUp(graphics, this->_player);;
@@ -316,7 +322,7 @@ void Game::gameLoop() {
 			}
 		}
 
-		if (input.wasKeyPressed(SDL_SCANCODE_Q) == true) {
+		if (input.wasKeyPressed(SDL_SCANCODE_Q) == true && activeInventory == false && activeStatMenu == false) {
 			if (activeTalk == false && npcName != ""){
 				activeTalk = true;
 				std::cout << "status of talk: " << activeTalk << std::endl;
@@ -351,7 +357,41 @@ void Game::gameLoop() {
 			}
 		}
 
-		if (input.wasKeyPressed(SDL_SCANCODE_TAB) == true) {
+		if (input.wasKeyPressed(SDL_SCANCODE_F1) == true) {
+			if (!activeStatMenu) {
+				selection = 1;
+				activeStatMenu = true;
+				this->_player.drawStatMenu(graphics, this->_player, selection);
+			}
+			else
+				activeStatMenu = false;
+		}
+
+		if (activeStatMenu) {
+			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+				this->_player.statChoice(selection);
+			}
+			if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
+				if (selection == 1)
+					this->_player.drawStatMenu(graphics, this->_player, selection);
+				else if (selection != 1) {
+					selection--;
+					this->_player.drawStatMenu(graphics, this->_player, selection);
+				}
+			}
+
+			if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
+				if (selection == 3)
+					this->_player.drawStatMenu(graphics, this->_player, selection);
+				else if (selection != 3) {
+					selection++;
+					this->_player.drawStatMenu(graphics, this->_player, selection);
+				}
+			}
+			
+		}
+
+		if (input.wasKeyPressed(SDL_SCANCODE_TAB) == true && activeStatMenu == false && activeTalk == false) {
 			if (activeInventory == false) {
 				activeInventory = true;
 				this->_inventory.draw(graphics, this->_player);
@@ -464,6 +504,9 @@ void Game::draw(Graphics &graphics) {
 	if (activeInventory == true) {
 		this->_inventory.draw(graphics, this->_player);
 	}
+	if (activeStatMenu)
+		this->_player.drawStatMenu(graphics, this->_player, selection);
+		
 
 	this->_player.drawCurrentMapName(graphics);
 
