@@ -63,12 +63,6 @@ HealthPotion::HealthPotion(Graphics & graphics, Vector2 spawnPoint) :
 }
 
 void HealthPotion::addToInventory() {
-	InventoryItem* hPot = new InventoryItem;
-	hPot->type = HEALTH_POT;
-	hPot->imagePath = "";
-	//hPot.type = HEALTH_POT;
-	std::cout << "add Item: hPot" << std::endl;
-	//this->addItem(hPot);
 }
 
 void HealthPotion::update(int elapsedTime, Player &player) {
