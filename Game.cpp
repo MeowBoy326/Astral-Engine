@@ -507,7 +507,7 @@ void Game::draw(Graphics &graphics) {
 	if (activeStatMenu)
 		this->_player.drawStatMenu(graphics, this->_player, selection);
 		
-
+	this->_player.drawHPNumbers(graphics);
 	this->_player.drawCurrentMapName(graphics);
 
 	graphics.flip(); //Render everything above
@@ -566,11 +566,14 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory);
 	}
 
+	/*
+	* TODO: Fix HP loss and find other usages in the future (currently handling in enemy class)
+	*/
 	//Check enemies
-	std::vector<Enemy*> otherEnemies;
-	if ((otherEnemies = this->_level.checkEnemyCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleEnemyCollisions(otherEnemies);
-	}
+	//std::vector<Enemy*> otherEnemies;
+	//if ((otherEnemies = this->_level.checkEnemyCollisions(this->_player.getBoundingBox())).size() > 0) {
+	//	this->_player.handleEnemyCollisions(otherEnemies);
+	//}
 
 	std::vector<Enemy*> projectileHit;
 	if ((projectileHit = this->_level.checkEnemyCollisions(this->_bullet.getProjectileBBox())).size() > 0) {

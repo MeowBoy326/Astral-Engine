@@ -6,8 +6,8 @@ HUD::HUD() {}
 
 HUD::HUD(Graphics &graphics, Player &player) {
 	this->_player = player;
-	this->_healthBarSprite = Sprite(graphics, "TextBox.png", 0, 40, 64, 8, 35, 70); //x, y, width, height, screen pos x, screen pos y
-	this->_healthNumber1 = Sprite(graphics, "TextBox.png", 0, 56, 8, 8, 66, 70);
+	this->_healthBarSprite = Sprite(graphics, "TextBox.png", 0, 40, 76, 8, 35, 70); //x, y, width, height, screen pos x, screen pos y
+	//this->_healthNumber1 = Sprite(graphics, "TextBox.png", 0, 56, 8, 8, 66, 70);
 	this->_currentHealthBar = Sprite(graphics, "Textbox.png", 0, 25, 40, 5, 83, 72);
 	this->_lvWord = Sprite(graphics, "TextBox.png", 81, 81, 11, 7, 38, 55);
 	this->_lvNumber = Sprite(graphics, "TextBox.png", 0, 56, 8, 8, 66, 52);
@@ -18,7 +18,7 @@ HUD::HUD(Graphics &graphics, Player &player) {
 }
 
 void HUD::update(int ElapsedTime, Player &player) {
-	this->_healthNumber1.setSourceRectX(8 * player.getCurrentHealth());
+	//this->_healthNumber1.setSourceRectX(8 * player.getCurrentHealth());
 
 	//Calculate the width of the health bar
 	//100% = 39px
@@ -35,13 +35,13 @@ void HUD::update(int ElapsedTime, Player &player) {
 void HUD::draw(Graphics &graphics, Player &player) {
 	//this->_healthBarSprite.draw(graphics, this->_healthBarSprite.getX(), this->_healthBarSprite.getY());
 	//had to calculate this manually relative to player pos :(
-	this->_expBar.draw(graphics, player.getX() - 269, player.getY() - 201);
+	this->_expBar.draw(graphics, player.getX() - 247, player.getY() - 201);
 	this->_healthBarSprite.draw(graphics, player.getX() - 317, player.getY() - 185);
-	this->_healthNumber1.draw(graphics, player.getX() - 285, player.getY() - 185);
-	this->_currentHealthBar.draw(graphics, player.getX() - 270, player.getY() - 183);
+	//this->_healthNumber1.draw(graphics, player.getX() - 285, player.getY() - 185);
+	this->_currentHealthBar.draw(graphics, player.getX() - 245, player.getY() - 183);
 	this->_lvWord.draw(graphics, player.getX() - 314, player.getY() - 200);
 	this->_lvNumber.draw(graphics, player.getX() - 285, player.getY() - 201);
-	this->_expBarValue.draw(graphics, player.getX() - 269, player.getY() - 202);
+	this->_expBarValue.draw(graphics, player.getX() - 247, player.getY() - 202);
 	this->_slash.draw(graphics, player.getX() - 255, player.getY() - 220);
 	this->_dashes.draw(graphics, player.getX() - 230, player.getY() - 235);
 }

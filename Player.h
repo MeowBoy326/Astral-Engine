@@ -54,6 +54,7 @@ public:
 	const float getY() const; //getting variables not changes const make sure it doesnt
 
 	//Health handling
+	void drawHPNumbers(Graphics &graphics);
 	void setIFrame(bool condition);
 	void gainHealth(float amount);
 	void gainMaxHealth(float amount);
@@ -106,7 +107,7 @@ private:
 	int mPosX, mPosY;
 
 	double _soulStrength = 1;
-	double _defense = 1;
+	double _defense = 1.05;
 	double _dmgMod = 1;
 	double _timeElapsed = 0; //for timer
 	double _mapTimeElapsed = 0;

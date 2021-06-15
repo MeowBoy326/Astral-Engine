@@ -39,8 +39,8 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	_grounded(false),
 	_lookingUp(false),
 	_lookingDown(false),
-	_maxHealth(3.0f),
-	_currentHealth(3.0f)
+	_maxHealth(100.0f),
+	_currentHealth(100.0f)
 {
 	graphics.loadImage("MyChar.png"); //loads sprite sheet in
 
@@ -306,6 +306,11 @@ std::string Player::getNpcName(std::vector<Npc*> &others, Graphics &graphics) {
 	return name;
 }
 
+void Player::drawHPNumbers(Graphics & graphics)
+{
+	this->_txt->drawHPNumber(graphics, this->_x - 285, this->_y - 185, this->_currentHealth);
+}
+
 void Player::setIFrame(bool condition) {
 	iFrame = condition;
 	std::cout << "player iFrame = " << condition << std::endl;
@@ -313,8 +318,9 @@ void Player::setIFrame(bool condition) {
 
 void Player::gainHealth(float amount) {
 	if (amount < 0 && player_constants::iFrame == false) {
+		amount = amount + (this->_defense * 0.5);
 		this->_currentHealth += amount;
-		std::cout << "lost " << _currentHealth << std::endl;
+		std::cout << "lost " << amount << std::endl;
 		player_constants::iFrame = true;
 	}
 	else if (amount > 0) {
@@ -365,7 +371,8 @@ int Player::getRequiredKills() {
 void Player::statChoice(int selection)
 {
 	if (selection == 1 && this->_statPoints > 0) {
-		this->_maxHealth += 1;
+		this->_maxHealth += 10 + (this->_soulLevel * 0.5 + 0.08);
+		this->_currentHealth = this->_maxHealth;
 		this->_statPoints--;
 	}
 	else if (selection == 2 && this->_statPoints > 0) {
@@ -374,7 +381,7 @@ void Player::statChoice(int selection)
 		//
 	}
 	else if (selection == 3 && this->_statPoints > 0) {
-		this->_defense += 1.25;
+		this->_defense += 0.25 + (this->_soulLevel * 0.5);
 		this->_statPoints--;
 	}
 }
@@ -452,6 +459,7 @@ void Player::update(float elapsedTime) {
 	if (this->getCurrentExp() >= this->getRequiredExp()) {
 		this->addLevel(1);
 		this->setCurrentExp(0);
+		this->_defense += 0.05 + (this->_soulLevel * 0.14);
 		this->_statPoints += 2;
 		std::cout << "Level up to: " << this->getLevel() << std::endl;
 	}

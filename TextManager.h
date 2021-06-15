@@ -37,6 +37,7 @@ public:
 	void drawItemQuantity(Graphics & graphics, int x, int y, const std::string & str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
 	void drawDmg(Graphics & graphics, int x, int y, double dmg);
 	void drawMapName(Graphics & graphics, std::string &mapName, int x, int y);
+	void drawHPNumber(Graphics & graphics, int x, int y, float hp, SDL_Color color = { 255, 255, 255, 255 });
 
 	SDL_Texture* renderText(Graphics &graphics, TTF_Font *font,
 		const std::string &str, SDL_Color color = { 255, 255, 255, 255 });

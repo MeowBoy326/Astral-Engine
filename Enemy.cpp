@@ -82,30 +82,22 @@ void Bat::update(int elapsedTime, Player &player) {
 		if (this->_y > (this->_startingY + 30) || this->_y < this->_startingY - 30) {
 			this->_shouldMoveUp = !this->_shouldMoveUp;
 		}
+		if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
+			player.gainHealth(-3.5);
+		}
 		if (_fireBall.getBoundingBox().collidesWith(player.getBoundingBox())) {
 			this->_fireBall.setX(this->_x);
 			this->_fireBall.setY(this->_y);
-			player.gainHealth(-0.5);
-			/*this->_fireX = this->_x;
-			this->_fireY = this->_y;*
-			/*this->_fireBall.setSourceRectX(this->_x);
-			this->_fireBall.setSourceRectY(this->_y);*/
+			player.gainHealth(-7.5);
 		}
 		else if (_fireBall.getY() > this->_y + 160) {
 			this->_fireBall.setX(this->_x);
 			this->_fireBall.setY(this->_y);
 		}
 		else {
-		  //this->_fireBall.setSourceRectX(player.getX() > this->_x ? this->_fireBall.getX() + 10 : this->_fireBall.getX() - 10);
-		 // this->_fireBall.setSourceRectY(player.getY() > this->_y ? this->_fireBall.getY() + 10 : this->_fireBall.getY() - 10);
 			this->_fireBall.addX(player.getX() > this->_x ? .2 : -.2);
 			this->_fireBall.addY(player.getY() > this->_y ? .2 : -.2);
-			//this->_fireX = (player.getX() > this->_x ? this->_fireX += .2 : this->_fireX += -.2);
-			//this->_fireY = (player.getY() > this->_y ? this->_fireY += .2 : this->_fireY += -.2);
 		}
-		//this->_fireBall.setSourceRectX(player.getX() > this->_x ? +10 : -10);
-		//this->_fireBall.setSourceRectY(player.getY() > this->_y ? +10 : -10);
-
 	}
 	
 	else if (this->getCurrentHealth() <= 0) {
@@ -200,11 +192,13 @@ void Shade::update(int elapsedTime, Player &player) {
 		else {
 			this->_x -= 0.2;
 		}
-
+		if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
+			player.gainHealth(-10.64);
+		}
 		if (_shadeBall.getBoundingBox().collidesWith(player.getBoundingBox())) {
 			this->_shadeBall.setX(this->_x);
 			this->_shadeBall.setY(this->_y + 60);
-			player.gainHealth(-1.5);
+			player.gainHealth(-16.5);
 		}
 		else if (_shadeBall.getX() > this->_x + 200) {
 			this->_shadeBall.setX(this->_x);
