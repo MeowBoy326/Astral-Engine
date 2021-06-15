@@ -7,6 +7,7 @@
 #include "Input.h"
 
 class Graphics;
+class TextManager;
 
 class Title : public AnimatedSprite
 {
@@ -27,6 +28,7 @@ private:
 	Sprite _startGame;
 	Sprite _loadGame;
 	Sprite _selectionBox;
+	TextManager* _txt;
 
 	int selectX = 104;
 	int selectY = 250;

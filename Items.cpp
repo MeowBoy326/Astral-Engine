@@ -90,7 +90,7 @@ PermHP::PermHP() {};
 
 PermHP::PermHP(Graphics &graphics, Vector2 spawnPoint) :
 	Items(graphics, "NpcSym.png", 288, 1, 14, 15, spawnPoint, 140),
-	maxHPgain(1)
+	maxHPgain(5)
 {
 	graphics.loadImage("NpcSym.png"); //loads sprite sheet in
 	//this->addToInventory();

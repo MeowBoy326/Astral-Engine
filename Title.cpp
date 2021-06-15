@@ -1,3 +1,4 @@
+#include "TextManager.h"
 #include "Title.h"
 #include <iostream>
 #include <algorithm>
@@ -139,6 +140,7 @@ void Title::draw(Graphics &graphics) {
 	this->_startGame.drawTitle(graphics, 110, 270);
 	this->_loadGame.drawTitle(graphics, 340, 270);
 	this->_selectionBox.drawSelectionBox(graphics, selectX, selectY);
-
+	this->_txt->drawVersion(graphics, 400, 460);
+	this->_txt->drawDeveloper(graphics, 0, 460);
 	graphics.flip();
 }

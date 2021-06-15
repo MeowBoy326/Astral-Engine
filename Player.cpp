@@ -319,6 +319,8 @@ void Player::setIFrame(bool condition) {
 void Player::gainHealth(float amount) {
 	if (amount < 0 && player_constants::iFrame == false) {
 		amount = amount + (this->_defense * 0.5);
+		if (amount >= 0)
+			amount = -0.15;
 		this->_currentHealth += amount;
 		std::cout << "lost " << amount << std::endl;
 		player_constants::iFrame = true;
@@ -497,7 +499,7 @@ void Player::drawStatMenu(Graphics &graphics, Player &player, int selection) {
 		_statSelection.drawStatSelection(graphics, this->_x - 285, this->_y - 25);
 	if (selection == 3)
 		_statSelection.drawStatSelection(graphics, this->_x - 285, this->_y - -25);
-	this->_txt->drawStats(graphics, this->_x - 115, this->_y - 65, (int)this->_maxHealth, (int)this->_dmgMod, (int)this->_defense, this->_statPoints);
+	this->_txt->drawStats(graphics, this->_x - 115, this->_y - 65, this->_maxHealth, this->_dmgMod, this->_defense, this->_statPoints);
 }
 
 void Player::drawCurrentMapName(Graphics &graphics) {

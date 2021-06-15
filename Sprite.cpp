@@ -44,7 +44,7 @@ void Sprite::drawStatMenu(Graphics &graphics, int x, int y) {
 
 void Sprite::drawStatSelection(Graphics & graphics, int x, int y)
 {
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 5, this->_sourceRect.h * 2 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 5.8, this->_sourceRect.h * 2 }; //where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }

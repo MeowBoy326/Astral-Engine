@@ -582,7 +582,7 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 			type = itemType.at(i);
 
 			if (type == 1) { //Permanent HP+1 item
-				player.gainMaxHealth(1);
+				player.gainMaxHealth(5);
 			}
 			else {
 				_items.at(i)->addToInventory(type);

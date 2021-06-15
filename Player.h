@@ -100,7 +100,7 @@ private:
 	bool iFrame;
 
 	int _requiredExp;
-	int _statPoints = 1;
+	int _statPoints = 25;
 	int _playerLevel = 0;
 	int _soulLevel = 0;
 	int _requiredKill;
