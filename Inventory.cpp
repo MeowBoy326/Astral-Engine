@@ -2,10 +2,6 @@
 
 #include <iostream>
 
-namespace inventoryConstants {
-	std::vector<Inventory::InventoryItem*> inventory;
-}
-
 Inventory::Inventory()
 {
 }
@@ -17,55 +13,51 @@ Inventory::Inventory(Graphics & graphics, Player & player)
 	this->_hpPot = Sprite(graphics, "NpcSym.png", 32, 83, 13, 11, 35, 70);
 }
 
-void Inventory::addItem(struct Inventory::InventoryItem *item) {
-	//InventoryItem* hPot = new InventoryItem;
-	//hPot->type = item->type;
-	//this->inventory.push_back(hPot);
-	//inventoryConstants::inventory.push_back(hPot);
-	inventoryConstants::inventory.push_back(item);
-	std::cout << "size of inventory: " << inventoryConstants::inventory.size() << std::endl;
+void Inventory::storeItem(int type)
+{
+	std::cout << "Stored item to inventory" << std::endl;
+	if (type == 0) {
+		if (this->inventoryTable.size() == 0)
+			this->inventoryTable.push_back(std::make_pair(2, 0));
+		else {
+			for (int index = 0; index < this->inventoryTable.size(); ++index) {
+				if (this->inventoryTable[index].second == 0)
+					this->inventoryTable[index].first += 1;
+			}
+		}
+	}
 }
 
 void Inventory::update(int elapsedTime, Player & player)
 {
-	//this->_player = player;
-	//this->_healthNumber1.setSourceRectX(8 * this->_player.getCurrentHealth());
 }
 
 void Inventory::useItem(int type, Player &player) {
-	if (type == 0) { //hpPot
-		if (inventoryConstants::inventory.size() == 0) {
-			std::cout << "you do not have anything in your inventory!" << std::endl;
-			return;
-		}
-		for (int i = 0; i < inventoryConstants::inventory.size(); i++) {
-			if (inventoryConstants::inventory.at(i)->type == HEALTH_POT) {
-				if (player.getCurrentHealth() < player.getMaxHealth()) {
-					this->hpToGain = player.getMaxHealth() - player.getCurrentHealth();
-					player.gainHealth(hpToGain);
-					std::cout << "player gained " << hpToGain << " hp" << std::endl;
-					inventoryConstants::inventory.erase(inventoryConstants::inventory.begin() + i);
-				}
-				else {
-					std::cout << "HP is already full!" << std::endl;
-					return;
-				}
+	if (type == 0 && this->inventoryTable.size() > 0) {
+		for (int index = 0; index < this->inventoryTable.size(); ++index) {
+			if (this->inventoryTable[index].second == 0 && player.getCurrentHealth() < player.getMaxHealth()) {
+				player.gainHealth(player.getMaxHealth() - player.getCurrentHealth());
+				this->inventoryTable[index].first -= 1;
+				if (this->inventoryTable[index].first == 0)
+					this->inventoryTable.erase(this->inventoryTable.begin() + index);
 			}
-			else if (!(inventoryConstants::inventory.at(i)->type == HEALTH_POT)) {
-				std::cout << "you do not have any health pots!" << std::endl;
+			else {
+				std::cout << "Either your HP is full or you do not have a Health Potion!" << std::endl;
 			}
 		}
-
+	}
+	else {
+		std::cout << "Inventory is empty" << std::endl;
 	}
 }
 
 void Inventory::draw(Graphics & graphics, Player & player)
 {
 	this->_iMenu.drawiMenu(graphics, player.getX()-130, player.getY() - 130);
-	for (int i = 0; i < inventoryConstants::inventory.size(); i++) {
-		if (inventoryConstants::inventory.at(i)->type == HEALTH_POT) {
+	for (int index = 0; index < this->inventoryTable.size(); ++index) {
+		if (this->inventoryTable[index].second == 0) {
 			this->_hpPot.draw(graphics, player.getX() - 120, player.getY() - 110);
-			this->drawQuantity(graphics, player.getX() - 110, player.getY() - 100, i + 1);
+			this->drawQuantity(graphics, player.getX() - 110, player.getY() - 100, this->inventoryTable[index].first);
 		}
 	}
 }
@@ -79,18 +71,6 @@ void Inventory::drawQuantity(Graphics & graphics, int x, int y, int quantity)
 void Inventory::addInstancedLoot(std::string mapName, int type)
 {
 	this->lootTable.push_back(std::make_pair(mapName, type));
-}
-
-std::vector<Inventory::InventoryItem*> Inventory::getInventory()
-{
-	std::vector<Inventory::InventoryItem*> temp;
-	temp = inventoryConstants::inventory;
-	return temp;
-}
-
-void Inventory::setInventory(std::vector<Inventory::InventoryItem*> invent)
-{
-	inventoryConstants::inventory = invent;
 }
 
 bool Inventory::isLooted(std::string map, int iType)

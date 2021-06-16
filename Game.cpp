@@ -102,8 +102,6 @@ void Game::gameLoop() {
 	//must start before loop
 	//Start the game loop
 	while (true) {
-
-
 		input.beginNewFrame(); //resets our released key pressed keys first time around doesnt matter already set to false but good to reset anyway
 		if (title == true) {
 			title = _title.Start(graphics, input, event);
@@ -117,34 +115,6 @@ void Game::gameLoop() {
 				this->loadGame(graphics);
 			}
 		}
-		//if (title == true) {
-		//		const int CURRENT_TIME_MS = SDL_GetTicks();
-		//		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
-
-		//		if (SDL_PollEvent(&event)) {
-		//			if (event.type == SDL_KEYDOWN) {
-		//				if (event.key.repeat == 0) {
-		//					input.keyDownEvent(event); //if we are holding key start keydown event
-		//				}
-		//			}
-		//			else if (event.type == SDL_KEYUP) { // if key was released
-		//				input.keyUpEvent(event);
-		//			}
-		//			else if (event.type == SDL_QUIT) {
-		//				return; //when the game ends or user exits
-		//			}
-		//		}
-		//		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) { //IF is imporannt make sure not to do else if otherwise u cannot move and jump!
-		//			title = false;
-		//		}
-
-		//		this->_graphics = graphics; //updated graphics
-		//		this->updateTitle(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME)); //take standard min : elapsed time ms and max frame time
-
-		//		LAST_UPDATE_TIME = CURRENT_TIME_MS; //loop will go again and current time - new last update will tell us how long next frame will take
-
-		//		this->drawTitle(graphics);
-		//}
 		if (title == false && GAMEOVER == true) {
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
@@ -495,13 +465,6 @@ int Game::saveGame(Graphics & graphics)
 	//Save loot table
 	element = xml.NewElement("Loot");
 	std::vector<std::pair<std::string, int>> tempVec = this->_inventory.getLootTable();
-	//for (auto iter = tempVec.begin(); iter != tempVec.end(); iter++) {
-	//	auto first = iter->first;
-	//	auto second = iter->second;
-	//	XMLElement* ptrElement = xml.NewElement("Table");
-	//	ptrElement->SetAttribute(first.c_str(), second);
-	//	element->InsertEndChild(ptrElement);
-	//}
 	for (auto iter = tempVec.begin(); iter != tempVec.end(); iter++) {
 		auto first = iter->first;
 		auto second = iter->second;
@@ -511,6 +474,18 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
+	//Save inventory
+	element = xml.NewElement("Inventory");
+	std::vector<std::pair<int, int>> iVec = this->_inventory.getInventoryTable();
+	for (auto iter = iVec.begin(); iter != iVec.end(); iter++) {
+		auto first = iter->first, second = iter->second;
+		XMLElement* ptrElement = xml.NewElement("iTable");
+		ptrElement->SetAttribute("type", second);
+		ptrElement->SetAttribute("quantity", first);
+		element->InsertEndChild(ptrElement);
+	}
+	root->InsertEndChild(element);
+
 	XMLError result = xml.SaveFile("SF-LOC.xml");
 	XMLCheckResult(result);
 }
@@ -536,6 +511,18 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("Table");
 	}
 	this->_inventory.setLootTable(tempVec);
+	//Load Inventory
+	element = root->FirstChildElement("Inventory");
+	ptrVec = element->FirstChildElement("iTable");
+	std::vector<std::pair<int, int>> iVec;
+	while (ptrVec != nullptr) {
+		int type, quantity;
+		result = ptrVec->QueryIntAttribute("type", &type);
+		result = ptrVec->QueryIntAttribute("quantity", &quantity);
+		iVec.push_back(std::make_pair(quantity, type));
+		ptrVec = ptrVec->NextSiblingElement("iTable");
+	}
+	this->_inventory.setInventoryTable(iVec);
 	//Load Map
 	element = root->FirstChildElement("Spawn");
 	if (element == nullptr)

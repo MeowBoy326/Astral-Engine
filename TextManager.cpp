@@ -398,7 +398,7 @@ void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::
 
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
-	TTF_CloseFont(font);
+	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }
 

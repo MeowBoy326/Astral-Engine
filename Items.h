@@ -21,7 +21,6 @@ public:
 	Items(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int width, int height, Vector2 spawnPoint, int timeToUpdate);
 	~Items();
 private:
-	//std::vector<std::vector<int>> lootTable;
 	std::vector<std::pair<std::string, int>> lootTable;
 };
 

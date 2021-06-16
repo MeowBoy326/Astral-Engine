@@ -33,12 +33,10 @@ public:
 	void addInstancedLoot(std::string mapName, int type);
 	inline const std::vector<std::pair<std::string, int>> getLootTable() const { return this->lootTable; }
 	inline void setLootTable(std::vector<std::pair<std::string, int>> table) { this->lootTable = table; }
-	std::vector<Inventory::InventoryItem*> getInventory();
-	void setInventory(std::vector<Inventory::InventoryItem*> invent);
+	inline const std::vector<std::pair<int, int>> getInventoryTable() const { return this->inventoryTable; }
+	inline void setInventoryTable(std::vector<std::pair<int, int>> table) { this->inventoryTable = table; }
 	bool isLooted(std::string map, int iType);
-
-	Inventory(struct Inventory::InventoryItem);
-	void addItem(Inventory::InventoryItem *item);
+	void storeItem(int type);
 	
 	~Inventory();
 
@@ -50,7 +48,7 @@ private:
 	Sprite _hpPot;
 
 	int hpToGain;
-
+	std::vector<std::pair<int, int>> inventoryTable;
 	std::vector<std::pair<std::string, int>> lootTable;
 protected:
 	

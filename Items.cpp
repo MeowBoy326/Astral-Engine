@@ -29,15 +29,6 @@ void Items::draw(Graphics &graphics) {
 
 
 void Items::addToInventory(int type) {
-	if (type == 0) {
-		itemConstants::hPot->type = HEALTH_POT;
-		this->addItem(itemConstants::hPot);
-		std::cout << "Items::addTo success!" << std::endl;
-	}
-
-	if (itemConstants::hPot->type != NULL) {
-		std::cout << "null..." << std::endl;
-	}
 }
 
 Items::~Items()

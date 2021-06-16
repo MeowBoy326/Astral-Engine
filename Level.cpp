@@ -578,38 +578,20 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 	std::vector<Items*> others;
 	for (int i = 0; i < this->_items.size(); i++) {
 		if (this->_items.at(i)->getBoundingBox().collidesWith(other)) {
-			int type;
-			type = itemType.at(i);
-
-			if (type == 1) { //Permanent HP+1 item
-				player.gainMaxHealth(5);
-			}
-			else {
-				_items.at(i)->addToInventory(type);
-			}
-			invent.addInstancedLoot(this->_mapName, type);
+			int type = itemType.at(i);
 			std::cout << "type = " << type << std::endl;
-			//this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
-			//this->_animation.insert(std::pair<std::string, std::vector<SDL_Rect> >(name, rectangles));
-
+			if (type == 1) //Permanent HP+1 item
+				player.gainMaxHealth(5);
+			else
+				invent.storeItem(type);
+			invent.addInstancedLoot(this->_mapName, type);
 			others.push_back(this->_items.at(i));
 			_items.erase(_items.begin() + i);
+			itemType.erase(itemType.begin() + i);
 		}
 	}
 	return others;
 }
-
-/*
-std::vector<std::string*> Level::checkDrops() {
-	std::vector<std::string*> drops;
-	for (int i = 0; i < this->dropList.size(); i++) {
-		if (this->dropList.at(i)->c_str == "HP") {
-			cout << "drop list found HP!" << endl;
-			drops.push_back(this->dropList.at(i));
-		}
-	}
-	return drops;
-}*/
 
 const Vector2 Level::getPlayerSpawnPoint() const {
 	return 
