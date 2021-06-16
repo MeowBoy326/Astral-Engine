@@ -1,10 +1,14 @@
 ﻿/* Game Class
 * This class holds all information for our main game loop
 */
+#ifndef XMLCheckResult
+	#define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return a_eResult;}
+#endif
+
 #include <algorithm>﻿
 #include <SDL.h>
 #include <SDL_mixer.h>
-
+#include "tinyxml2.h"
 #include "game.h"
 #include "Graphics.h"
 #include "Input.h"
@@ -12,9 +16,9 @@
 #include <iostream>
 #include <fstream>
 
+using namespace tinyxml2;
 
 bool activeProjectile = false;
-
 namespace {
 	const int FPS = 50;
 	// remove 5 *
@@ -93,26 +97,6 @@ void Game::gameLoop() {
 	this->_inventory = Inventory(graphics, this->_player);
 	//Camera::Init();
 
-
-	//data.open("savefile1.txt");
-	//if (data.good()) {
-	//	if (!data.peek() == data.eof()) {
-	//		while (data >> x >> y >> mapname) {
-	//			cout << "data: " << x << " , " << y << " " << mapname << endl;
-	//			this->_level = Level(mapname, graphics); //intialize level: Map name , spawn point, graphics
-	//			spawn = Vector2(std::ceil(x), std::ceil(y));
-	//			this->_player = Player(graphics, spawn);
-	//			cout << "data retrieved successfully!" << endl;
-	//		}
-	//	}
-	//	else if (data.peek() == std::ifstream::traits_type::eof()) {
-	//		cout << "No save data found...Starting new game!" << endl;
-	//		this->_level = Level("cave", graphics); //intialize level: Map name , spawn point, graphics
-	//		this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
-	//	}
-	//}
-
-
 	int LAST_UPDATE_TIME = SDL_GetTicks(); 
 	//Above ^ gets the amount of miliseconds since the SDL library was intialized
 	//must start before loop
@@ -127,29 +111,11 @@ void Game::gameLoop() {
 				std::cout << "No save data found...Starting new game!" << std::endl;
 				this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
-				std::ofstream ofs("savefile1.txt", std::ios::out | std::ios::trunc);
-				ofs.close();
-
+				this->saveGame(graphics);
 			}
 			else {
-				data.open("savefile1.txt");
-				if (!data.peek() == data.eof()) {
-					while (data >> x >> y >> mapname) {
-						std::cout << "data: " << x << " , " << y << " " << mapname << std::endl;
-						this->_level = Level(mapname, graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
-						spawn = Vector2(std::ceil(x), std::ceil(y));
-						this->_player = Player(graphics, spawn);
-						std::cout << "data retrieved successfully!" << std::endl;
-						data.close();
-					}
-				}
-				else {
-					std::cout << "No save data found...Starting new game!" << std::endl;
-					this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
-					this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
-				}
+				this->loadGame(graphics);
 			}
-			
 		}
 		//if (title == true) {
 		//		const int CURRENT_TIME_MS = SDL_GetTicks();
@@ -227,24 +193,7 @@ void Game::gameLoop() {
 			}
 		}
 		if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {
-			std::ofstream saveFile;
-			int x, y, saveNum;
-			std::string mapName;
-
-			x = this->_player.getX();
-			y = this->_player.getY();
-			mapName = this->_player.getMap();
-
-			if (saveFile.good()) {
-				saveFile.open("savefile1.txt");
-				saveFile << x << std::endl << y << std::endl << mapName;
-				saveFile.close();
-				std::cout << "Save file succesfully overwritten!" << std::endl;
-			}
-			else if (!saveFile.good()) {
-				std::cout << "Save file not found!" << std::endl;
-			}
-
+			this->saveGame(graphics);
 			std::cout << "Quitting Game..." << std::endl;
 			return; //quit game if ESC was pressed
 		}
@@ -515,6 +464,122 @@ void Game::draw(Graphics &graphics) {
 
 void Game::updateBullet(float elapsedTime) {
 	this->_bullet.update(elapsedTime, this->_player);
+}
+
+int Game::saveGame(Graphics & graphics)
+{
+	XMLDocument xml;
+	XMLNode* root = xml.NewElement("Root");
+	xml.InsertFirstChild(root);
+	std::cout << "Creating XML Document..." << std::endl;
+
+	//Save player location
+	XMLElement* element = xml.NewElement("Spawn");
+	element->SetAttribute("mapName", this->_level.getMapName().c_str());
+	element->SetAttribute("xCoordinate", this->_player.getX());
+	element->SetAttribute("yCoordinate", this->_player.getY());
+	root->InsertEndChild(element);
+	//Save player stats
+	element = xml.NewElement("Stats");
+	element->SetAttribute("MaxVitality", this->_player.getMaxHealth());
+	element->SetAttribute("Vitality", this->_player.getCurrentHealth());
+	element->SetAttribute("Damage", this->_player.getDmgMod());
+	element->SetAttribute("Defense", this->_player.getDefense());
+	element->SetAttribute("Points", this->_player.getStatPoints());
+	element->SetAttribute("Level", this->_player.getLevel());
+	element->SetAttribute("Exp", this->_player.getCurrentExp());
+	element->SetAttribute("SoulStr", this->_player.getSoulStr());
+	element->SetAttribute("SoulLevel", this->_player.getSoulLevel());
+	element->SetAttribute("KillCount", this->_player.getKillCount());
+	root->InsertEndChild(element);
+	//Save loot table
+	element = xml.NewElement("Loot");
+	std::vector<std::pair<std::string, int>> tempVec = this->_inventory.getLootTable();
+	//for (auto iter = tempVec.begin(); iter != tempVec.end(); iter++) {
+	//	auto first = iter->first;
+	//	auto second = iter->second;
+	//	XMLElement* ptrElement = xml.NewElement("Table");
+	//	ptrElement->SetAttribute(first.c_str(), second);
+	//	element->InsertEndChild(ptrElement);
+	//}
+	for (auto iter = tempVec.begin(); iter != tempVec.end(); iter++) {
+		auto first = iter->first;
+		auto second = iter->second;
+		XMLElement* ptrElement = xml.NewElement("Table");
+		ptrElement->SetAttribute("value", second);
+		ptrElement->SetAttribute("key", first.c_str());
+		element->InsertEndChild(ptrElement);
+	}
+	root->InsertEndChild(element);
+	XMLError result = xml.SaveFile("SF-LOC.xml");
+	XMLCheckResult(result);
+}
+
+int Game::loadGame(Graphics & graphics)
+{
+	XMLDocument xml;
+	xml.LoadFile("SF-LOC.xml");
+	XMLError result;
+	XMLNode* root = xml.FirstChild();
+	if (root == nullptr)
+		return XML_ERROR_FILE_READ_ERROR;
+	//Load loot table
+	XMLElement* element = root->FirstChildElement("Loot");
+	XMLElement* ptrVec = element->FirstChildElement("Table");
+	std::vector<std::pair<std::string, int>> tempVec;
+	while (ptrVec != nullptr) {
+		int type; std::string map; const char * getText = nullptr;
+		result = ptrVec->QueryIntAttribute("value", &type);
+		getText = ptrVec->Attribute("key");
+		map = getText;
+		tempVec.push_back(std::make_pair(map, type));
+		ptrVec = ptrVec->NextSiblingElement("Table");
+	}
+	this->_inventory.setLootTable(tempVec);
+	//Load Map
+	element = root->FirstChildElement("Spawn");
+	if (element == nullptr)
+		return XML_ERROR_PARSING_ELEMENT;
+	const char* textPtr = nullptr;
+	textPtr = element->Attribute("mapName");
+	std::string mapName = textPtr;
+	this->_level = Level(mapName, graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
+	//Load coordinates
+	Vector2 spawn;
+	int x, y;
+	result = element->QueryIntAttribute("xCoordinate", &x);
+	result = element->QueryIntAttribute("yCoordinate", &y);
+	spawn = Vector2((int)std::ceil(x), (int)std::ceil(y));
+	//spawn = this->_level.getPlayerSpawnPoint();
+	this->_player = Player(graphics, spawn);
+
+	//Load stats
+	element = root->FirstChildElement("Stats");
+	if (element == nullptr)
+		return XML_ERROR_PARSING_ELEMENT;
+	float fValue; double dValue; int iValue;
+	result = element->QueryFloatAttribute("MaxVitality", &fValue);
+	this->_player.setMaxHealth(fValue);
+	result = element->QueryFloatAttribute("Vitality", &fValue);
+	this->_player.setCurrentHealth(fValue);
+	result = element->QueryDoubleAttribute("Damage", &dValue);
+	this->_player.setDmgMod(dValue);
+	result = element->QueryDoubleAttribute("Defense", &dValue);
+	this->_player.setDefense(dValue);
+	result = element->QueryIntAttribute("Points", &iValue);
+	this->_player.setStatPoints(iValue);
+	result = element->QueryIntAttribute("Level", &iValue);
+	this->_player.setLevel(iValue);
+	result = element->QueryFloatAttribute("Exp", &fValue);
+	this->_player.setCurrentExp(fValue);
+	result = element->QueryDoubleAttribute("SoulStr", &dValue);
+	this->_player.setSoulStr(dValue);
+	result = element->QueryIntAttribute("SoulLevel", &iValue);
+	this->_player.setSoulLevel(iValue);
+	result = element->QueryIntAttribute("KillCount", &iValue);
+	this->_player.setKillCount(iValue);
+
+	XMLCheckResult(result);
 }
 
 void Game::update(float elapsedTime, Graphics &graphics) {

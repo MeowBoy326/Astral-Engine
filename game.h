@@ -30,6 +30,8 @@ private:
 	void drawGameOver(Graphics & graphics);
 	void update(float elapsedTime, Graphics &graphics);
 	void updateBullet(float elapsedTime);
+	int saveGame(Graphics &graphics);
+	int loadGame(Graphics &graphics);
 
 	Player _player;
 

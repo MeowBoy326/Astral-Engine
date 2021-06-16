@@ -14,13 +14,7 @@ public:
 	Inventory();
 	Inventory(Graphics &graphics, Player &player);
 
-	void update(int elapsedTime, Player &player);
-	void useItem(int type, Player & player);
-	void draw(Graphics &graphics, Player &player);
-	void drawQuantity(Graphics &graphics, int x, int y, int quantity);
-	void addInstancedLoot(std::string mapName, int type);
-	bool isLooted(std::string map, int iType);
-
+	
 	enum ItemType {
 		HEALTH_POT,
 		BUFF
@@ -31,6 +25,17 @@ public:
 		ItemType type;
 		std::string imagePath;
 	};
+
+	void update(int elapsedTime, Player &player);
+	void useItem(int type, Player & player);
+	void draw(Graphics &graphics, Player &player);
+	void drawQuantity(Graphics &graphics, int x, int y, int quantity);
+	void addInstancedLoot(std::string mapName, int type);
+	inline const std::vector<std::pair<std::string, int>> getLootTable() const { return this->lootTable; }
+	inline void setLootTable(std::vector<std::pair<std::string, int>> table) { this->lootTable = table; }
+	std::vector<Inventory::InventoryItem*> getInventory();
+	void setInventory(std::vector<Inventory::InventoryItem*> invent);
+	bool isLooted(std::string map, int iType);
 
 	Inventory(struct Inventory::InventoryItem);
 	void addItem(Inventory::InventoryItem *item);

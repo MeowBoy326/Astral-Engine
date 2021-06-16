@@ -81,6 +81,18 @@ void Inventory::addInstancedLoot(std::string mapName, int type)
 	this->lootTable.push_back(std::make_pair(mapName, type));
 }
 
+std::vector<Inventory::InventoryItem*> Inventory::getInventory()
+{
+	std::vector<Inventory::InventoryItem*> temp;
+	temp = inventoryConstants::inventory;
+	return temp;
+}
+
+void Inventory::setInventory(std::vector<Inventory::InventoryItem*> invent)
+{
+	inventoryConstants::inventory = invent;
+}
+
 bool Inventory::isLooted(std::string map, int iType)
 {
 	for (auto iter = this->lootTable.begin(); iter != this->lootTable.end(); iter++) {

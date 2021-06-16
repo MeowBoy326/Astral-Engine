@@ -429,6 +429,21 @@ double Player::getDmgMod() {
 	return this->_dmgMod;
 }
 
+double Player::getDefense()
+{
+	return this->_defense;
+}
+
+double Player::getSoulStr()
+{
+	return this->_soulStrength;
+}
+
+int Player::getStatPoints()
+{
+	return this->_statPoints;
+}
+
 
 Direction Player::facingDir()
 {

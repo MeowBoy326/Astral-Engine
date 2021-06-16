@@ -58,8 +58,10 @@ public:
 	void setIFrame(bool condition);
 	void gainHealth(float amount);
 	void gainMaxHealth(float amount);
-	const inline int getMaxHealth() const { return this->_maxHealth; }
-	const inline int getCurrentHealth() const { return this->_currentHealth; }
+	const inline float getMaxHealth() const { return this->_maxHealth; }
+	const inline float getCurrentHealth() const { return this->_currentHealth; }
+	inline void setMaxHealth(float hp) { this->_maxHealth = hp; }
+	inline void setCurrentHealth(float hp) { this->_currentHealth = hp; }
 
 	//Exp & Level handling
 	void gainExp(float exp);
@@ -72,7 +74,6 @@ public:
 	int getSoulLevel();
 	void setSoulLevel(int num);
 	void addSoulLevel(int num);
-	double getDmgMod();
 
 	//void gainHealth(float amount);
 	void addKillCount(int num);
@@ -83,6 +84,14 @@ public:
 
 	//Stat menu
 	void statChoice(int selection);
+	inline void setDmgMod(double mod) { this->_dmgMod = mod; }
+	inline void setDefense(double def) { this->_defense = def; }
+	inline void setStatPoints(int points) { this->_statPoints = points; }
+	inline void setSoulStr(double str) { this->_soulStrength = str; }
+	double getDmgMod();
+	double getDefense();
+	double getSoulStr();
+	int getStatPoints();
 	int selectX = 0;
 	int selectY = 0;
 private:

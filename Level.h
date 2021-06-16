@@ -41,6 +41,7 @@ public:
 	std::vector<Npc*> checkNpcCollisions(const Rectangle & other, Graphics &graphics);
 	std::vector<Items*> checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
 
+	inline const std::string getMapName() const { return this->_mapName; }
 	const Vector2 getPlayerSpawnPoint() const;
 	//debug
 	const Vector2 getBulletSpawnPoint() const;
