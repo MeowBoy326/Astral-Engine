@@ -1,13 +1,11 @@
+#ifndef XMLCheckResult
+	#define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return a_eResult;}
+#endif
 #include "Npc.h"
 #include "Input.h"
-#include <limits>
+#include "tinyxml2.h";
 
-//TextManager txt;
-//Base Npc class
-namespace npcConstants {
-	bool endTalk = false;
-	int numOfLines = 0;
-}
+using namespace tinyxml2;
 
 Npc::Npc() {}
 
@@ -16,45 +14,11 @@ Npc::Npc(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int
 	_direction(LEFT),
 	_maxHealth(10),
 	_currentHealth(10)
-	
-	
 {
-	//font = TTF_OpenFont("Arcadia.ttf", 20);
-	//cout << "font is: " << fonts << endl;
 	this->_txtBox = Sprite(graphics, "npcTextBox.png", 0, 0, 76, 24, 505, 499);
+	this->_npcBox = Sprite(graphics, "npcTextBox.png", 63, 149, 32, 32, 505, 499);
 	graphics.loadImage("npcTextBox.png"); //loads sprite sheet in
-	this->_script = "clock.txt";
-	if (!this->_script.empty()) {
-		std::cout << "writing in script..." << std::endl;
-		std::ifstream script(_script);
-		std::string ln;
-		while (script.good()) {
-			getline(script, ln);
-			speech.push(ln);
-		}
-	}
 }
-
-Input input;
-SDL_Event event;
-void eventQuit()
-{
-	SDL_Event *q = new SDL_Event();
-	q->type = SDL_QUIT;
-	SDL_FlushEvents(0, UINT32_MAX);
-	SDL_PushEvent(q);
-}  // void eventQuit()
-
-SDL_Event pressAnyKey()
-{
-	SDL_Event e;
-	SDL_FlushEvent(SDL_KEYDOWN);
-	SDL_FlushEvent(SDL_MOUSEBUTTONDOWN);
-	SDL_WaitEvent(&e);
-	while (e.type != SDL_KEYDOWN && e.type != SDL_MOUSEBUTTONDOWN && input.wasKeyPressed(SDL_SCANCODE_Q) == true)
-		SDL_WaitEvent(&e);
-	return e;
-}  // void pressAnyKey()
 
 void Npc::update(int elapsedTime, Player &player) {
 	AnimatedSprite::update(elapsedTime);
@@ -64,162 +28,87 @@ void Npc::draw(Graphics &graphics) {
 	AnimatedSprite::drawNpc(graphics, this->_x, this->_y);
 }
 
-void Npc::drawTxt(Graphics &graphics, const std::string &str) {
-	//AnimatedSprite::drawTextBox(graphics, str, fonts);
-}
+void Npc::animationDone(std::string currentAnimation){}
 
-void Npc::animationDone(std::string currentAnimation)
+void Npc::setupAnimations() {}
+
+void Npc::setNpcIcon(Graphics & graphics, const std::string name, int posX, int posY)
 {
+	graphics.loadImage(name+".png");
+	this->_npcIcon = Sprite(graphics, name + ".png", 0, 0, 28, 28, posX, posY);
+	this->_npcBox = Sprite(graphics, "npcTextBox.png", 63, 149, 32, 32, posX, posY);
 }
 
-
-void Npc::setupAnimations() {
-
-}
-
-std::ifstream& GotoLine(std::ifstream& file, unsigned int num) {
-	file.seekg(std::ios::beg);
-	for (int i = 0; i < num - 1; ++i) {
-		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	}
-	return file;
-}
-
-void Npc::playNextScript(std::string name, Graphics &graphics, int posX, int posY, int currentLine) {
-	this->_script = name + ".txt";
-	
-	/*
-	if (!this->_script.empty()) {
-		ifstream script(_script);
-		string dummyLine;
-		string ln;
-		GotoLine(script, npcConstants::numOfLines);
-		string line1;
-		script >> line1;
-		//getline(script, ln);
-		speech.push(line1);
-		cout << line1 << endl;
-	}*/
-
-	std::string line;
-	std::ifstream script(_script);
-	for (int i = 0; i < currentLine; ++i) {
-		getline(script, line);
-	}
-	getline(script, line);
-	speech.push(line);
-
-	speech.pop();
-	std::string str = speech.front();
-	//cout << "str = " << str << endl;
-	//speech.pop();
-	this->drawNpcText(graphics, 100, 100, str, posX, posY);
-	
-}
-
-int Npc::getLineAmount() {
-	return npcConstants::numOfLines;
-}
-
-void Npc::setEmpty() {
-	this->clearScripts(speech);
-}
-
-void Npc::clearScripts(std::queue<std::string> &q) {
-	std::queue<std::string> empty;
-	std::swap(q, empty);
-}
-
-void Npc::runScript(std::string name, Graphics &graphics, int posX, int posY) {
-	speech.empty();
-	this->_script = name + ".txt";
-	//cout << "runScript: script name is: " << _script;
-	std::ifstream script(_script);
-	if (!this->_script.empty()) {
-		//cout << "runScript: writing in script..." << endl;
-		
-		std::string ln;
-		
-			getline(script, ln);
-			speech.push(ln);
-
-	}
-	std::string str = speech.front();
-	//speech.pop();
-
-	//this->say(graphics, posX, posY);
-
-	//cout << str << endl;
-	this->drawNpcText(graphics, 100, 100, str, posX, posY);
-	std::string lines;
-	int count = 0;
-	while (getline(script, lines)) {
-		count++;
-	}
-	npcConstants::numOfLines = count + 1;
-
-	//txt.drawNpcText(graphics, 100, 100, str);
-	//TextManager::drawNpcText(graphics, 5, 5, str);
-	//this->drawNpcText(graphics, 5, 5, str);
-
-	//drawTxt(graphics, str);
-	
-	//this->_txtBox.draw(graphics, 505, 499);
-}
-
-
-void Npc::rendScript(Graphics &graphics, const std::string & str, int posX, int posY, SDL_Color color)
+void Npc::drawNpcIcon(Graphics & graphics, const std::string name, int posX, int posY)
 {
-	std::string temp = str;
+	this->_npcBox.draw(graphics, posX - 270, posY + 5);
+	this->_npcIcon.draw(graphics, posX - 265, posY + 5);
+	this->drawNpcName(graphics, posX, posY, name);
+}
 
-	while (!temp.empty() && npcConstants::endTalk == false)
-	{
-		if (SDL_PollEvent(&event)) {
-			if (event.type == SDL_KEYDOWN) {
-				if (event.key.repeat == 0) {
-					input.keyDownEvent(event); //if we are holding key start keydown event
-				}
-			}
-			else if (event.type == SDL_KEYUP) { // if key was released
-				input.keyUpEvent(event);
-			}
-			else if (event.type == SDL_QUIT) {
-				return; //when the game ends or user exits
-			}
-		}
-		this->renderTextbox(graphics, "", posX, posY);
-		if (!name.empty())
-			temp = this->renderTextbox(graphics, name + ": " + temp, posX, posY, color);
-		else
-			temp = this->renderTextbox(graphics, temp, posX, posY, color);
-		SDL_RenderPresent(graphics.getRenderer());
-		if (input.wasKeyPressed(SDL_SCANCODE_Q) == true) {
-			npcConstants::endTalk = true;
-		}
-		//SDL_Event e = pressAnyKey();
+int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
+{
+	this->endOfChat = false;
+	XMLDocument xml;
+	XMLError result;
+	name += ".xml";
+	result = xml.LoadFile(name.c_str());
+	if (result != tinyxml2::XML_SUCCESS)
+		std::cout << "Could not read the file!";
+	XMLNode* root = xml.FirstChild();
+	if (root == nullptr) {
+		std::cout << XML_ERROR_FILE_READ_ERROR << std::endl;
+		return XML_ERROR_FILE_READ_ERROR;
+	}
+	XMLElement* element = root->FirstChildElement("Talk");
+	if (element == nullptr)
+		return XML_ERROR_PARSING_ELEMENT;
+	//get number of lines here
+	result = element->QueryIntAttribute("lines", &this->lines);
+	const char* textPtr = nullptr;
+	textPtr = element->Attribute((char*)&this->lineChar);
+	std::string text = textPtr;
+	this->drawNpcText(graphics, 100, 100, text, posX, posY);
+	XMLCheckResult(result);
+}
 
-
+int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY)
+{
+	XMLDocument xml;
+	name += ".xml";
+	xml.LoadFile(name.c_str());
+	XMLError result;
+	XMLNode* root = xml.FirstChild();
+	if (root == nullptr)
+		return XML_ERROR_FILE_READ_ERROR;
+	XMLElement* element = root->FirstChildElement("Talk");
+	if (element == nullptr)
+		return XML_ERROR_PARSING_ELEMENT;
+	result = element->QueryIntAttribute("lines", &this->lines);
+	const char* textPtr = nullptr;
+	this->lineChar++;
+	this->lineCounter++;
+	if (this->lineCounter <= this->lines) {
+		textPtr = element->Attribute((char*)&this->lineChar);
+		std::string text;
+		text = textPtr;
+		this->drawNpcText(graphics, 100, 100, text, posX, posY);
+		XMLCheckResult(result);
+	}
+	else {
+		this->lineCounter = 1;
+		this->lineChar = 'a';
+		this->endOfChat = true;
 	}
 }
 
-void Npc::say(Graphics &graphics, int posX, int posY)
+void Npc::resetScripts()
 {
-	for (int i = 0; i < speech.size(); ++i) {
-		std::cout << speech.front() << std::endl;
-	}
-	if (speech.empty()) {
-		std::cout << "empty speech" << std::endl;
-		rendScript(graphics, "I have nothing more to say.", posX, posY);
-	}
-	else
-	{
-		std::cout << "speech not empty..";
-		std::string str = speech.front();
-		speech.pop();
-		rendScript(graphics, str, posX, posY);
-		speech.push(str);
-	}
-} // void Sprite::say(SDL_Renderer *ren, string &str)*/
+	this->lines = 1;
+	this->lineCounter = 1;
+	this->lineChar = 'a';
+	this->endOfChat = false;
+}
 
 //Clock class
 Clock::Clock() {}
@@ -232,21 +121,7 @@ Clock::Clock(Graphics &graphics, Vector2 spawnPoint, std::string name) :
 {
 	_npcName = name;
 	this->setupAnimations();
-	this->setupScripts();
 	this->playAnimation("clock");
-	std::cout << "prep npc" << std::endl;
-	//fonts = TTF_OpenFont("Arcadia.ttf", 20);
-	//this->fonts = TTF_OpenFont("Arcadia.ttf", 20);
-	this->_script = "clock.txt";
-	if (!this->_script.empty()) {
-		std::cout << "writing in script..." << std::endl;
-		std::ifstream script(_script);
-		std::string ln;
-		while (script.good()) {
-			getline(script, ln);
-			speech.push(ln);
-		}
-	}
 }
 
 void Clock::update(int elapsedTime, Player &player) {
@@ -270,10 +145,6 @@ void Clock::draw(Graphics &graphics) {
 
 void Clock::animationDone(std::string currentAnimation) {
 
-}
-
-void Clock::setupScripts() {
-	this->addScript(1, 0, 0, "say", 243, 23, Vector2(0, 0));
 }
 
 void Clock::setupAnimations() {

@@ -170,16 +170,54 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
 	} 
-	
 	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
-	SDL_Surface *surface;
+	SDL_Surface *surface = TTF_RenderText_Solid(font, str.c_str(), color);;
+	SDL_Rect destinationRectangle = { posX - 260 , posY + 105, surface->w, surface->h };;
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);;
 
-	surface = TTF_RenderText_Solid(font, str.c_str(), color);
-	SDL_Rect destinationRectangle = { posX - 260 , posY + 105, surface->w, surface->h }; //where on screen we will be drawing
-	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
-	//graphics.blitSurface(tex, NULL, &dest);
-
-	graphics.blitSurface(tex, NULL, &destinationRectangle);
+	std::string temp = "";
+	int count = 0;
+	for (int index = 0; index < str.length(); ++index) {
+		if (str[index] == '$' && str[index + 1] == 'n') {
+			count++;
+			if (count == 1) {
+				TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+				SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
+				SDL_Rect destinationRectangle = { posX - 260 , posY + 105, surface->w, surface->h }; //where on screen we will be drawing
+				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+				//graphics.blitSurface(tex, NULL, &dest);
+				graphics.blitSurface(tex, NULL, &destinationRectangle);
+				SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+				TTF_CloseFont(font);
+				SDL_DestroyTexture(tex);
+			}
+			else if (count == 2) {
+				TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+				SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
+				SDL_Rect destinationRectangle = { posX - 260 , posY + 135, surface->w, surface->h }; //where on screen we will be drawing
+				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+				//graphics.blitSurface(tex, NULL, &dest);
+				graphics.blitSurface(tex, NULL, &destinationRectangle);
+				SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+				TTF_CloseFont(font);
+				SDL_DestroyTexture(tex);
+			}
+			temp = "";
+			index += 2;
+		}
+		if (str[index] == '$' && str[index + 1] == 'e') {
+			TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+			SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
+			SDL_Rect destinationRectangle = { posX - 260 , posY + 165, surface->w, surface->h }; //where on screen we will be drawing
+			SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+			//graphics.blitSurface(tex, NULL, &dest);
+			graphics.blitSurface(tex, NULL, &destinationRectangle);
+			SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+			TTF_CloseFont(font);
+			SDL_DestroyTexture(tex);
+		}
+		temp += str[index];
+	}
 	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
 	TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
@@ -334,6 +372,19 @@ void TextManager::drawHPNumber(Graphics & graphics, int x, int y, float hp, SDL_
 	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
 	//TTF_CloseFont(font);
 	TTF_CloseFont(iFont);
+	SDL_DestroyTexture(tex);
+}
+
+void TextManager::drawNpcName(Graphics & graphics, int x, int y, const std::string & name, SDL_Color color)
+{
+	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 14);
+	SDL_Surface *surface = TTF_RenderText_Solid(font, name.c_str(), color);;
+	SDL_Rect destinationRectangle = { x - 260 , y + 50, surface->w, surface->h };;
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);;
+
+	graphics.blitSurface(tex, NULL, &destinationRectangle);
+	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 }
 

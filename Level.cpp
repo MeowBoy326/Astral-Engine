@@ -371,10 +371,10 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						const char* name = pObject->Attribute("name");
 						std::stringstream ss;
 						ss << name;
-						if (ss.str() == "clock") {
+						if (ss.str() == "Luna") {
 							this->_npcs.push_back(new Clock(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE), ss.str()));
-							std::cout << "clock added!" << std::endl;
+							std::cout << "Luna added!" << std::endl;
 							
 						}
 

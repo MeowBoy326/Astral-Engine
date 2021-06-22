@@ -26,23 +26,19 @@ public:
 
 	virtual void update(int elapsedTime, Player &player);
 	virtual void draw(Graphics &graphics);
-	void drawTxt(Graphics &graphics, const std::string & str);
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
-	void playNextScript(std::string name, Graphics & graphics, int posX, int posY, int currentLine);
-	int getLineAmount();
-	void setEmpty();
-	void clearScripts(std::queue<std::string>& q);
-	void runScript(std::string name, Graphics &graphics, int posX, int posY);
-
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
 	const inline std::string getName() const { return this->_npcName; }
 
-	void say(Graphics & graphics, int posX, int posY);
-	void rendScript(Graphics &graphics, const std::string &str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
-
-	
+	void setNpcIcon(Graphics &graphics, const std::string name, int posX, int posY);
+	void drawNpcIcon(Graphics &graphics, const std::string name, int posX, int posY);
+	int playScript(std::string name, Graphics &graphics, int posX, int posY);
+	int playNext(std::string name, Graphics &graphics, int posX, int posY);
+	inline bool const getChatStatus() { return this->endOfChat; }
+	inline void setChatStatus(bool condition) { this->endOfChat = condition; }
+	void resetScripts();
 protected:
 	Direction _direction;
 
@@ -52,14 +48,13 @@ protected:
 	std::string _npcName;
 
 	Sprite _txtBox;
+	Sprite _npcBox;
+	Sprite _npcIcon;
 
-	std::string _script;
-	std::queue<std::string> speech;
-	//!< Circular queue of everything this Sprite says.
-	//TTF_Font *fonts = TTF_OpenFont("Arcadia.ttf", 20);
-	std::string name;
-	//!< Font the Sprite uses to 'speak'.
-	
+	int lines = 1;
+	int lineCounter = 1;
+	char lineChar = 'a';
+	bool endOfChat = false;
 };
 
 class Clock : public Npc {
@@ -73,7 +68,6 @@ public:
 	void bulletHit();
 
 	void animationDone(std::string currentAnimation);
-	void setupScripts();
 	void setupAnimations();
 private:
 	float _startingX, _startingY;

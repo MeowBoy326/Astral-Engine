@@ -412,3 +412,5 @@ Source1.cpp
 *.ttf
 *.diagsession
 SF-LOC.xml
+*.xml
+*.txt

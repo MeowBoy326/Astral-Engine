@@ -289,7 +289,7 @@ void Player::handleNpcCollisions(std::vector<Npc*> &others, Graphics &graphics, 
 		//others.at(i)->say(graphics, this);
 		//cout << "handleNpcColl: This npc is: " << others.at(i)->getName() << endl;
 		if (lineCount == 0) {
-			others.at(i)->runScript(others.at(i)->getName(), graphics, this->_x, this->_y);
+			others.at(i)->playScript(others.at(i)->getName(), graphics, this->_x, this->_y);
 		}
 	/*	else if (lineCount >= 1) {
 			others.at(i)->playNextScript(others.at(i)->getName(), graphics, this->_x, this->_y, lineCount);

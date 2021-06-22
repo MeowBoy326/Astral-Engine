@@ -244,35 +244,24 @@ void Game::gameLoop() {
 		if (input.wasKeyPressed(SDL_SCANCODE_Q) == true && activeInventory == false && activeStatMenu == false) {
 			if (activeTalk == false && npcName != ""){
 				activeTalk = true;
-				std::cout << "status of talk: " << activeTalk << std::endl;
 				this->_chatBox.setTextStatus(true);
 				this->_chatBox.drawChatBox(graphics, this->_player);
-				this->_npc.runScript(npcName, graphics, this->_player.getX(), this->_player.getY());
+				this->_npc.setNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
+				this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
+				this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 			}
 			else if (activeTalk == true) {
 				activeTalk = false;
-				std::cout << "status of talk: " << activeTalk << std::endl;
 				this->_chatBox.setTextStatus(false);
-
+				this->_npc.resetScripts();
 			}
 		}
 
 		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && activeTalk == true) {
-			lineNum = _npc.getLineAmount();
-			currentLine++;
-			std::cout << "lineNum: " << lineNum << std::endl;
-			std::cout << "currentLine: " << currentLine << std::endl;
-			if (currentLine < lineNum) {
-				this->_npc.playNextScript(npcName, graphics, this->_player.getX(), this->_player.getY(), currentLine);
-				nextLine = true;
-			}
-			else if (currentLine >= lineNum) {
-				nextLine = false;
+			this->_npc.playNext(npcName, graphics, this->_player.getX(), this->_player.getY());
+			if (this->_npc.getChatStatus()) {
 				activeTalk = false;
 				this->_chatBox.setTextStatus(false);
-				this->_npc.setEmpty();
-				std::cout << "ran out of lines" << std::endl;
-				currentLine = 0;
 			}
 		}
 
@@ -411,13 +400,17 @@ void Game::draw(Graphics &graphics) {
 	this->_chatBox.drawChatBox(graphics, this->_player);
 	this->_bullet.drawDmgText(graphics);
 
-	if (activeTalk == true && nextLine == false) {
+	if (activeTalk == true) {
+		this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
+		this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
+	}
+	/*if (activeTalk == true && nextLine == false) {
 		this->_npc.runScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 	}
 
 	if (activeTalk == true && nextLine == true) {
 		this->_npc.playNextScript(npcName, graphics, this->_player.getX(), this->_player.getY(), currentLine);
-	}
+	}*/
 
 	this->_hud.draw(graphics, this->_player);
 	if (activeInventory == true) {
@@ -441,7 +434,7 @@ int Game::saveGame(Graphics & graphics)
 	XMLDocument xml;
 	XMLNode* root = xml.NewElement("Root");
 	xml.InsertFirstChild(root);
-	std::cout << "Creating XML Document..." << std::endl;
+	std::cout << "Creating the XML Document..." << std::endl;
 
 	//Save player location
 	XMLElement* element = xml.NewElement("Spawn");

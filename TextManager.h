@@ -40,6 +40,7 @@ public:
 	void drawVersion(Graphics & graphics, int x, int y);
 	void drawDeveloper(Graphics & graphics, int x, int y);
 	void drawHPNumber(Graphics & graphics, int x, int y, float hp, SDL_Color color = { 255, 255, 255, 255 });
+	void drawNpcName(Graphics & graphics, int x, int y, const std::string &name, SDL_Color color = { 255, 255, 255, 255 });
 
 	SDL_Texture* renderText(Graphics &graphics, TTF_Font *font,
 		const std::string &str, SDL_Color color = { 255, 255, 255, 255 });
