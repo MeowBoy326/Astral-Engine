@@ -30,6 +30,7 @@ namespace {
 	bool activeStatMenu = false;
 	int selection = 1;
 	int npcSelection = 1;
+	int questSelection = 1;
 	bool pickUp = false;
 	bool nextLine = false;
 	std::string npcName;
@@ -251,7 +252,6 @@ void Game::gameLoop() {
 				this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
 				this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
 				this->_npc.loadQuests(npcName);
-				/*this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());*/
 			}
 			else if (activeTalk == true) {
 				activeTalk = false;
@@ -262,34 +262,70 @@ void Game::gameLoop() {
 
 		if (activeTalk) {
 			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-				if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
-					std::cout << "npcTalk == false " << std::endl;
+				//chat
+				if (this->_npc.getQuestState() == true) {
+					activeTalk = false;
+					this->_chatBox.setTextStatus(false);
+					this->_npc.setNpcTalk(false);
+					this->_npc.setQuestMenuState(false);
+					this->_npc.setQuestState(false);
+					this->_npc.setQuestDone(false);
+					this->_npc.setNoQuest(false);
+					this->_npc.resetScripts();
+					npcSelection = 1;
+					questSelection = 1;
+				}
+				else if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
 					this->_npc.setNpcTalk(true);
 					this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
-					//this->_npc.playNext(npcName, graphics, this->_player.getX(), this->_player.getY(), this->_player);
 				}
 				else if (npcSelection == 1 && this->_npc.getNpcTalk()) {
-					std::cout << "npcTalk == true " << std::endl;
 					this->_npc.playNext(npcName, graphics, this->_player.getX(), this->_player.getY(), this->_player);
 					if (this->_npc.getChatStatus()) {
-						std::cout << "first option npc";
 						this->_npc.setNpcTalk(false);
 						activeTalk = false;
 						this->_chatBox.setTextStatus(false);
 						this->_npc.resetScripts();
 					}
 				}
-
+				//quests
 				else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
 					this->_npc.setNpcTalk(true);
-					//this->_npc.checkQuest(graphics, npcName + ".xml", this->_player.getX(), this->_player.getY(), this->_player);
+					this->_npc.setQuestMenuState(true);
 					this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
 				}
-				else if (npcSelection == 2 && this->_npc.getNpcTalk())
+				else if (npcSelection == 2 && this->_npc.getNpcTalk() && this->_npc.checkNoQuests() == false) {
+					if (questSelection == 1) {
+						this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
+					}
+					else if (questSelection == 2) {
+						this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
+					}
+				}
+				else if (this->_npc.checkNoQuests()) {
+					activeTalk = false;
+					this->_chatBox.setTextStatus(false);
 					this->_npc.setNpcTalk(false);
+					this->_npc.setQuestMenuState(false);
+					this->_npc.setQuestState(false);
+					this->_npc.setQuestDone(false);
+					this->_npc.setNoQuest(false);
+					this->_npc.resetScripts();
+					npcSelection = 1;
+					questSelection = 1;
+				}
+					
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getNpcTalk() == false) {
+			if (input.wasKeyPressed(SDL_SCANCODE_DELETE) == true) {
+				this->_npc.setNpcTalk(false);
+				this->_chatBox.setTextStatus(false);
+				activeTalk = false;
+				this->_npc.setQuestMenuState(false);
+				this->_npc.resetScripts();
+			}
+
+			if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getNpcTalk() == false && this->_npc.getQuestMenuState() == false) {
 				if (npcSelection == 1)
 					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
 				else if (npcSelection != 1) {
@@ -297,7 +333,7 @@ void Game::gameLoop() {
 					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
 				}
 			}
-			if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getNpcTalk() == false) {
+			else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getNpcTalk() == false && this->_npc.getQuestMenuState() == false) {
 				if (npcSelection == 2)
 					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
 				else if (npcSelection != 2) {
@@ -305,8 +341,23 @@ void Game::gameLoop() {
 					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
 				}
 			}
+			else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getQuestMenuState() == true) {
+				if (questSelection == 1)
+					this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+				else {
+					questSelection--;
+					this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+				}
+			}
+			else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getQuestMenuState() == true) {
+				if (questSelection == 2)
+					this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+				else {
+					questSelection++;
+					this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+				}
+			}
 		}
-
 
 		if (input.wasKeyPressed(SDL_SCANCODE_F1) == true) {
 			if (!activeStatMenu) {
@@ -330,8 +381,7 @@ void Game::gameLoop() {
 					this->_player.drawStatMenu(graphics, this->_player, selection);
 				}
 			}
-
-			if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
+			else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
 				if (selection == 3)
 					this->_player.drawStatMenu(graphics, this->_player, selection);
 				else if (selection != 3) {
@@ -339,7 +389,6 @@ void Game::gameLoop() {
 					this->_player.drawStatMenu(graphics, this->_player, selection);
 				}
 			}
-			
 		}
 
 		if (input.wasKeyPressed(SDL_SCANCODE_TAB) == true && activeStatMenu == false && activeTalk == false) {
@@ -356,9 +405,7 @@ void Game::gameLoop() {
 		if (input.wasKeyPressed(SDL_SCANCODE_Z) == true) {
 			if (pickUp == false) {
 				pickUp = true;
-				//this->_inventory.draw(graphics, this->_player);
 			}
-
 			else if (pickUp == true) {
 				pickUp = false;
 			}
@@ -452,8 +499,13 @@ void Game::draw(Graphics &graphics) {
 			//std::cout << "draw first option" << std::endl;
 			this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 		}
-		else if (this->_npc.getNpcTalk() && npcSelection == 2)
+		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && !this->_npc.getQuestState()) {
 			this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
+			this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), questSelection);
+		}
+		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && this->_npc.getQuestState() && this->_npc.checkNoQuests() == false) {
+			this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
+		}
 			//this->_npc.checkQuest(graphics, npcName + ".xml", this->_player.getX(), this->_player.getY(), this->_player);
 		else {
 			this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);

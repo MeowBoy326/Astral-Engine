@@ -49,6 +49,13 @@ void Sprite::drawStatSelection(Graphics & graphics, int x, int y)
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
+void Sprite::drawQuestSelection(Graphics & graphics, int x, int y)
+{
+	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 11.8, this->_sourceRect.h * 2 }; //where on screen we will be drawing
+//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
+	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
+}
+
 void Sprite::drawiMenu(Graphics &graphics, int x, int y) { //this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 7, this->_sourceRect.h * 7 }; //where on screen we will be drawing
 	//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;

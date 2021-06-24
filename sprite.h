@@ -29,6 +29,7 @@ public:
 	void draw(Graphics &graphics, int x, int y);
 	void drawStatMenu(Graphics &graphics, int x, int y);
 	void drawStatSelection(Graphics &graphics, int x, int y);
+	void drawQuestSelection(Graphics &graphics, int x, int y);
 	void drawiMenu(Graphics & graphics, int x, int y);
 	void drawChat(Graphics & graphics, int x, int y);
 	void drawTitle(Graphics & graphics, int x, int y);

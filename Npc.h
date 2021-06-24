@@ -45,21 +45,32 @@ public:
 	
 	int loadQuests(std::string name);
 	void displayQuests(Graphics &grpahics, std::string npcName, int posX, int posY, Player &player);
+	void questSelection(Graphics &graphics, int posX, int posY, int selection);
+	void acceptQuest(Graphics &graphics, std::string npcName, int posX, int posY, Player &player, int selection);
+	void giveRewards(Graphics &graphics, std::string npcName, int posX, int posY, Player &player, int selection);
 	bool checkQuest(Graphics &graphics, std::string name, int posX, int posY, Player &player);
 	inline bool const getQuestState() { return this->questState; }
+	inline void setQuestState(bool condition) { this->questState = condition; }
 	inline bool const checkQuestDone() { return this->questDone; }
+	inline bool const getQuestMenuState() { return this->questMenu; }
+	inline void const setQuestMenuState(bool condition) { this->questMenu = condition; }
+	inline void setQuestDone(bool condition) { this->questDone = condition; }
+	inline bool const checkNoQuests() { return this->noQuest; }
+	inline void setNoQuest(bool condition) { this->noQuest = condition; }
 protected:
 	Direction _direction;
 	//std::vector<std::vector<std::pair<std::string, int>>> questTable;
 	std::vector<std::tuple<std::string, int, std::string, int, std::string, std::string>> questTable;
-	std::vector<std::pair<std::string, bool>> questLog;
+	std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> questLog;
 
 	int _maxHealth;
 	int _currentHealth;
 
 	std::string _npcName;
+	std::string storedQuestName;
 
 	Sprite* _chatSelection;
+	Sprite* _questSelection;
 	Sprite* _txtBox;
 	Sprite* _npcBox;
 	Sprite* _npcIcon;
@@ -71,6 +82,8 @@ protected:
 	bool questState = false;
 	bool questDone = false;
 	bool npcTalking = false;
+	bool questMenu = false;
+	bool noQuest = false;
 };
 
 class Clock : public Npc {

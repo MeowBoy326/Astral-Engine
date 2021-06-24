@@ -121,23 +121,36 @@ const float Player::getY() const {
 
 void Player::addKillTable(std::string name)
 {
-	if (name == "bat") {
-		if (this->killTable.size() == 0)
-			this->killTable.push_back(std::make_pair("bat", 1));
+	if (this->killTable.empty()) {
+		this->killTable.push_back(std::make_pair(name, 1));
+	}
+	else {
+		auto it = std::find_if(killTable.begin(), killTable.end(), [&name](const auto& t) {return t.first == name; });
+		auto distance = std::distance(this->killTable.begin(), it);
+		if (it != killTable.end()) {
+			killTable[distance].second += 1;
+		}
 		else {
-			for (int index = 0; index < this->killTable.size(); ++index) {
-				if (this->killTable[index].first == "bat")
-					this->killTable[index].second += 1;
-			}
+			this->killTable.push_back(std::make_pair(name, 1));
 		}
 	}
+	//if (name == "bat") {
+	//	if (this->killTable.size() == 0)
+	//		this->killTable.push_back(std::make_pair("bat", 1));
+	//	else {
+	//		for (int index = 0; index < this->killTable.size(); ++index) {
+	//			if (this->killTable[index].first == "bat")
+	//				this->killTable[index].second += 1;
+	//		}
+	//	}
+	//}
 }
 
 bool Player::checkKillQuestComplete(std::string name, int count)
 {
 	for (int index = 0; index < this->killTable.size(); ++index) {
 		if (this->killTable[index].first == name && this->killTable[index].second >= count) {
-			std::cout << "found 4 bats killed!" << std::endl;
+			std::cout << "Appropiate amount of mobs killed!" << std::endl;
 			return true;
 		}
 			

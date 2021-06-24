@@ -517,6 +517,7 @@ void Level::checkEnemyHP(Player & player) {
 				player.gainExp(this->_enemies.at(i)->enemyExpAmount());
 				player.addKillCount(1);
 				player.addKillTable(this->_enemies.at(i)->getName());
+				std::cout << this->_enemies.at(i)->getName() << " has been slain" << std::endl;
 				this->_enemies.erase(this->_enemies.begin() + i);
 			}
 		}
