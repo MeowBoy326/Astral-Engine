@@ -28,6 +28,11 @@ void Enemy::bulletHit(float dmg) {
 	std::cout << "hit! HP = " << this->_currentHealth << std::endl;
 }
 
+std::string Enemy::getName()
+{
+	return this->name;
+}
+
 void Enemy::playDeath() {
 	if (deathCreated == false) {
 
@@ -161,6 +166,11 @@ float Bat::enemyExpAmount() {
 	return Bat::batExp;
 }
 
+std::string Bat::getName()
+{
+	return this->name;
+}
+
 
 //Shade class
 Shade::Shade() {}
@@ -268,4 +278,9 @@ void Shade::setRemoveable() {
 
 float Shade::enemyExpAmount() {
 	return Shade::shadeExp;
+}
+
+std::string Shade::getName()
+{
+	return this->name;
 }

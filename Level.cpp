@@ -516,6 +516,7 @@ void Level::checkEnemyHP(Player & player) {
 				this->_enemies.at(i)->setRemoveable();
 				player.gainExp(this->_enemies.at(i)->enemyExpAmount());
 				player.addKillCount(1);
+				player.addKillTable(this->_enemies.at(i)->getName());
 				this->_enemies.erase(this->_enemies.begin() + i);
 			}
 		}

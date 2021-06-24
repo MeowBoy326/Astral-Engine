@@ -119,6 +119,32 @@ const float Player::getY() const {
 	return this->_y;
 }
 
+void Player::addKillTable(std::string name)
+{
+	if (name == "bat") {
+		if (this->killTable.size() == 0)
+			this->killTable.push_back(std::make_pair("bat", 1));
+		else {
+			for (int index = 0; index < this->killTable.size(); ++index) {
+				if (this->killTable[index].first == "bat")
+					this->killTable[index].second += 1;
+			}
+		}
+	}
+}
+
+bool Player::checkKillQuestComplete(std::string name, int count)
+{
+	for (int index = 0; index < this->killTable.size(); ++index) {
+		if (this->killTable[index].first == name && this->killTable[index].second >= count) {
+			std::cout << "found 4 bats killed!" << std::endl;
+			return true;
+		}
+			
+	}
+	return false;
+}
+
 void Player::moveLeft() {
 	if (this->_lookingDown == true && this->_grounded == true) //while facing backwards if we are on the ground and looking down that means char
 	//is turned around and interacting with something so don't allow movement!
@@ -289,7 +315,7 @@ void Player::handleNpcCollisions(std::vector<Npc*> &others, Graphics &graphics, 
 		//others.at(i)->say(graphics, this);
 		//cout << "handleNpcColl: This npc is: " << others.at(i)->getName() << endl;
 		if (lineCount == 0) {
-			others.at(i)->playScript(others.at(i)->getName(), graphics, this->_x, this->_y);
+			//others.at(i)->playScript(others.at(i)->getName(), graphics, this->_x, this->_y);
 		}
 	/*	else if (lineCount >= 1) {
 			others.at(i)->playNextScript(others.at(i)->getName(), graphics, this->_x, this->_y, lineCount);

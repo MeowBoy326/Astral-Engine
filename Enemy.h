@@ -25,6 +25,7 @@ public:
 	virtual void setRemoveable();
 
 	virtual void bulletHit(float dmg);
+	virtual std::string getName();
 
 	bool removeEnemy = false;
 
@@ -33,7 +34,7 @@ protected:
 
 	int _maxHealth;
 	int _currentHealth;
-
+	std::string name;
 	bool deathCreated = false;
 };
 
@@ -61,6 +62,8 @@ public:
 	bool removeEnemy = false;
 
 	float enemyExpAmount();
+
+	std::string getName();
 private:
 	float _startingX, _startingY;
 	bool _shouldMoveUp; //keep track of if bat should move
@@ -75,7 +78,7 @@ protected:
 
 	int _maxHealth;
 	int _currentHealth;
-
+	std::string name = "bat";
 	bool deathCreated = false;
 };
 
@@ -102,6 +105,8 @@ public:
 
 	bool removeEnemy = false;
 	float enemyExpAmount();
+
+	std::string getName();
 private:
 	float _startingX, _startingY;
 	bool _shouldMoveUp; //keep track of if bat should move
@@ -116,6 +121,6 @@ protected:
 
 	int _maxHealth;
 	int _currentHealth;
-
+	std::string name = "shade";
 	bool deathCreated = false;
 };

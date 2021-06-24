@@ -32,29 +32,45 @@ public:
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
 	const inline std::string getName() const { return this->_npcName; }
 
+	void npcSelection(Graphics &graphics, int posX, int posY, int selection);
 	void setNpcIcon(Graphics &graphics, const std::string name, int posX, int posY);
 	void drawNpcIcon(Graphics &graphics, const std::string name, int posX, int posY);
 	int playScript(std::string name, Graphics &graphics, int posX, int posY);
-	int playNext(std::string name, Graphics &graphics, int posX, int posY);
+	int playNext(std::string name, Graphics &graphics, int posX, int posY, Player &player);
 	inline bool const getChatStatus() { return this->endOfChat; }
 	inline void setChatStatus(bool condition) { this->endOfChat = condition; }
+	inline bool const getNpcTalk() { return this->npcTalking; }
+	inline void setNpcTalk(bool condition) { this->npcTalking = condition; }
 	void resetScripts();
+	
+	int loadQuests(std::string name);
+	void displayQuests(Graphics &grpahics, std::string npcName, int posX, int posY, Player &player);
+	bool checkQuest(Graphics &graphics, std::string name, int posX, int posY, Player &player);
+	inline bool const getQuestState() { return this->questState; }
+	inline bool const checkQuestDone() { return this->questDone; }
 protected:
 	Direction _direction;
+	//std::vector<std::vector<std::pair<std::string, int>>> questTable;
+	std::vector<std::tuple<std::string, int, std::string, int, std::string, std::string>> questTable;
+	std::vector<std::pair<std::string, bool>> questLog;
 
 	int _maxHealth;
 	int _currentHealth;
 
 	std::string _npcName;
 
-	Sprite _txtBox;
-	Sprite _npcBox;
-	Sprite _npcIcon;
+	Sprite* _chatSelection;
+	Sprite* _txtBox;
+	Sprite* _npcBox;
+	Sprite* _npcIcon;
 
 	int lines = 1;
 	int lineCounter = 1;
 	char lineChar = 'a';
 	bool endOfChat = false;
+	bool questState = false;
+	bool questDone = false;
+	bool npcTalking = false;
 };
 
 class Clock : public Npc {
@@ -71,7 +87,7 @@ public:
 	void setupAnimations();
 private:
 	float _startingX, _startingY;
-	bool _shouldMoveUp; //keep track of if Clock should move
+	bool _shouldMoveUp;
 };
 
 #endif

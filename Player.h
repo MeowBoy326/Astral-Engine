@@ -52,6 +52,9 @@ public:
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
 	const float getX() const;
 	const float getY() const; //getting variables not changes const make sure it doesnt
+	std::string enemyName;
+	void addKillTable(std::string name);
+	bool checkKillQuestComplete(std::string name, int count);
 
 	//Health handling
 	void drawHPNumbers(Graphics &graphics);
@@ -124,6 +127,8 @@ private:
 	TextManager* _txt;
 	Sprite _statMenu;
 	Sprite _statSelection;
+
+	std::vector<std::pair<std::string, int>> killTable;
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;

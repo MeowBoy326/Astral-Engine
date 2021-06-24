@@ -388,6 +388,19 @@ void TextManager::drawNpcName(Graphics & graphics, int x, int y, const std::stri
 	SDL_DestroyTexture(tex);
 }
 
+void TextManager::drawQuestText(Graphics & graphics, int x, int y, const std::string & text, SDL_Color color)
+{
+	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+	SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), color);
+	SDL_Rect destinationRectangle = { x - 260 , y + 105, surface->w, surface->h }; //where on screen we will be drawing
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+	//graphics.blitSurface(tex, NULL, &dest);
+	graphics.blitSurface(tex, NULL, &destinationRectangle);
+	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	TTF_CloseFont(font);
+	SDL_DestroyTexture(tex);
+}
+
 void TextManager::drawStats(Graphics & graphics, int posX, int posY, float hPoints, double dmgPoints, double defPoints, int available, SDL_Color color) {
 	//TTF_Init();
 	if (TTF_Init() == -1) {
