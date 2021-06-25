@@ -50,6 +50,7 @@ public:
 	void drawNpc(Graphics & graphics, int x, int y);
 	void drawTitle(Graphics & graphics, int x, int y);
 	void drawBullet(Graphics &graphics, int x, int y);
+	void drawLoot(Graphics &graphics, int x, int y);
 
 	
 

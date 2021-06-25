@@ -30,8 +30,8 @@ public:
 	~Level();
 
 	void update(int elapsedTime, Player &player);
-	void draw(Graphics &graphics);
-	void checkEnemyHP(Player & player);
+	void draw(Graphics &graphics, Player &player);
+	void checkEnemyHP(Player & player, Graphics &graphics);
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
@@ -40,6 +40,7 @@ public:
 	std::vector<Enemy*> checkBulletCollisions(const Rectangle & other);
 	std::vector<Npc*> checkNpcCollisions(const Rectangle & other, Graphics &graphics);
 	std::vector<Items*> checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
+	void checkItemFloorCollisions(Items* obj);
 
 	inline const std::string getMapName() const { return this->_mapName; }
 	const Vector2 getPlayerSpawnPoint() const;

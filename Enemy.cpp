@@ -53,6 +53,11 @@ void Enemy::setRemoveable() {
 	}
 }
 
+void Enemy::dropLoot(Player & player)
+{
+	this->canDropLoot = true;
+}
+
 float Enemy::enemyExpAmount() {
 	return 0;
 }
@@ -104,7 +109,6 @@ void Bat::update(int elapsedTime, Player &player) {
 			this->_fireBall.addY(player.getY() > this->_y ? .2 : -.2);
 		}
 	}
-	
 	else if (this->getCurrentHealth() <= 0) {
 		this->playAnimation("BatDie", true);
 	}
@@ -120,12 +124,14 @@ void Bat::draw(Graphics &graphics) {
 void Bat::animationDone(std::string currentAnimation) {
 	if (this->getCurrentHealth() <= 0) {
 		this->removeEnemy = true;
-		this->dropLoot();
+		//this->dropLoot();
+		this->canDropLoot = true;
+		std::cout << "yooo" << std::endl;
 	}
 }
 
-void Bat::dropLoot() {
-
+void Bat::dropLoot(Player &player) {
+	
 }
 
 void Bat::setupAnimations() {
@@ -149,7 +155,10 @@ void Bat::touchPlayer(Player* player) {
 
 void Bat::bulletHit(float dmg) {
 	this->_currentHealth -= dmg;
-	std::cout << "hit! HP = " << this->_currentHealth << std::endl;
+	std::cout << "BAT hit! HP = " << this->_currentHealth << std::endl;
+	if (this->_currentHealth <= 0 && removeEnemy == true) {
+		std::cout << "Dead" << std::endl;
+	}
 }
 
 void Bat::setRemoveable() {
@@ -239,11 +248,11 @@ void Shade::draw(Graphics &graphics) {
 void Shade::animationDone(std::string currentAnimation) {
 	if (this->getCurrentHealth() <= 0) {
 		this->removeEnemy = true;
-		this->dropLoot();
+		//this->dropLoot();
 	}
 }
 
-void Shade::dropLoot() {
+void Shade::dropLoot(Player &player) {
 
 }
 

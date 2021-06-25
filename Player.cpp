@@ -416,6 +416,12 @@ int Player::getRequiredKills() {
 	return this->_requiredKill;
 }
 
+void Player::gainCurrency(int num)
+{
+	this->currency += num;
+	std::cout << "Player gained " << num << " money\n Total is: " << getCurrency() << std::endl;
+}
+
 void Player::statChoice(int selection)
 {
 	if (selection == 1 && this->_statPoints > 0) {

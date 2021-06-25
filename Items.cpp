@@ -136,3 +136,42 @@ void Key::setupAnimations() {
 
 }
 
+/*
+*  Gold Coin
+*/
+
+GoldCoin::GoldCoin()
+{
+}
+
+GoldCoin::GoldCoin(Graphics & graphics, Vector2 spawnPoint) :
+	Items(graphics, "loot.png", 1, 1, 16, 16, spawnPoint, 140),
+	amountGain(100)
+{
+	graphics.loadImage("loot.png"); //loads sprite sheet in
+	this->setupAnimations();
+	this->playAnimation("Rotate");
+	std::cout << "Gold coin class creation" << std::endl;
+}
+
+void GoldCoin::update(int elapsedTime, Player & player)
+{
+	this->playAnimation("Rotate");
+	this->_y += 0.4;
+	Items::update(elapsedTime, player);
+}
+
+void GoldCoin::draw(Graphics & graphics)
+{
+	//Items::draw(graphics);
+	Items::drawLoot(graphics, this->_x, this->_y);
+}
+
+void GoldCoin::animationDone(std::string currentAnimation)
+{
+}
+
+void GoldCoin::setupAnimations()
+{
+	this->addAnimation(4, 1, 1, "Rotate", 16, 16, Vector2(0, 0));
+}

@@ -480,7 +480,7 @@ void Game::drawGameOver(Graphics &graphics) {
 void Game::draw(Graphics &graphics) {
 	graphics.clear(); //clear any drawings MUST do
 
-	this->_level.draw(graphics); //need to draw level before player (below) so player is on top of level and not behind it!
+	this->_level.draw(graphics, this->_player); //need to draw level before player (below) so player is on top of level and not behind it!
 	this->_player.draw(graphics); //what and where to draw
 	this->_bullet.draw(graphics, this->_player);
 	this->_bullet.drawUp(graphics, this->_player);
@@ -668,7 +668,6 @@ int Game::loadGame(Graphics & graphics)
 		objName = objPtr;
 		result = ptrVec->QueryBoolAttribute("completed", &completed);
 		result = ptrVec->QueryBoolAttribute("rewarded", &rewarded);
-		std::cout << "pushing to qVec" << std::endl;
 		qVec.push_back(std::make_tuple(qName, type, objName, amount, completed, rewarded));
 		ptrVec = ptrVec->NextSiblingElement("Quests");
 	}
@@ -698,8 +697,6 @@ int Game::loadGame(Graphics & graphics)
 		result = ptrVec->QueryIntAttribute("amount", &amount);
 		getText = ptrVec->Attribute("Name");
 		name = getText;
-		std::cout << "amount = " << amount << " name = " << name << std::endl;
-		std::cout << "pushing kill table" << std::endl;
 		kVec.push_back(std::make_pair(name, amount));
 		ptrVec = ptrVec->NextSiblingElement("kTable");
 	}
@@ -782,6 +779,8 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory);
 	}
 
+	std::vector<Items*> otherItems;
+	//if ((otherItems = this->_level.checkItemFloorCollisions(this->_level.)))
 	/*
 	* TODO: Fix HP loss and find other usages in the future (currently handling in enemy class)
 	*/
@@ -795,7 +794,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	if ((projectileHit = this->_level.checkEnemyCollisions(this->_bullet.getProjectileBBox())).size() > 0) {
 		this->_bullet.handleProjectileCollisions(projectileHit, graphics);
 	}
-	this->_level.checkEnemyHP(this->_player);
+	this->_level.checkEnemyHP(this->_player, this->_graphics);
 
 	if (pickUp == true) {
 		std::vector<Items*> itemPickUp;

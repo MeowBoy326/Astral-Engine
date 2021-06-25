@@ -244,6 +244,20 @@ void AnimatedSprite::drawBullet(Graphics &graphics, int x, int y) {
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 }
+void AnimatedSprite::drawLoot(Graphics & graphics, int x, int y)
+{
+	if (this->_visible) { //only draw when visible
+		SDL_Rect destinationRectangle; //temp where we draw on screen
+		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
+		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
+		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
+		destinationRectangle.w = this->_sourceRect.w * 1.2;
+		destinationRectangle.h = this->_sourceRect.h * 1.2;
+
+		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
+		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
+	}
+}
 /*
 void AnimatedSprite::updateBullet(int elapsedTime) { //timer checks when to go to next frame in animation
 	Sprite::updateBullet(); //since we extend we can call like this

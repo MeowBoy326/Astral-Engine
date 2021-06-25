@@ -68,7 +68,7 @@ public:
 	inline void setMaxHealth(float hp) { this->_maxHealth = hp; }
 	inline void setCurrentHealth(float hp) { this->_currentHealth = hp; }
 
-	//Exp & Level handling
+	//Exp, Level, & currency handling
 	void gainExp(float exp);
 	float getCurrentExp();
 	void setCurrentExp(float exp);
@@ -79,13 +79,14 @@ public:
 	int getSoulLevel();
 	void setSoulLevel(int num);
 	void addSoulLevel(int num);
-
-	//void gainHealth(float amount);
 	void addKillCount(int num);
 	void setKillCount(int num);
 	int getKillCount();
 	int getRequiredKills();
 	int killCount = 0;
+	void gainCurrency(int num);
+	int getCurrency() { return this->currency; }
+	void setCurrency(int num) { this->currency = num; }
 
 	//Stat menu
 	void statChoice(int selection);
@@ -119,6 +120,7 @@ private:
 	int _soulLevel = 0;
 	int _requiredKill;
 	int mPosX, mPosY;
+	int currency = 0;
 
 	double _soulStrength = 1;
 	double _defense = 1.05;

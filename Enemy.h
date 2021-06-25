@@ -7,6 +7,8 @@
 #include <string>
 
 class Graphics;
+class Items;
+class GoldCoin;
 
 class Enemy : public AnimatedSprite {
 public:
@@ -23,7 +25,9 @@ public:
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
 	virtual bool isRemoveable();
 	virtual void setRemoveable();
-
+	virtual void dropLoot(Player &player);
+	const inline bool getLootState() const { return this->canDropLoot; }
+	inline void setLootState(bool condition) { this->canDropLoot = condition; }
 	virtual void bulletHit(float dmg);
 	virtual std::string getName();
 
@@ -36,6 +40,7 @@ protected:
 	int _currentHealth;
 	std::string name;
 	bool deathCreated = false;
+	bool canDropLoot = false;
 };
 
 class Bat : public Enemy {
@@ -49,7 +54,7 @@ public:
 	void playDeath();
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
-	void dropLoot();
+	void dropLoot(Player &player);
 	void playAttack();
 
 	void bulletHit(float dmg);
@@ -80,6 +85,7 @@ protected:
 	int _currentHealth;
 	std::string name = "bat";
 	bool deathCreated = false;
+	bool canDropLoot = false;
 };
 
 class Shade : public Enemy {
@@ -93,7 +99,7 @@ public:
 	void playDeath();
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
-	void dropLoot();
+	void dropLoot(Player &player);
 	void playAttack();
 
 	void bulletHit(float dmg);
@@ -123,4 +129,5 @@ protected:
 	int _currentHealth;
 	std::string name = "shade";
 	bool deathCreated = false;
+	bool canDropLoot = false;
 };

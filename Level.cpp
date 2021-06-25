@@ -431,11 +431,13 @@ void Level::update(int elapsedTime, Player &player) {
 	}
 	for (int i = 0; i < this->_items.size(); i++) {
 		this->_items.at(i)->update(elapsedTime, player);
+		if (this->_items.at(i)->isDroppedItem())
+			this->checkItemFloorCollisions(this->_items.at(i));
 	}
 
 }
 
-void Level::draw(Graphics &graphics) {
+void Level::draw(Graphics &graphics, Player &player) {
 	for (int i = 0; i < this->_tileList.size(); i++) {
 		this->_tileList.at(i).draw(graphics); //loop thru all tiles and draw them
 	}
@@ -444,6 +446,14 @@ void Level::draw(Graphics &graphics) {
 	}
 	for (int i = 0; i < this->_enemies.size(); i++) {
 		this->_enemies.at(i)->draw(graphics);
+		//if (this->_enemies.at(i)->dropLoot() )
+		//if (this->_enemies.at(i)->getLootState()) {
+		//	//this->_enemies.at(i)->dropLoot(player);
+		//	std::cout << "created gold coin " << std::endl;
+		//	this->_items.push_back(new GoldCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()) * globals::SPRITE_SCALE,
+		//		std::floor(this->_enemies.at(i)->getY()) * globals::SPRITE_SCALE)));
+		//	this->_enemies.at(i)->setLootState(false);
+		//}
 	}
 	for (int i = 0; i < this->_npcs.size(); i++) {
 		this->_npcs.at(i)->draw(graphics);
@@ -474,6 +484,15 @@ void Level::draw(Graphics &graphics) {
 		}
 	}
 	*/
+}
+
+void Level::checkItemFloorCollisions(Items* obj)
+{
+	for (int i = 0; i < this->_collisionRects.size(); i++) {
+		if (this->_collisionRects.at(i).collidesWith(obj->getBoundingBox())) {
+			obj->addY(-0.8);
+		}
+	}
 }
 
 std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { //Goes through all tiles and checks if they are colliding with other rectangle 
@@ -509,11 +528,14 @@ std::vector<Door> Level::checkDoorCollisions(const Rectangle &other) {
 	return others;
 }
 
-void Level::checkEnemyHP(Player & player) {
+void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 	for (int i = 0; i < this->_enemies.size(); i++) {
 		if (this->_enemies.at(i)->getCurrentHealth() <= 0) {
 			if (this->_enemies.at(i)->isRemoveable() == true) {
 				this->_enemies.at(i)->setRemoveable();
+				this->_items.push_back(new GoldCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
+					std::floor(this->_enemies.at(i)->getY()))));
+				this->itemType.push_back(2);
 				player.gainExp(this->_enemies.at(i)->enemyExpAmount());
 				player.addKillCount(1);
 				player.addKillTable(this->_enemies.at(i)->getName());
@@ -584,6 +606,8 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 			std::cout << "type = " << type << std::endl;
 			if (type == 1) //Permanent HP+1 item
 				player.gainMaxHealth(5);
+			else if (type == 2)
+				player.gainCurrency(this->_items.at(i)->getAmount());
 			else
 				invent.storeItem(type);
 			invent.addInstancedLoot(this->_mapName, type);
