@@ -651,22 +651,6 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("iTable");
 	}
 	this->_inventory.setInventoryTable(iVec);
-	//Load KillTable
-	element = root->FirstChildElement("KillTable");
-	ptrVec = element->FirstChildElement("kTable");
-	std::vector<std::pair<std::string, int>> kVec;
-	while (ptrVec != nullptr) {
-		int amount; std::string name; const char * getText = nullptr;
-		result = ptrVec->QueryIntAttribute("amount", &amount);
-		getText = ptrVec->Attribute("Name");
-		name = getText;
-		std::cout << "amount = " << amount << " name = " << name << std::endl;
-		std::cout << "pushing kill table" << std::endl;
-		this->_player.addMultiKill(name, amount);
-		//kVec.push_back(std::make_pair(name, amount));
-		ptrVec = ptrVec->NextSiblingElement("kTable");
-	}
-	//this->_player.setKillTable(kVec);
 	//Load QuestLog
 	element = root->FirstChildElement("QuestLog");
 	ptrVec = element->FirstChildElement("Quest");
@@ -705,7 +689,21 @@ int Game::loadGame(Graphics & graphics)
 	spawn = Vector2((int)std::ceil(x), (int)std::ceil(y));
 	//spawn = this->_level.getPlayerSpawnPoint();
 	this->_player = Player(graphics, spawn);
-
+	//Load KillTable
+	element = root->FirstChildElement("KillTable");
+	ptrVec = element->FirstChildElement("kTable");
+	std::vector<std::pair<std::string, int>> kVec;
+	while (ptrVec != nullptr) {
+		int amount; std::string name; const char * getText = nullptr;
+		result = ptrVec->QueryIntAttribute("amount", &amount);
+		getText = ptrVec->Attribute("Name");
+		name = getText;
+		std::cout << "amount = " << amount << " name = " << name << std::endl;
+		std::cout << "pushing kill table" << std::endl;
+		kVec.push_back(std::make_pair(name, amount));
+		ptrVec = ptrVec->NextSiblingElement("kTable");
+	}
+	this->_player.setKillTable(kVec);
 	//Load stats
 	element = root->FirstChildElement("Stats");
 	if (element == nullptr)
