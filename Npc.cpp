@@ -221,6 +221,10 @@ void Npc::acceptQuest(Graphics & graphics, std::string npcName, int posX, int po
 	bool isCompleted;
 	if (questLog.empty() && questTable.empty())
 		return;
+	if (selection >= this->questTable.size()) { //If player tries to select and empty quest index
+		std::cout << "Cannot find specified index..." << std::endl;
+		return;
+	}	
 	std::string text = std::get<0>(this->questTable[selection]);
 	this->storedQuestName = text;
 	if (!questLog.empty() && !questTable.empty()) {
