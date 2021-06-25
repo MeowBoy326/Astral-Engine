@@ -112,20 +112,20 @@ void PermHP::setupAnimations() {
 Key::Key() {};
 
 Key::Key(Graphics &graphics, Vector2 spawnPoint) :
-	Items(graphics, "NpcSym.png", 288, 1, 14, 15, spawnPoint, 140)
+	Items(graphics, "NpcSym.png", 194, 4, 16, 16, spawnPoint, 140)
 {
 	graphics.loadImage("NpcSym.png"); //loads sprite sheet in
-	//this->addToInventory();
 	this->setupAnimations();
 	this->playAnimation("Blink");
 }
 
 void Key::draw(Graphics &graphics) {
-
+	Items::draw(graphics);
 }
 
 void Key::update(int elapsedTime, Player & player) {
-
+	this->playAnimation("Blink");
+	Items::update(elapsedTime, player);
 }
 
 void Key::animationDone(std::string currentAnimation) {
@@ -133,7 +133,8 @@ void Key::animationDone(std::string currentAnimation) {
 }
 
 void Key::setupAnimations() {
-
+	this->addSpecialAnimation(2, 194, 1, "Blink", 15, 14, Vector2(0, 0));
+	//special animation for large X-value frames
 }
 
 /*
@@ -151,7 +152,6 @@ GoldCoin::GoldCoin(Graphics & graphics, Vector2 spawnPoint) :
 	graphics.loadImage("loot.png"); //loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
-	std::cout << "Gold coin class creation" << std::endl;
 }
 
 void GoldCoin::update(int elapsedTime, Player & player)

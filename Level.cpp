@@ -323,6 +323,13 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 											Door door = Door(rect, ss2.str());
 											this->_doorList.push_back(door);
 										}
+										else if (ss.str() == "lockedDoor") {
+											const char* value = pProperty->Attribute("value");
+											std::stringstream ss2;
+											ss2 << value;
+											Door lDoor = Door(rect, ss2.str());
+											this->_lockDoor.push_back(lDoor);
+										}
 										pProperty = pProperty->NextSiblingElement("property");
 									}
 								}
@@ -398,7 +405,6 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									std::floor(y) * globals::SPRITE_SCALE)));
 								this->itemType.push_back(0);
 								std::cout << "Item HP added!" << std::endl;
-								std::cout << x << ", " << y << std::endl;
 							}
 						}
 						else if (ss.str() == "permHP") {
@@ -406,6 +412,13 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
 								this->itemType.push_back(1);
 								std::cout << "permHP added!" << std::endl;
+							}
+						}
+						else if (ss.str() == "key") {
+							if (!invent.isLooted(mapName, 3)) {
+								this->_items.push_back(new Key(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
+								this->itemType.push_back(3);
+								std::cout << "Key item added to map" << std::endl;
 							}
 						}
 
@@ -446,14 +459,6 @@ void Level::draw(Graphics &graphics, Player &player) {
 	}
 	for (int i = 0; i < this->_enemies.size(); i++) {
 		this->_enemies.at(i)->draw(graphics);
-		//if (this->_enemies.at(i)->dropLoot() )
-		//if (this->_enemies.at(i)->getLootState()) {
-		//	//this->_enemies.at(i)->dropLoot(player);
-		//	std::cout << "created gold coin " << std::endl;
-		//	this->_items.push_back(new GoldCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()) * globals::SPRITE_SCALE,
-		//		std::floor(this->_enemies.at(i)->getY()) * globals::SPRITE_SCALE)));
-		//	this->_enemies.at(i)->setLootState(false);
-		//}
 	}
 	for (int i = 0; i < this->_npcs.size(); i++) {
 		this->_npcs.at(i)->draw(graphics);
@@ -523,6 +528,17 @@ std::vector<Door> Level::checkDoorCollisions(const Rectangle &other) {
 	for (int i = 0; i < this->_doorList.size(); i++) {
 		if (this->_doorList.at(i).collidesWith(other)) {
 			others.push_back(this->_doorList.at(i));
+		}
+	}
+	return others;
+}
+
+std::vector<Door> Level::checkLockedDoorCollisions(const Rectangle & other)
+{
+	std::vector<Door> others;
+	for (int i = 0; i < this->_lockDoor.size(); i++) {
+		if (this->_lockDoor.at(i).collidesWith(other)) {
+			others.push_back(this->_lockDoor.at(i));
 		}
 	}
 	return others;

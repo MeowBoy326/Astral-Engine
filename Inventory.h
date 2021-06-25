@@ -37,6 +37,7 @@ public:
 	inline void setInventoryTable(std::vector<std::pair<int, int>> table) { this->inventoryTable = table; }
 	bool isLooted(std::string map, int iType);
 	void storeItem(int type);
+	bool hasKeyStored();
 	
 	~Inventory();
 
@@ -46,6 +47,7 @@ private:
 	//Health Sprites
 	Sprite _iMenu;
 	Sprite _hpPot;
+	Sprite _key;
 
 	int hpToGain;
 	std::vector<std::pair<int, int>> inventoryTable;

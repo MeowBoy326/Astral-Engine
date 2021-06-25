@@ -312,6 +312,21 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 	}
 }
 
+void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level, Graphics & graphics, Inventory & invent)
+{
+	//Check if the player is grounded and holding the down arrow
+	//Also check to see if the player has a "Key"
+	for (int i = 0; i < others.size(); i++) {
+		if (this->_grounded == true && this->_lookingDown == true && invent.hasKeyStored() == true) {
+			level = Level(others.at(i).getDestination(), graphics, invent);
+			player_constants::mapName = others.at(i).getDestination();
+			this->_x = level.getPlayerSpawnPoint().x;
+			this->_y = level.getPlayerSpawnPoint().y;
+			player_constants::showMapName = true;
+		}
+	}
+}
+
 void Player::handleEnemyCollisions(std::vector<Enemy*> &others) {
 	for (int i = 0; i < others.size(); i++) {
 		if (others.at(i)->getCurrentHealth() > 0) {

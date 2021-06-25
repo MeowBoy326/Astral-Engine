@@ -32,6 +32,21 @@ void AnimatedSprite::addAnimation(int frames, int x, int y, std::string name, in
 	this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
 }
 
+void AnimatedSprite::addSpecialAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset)
+{
+	std::vector<SDL_Rect> rectangles; //temp hold onto each of our new rectangle that will be put in our map
+	int nWidth = width;
+	for (int i = 0; i < frames; i++) {
+		SDL_Rect newRect = { (nWidth + x), y, width, height };
+		nWidth += width;
+		rectangles.push_back(newRect);
+	}
+	this->_animation.insert(std::pair<std::string, std::vector<SDL_Rect> >(name, rectangles));
+	this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
+}
+
+
+
 void AnimatedSprite::addScript(int frames, int x, int y, std::string name, int width, int height, Vector2 offset) {
 	std::vector<SDL_Rect> rectangles; //temp hold onto each of our new rectangle that will be put in our map
 	for (int i = 0; i < frames; i++) {

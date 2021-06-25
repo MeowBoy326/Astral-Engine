@@ -36,6 +36,7 @@ public:
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
 	std::vector<Door> checkDoorCollisions(const Rectangle &other);
+	std::vector<Door> checkLockedDoorCollisions(const Rectangle &other);
 	std::vector<Enemy*> checkEnemyCollisions(const Rectangle &other);
 	std::vector<Enemy*> checkBulletCollisions(const Rectangle & other);
 	std::vector<Npc*> checkNpcCollisions(const Rectangle & other, Graphics &graphics);
@@ -64,6 +65,7 @@ private:
 	std::vector<Rectangle> _collisionRects; 
 	std::vector<Slope> _slopes; //list of slopes
 	std::vector<Door> _doorList;
+	std::vector<Door> _lockDoor;
 	std::vector<Enemy*> _enemies; //polymorphism to call the update and draw for the bat and not Enemy's functions, so needs to be a pointer for poly to work
 	std::vector<Npc*> _npcs;
 	std::vector<Items*> _items;

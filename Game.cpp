@@ -782,6 +782,11 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory);
 	}
 
+	std::vector<Door> lockedDoors;
+	if ((lockedDoors = this->_level.checkLockedDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
+		this->_player.handleLockedDoorCollision(lockedDoors, this->_level, this->_graphics, this->_inventory);
+	}
+
 	std::vector<Items*> otherItems;
 	//if ((otherItems = this->_level.checkItemFloorCollisions(this->_level.)))
 	/*

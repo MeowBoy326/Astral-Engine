@@ -94,7 +94,7 @@ public:
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
 private:
-	std::string keyName;
+	std::string keyName = "key";
 	int currencyAmount = 0;
 	bool wasDropped = false;
 };

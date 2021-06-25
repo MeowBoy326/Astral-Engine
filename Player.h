@@ -46,6 +46,7 @@ public:
 	void handleTileCollisions(std::vector<Rectangle> &others);
 	void handleSlopeCollisions(std::vector<Slope> &others);
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent);
+	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
 	void handleNpcCollisions(std::vector<Npc*>& others, Graphics &graphics, int lineCount);
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
