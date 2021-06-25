@@ -57,10 +57,13 @@ public:
 	inline void setQuestDone(bool condition) { this->questDone = condition; }
 	inline bool const checkNoQuests() { return this->noQuest; }
 	inline void setNoQuest(bool condition) { this->noQuest = condition; }
+	inline const std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> getQuestLog() const { return this->questLog; }
+	inline void setQuestLog(std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> table) { this->questLog = table; }
 protected:
 	Direction _direction;
-	//std::vector<std::vector<std::pair<std::string, int>>> questTable;
+	//questName, type, object, amount, description, npcName
 	std::vector<std::tuple<std::string, int, std::string, int, std::string, std::string>> questTable;
+	//questName, type, object, amount, isCompleted, isRewarded
 	std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> questLog;
 
 	int _maxHealth;

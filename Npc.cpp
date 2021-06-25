@@ -155,7 +155,8 @@ int Npc::loadQuests(std::string name)
 		descPtr = ptrElement->Attribute("description");
 		objPtr = ptrElement->Attribute("object");
 		std::string text = textPtr, descText = descPtr, objText = objPtr;
-		auto logIt = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+		bool completed = true;
+		auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
 		//push to vector
 		if (this->questTable.empty() && logIt == questLog.end()) { //check if its not in the accepted quests already
 			std::cout << "table empty...adding quest" << std::endl;
@@ -174,6 +175,12 @@ int Npc::loadQuests(std::string name)
 		}
 		if (ptrElement->NextSiblingElement("Quest") != nullptr)
 			ptrElement = ptrElement->NextSiblingElement("Quest");
+	}
+	for (auto &t : this->questLog) {
+		if (std::get<5>(t) == true && std::get<4>(t) == false) {
+			std::get<4>(t) = true;
+			//once rewarded and player opens menu again, mark as completed.
+		}
 	}
 }
 

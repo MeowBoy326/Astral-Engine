@@ -47,13 +47,15 @@ public:
 	void handleSlopeCollisions(std::vector<Slope> &others);
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
-	void handleItemCollisions(std::vector<std::string*>& others);
 	void handleNpcCollisions(std::vector<Npc*>& others, Graphics &graphics, int lineCount);
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
 	const float getX() const;
 	const float getY() const; //getting variables not changes const make sure it doesnt
 	std::string enemyName;
 	void addKillTable(std::string name);
+	void addMultiKill(std::string name, int amount);
+	inline const std::vector<std::pair<std::string, int>> getKillTable() const { return this->killTable; }
+	inline void setKillTable(std::vector<std::pair<std::string, int>> table) { this->killTable = table; }
 	bool checkKillQuestComplete(std::string name, int count);
 
 	//Health handling

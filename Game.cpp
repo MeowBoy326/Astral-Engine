@@ -586,7 +586,34 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
-
+	element = xml.NewElement("QuestLog");
+	if (element == nullptr)
+		return XML_ERROR_PARSING_ELEMENT;
+	std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> qVec = this->_npc.getQuestLog();
+	for (int counter = 0; counter < qVec.size(); ++counter) {
+		XMLElement* qElement = xml.NewElement("Quest");
+		qElement->SetAttribute("questName", std::get<0>(qVec[counter]).c_str());
+		qElement->SetAttribute("type", std::get<1>(qVec[counter]));
+		qElement->SetAttribute("object", std::get<2>(qVec[counter]).c_str());
+		qElement->SetAttribute("amount", std::get<3>(qVec[counter]));
+		qElement->SetAttribute("completed", std::get<4>(qVec[counter]));
+		qElement->SetAttribute("rewarded", std::get<5>(qVec[counter]));
+		element->InsertEndChild(qElement);
+	}
+	root->InsertEndChild(element);
+	element = xml.NewElement("KillTable");
+	if (element == nullptr)
+		return XML_ERROR_PARSING_ELEMENT;
+	std::vector<std::pair<std::string, int>> kVec = this->_player.getKillTable();
+	for (auto iter = kVec.begin(); iter != kVec.end(); iter++) {
+		auto first = iter->first;
+		auto second = iter->second;
+		XMLElement* ptrElement = xml.NewElement("kTable");
+		ptrElement->SetAttribute("amount", second);
+		ptrElement->SetAttribute("Name", first.c_str());
+		element->InsertEndChild(ptrElement);
+	}
+	root->InsertEndChild(element);
 	XMLError result = xml.SaveFile("SF-LOC.xml");
 	XMLCheckResult(result);
 }
@@ -624,6 +651,44 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("iTable");
 	}
 	this->_inventory.setInventoryTable(iVec);
+	//Load KillTable
+	element = root->FirstChildElement("KillTable");
+	ptrVec = element->FirstChildElement("kTable");
+	std::vector<std::pair<std::string, int>> kVec;
+	while (ptrVec != nullptr) {
+		int amount; std::string name; const char * getText = nullptr;
+		result = ptrVec->QueryIntAttribute("amount", &amount);
+		getText = ptrVec->Attribute("Name");
+		name = getText;
+		std::cout << "amount = " << amount << " name = " << name << std::endl;
+		std::cout << "pushing kill table" << std::endl;
+		this->_player.addMultiKill(name, amount);
+		//kVec.push_back(std::make_pair(name, amount));
+		ptrVec = ptrVec->NextSiblingElement("kTable");
+	}
+	//this->_player.setKillTable(kVec);
+	//Load QuestLog
+	element = root->FirstChildElement("QuestLog");
+	ptrVec = element->FirstChildElement("Quest");
+	std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> qVec;
+	while (ptrVec != nullptr) {
+		int amount, type;
+		const char* textPtr = nullptr, *objPtr = nullptr;
+		std::string qName, objName;
+		bool completed, rewarded;
+		result = ptrVec->QueryIntAttribute("type", &type);
+		result = ptrVec->QueryIntAttribute("amount", &amount);
+		textPtr = ptrVec->Attribute("questName");
+		qName = textPtr;
+		objPtr = ptrVec->Attribute("object");
+		objName = objPtr;
+		result = ptrVec->QueryBoolAttribute("completed", &completed);
+		result = ptrVec->QueryBoolAttribute("rewarded", &rewarded);
+		std::cout << "pushing to qVec" << std::endl;
+		qVec.push_back(std::make_tuple(qName, type, objName, amount, completed, rewarded));
+		ptrVec = ptrVec->NextSiblingElement("Quests");
+	}
+	this->_npc.setQuestLog(qVec);
 	//Load Map
 	element = root->FirstChildElement("Spawn");
 	if (element == nullptr)
