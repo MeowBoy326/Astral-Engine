@@ -562,6 +562,7 @@ int Game::saveGame(Graphics & graphics)
 	element->SetAttribute("SoulStr", this->_player.getSoulStr());
 	element->SetAttribute("SoulLevel", this->_player.getSoulLevel());
 	element->SetAttribute("KillCount", this->_player.getKillCount());
+	element->SetAttribute("Celestial", this->_player.getCurrency());
 	root->InsertEndChild(element);
 	//Save loot table
 	element = xml.NewElement("Loot");
@@ -726,6 +727,8 @@ int Game::loadGame(Graphics & graphics)
 	this->_player.setSoulLevel(iValue);
 	result = element->QueryIntAttribute("KillCount", &iValue);
 	this->_player.setKillCount(iValue);
+	result = element->QueryIntAttribute("Celestial", &iValue);
+	this->_player.setCurrency(iValue);
 
 	XMLCheckResult(result);
 }

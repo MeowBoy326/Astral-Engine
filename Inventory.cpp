@@ -54,6 +54,8 @@ void Inventory::useItem(int type, Player &player) {
 void Inventory::draw(Graphics & graphics, Player & player)
 {
 	this->_iMenu.drawiMenu(graphics, player.getX()-130, player.getY() - 130);
+	std::string cels = "Celestials:"+std::to_string(player.getCurrency());
+	this->drawCurrency(graphics, player.getX() - 100, player.getY() + 125, cels);
 	for (int index = 0; index < this->inventoryTable.size(); ++index) {
 		if (this->inventoryTable[index].second == 0) {
 			this->_hpPot.draw(graphics, player.getX() - 120, player.getY() - 110);

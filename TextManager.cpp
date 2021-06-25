@@ -346,3 +346,24 @@ void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::
 	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }
+
+void TextManager::drawCurrency(Graphics & graphics, int x, int y, const std::string & str, SDL_Color color)
+{
+	//TTF_Init();
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(2);
+	}
+
+	SDL_Surface *surface;
+	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 18);
+	surface = TTF_RenderText_Solid(iFont, str.c_str(), color);
+	SDL_Rect destinationRectangle = { x, y, surface->w, surface->h }; //where on screen we will be drawing
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+	//graphics.blitSurface(tex, NULL, &dest);
+
+	graphics.blitSurface(tex, NULL, &destinationRectangle);
+	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	TTF_CloseFont(iFont);
+	SDL_DestroyTexture(tex);
+}
