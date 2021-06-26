@@ -14,8 +14,15 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <random>
 
 using namespace tinyxml2; //all tinyxml2 is in a namespace because we will use so many features dont wanna write tinyxml:: all the time :D
+
+template<typename T> Items * createInstance(Graphics& graphics, Vector2 spawnPoint) { return new T(graphics, spawnPoint); }
+
+typedef std::map<std::string, Items* (*)(Graphics&, Vector2)> map_type;
+
+map_type classMap;
 
 Level::Level() {}
 
@@ -27,8 +34,14 @@ Level::Level(std::string mapName, Graphics &graphics, Inventory &invent) :
 }
 
 Level::~Level() {
-	/*for (auto ptr : this->_enemies)
-		delete ptr;*/
+	std::cout << "Level Destructor called" << std::endl;
+	for (auto& ptr : this->_enemies) {
+		std::cout << "enemies ptr = " << ptr->getName();
+	}
+	//if (!this->_enemies.empty()) {
+	//	for (auto& ptr : this->_enemies)
+	//		delete ptr;
+	//}
 }
 
 void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) {
@@ -352,12 +365,20 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						std::stringstream ss;
 						ss << name;
 						if (ss.str() == "bat") {
-							/*Bat* batObj = new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE));
-							this->_enemies.push_back(batObj);
-							delete batObj;*/
 							this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE)));
+							if (!mobDropList.empty()) {
+								std::string mob = "bat";
+								auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return std::get<1>(t) == mob; });
+								if (it == mobDropList.end()) {
+									classMap["bat"] = &createInstance<SilverGem>;
+									this->mobDropList.push_back(std::make_tuple(new SilverGem(graphics, Vector2(std::floor(x), std::floor(y))), "bat", 30));
+								}
+							}
+							else {
+								classMap["bat"] = &createInstance<SilverGem>;
+								this->mobDropList.push_back(std::make_tuple(new SilverGem(graphics, Vector2(std::floor(x), std::floor(y))), "bat", 30));
+							}
 						}
 						else if (ss.str() == "shade") {
 							this->_enemies.push_back(new Shade(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
@@ -545,18 +566,44 @@ std::vector<Door> Level::checkLockedDoorCollisions(const Rectangle & other)
 }
 
 void Level::checkEnemyHP(Player & player, Graphics &graphics) {
-	for (int i = 0; i < this->_enemies.size(); i++) {
-		if (this->_enemies.at(i)->getCurrentHealth() <= 0) {
-			if (this->_enemies.at(i)->isRemoveable() == true) {
-				this->_enemies.at(i)->setRemoveable();
-				this->_items.push_back(new GoldCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
-					std::floor(this->_enemies.at(i)->getY()))));
-				this->itemType.push_back(2);
-				player.gainExp(this->_enemies.at(i)->enemyExpAmount());
-				player.addKillCount(1);
-				player.addKillTable(this->_enemies.at(i)->getName());
-				std::cout << this->_enemies.at(i)->getName() << " has been slain" << std::endl;
-				this->_enemies.erase(this->_enemies.begin() + i);
+	if (!this->_enemies.empty()) {
+		for (int i = 0; i < this->_enemies.size(); i++) {
+			if (this->_enemies.at(i)->getCurrentHealth() <= 0) {
+				if (this->_enemies.at(i)->isRemoveable() == true) {
+					bool dropRate = (rand() % 2) != 0; //50% chance
+					this->_enemies.at(i)->setRemoveable();
+					if (this->_enemies.at(i)->getCoinDropType() == "bronze") {
+						if (dropRate) {
+							this->_items.push_back(new BronzeCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
+								std::floor(this->_enemies.at(i)->getY()))));
+							this->itemType.push_back(2);
+						}
+					}
+					else if (this->_enemies.at(i)->getCoinDropType() == "red") {
+						this->_items.push_back(new RedCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
+							std::floor(this->_enemies.at(i)->getY()))));
+						this->itemType.push_back(2);
+					}
+					std::string mob = this->_enemies.at(i)->getName();
+					auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return std::get<1>(t) == mob; });
+					auto distance = std::distance(this->mobDropList.begin(), it);
+					if (it != mobDropList.end()) {
+						std::random_device rd;  //Seed for the random number
+						std::mt19937 gen(rd()); //Mersenne_twister_engine with rd seed
+						std::uniform_int_distribution<> distrib(1, 100);
+						if (distrib(gen) <= std::get<2>(mobDropList[distance])) {
+							Items *b = classMap[mob](graphics, Vector2(std::floor(this->_enemies.at(i)->getX()), std::floor(this->_enemies.at(i)->getY())));
+							this->_items.push_back(b);
+							this->itemType.push_back(4);
+						}
+
+					}
+					player.gainExp(this->_enemies.at(i)->enemyExpAmount());
+					player.addKillCount(1);
+					player.addKillTable(this->_enemies.at(i)->getName());
+					delete this->_enemies.at(i);
+					this->_enemies.erase(this->_enemies.begin() + i);
+				}
 			}
 		}
 	}
@@ -628,7 +675,8 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 				invent.storeItem(type);
 			invent.addInstancedLoot(this->_mapName, type);
 			others.push_back(this->_items.at(i));
-			_items.erase(_items.begin() + i);
+			delete this->_items.at(i);
+			this->_items.erase(_items.begin() + i);
 			itemType.erase(itemType.begin() + i);
 		}
 	}

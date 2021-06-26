@@ -28,6 +28,8 @@ public:
 	virtual void dropLoot(Player &player);
 	const inline bool getLootState() const { return this->canDropLoot; }
 	inline void setLootState(bool condition) { this->canDropLoot = condition; }
+	virtual const inline std::string getCoinDropType() { return this->coinType; }
+
 	virtual void bulletHit(float dmg);
 	virtual std::string getName();
 
@@ -39,6 +41,7 @@ protected:
 	int _maxHealth;
 	int _currentHealth;
 	std::string name;
+	std::string coinType;
 	bool deathCreated = false;
 	bool canDropLoot = false;
 };
@@ -60,6 +63,8 @@ public:
 	void bulletHit(float dmg);
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
+
+	const inline std::string getCoinDropType() { return this->coinType; }
 
 	bool isRemoveable();
 	void setRemoveable();
@@ -84,6 +89,7 @@ protected:
 	int _maxHealth;
 	int _currentHealth;
 	std::string name = "bat";
+	std::string coinType = "bronze";
 	bool deathCreated = false;
 	bool canDropLoot = false;
 };
@@ -105,6 +111,8 @@ public:
 	void bulletHit(float dmg);
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
+
+	const inline std::string getCoinDropType() { return this->coinType; }
 
 	bool isRemoveable();
 	void setRemoveable();
@@ -128,6 +136,7 @@ protected:
 	int _maxHealth;
 	int _currentHealth;
 	std::string name = "shade";
+	std::string coinType = "red";
 	bool deathCreated = false;
 	bool canDropLoot = false;
 };

@@ -70,6 +70,7 @@ private:
 	std::vector<Npc*> _npcs;
 	std::vector<Items*> _items;
 	std::vector<int> itemType;
+	std::vector<std::tuple<Items*, std::string, int>> mobDropList;
 
 	//Private loads a map only call level within level class
 	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); //wont need size or spawn because it will be parsed out of the xml within this function later

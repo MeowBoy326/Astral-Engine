@@ -24,6 +24,7 @@ public:
 	~Items();
 private:
 	std::vector<std::pair<std::string, int>> lootTable;
+	std::vector<std::pair<Items*, std::string>> mobDrops; 
 	bool wasDropped;
 	int currencyAmount;
 };
@@ -79,6 +80,57 @@ public:
 private:
 	int amountGain = 100;
 	int currencyAmount = 100;
+	bool wasDropped = true;
+};
+
+class RedCoin : public Items {
+public:
+	RedCoin();
+	RedCoin(Graphics &graphics, Vector2 spawnPoint);
+
+	void update(int elapsedTime, Player &player);
+	void draw(Graphics &graphics);
+	const inline bool isDroppedItem() { return this->wasDropped; }
+	void animationDone(std::string currentAnimation);
+	void setupAnimations();
+	const inline int getAmount() { return this->currencyAmount; }
+private:
+	int amountGain = 1000;
+	int currencyAmount = 1000;
+	bool wasDropped = true;
+};
+
+class BronzeCoin : public Items {
+public:
+	BronzeCoin();
+	BronzeCoin(Graphics &graphics, Vector2 spawnPoint);
+
+	void update(int elapsedTime, Player &player);
+	void draw(Graphics &graphics);
+	const inline bool isDroppedItem() { return this->wasDropped; }
+	void animationDone(std::string currentAnimation);
+	void setupAnimations();
+	const inline int getAmount() { return this->currencyAmount; }
+private:
+	int amountGain = 1;
+	int currencyAmount = 1;
+	bool wasDropped = true;
+};
+
+class SilverGem : public Items {
+public:
+	SilverGem();
+	SilverGem(Graphics &graphics, Vector2 spawnPoint);
+
+	void update(int elapsedTime, Player &player);
+	void draw(Graphics &graphics);
+	const inline bool isDroppedItem() { return this->wasDropped; }
+	void animationDone(std::string currentAnimation);
+	void setupAnimations();
+	const inline int getAmount() { return this->currencyAmount; }
+private:
+	int amountGain = 1;
+	int currencyAmount = 0;
 	bool wasDropped = true;
 };
 

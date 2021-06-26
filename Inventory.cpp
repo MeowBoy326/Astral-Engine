@@ -12,6 +12,7 @@ Inventory::Inventory(Graphics & graphics, Player & player)
 	this->_iMenu = Sprite(graphics, "TextBox.png", 0, 87, 40, 45, 35, 70); //x, y, width, height, screen pos x, screen pos y
 	this->_hpPot = Sprite(graphics, "NpcSym.png", 32, 83, 13, 11, 35, 70);
 	this->_key = Sprite(graphics, "NpcSym.png", 194, 4, 12, 10, 35, 70);
+	this->_silverGem = Sprite(graphics, "loot.png", 72, 50, 16, 16, 35, 70);
 }
 
 void Inventory::storeItem(int type)
@@ -92,6 +93,10 @@ void Inventory::draw(Graphics & graphics, Player & player)
 		else if (this->inventoryTable[index].second == 3) {
 			this->_key.draw(graphics, player.getX() - 90, player.getY() - 110);
 			this->drawQuantity(graphics, player.getX() - 80, player.getY() - 100, this->inventoryTable[index].first);
+		}
+		else if (this->inventoryTable[index].second == 4) {
+			this->_silverGem.draw(graphics, player.getX() - 60, player.getY() - 110);
+			this->drawQuantity(graphics, player.getX() - 50, player.getY() - 100, this->inventoryTable[index].first);
 		}
 	}
 }

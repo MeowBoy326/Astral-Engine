@@ -48,6 +48,7 @@ private:
 	Sprite _iMenu;
 	Sprite _hpPot;
 	Sprite _key;
+	Sprite _silverGem;
 
 	int hpToGain;
 	std::vector<std::pair<int, int>> inventoryTable;

@@ -163,7 +163,6 @@ void GoldCoin::update(int elapsedTime, Player & player)
 
 void GoldCoin::draw(Graphics & graphics)
 {
-	//Items::draw(graphics);
 	Items::drawLoot(graphics, this->_x, this->_y);
 }
 
@@ -174,4 +173,114 @@ void GoldCoin::animationDone(std::string currentAnimation)
 void GoldCoin::setupAnimations()
 {
 	this->addAnimation(4, 1, 1, "Rotate", 16, 16, Vector2(0, 0));
+}
+
+/*
+*  Red Coin
+*/
+
+RedCoin::RedCoin()
+{
+}
+
+RedCoin::RedCoin(Graphics & graphics, Vector2 spawnPoint) :
+	Items(graphics, "loot.png", 1, 23, 16, 16, spawnPoint, 140),
+	amountGain(1000)
+{
+	graphics.loadImage("loot.png"); //loads sprite sheet in
+	this->setupAnimations();
+	this->playAnimation("Rotate");
+}
+
+void RedCoin::update(int elapsedTime, Player & player)
+{
+	this->playAnimation("Rotate");
+	this->_y += 0.4;
+	Items::update(elapsedTime, player);
+}
+
+void RedCoin::draw(Graphics & graphics)
+{
+	Items::drawLoot(graphics, this->_x, this->_y);
+}
+
+void RedCoin::animationDone(std::string currentAnimation)
+{
+}
+
+void RedCoin::setupAnimations()
+{
+	this->addAnimation(4, 1, 23, "Rotate", 16, 16, Vector2(0, 0));
+}
+
+/*
+*  Bronze Coin
+*/
+
+BronzeCoin::BronzeCoin()
+{
+}
+
+BronzeCoin::BronzeCoin(Graphics & graphics, Vector2 spawnPoint) :
+	Items(graphics, "loot.png", 96, 23, 16, 16, spawnPoint, 140),
+	amountGain(1)
+{
+	graphics.loadImage("loot.png"); //loads sprite sheet in
+	this->setupAnimations();
+	this->playAnimation("Rotate");
+}
+
+void BronzeCoin::update(int elapsedTime, Player & player)
+{
+	this->playAnimation("Rotate");
+	this->_y += 0.4;
+	Items::update(elapsedTime, player);
+}
+
+void BronzeCoin::draw(Graphics & graphics)
+{
+	Items::drawLoot(graphics, this->_x, this->_y);
+}
+
+void BronzeCoin::animationDone(std::string currentAnimation)
+{
+}
+
+void BronzeCoin::setupAnimations()
+{
+	this->addSpecialAnimation(4, 96, 23, "Rotate", 16, 16, Vector2(0, 0));
+}
+
+SilverGem::SilverGem()
+{
+}
+
+SilverGem::SilverGem(Graphics & graphics, Vector2 spawnPoint) :
+	Items(graphics, "loot.png", 72, 50, 16, 16, spawnPoint, 140),
+	amountGain(1)
+{
+	graphics.loadImage("loot.png"); //loads sprite sheet in
+	this->setupAnimations();
+	this->playAnimation("Rotate");
+}
+
+void SilverGem::update(int elapsedTime, Player & player)
+{
+	this->playAnimation("Rotate");
+	this->_y += 0.4;
+	Items::update(elapsedTime, player);
+}
+
+void SilverGem::draw(Graphics & graphics)
+{
+	Items::drawLoot(graphics, this->_x, this->_y);
+}
+
+void SilverGem::animationDone(std::string currentAnimation)
+{
+}
+
+void SilverGem::setupAnimations()
+{
+	this->addSpecialAnimation(4, 72, 50, "Rotate", 16, 16, Vector2(0, 0));
 }
