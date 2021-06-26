@@ -70,8 +70,8 @@ Bat::Bat(Graphics &graphics, Vector2 spawnPoint) :
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
-	_maxHealth(3),
-	_currentHealth(3)
+	_maxHealth(5),
+	_currentHealth(5)
 {
 	this->setupAnimations();
 	this->playAnimation("FlyLeft");
@@ -93,12 +93,12 @@ void Bat::update(int elapsedTime, Player &player) {
 			this->_shouldMoveUp = !this->_shouldMoveUp;
 		}
 		if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
-			player.gainHealth(-3.5);
+			player.gainHealth(-4.5);
 		}
 		if (_fireBall.getBoundingBox().collidesWith(player.getBoundingBox())) {
 			this->_fireBall.setX(this->_x);
 			this->_fireBall.setY(this->_y);
-			player.gainHealth(-7.5);
+			player.gainHealth(-8.5);
 		}
 		else if (_fireBall.getY() > this->_y + 160) {
 			this->_fireBall.setX(this->_x);
@@ -189,8 +189,8 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
-	_currentHealth(30),
-	_maxHealth(30)
+	_currentHealth(100),
+	_maxHealth(100)
 {
 	this->setupAnimations();
 	this->playAnimation("shadeRight");
@@ -212,12 +212,12 @@ void Shade::update(int elapsedTime, Player &player) {
 			this->_x -= 0.2;
 		}
 		if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
-			player.gainHealth(-10.64);
+			player.gainHealth(-12.64);
 		}
 		if (_shadeBall.getBoundingBox().collidesWith(player.getBoundingBox())) {
 			this->_shadeBall.setX(this->_x);
 			this->_shadeBall.setY(this->_y + 60);
-			player.gainHealth(-16.5);
+			player.gainHealth(-26.69);
 		}
 		else if (_shadeBall.getX() > this->_x + 200) {
 			this->_shadeBall.setX(this->_x);

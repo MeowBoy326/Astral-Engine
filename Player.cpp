@@ -23,8 +23,8 @@ namespace player_constants {
 	* Index 0 = the exp needed from lvl 0 (starting level) to level 1.
 	* So, to get to level 1 you need 20 exp. Level 2 needs 40 exp. With every new level exp is set to 0 
 	*/
-	std::vector<float> expTable = {20, 40, 60, 80, 100, 120, 140, 160, 180, 200};
-	std::vector<float> dmgTable = { 6, 20, 67, 150, 222, 437, 700, 1000 }; 
+	std::vector<float> expTable = {20, 150, 369, 715, 1000, 1420, 2840, 4160, 7180, 12420};
+	std::vector<float> dmgTable = { 40, 185, 420, 850, 1522, 2437, 4700, 6000 }; 
 	// same as above but with kills. this increased damage per kill needed
 }
 
@@ -408,7 +408,7 @@ void Player::gainMaxHealth(float amount) {
 void Player::gainExp(float exp) {
 	this->_exp += exp;
 	std::cout << "current exp = " << this->_exp << std::endl;
-	std::cout << "required exp for level " << this->getLevel() << " is:" << this->_requiredExp << std::endl;
+	std::cout << "required exp for level " << this->getLevel()+1 << " is:" << this->_requiredExp << std::endl;
 }
 
 float Player::getCurrentExp()
