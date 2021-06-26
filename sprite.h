@@ -27,6 +27,8 @@ public:
 	virtual void updateBoss(int y);
 	const Rectangle getProjectileBBox() const;
 	void draw(Graphics &graphics, int x, int y);
+	void drawHPBar(Graphics &graphics, int x, int y);
+	void drawLevelBar(Graphics &graphics, int x, int y);
 	void drawStatMenu(Graphics &graphics, int x, int y);
 	void drawStatSelection(Graphics &graphics, int x, int y);
 	void drawQuestSelection(Graphics &graphics, int x, int y);

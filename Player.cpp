@@ -369,7 +369,14 @@ std::string Player::getNpcName(std::vector<Npc*> &others, Graphics &graphics) {
 
 void Player::drawHPNumbers(Graphics & graphics)
 {
-	this->_txt->drawHPNumber(graphics, this->_x - 285, this->_y - 185, this->_currentHealth);
+	double percent = ((double)this->_currentHealth / (double)this->_maxHealth) * 100;
+	this->_txt->drawPercentNumber(graphics, this->_x - 245, this->_y - 215, percent);
+}
+
+void Player::drawExpNumbers(Graphics & graphics)
+{
+	double percent = ((double)this->getCurrentExp() / (double)this->getRequiredExp()) * 100;
+	this->_txt->drawPercentNumber(graphics, this->_x - 245, this->_y - 200, percent);
 }
 
 void Player::setIFrame(bool condition) {

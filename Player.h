@@ -70,6 +70,7 @@ public:
 	inline void setCurrentHealth(float hp) { this->_currentHealth = hp; }
 
 	//Exp, Level, & currency handling
+	void drawExpNumbers(Graphics &graphics);
 	void gainExp(float exp);
 	float getCurrentExp();
 	void setCurrentExp(float exp);

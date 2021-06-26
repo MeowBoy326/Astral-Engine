@@ -528,6 +528,7 @@ void Game::draw(Graphics &graphics) {
 		this->_player.drawStatMenu(graphics, this->_player, selection);
 		
 	this->_player.drawHPNumbers(graphics);
+	this->_player.drawExpNumbers(graphics);
 	this->_player.drawCurrentMapName(graphics);
 
 	graphics.flip(); //Render everything above

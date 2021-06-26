@@ -34,6 +34,7 @@ public:
 	void drawVersion(Graphics & graphics, int x, int y);
 	void drawDeveloper(Graphics & graphics, int x, int y);
 	void drawHPNumber(Graphics & graphics, int x, int y, float hp, SDL_Color color = { 255, 255, 255, 255 });
+	void drawPercentNumber(Graphics & graphics, int x, int y, double exp, SDL_Color color = { 255, 255, 255, 255 });
 	void drawNpcName(Graphics & graphics, int x, int y, const std::string &name, SDL_Color color = { 255, 255, 255, 255 });
 	void drawQuestText(Graphics & graphics, int x, int y, const std::string &name, SDL_Color color = { 255, 255, 255 ,255 });
 protected:

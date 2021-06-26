@@ -49,9 +49,6 @@ bool Inventory::hasKeyStored()
 					this->inventoryTable.erase(this->inventoryTable.begin() + index);
 					return true;
 				}
-				else {
-					return false;
-				}
 			}
 		}
 	}
@@ -65,7 +62,8 @@ void Inventory::update(int elapsedTime, Player & player)
 void Inventory::useItem(int type, Player &player) {
 	if (type == 0 && this->inventoryTable.size() > 0) {
 		for (int index = 0; index < this->inventoryTable.size(); ++index) {
-			if (this->inventoryTable[index].second == 0 && player.getCurrentHealth() < player.getMaxHealth()) {
+			if (this->inventoryTable[index].second == 0 && this->inventoryTable[index].first >=1 && 
+				player.getCurrentHealth() < player.getMaxHealth()) {
 				player.gainHealth(player.getMaxHealth() - player.getCurrentHealth());
 				this->inventoryTable[index].first -= 1;
 				if (this->inventoryTable[index].first == 0)

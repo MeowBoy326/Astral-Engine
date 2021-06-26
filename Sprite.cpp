@@ -36,6 +36,20 @@ void Sprite::draw(Graphics &graphics, int x, int y) { //this will do all the dra
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle); 
 	}
 
+void Sprite::drawHPBar(Graphics & graphics, int x, int y)
+{
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 3.0, this->_sourceRect.h * 3.0 }; //where on screen we will be drawing
+//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
+	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
+}
+
+void Sprite::drawLevelBar(Graphics & graphics, int x, int y)
+{
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 1.5, this->_sourceRect.h * 1.5 }; //where on screen we will be drawing
+//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
+	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
+}
+
 void Sprite::drawStatMenu(Graphics &graphics, int x, int y) {
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 4, this->_sourceRect.h * 4 }; //where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;

@@ -262,6 +262,28 @@ void TextManager::drawHPNumber(Graphics & graphics, int x, int y, float hp, SDL_
 	SDL_DestroyTexture(tex);
 }
 
+void TextManager::drawPercentNumber(Graphics & graphics, int x, int y, double exp, SDL_Color color)
+{
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(2);
+	}
+	SDL_Surface *surface;
+	int precisionVal = 2;
+	std::string percentNum = std::to_string(exp).substr(0, std::to_string(exp).find(".") + precisionVal + 1) +"%";
+	//std::string expNum = std::to_string(exp) + "%";
+	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 14);
+	surface = TTF_RenderText_Solid(iFont, percentNum.c_str(), color);
+
+	SDL_Rect destinationRectangle = { x - 15, y, surface->w, surface->h }; //where on screen we will be drawing
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+	graphics.blitSurface(tex, NULL, &destinationRectangle);
+	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	TTF_CloseFont(iFont);
+	SDL_DestroyTexture(tex);
+}
+
+
 void TextManager::drawNpcName(Graphics & graphics, int x, int y, const std::string & name, SDL_Color color)
 {
 	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 14);
