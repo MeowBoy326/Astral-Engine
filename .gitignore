@@ -414,3 +414,4 @@ Source1.cpp
 SF-LOC.xml
 *.xml
 *.txt
+*.dsnapshot

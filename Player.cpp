@@ -303,6 +303,8 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 	//If not, do nothing
 	for (int i = 0; i < others.size(); i++) {
 		if (this->_grounded == true && this->_lookingDown == true) {
+			std::cout << "Deallocating memory in Level object" << std::endl;
+			level.deallocateMemory();
 			level = Level(others.at(i).getDestination(), graphics, invent);
 			player_constants::mapName = others.at(i).getDestination();
 			this->_x = level.getPlayerSpawnPoint().x;

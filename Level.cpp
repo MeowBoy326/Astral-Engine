@@ -35,9 +35,6 @@ Level::Level(std::string mapName, Graphics &graphics, Inventory &invent) :
 
 Level::~Level() {
 	std::cout << "Level Destructor called" << std::endl;
-	for (auto& ptr : this->_enemies) {
-		std::cout << "enemies ptr = " << ptr->getName();
-	}
 	//if (!this->_enemies.empty()) {
 	//	for (auto& ptr : this->_enemies)
 	//		delete ptr;
@@ -369,15 +366,16 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								std::floor(y) * globals::SPRITE_SCALE)));
 							if (!mobDropList.empty()) {
 								std::string mob = "bat";
-								auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return std::get<1>(t) == mob; });
+								auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return t.first == mob; });
 								if (it == mobDropList.end()) {
+									std::cout << "Not found & not empty" << std::endl;
 									classMap["bat"] = &createInstance<SilverGem>;
-									this->mobDropList.push_back(std::make_tuple(new SilverGem(graphics, Vector2(std::floor(x), std::floor(y))), "bat", 30));
+									this->mobDropList.push_back(std::make_pair("bat", 30));
 								}
 							}
 							else {
 								classMap["bat"] = &createInstance<SilverGem>;
-								this->mobDropList.push_back(std::make_tuple(new SilverGem(graphics, Vector2(std::floor(x), std::floor(y))), "bat", 30));
+								this->mobDropList.push_back(std::make_pair("bat", 30));
 							}
 						}
 						else if (ss.str() == "shade") {
@@ -400,6 +398,9 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						std::stringstream ss;
 						ss << name;
 						if (ss.str() == "Luna") {
+							//auto npObj = std::make_unique<Clock>(Clock(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+							//	std::floor(y) * globals::SPRITE_SCALE), ss.str()));
+							//this->_npcs.push_back(std::move(npObj));
 							this->_npcs.push_back(new Clock(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE), ss.str()));
 							std::cout << "Luna added!" << std::endl;
@@ -585,13 +586,13 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 						this->itemType.push_back(2);
 					}
 					std::string mob = this->_enemies.at(i)->getName();
-					auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return std::get<1>(t) == mob; });
+					auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return t.first == mob; });
 					auto distance = std::distance(this->mobDropList.begin(), it);
 					if (it != mobDropList.end()) {
 						std::random_device rd;  //Seed for the random number
 						std::mt19937 gen(rd()); //Mersenne_twister_engine with rd seed
 						std::uniform_int_distribution<> distrib(1, 100);
-						if (distrib(gen) <= std::get<2>(mobDropList[distance])) {
+						if (distrib(gen) <= mobDropList[distance].second) {
 							Items *b = classMap[mob](graphics, Vector2(std::floor(this->_enemies.at(i)->getX()), std::floor(this->_enemies.at(i)->getY())));
 							this->_items.push_back(b);
 							this->itemType.push_back(4);
@@ -606,6 +607,22 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 				}
 			}
 		}
+	}
+}
+
+void Level::deallocateMemory()
+{
+	if (!this->_enemies.empty()) {
+		for (auto& ptr : this->_enemies)
+			delete ptr;
+	}
+	if (!this->_items.empty()) {
+		for (auto& ptr : this->_items)
+			delete ptr;
+	}
+	if (!this->_npcs.empty()) {
+		for (auto& ptr : this->_npcs)
+			delete ptr;
 	}
 }
 
