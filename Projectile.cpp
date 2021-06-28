@@ -373,6 +373,24 @@ void Projectile::handleProjectileCollisions(std::vector<Enemy*> &others, Graphic
 	}
 }
 
+void Projectile::handleProjectileTileCollision(std::vector<Rectangle>& others)
+{
+	for (int i = 0; i < others.size(); i++) {
+		if (bulletDown.size() != 0) {
+			bulletDown.erase(bulletDown.begin() + i);
+		}
+		else if (bulletLeft.size() != 0) {
+			bulletLeft.erase(bulletLeft.begin() + i);
+		}
+		else if (bulletVec.size() != 0) {
+			bulletVec.erase(bulletVec.begin() + i);
+		}
+		else if (bulletUp.size() != 0) {
+			bulletUp.erase(bulletUp.begin() + i);
+		}
+	}
+}
+
 void Projectile::setDmg(double dmg) {
 	projectileConstants::BULLET_DMG = dmg;
 	std::cout << "Dmg = " << projectileConstants::BULLET_DMG << std::endl;

@@ -39,6 +39,7 @@ public:
 	bool isActive();
 
 	void handleProjectileCollisions(std::vector<Enemy*>& others, Graphics & graphics);
+	void handleProjectileTileCollision(std::vector<Rectangle>& others);
 	void setDmg(double dmg);
 	double checkDmg();
 

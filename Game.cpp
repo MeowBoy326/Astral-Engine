@@ -794,6 +794,11 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	}
 	this->_level.checkEnemyHP(this->_player, this->_graphics);
 
+	std::vector<Rectangle> otherProjectile;
+	if ((otherProjectile = this->_level.checkTileCollisions(this->_bullet.getProjectileBBox())).size() > 0) {
+		this->_bullet.handleProjectileTileCollision(otherProjectile);
+	}
+
 	if (pickUp == true) {
 		std::vector<Items*> itemPickUp;
 		std::vector<std::string*> dropPick;
