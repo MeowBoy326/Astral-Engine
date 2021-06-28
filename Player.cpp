@@ -170,6 +170,17 @@ void Player::storeLevel(Level & level)
 	this->mapStorage[level.getMapName()] = level;
 }
 
+void Player::overwriteLevel(Level & level, std::string mapName)
+{
+	//update the level that is stored already
+	std::map<std::string, Level>::iterator it;
+	it = this->mapStorage.find(mapName);
+	if (it != this->mapStorage.end()) {
+		std::cout << "found & overwritten the saved map:" << mapName << std::endl;
+		it->second = level;
+	}
+}
+
 void Player::moveLeft() {
 	if (this->_lookingDown == true && this->_grounded == true) //while facing backwards if we are on the ground and looking down that means char
 	//is turned around and interacting with something so don't allow movement!
@@ -310,6 +321,7 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 		if (this->_grounded == true && this->_lookingDown == true) {
 			std::cout << "Deallocating memory in Level object" << std::endl;
 			//level.deallocateMemory();
+			this->overwriteLevel(level, level.getMapName());
 			std::map<std::string, Level>::iterator it;
 			it = this->mapStorage.find(others.at(i).getDestination());
 			if (it != this->mapStorage.end()) {

@@ -636,8 +636,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					player.gainExp(this->_enemies.at(i)->enemyExpAmount());
 					player.addKillCount(1);
 					player.addKillTable(this->_enemies.at(i)->getName());
-					//delete this->_enemies.at(i);
-					this->_enemies.erase(this->_enemies.begin() + i);
+					//this->_enemies.erase(this->_enemies.begin() + i);
 				}
 			}
 		}
@@ -668,7 +667,7 @@ void Level::deallocateMemory()
 std::vector<Enemy*> Level::checkEnemyCollisions(const Rectangle &other) {
 	std::vector<Enemy*> others;
 	for (int i = 0; i < this->_enemies.size(); i++) {
-		if (this->_enemies.at(i)->getBoundingBox().collidesWith(other)) {
+		if (this->_enemies.at(i)->getBoundingBox().collidesWith(other) && this->_enemies.at(i)->getCurrentHealth() >= 1) {
 			others.push_back(this->_enemies.at(i));
 		}
 		/*

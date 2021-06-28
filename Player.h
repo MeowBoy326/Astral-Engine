@@ -59,6 +59,7 @@ public:
 	inline void setKillTable(std::vector<std::pair<std::string, int>> table) { this->killTable = table; }
 	bool checkKillQuestComplete(std::string name, int count);
 	void storeLevel(Level &level);
+	void overwriteLevel(Level &level, std::string mapName);
 	
 
 	//Health handling

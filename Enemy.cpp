@@ -84,8 +84,7 @@ Bat::Bat(Graphics &graphics, Vector2 spawnPoint) :
 void Bat::update(int elapsedTime, Player &player) {
 	this->_fireBall.update();
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
-	if (this->getCurrentHealth() > 0) {
-		
+	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
 		this->playAnimation(this->_direction == RIGHT ? "FlyRight" : "FlyLeft");
 		//Move up or down
 		this->_y += this->_shouldMoveUp ? -.06 : .06;
@@ -110,23 +109,44 @@ void Bat::update(int elapsedTime, Player &player) {
 		}
 	}
 	else if (this->getCurrentHealth() <= 0) {
-		this->playAnimation("BatDie", true);
+		_deathTimeElapsed += elapsedTime;
+		if (isVisible == false)
+			timerRespawn += elapsedTime;
+		if (_deathTimeElapsed > _deathAnimationTime && isVisible == true && dyingAnimation == true) {
+			this->dyingAnimation = false;
+			this->_deathTimeElapsed = 0;
+			this->isVisible = false;
+		}
+		else if (_deathTimeElapsed < _deathAnimationTime && isVisible == true) {
+			this->dyingAnimation = true;
+			this->playAnimation("BatDie");
+		}
+		if (timerRespawn > respawnTime && isVisible == false && dyingAnimation == false) {
+			timerRespawn = 0;
+			this->isVisible = true;
+			this->_currentHealth = this->_maxHealth;
+			this->removeEnemy = false;
+			this->canDropLoot = false;
+			_deathTimeElapsed = 0;
+		}
 	}
 
 	Enemy::update(elapsedTime, player);
 }
 
 void Bat::draw(Graphics &graphics) {
-	Enemy::draw(graphics);
-	this->_fireBall.draw(graphics, this->_fireBall.getX(), this->_fireBall.getY());
+	if (isVisible == true) {
+		Enemy::draw(graphics);
+		this->_fireBall.draw(graphics, this->_fireBall.getX(), this->_fireBall.getY());
+	}
 }
 
 void Bat::animationDone(std::string currentAnimation) {
 	if (this->getCurrentHealth() <= 0) {
-		this->removeEnemy = true;
-		//this->dropLoot();
-		this->canDropLoot = true;
-		std::cout << "yooo" << std::endl;
+		if (this->canDropLoot == false) {
+			this->removeEnemy = true;
+			this->canDropLoot = true;
+		}
 	}
 }
 
@@ -154,11 +174,9 @@ void Bat::touchPlayer(Player* player) {
 }
 
 void Bat::bulletHit(float dmg) {
-	this->_currentHealth -= dmg;
-	std::cout << "BAT hit! HP = " << this->_currentHealth << std::endl;
-	if (this->_currentHealth <= 0 && removeEnemy == true) {
-		std::cout << "Dead" << std::endl;
-	}
+	if (this->_currentHealth >= 1)
+		this->_currentHealth -= dmg;
+	//std::cout << "BAT hit! HP = " << this->_currentHealth << std::endl;
 }
 
 void Bat::setRemoveable() {
