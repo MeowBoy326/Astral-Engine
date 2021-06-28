@@ -58,6 +58,8 @@ public:
 	inline const std::vector<std::pair<std::string, int>> getKillTable() const { return this->killTable; }
 	inline void setKillTable(std::vector<std::pair<std::string, int>> table) { this->killTable = table; }
 	bool checkKillQuestComplete(std::string name, int count);
+	void storeLevel(Level &level);
+	
 
 	//Health handling
 	void drawHPNumbers(Graphics &graphics);
@@ -135,6 +137,7 @@ private:
 	Sprite _statSelection;
 
 	std::vector<std::pair<std::string, int>> killTable;
+	std::map<std::string, Level> mapStorage;
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;

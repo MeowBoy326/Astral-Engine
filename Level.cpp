@@ -21,7 +21,6 @@ using namespace tinyxml2; //all tinyxml2 is in a namespace because we will use s
 template<typename T> Items * createInstance(Graphics& graphics, Vector2 spawnPoint) { return new T(graphics, spawnPoint); }
 
 typedef std::map<std::string, Items* (*)(Graphics&, Vector2)> map_type;
-
 map_type classMap;
 
 Level::Level() {}
@@ -33,8 +32,43 @@ Level::Level(std::string mapName, Graphics &graphics, Inventory &invent) :
 	this->loadMap(mapName, graphics, invent);
 }
 
+Level & Level::operator=(const Level & levelMap)
+{
+	//this->_enemies = levelMap._enemies;
+	std::cout << "this size of enmy: " << this->_enemies.size()
+		<< " | levelMap size: " << levelMap._enemies.size() << std::endl;
+	this->_enemies.resize(levelMap._enemies.size());
+	if (!levelMap._enemies.empty()) {
+		for (int i = 0; i < levelMap._enemies.size(); i++) {
+			this->_enemies[i] = levelMap._enemies[i];
+		}
+	}
+
+	this->_items = levelMap._items;
+	this->_npcs = levelMap._npcs;
+	this->_animatedTileInfos = levelMap._animatedTileInfos;
+	this->_animatedTileList = levelMap._animatedTileList;
+	this->_backgroundTexture = levelMap._backgroundTexture;
+	this->_collisionRects = levelMap._collisionRects;
+	this->_doorList = levelMap._doorList;
+	this->_lockDoor = levelMap._lockDoor;
+	this->_mapName = levelMap._mapName;
+	this->_size = levelMap._size;
+	this->_slopes = levelMap._slopes;
+	this->_spawnPoint = levelMap._spawnPoint;
+	this->_tileList = levelMap._tileList;
+	this->_tilesets = levelMap._tilesets;
+	this->_tileSize = levelMap._tileSize;
+	this->itemType = levelMap.itemType;
+	this->mobDropList = levelMap.mobDropList;
+	this->areaMap = levelMap.areaMap;
+	// TODO: insert return statement here
+	return *this;
+}
+
 Level::~Level() {
 	std::cout << "Level Destructor called" << std::endl;
+	//areaMap["ad"] = this;
 	//if (!this->_enemies.empty()) {
 	//	for (auto& ptr : this->_enemies)
 	//		delete ptr;
@@ -602,7 +636,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					player.gainExp(this->_enemies.at(i)->enemyExpAmount());
 					player.addKillCount(1);
 					player.addKillTable(this->_enemies.at(i)->getName());
-					delete this->_enemies.at(i);
+					//delete this->_enemies.at(i);
 					this->_enemies.erase(this->_enemies.begin() + i);
 				}
 			}
@@ -613,17 +647,22 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 void Level::deallocateMemory()
 {
 	if (!this->_enemies.empty()) {
+		std::cout << "enemy deletion. Size is: " << _enemies.size() << std::endl;
 		for (auto& ptr : this->_enemies)
 			delete ptr;
 	}
 	if (!this->_items.empty()) {
+		std::cout << "item deletion. Size is: " << _items.size() << std::endl;
 		for (auto& ptr : this->_items)
 			delete ptr;
 	}
 	if (!this->_npcs.empty()) {
+		std::cout << "NPC deletion. Size is: " << _npcs.size() << std::endl;
 		for (auto& ptr : this->_npcs)
 			delete ptr;
 	}
+	if (!classMap.empty())
+		classMap.clear();
 }
 
 std::vector<Enemy*> Level::checkEnemyCollisions(const Rectangle &other) {

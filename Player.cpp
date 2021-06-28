@@ -165,6 +165,11 @@ bool Player::checkKillQuestComplete(std::string name, int count)
 	return false;
 }
 
+void Player::storeLevel(Level & level)
+{
+	this->mapStorage[level.getMapName()] = level;
+}
+
 void Player::moveLeft() {
 	if (this->_lookingDown == true && this->_grounded == true) //while facing backwards if we are on the ground and looking down that means char
 	//is turned around and interacting with something so don't allow movement!
@@ -304,8 +309,18 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 	for (int i = 0; i < others.size(); i++) {
 		if (this->_grounded == true && this->_lookingDown == true) {
 			std::cout << "Deallocating memory in Level object" << std::endl;
-			level.deallocateMemory();
-			level = Level(others.at(i).getDestination(), graphics, invent);
+			//level.deallocateMemory();
+			std::map<std::string, Level>::iterator it;
+			it = this->mapStorage.find(others.at(i).getDestination());
+			if (it != this->mapStorage.end()) {
+				std::cout << "found the saved map:" << others.at(i).getDestination() << std::endl;
+				level = it->second;
+			}
+			else {
+				level = Level(others.at(i).getDestination(), graphics, invent);
+				this->storeLevel(level);
+				std::cout << "stored level" << std::endl;
+			}
 			player_constants::mapName = others.at(i).getDestination();
 			this->_x = level.getPlayerSpawnPoint().x;
 			this->_y = level.getPlayerSpawnPoint().y;
