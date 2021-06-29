@@ -26,6 +26,11 @@ void Items::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
 }
 
+void Items::drawDrops(Graphics & graphics, float x, float y)
+{
+	AnimatedSprite::drawLoot(graphics, x, y);
+}
+
 
 
 void Items::addToInventory(int type) {
@@ -65,6 +70,11 @@ void HealthPotion::draw(Graphics &graphics) {
 	Items::draw(graphics);
 }
 
+void HealthPotion::drawDrops(Graphics & graphics, float x, float y)
+{
+	AnimatedSprite::drawLoot(graphics, x, y);
+}
+
 void HealthPotion::animationDone(std::string currentAnimation)
 {
 }
@@ -98,6 +108,11 @@ void PermHP::draw(Graphics & graphics) {
 	Items::draw(graphics);
 }
 
+void PermHP::drawDrops(Graphics & graphics, float x, float y)
+{
+	AnimatedSprite::drawLoot(graphics, x, y);
+}
+
 void PermHP::animationDone(std::string currentAnimation) {
 }
 
@@ -121,6 +136,11 @@ Key::Key(Graphics &graphics, Vector2 spawnPoint) :
 
 void Key::draw(Graphics &graphics) {
 	Items::draw(graphics);
+}
+
+void Key::drawDrops(Graphics & graphics, float x, float y)
+{
+	AnimatedSprite::drawLoot(graphics, x, y);
 }
 
 void Key::update(int elapsedTime, Player & player) {
@@ -166,6 +186,11 @@ void GoldCoin::draw(Graphics & graphics)
 	Items::drawLoot(graphics, this->_x, this->_y);
 }
 
+void GoldCoin::drawDrops(Graphics & graphics, float x, float y)
+{
+	AnimatedSprite::drawLoot(graphics, x, y);
+}
+
 void GoldCoin::animationDone(std::string currentAnimation)
 {
 }
@@ -202,6 +227,11 @@ void RedCoin::update(int elapsedTime, Player & player)
 void RedCoin::draw(Graphics & graphics)
 {
 	Items::drawLoot(graphics, this->_x, this->_y);
+}
+
+void RedCoin::drawDrops(Graphics & graphics, float x, float y)
+{
+	AnimatedSprite::drawLoot(graphics, x, y);
 }
 
 void RedCoin::animationDone(std::string currentAnimation)
@@ -242,6 +272,11 @@ void BronzeCoin::draw(Graphics & graphics)
 	Items::drawLoot(graphics, this->_x, this->_y);
 }
 
+void BronzeCoin::drawDrops(Graphics & graphics, float x, float y)
+{
+	AnimatedSprite::drawLoot(graphics, x, y);
+}
+
 void BronzeCoin::animationDone(std::string currentAnimation)
 {
 }
@@ -267,7 +302,6 @@ SilverGem::SilverGem(Graphics & graphics, Vector2 spawnPoint) :
 void SilverGem::update(int elapsedTime, Player & player)
 {
 	this->playAnimation("Rotate");
-	this->_y += 0.4;
 	Items::update(elapsedTime, player);
 }
 
@@ -276,11 +310,16 @@ void SilverGem::draw(Graphics & graphics)
 	Items::drawLoot(graphics, this->_x, this->_y);
 }
 
+void SilverGem::drawDrops(Graphics & graphics, float x, float y)
+{
+	AnimatedSprite::drawLoot(graphics, x, y);
+}
+
 void SilverGem::animationDone(std::string currentAnimation)
 {
 }
 
 void SilverGem::setupAnimations()
 {
-	this->addSpecialAnimation(4, 72, 50, "Rotate", 16, 16, Vector2(0, 0));
+	this->addSpecialAnimation(3, 70, 50, "Rotate", 16, 16, Vector2(0, 0));
 }

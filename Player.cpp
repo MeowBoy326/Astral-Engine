@@ -319,8 +319,6 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 	//If not, do nothing
 	for (int i = 0; i < others.size(); i++) {
 		if (this->_grounded == true && this->_lookingDown == true) {
-			std::cout << "Deallocating memory in Level object" << std::endl;
-			//level.deallocateMemory();
 			this->overwriteLevel(level, level.getMapName());
 			std::map<std::string, Level>::iterator it;
 			it = this->mapStorage.find(others.at(i).getDestination());

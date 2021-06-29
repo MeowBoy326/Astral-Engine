@@ -35,8 +35,6 @@ Level::Level(std::string mapName, Graphics &graphics, Inventory &invent) :
 Level & Level::operator=(const Level & levelMap)
 {
 	//this->_enemies = levelMap._enemies;
-	std::cout << "this size of enmy: " << this->_enemies.size()
-		<< " | levelMap size: " << levelMap._enemies.size() << std::endl;
 	this->_enemies.resize(levelMap._enemies.size());
 	if (!levelMap._enemies.empty()) {
 		for (int i = 0; i < levelMap._enemies.size(); i++) {
@@ -60,20 +58,17 @@ Level & Level::operator=(const Level & levelMap)
 	this->_tilesets = levelMap._tilesets;
 	this->_tileSize = levelMap._tileSize;
 	this->itemType = levelMap.itemType;
-	this->mobDropList = levelMap.mobDropList;
+	for (int i = 0; i < levelMap.mobDropList.size(); i++) {
+		this->mobDropList.push_back(levelMap.mobDropList[i]);
+	}
+	std::sort(this->mobDropList.begin(), this->mobDropList.end());
+	this->mobDropList.erase(std::unique(this->mobDropList.begin(), this->mobDropList.end()), this->mobDropList.end());
+	this->dropLootTable = levelMap.dropLootTable;
 	this->areaMap = levelMap.areaMap;
-	// TODO: insert return statement here
 	return *this;
 }
 
-Level::~Level() {
-	std::cout << "Level Destructor called" << std::endl;
-	//areaMap["ad"] = this;
-	//if (!this->_enemies.empty()) {
-	//	for (auto& ptr : this->_enemies)
-	//		delete ptr;
-	//}
-}
+Level::~Level() {}
 
 void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) {
 	//parse the .tmx file
@@ -402,14 +397,19 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								std::string mob = "bat";
 								auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return t.first == mob; });
 								if (it == mobDropList.end()) {
-									std::cout << "Not found & not empty" << std::endl;
 									classMap["bat"] = &createInstance<SilverGem>;
-									this->mobDropList.push_back(std::make_pair("bat", 30));
+									Items *b = classMap["bat"](graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+										std::floor(y) * globals::SPRITE_SCALE));
+									this->dropLootTable.push_back(std::make_tuple("bat", 100, b));
+									this->mobDropList.push_back(std::make_pair("bat", 100));
 								}
 							}
 							else {
 								classMap["bat"] = &createInstance<SilverGem>;
-								this->mobDropList.push_back(std::make_pair("bat", 30));
+								Items *b = classMap["bat"](graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE));
+								this->dropLootTable.push_back(std::move(std::make_tuple("bat", 100, b)));
+								this->mobDropList.push_back(std::make_pair("bat", 100));
 							}
 						}
 						else if (ss.str() == "shade") {
@@ -504,6 +504,15 @@ void Level::update(int elapsedTime, Player &player) {
 			this->checkItemFloorCollisions(this->_items.at(i));
 	}
 
+	for (int i = 0; i < this->_droppedItems.size(); i++) {
+		std::get<0>(this->_droppedItems[i])->update(elapsedTime, player);
+		if (std::get<0>(this->_droppedItems[i])->isDroppedItem()) {
+			if (this->checkDroppedItemFloorCollisions(std::get<0>(this->_droppedItems[i]), 
+				std::get<1>(this->_droppedItems[i]), std::get<2>(this->_droppedItems[i])))
+				std::get<2>(this->_droppedItems[i]) += -0.8;
+		}
+	}
+
 }
 
 void Level::draw(Graphics &graphics, Player &player) {
@@ -521,6 +530,10 @@ void Level::draw(Graphics &graphics, Player &player) {
 	}
 	for (int i = 0; i < this->_items.size(); i++) {
 		this->_items.at(i)->draw(graphics);
+	}
+	for (int i = 0; i < this->_droppedItems.size(); i++) {
+		std::get<2>(this->_droppedItems[i]) += 0.4;
+		std::get<0>(this->_droppedItems[i])->drawDrops(graphics, std::get<1>(this->_droppedItems[i]), std::get<2>(this->_droppedItems[i]));
 	}
 	/* OLD code when maps/tile werent implemented
 	//Draw the background
@@ -554,6 +567,17 @@ void Level::checkItemFloorCollisions(Items* obj)
 			obj->addY(-0.8);
 		}
 	}
+}
+
+bool Level::checkDroppedItemFloorCollisions(Items* obj, float x, float y)
+{
+	Rectangle _itemBoundingBox = Rectangle(x, y, obj->getSourceRect().w * globals::SPRITE_SCALE, obj->getSourceRect().h * globals::SPRITE_SCALE);
+	for (int i = 0; i < this->_collisionRects.size(); i++) {
+		if (this->_collisionRects.at(i).collidesWith(_itemBoundingBox)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { //Goes through all tiles and checks if they are colliding with other rectangle 
@@ -607,18 +631,18 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 				if (this->_enemies.at(i)->isRemoveable() == true) {
 					bool dropRate = (rand() % 2) != 0; //50% chance
 					this->_enemies.at(i)->setRemoveable();
-					if (this->_enemies.at(i)->getCoinDropType() == "bronze") {
-						if (dropRate) {
-							this->_items.push_back(new BronzeCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
-								std::floor(this->_enemies.at(i)->getY()))));
-							this->itemType.push_back(2);
-						}
-					}
-					else if (this->_enemies.at(i)->getCoinDropType() == "red") {
-						this->_items.push_back(new RedCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
-							std::floor(this->_enemies.at(i)->getY()))));
-						this->itemType.push_back(2);
-					}
+					//if (this->_enemies.at(i)->getCoinDropType() == "bronze") {
+					//	if (dropRate) {
+					//		this->_items.push_back(new BronzeCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
+					//			std::floor(this->_enemies.at(i)->getY()))));
+					//		this->itemType.push_back(2);
+					//	}
+					//}
+					//else if (this->_enemies.at(i)->getCoinDropType() == "red") {
+					//	this->_items.push_back(new RedCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
+					//		std::floor(this->_enemies.at(i)->getY()))));
+					//	this->itemType.push_back(2);
+					//}
 					std::string mob = this->_enemies.at(i)->getName();
 					auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return t.first == mob; });
 					auto distance = std::distance(this->mobDropList.begin(), it);
@@ -627,9 +651,13 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 						std::mt19937 gen(rd()); //Mersenne_twister_engine with rd seed
 						std::uniform_int_distribution<> distrib(1, 100);
 						if (distrib(gen) <= mobDropList[distance].second) {
-							Items *b = classMap[mob](graphics, Vector2(std::floor(this->_enemies.at(i)->getX()), std::floor(this->_enemies.at(i)->getY())));
-							this->_items.push_back(b);
-							this->itemType.push_back(4);
+							auto dropIt = std::find_if(dropLootTable.begin(), dropLootTable.end(), [&mob](const auto& t) {return std::get<0>(t) == mob; });
+							auto dropDistance = std::distance(this->dropLootTable.begin(), dropIt);
+							if (dropIt != dropLootTable.end()) {
+								this->_droppedItems.push_back(std::make_tuple(std::get<2>(dropLootTable[dropDistance]),
+									this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY()));
+								this->itemType.push_back(4);
+							}
 						}
 
 					}
@@ -641,27 +669,6 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 			}
 		}
 	}
-}
-
-void Level::deallocateMemory()
-{
-	if (!this->_enemies.empty()) {
-		std::cout << "enemy deletion. Size is: " << _enemies.size() << std::endl;
-		for (auto& ptr : this->_enemies)
-			delete ptr;
-	}
-	if (!this->_items.empty()) {
-		std::cout << "item deletion. Size is: " << _items.size() << std::endl;
-		for (auto& ptr : this->_items)
-			delete ptr;
-	}
-	if (!this->_npcs.empty()) {
-		std::cout << "NPC deletion. Size is: " << _npcs.size() << std::endl;
-		for (auto& ptr : this->_npcs)
-			delete ptr;
-	}
-	if (!classMap.empty())
-		classMap.clear();
 }
 
 std::vector<Enemy*> Level::checkEnemyCollisions(const Rectangle &other) {
@@ -700,18 +707,13 @@ std::vector<Npc*> Level::checkNpcCollisions(const Rectangle &other, Graphics &gr
 	std::vector<Npc*> others;
 	for (int i = 0; i < this->_npcs.size(); i++) {
 		if (this->_npcs.at(i)->getBoundingBox().collidesWith(other)) {
-			//std::string tmp = this->_npcs.at(i)->getName();
-			//this->_npcs.at(i)->runScript(tmp, graphics);
 			others.push_back(this->_npcs.at(i));
-			//cout << "debug: NPC touch" << endl;
 		}
 		else if (!this->_npcs.at(i)->getBoundingBox().collidesWith(other)) {
-			//cout << "not colliding!" << endl;
 			others.clear();
 			return others;
 		}
 	}
-	//cout << others.size() << endl;
 	return others;
 
 }
@@ -730,8 +732,29 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 				invent.storeItem(type);
 			invent.addInstancedLoot(this->_mapName, type);
 			others.push_back(this->_items.at(i));
-			delete this->_items.at(i);
 			this->_items.erase(_items.begin() + i);
+			itemType.erase(itemType.begin() + i);
+		}
+	}
+	return others;
+}
+
+std::vector<Items*> Level::checkDroppedItemCollisions(Player & player, const Rectangle & other, Graphics & graphics, Inventory & invent)
+{
+	std::vector<Items*> others;
+	for (int i = 0; i < this->_droppedItems.size(); i++) {
+		Rectangle _itemBoundingBox = Rectangle(std::get<1>(this->_droppedItems[i]), std::get<2>(this->_droppedItems[i]), 
+			std::get<0>(this->_droppedItems[i])->getSourceRect().w * globals::SPRITE_SCALE, std::get<0>(this->_droppedItems[i])->getSourceRect().h * globals::SPRITE_SCALE);
+		if (_itemBoundingBox.collidesWith(other)) {
+			int type = itemType.at(i);
+			if (type == 1) //Permanent HP+1 item
+				player.gainMaxHealth(5);
+			else if (type == 2)
+				player.gainCurrency(std::get<0>(this->_droppedItems[i])->getAmount());
+			else
+				invent.storeItem(type);
+			others.push_back(std::get<0>(this->_droppedItems[i]));
+			this->_droppedItems.erase(_droppedItems.begin() + i);
 			itemType.erase(itemType.begin() + i);
 		}
 	}

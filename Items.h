@@ -17,6 +17,7 @@ public:
 	Items(Graphics &graphics);
 	virtual void update(int elapsedTime, Player & player);
 	virtual void draw(Graphics & graphics);
+	virtual void drawDrops(Graphics &graphics, float x, float y);
 	void addToInventory(int type);
 	virtual const inline bool isDroppedItem() { return this->wasDropped; }
 	virtual const inline int getAmount() { return this->currencyAmount; }
@@ -40,6 +41,7 @@ public:
 	void update(int elapsedTime, Player & player);
 
 	void draw(Graphics & graphics);
+	void drawDrops(Graphics &graphics, float x, float y);
 
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
@@ -57,6 +59,7 @@ public:
 	const inline int getAmount() { return this->currencyAmount; }
 	void update(int elapsedTime, Player & player);
 	void draw(Graphics & graphics);
+	void drawDrops(Graphics &graphics, float x, float y);
 
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
@@ -73,6 +76,7 @@ public:
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
+	void drawDrops(Graphics &graphics, float x, float y);
 	const inline bool isDroppedItem() { return this->wasDropped; }
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
@@ -90,6 +94,7 @@ public:
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
+	void drawDrops(Graphics &graphics, float x, float y);
 	const inline bool isDroppedItem() { return this->wasDropped; }
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
@@ -107,6 +112,7 @@ public:
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
+	void drawDrops(Graphics &graphics, float x, float y);
 	const inline bool isDroppedItem() { return this->wasDropped; }
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
@@ -124,6 +130,7 @@ public:
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
+	void drawDrops(Graphics &graphics, float x, float y);
 	const inline bool isDroppedItem() { return this->wasDropped; }
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
@@ -132,6 +139,7 @@ private:
 	int amountGain = 1;
 	int currencyAmount = 0;
 	bool wasDropped = true;
+	bool initialPosDone = false;
 };
 
 class Key : public Items {
@@ -141,6 +149,7 @@ public:
 	const inline bool isDroppedItem() { return this->wasDropped; }
 	const inline int getAmount() { return this->currencyAmount; }
 	void draw(Graphics &graphics);
+	void drawDrops(Graphics &graphics, float x, float y);
 	void update(int elapsedTime, Player & player);
 
 	void animationDone(std::string currentAnimation);

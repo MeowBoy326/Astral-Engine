@@ -33,7 +33,6 @@ public:
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics, Player &player);
 	void checkEnemyHP(Player & player, Graphics &graphics);
-	void deallocateMemory();
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
@@ -43,7 +42,9 @@ public:
 	std::vector<Enemy*> checkBulletCollisions(const Rectangle & other);
 	std::vector<Npc*> checkNpcCollisions(const Rectangle & other, Graphics &graphics);
 	std::vector<Items*> checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
+	std::vector<Items*> checkDroppedItemCollisions(Player &player, const Rectangle &other, Graphics &graphics, Inventory &invent);
 	void checkItemFloorCollisions(Items* obj);
+	bool checkDroppedItemFloorCollisions(Items* obj, float x, float y);
 
 	inline const std::string getMapName() const { return this->_mapName; }
 	const Vector2 getPlayerSpawnPoint() const;
@@ -71,8 +72,10 @@ private:
 	std::vector<Enemy*> _enemies; //polymorphism to call the update and draw for the bat and not Enemy's functions, so needs to be a pointer for poly to work
 	std::vector<Npc*> _npcs;
 	std::vector<Items*> _items;
+	std::vector<std::tuple<Items*, float, float>> _droppedItems;
 	std::vector<int> itemType;
 	std::vector<std::pair<std::string, int>> mobDropList;
+	std::vector<std::tuple<std::string, int, Items*>> dropLootTable;
 
 	//Private loads a map only call level within level class
 	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); //wont need size or spawn because it will be parsed out of the xml within this function later

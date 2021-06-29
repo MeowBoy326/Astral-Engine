@@ -57,6 +57,8 @@ public:
 	void setSourceRectW(int value);
 	void setSourceRectH(int value);
 
+	const inline SDL_Rect getSourceRect() const { return this->_sourceRect; }
+
 	float _x, _y; //x,y pos of sprite
 protected:
 	SDL_Rect _sourceRect; //where on the spritesheet to get the sprite from
