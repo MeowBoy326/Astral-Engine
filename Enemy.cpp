@@ -220,7 +220,7 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 void Shade::update(int elapsedTime, Player &player) {
 	this->_shadeBall.update();
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
-	if (this->getCurrentHealth() > 0) {
+	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
 		this->playAnimation(this->_direction == RIGHT ? "shadeRight" : "shadeLeft");
 
 		if (this->_direction == RIGHT) {
@@ -247,26 +247,49 @@ void Shade::update(int elapsedTime, Player &player) {
 	}
 
 	else if (this->getCurrentHealth() <= 0) {
-		this->playAnimation("shadeDie", true);
+		_deathTimeElapsed += elapsedTime;
+		if (isVisible == false)
+			timerRespawn += elapsedTime;
+		if (_deathTimeElapsed > _deathAnimationTime && isVisible == true && dyingAnimation == true) {
+			this->dyingAnimation = false;
+			this->_deathTimeElapsed = 0;
+			this->isVisible = false;
+		}
+		else if (_deathTimeElapsed < _deathAnimationTime && isVisible == true) {
+			this->dyingAnimation = true;
+			this->playAnimation("shadeDie");
+		}
+		if (timerRespawn > respawnTime && isVisible == false && dyingAnimation == false) {
+			timerRespawn = 0;
+			this->isVisible = true;
+			this->_currentHealth = this->_maxHealth;
+			this->removeEnemy = false;
+			this->canDropLoot = false;
+			_deathTimeElapsed = 0;
+		}
 	}
 
 	AnimatedSprite::updateBoss(elapsedTime, player.getY());
 }
 
 void Shade::bulletHit(float dmg) {
-	this->_currentHealth -= dmg;
-	std::cout << "hit! HP = " << this->_currentHealth << std::endl;
+	if (this->_currentHealth >= 1)
+		this->_currentHealth -= dmg;
 }
 
 void Shade::draw(Graphics &graphics) {
+	if (isVisible == true) {
 	AnimatedSprite::drawBoss(graphics, this->_x, this->_y);
 	this->_shadeBall.draw(graphics, this->_shadeBall.getX(), this->_shadeBall.getY());
+	}
 }
 
 void Shade::animationDone(std::string currentAnimation) {
 	if (this->getCurrentHealth() <= 0) {
-		this->removeEnemy = true;
-		//this->dropLoot();
+		if (this->canDropLoot == false) {
+			this->removeEnemy = true;
+			this->canDropLoot = true;
+		}
 	}
 }
 

@@ -31,6 +31,8 @@ public:
 	const inline bool getLootState() const { return this->canDropLoot; }
 	inline void setLootState(bool condition) { this->canDropLoot = condition; }
 	virtual const inline std::string getCoinDropType() { return this->coinType; }
+	virtual const inline bool isBoss() { return this->boss; }
+	virtual const inline bool isMiniBoss() { return this->miniBoss; }
 
 	virtual void bulletHit(float dmg);
 	virtual std::string getName();
@@ -44,6 +46,8 @@ protected:
 	int _currentHealth;
 	std::string name;
 	std::string coinType;
+	bool boss;
+	bool miniBoss;
 	bool deathCreated = false;
 	bool canDropLoot = false;
 	bool dyingAnimation = true;
@@ -76,6 +80,8 @@ public:
 	inline void setVisible(bool condition) { this->isVisible = condition; }
 
 	const inline std::string getCoinDropType() { return this->coinType; }
+	const inline bool isBoss() { return this->boss; }
+	const inline bool isMiniBoss() { return this->miniBoss; }
 
 	bool isRemoveable();
 	void setRemoveable();
@@ -102,6 +108,8 @@ protected:
 	int _currentHealth;
 	std::string name = "bat";
 	std::string coinType = "bronze";
+	bool boss = false;
+	bool miniBoss = false;
 	bool deathCreated = false;
 	bool canDropLoot = false;
 	bool dyingAnimation = true;
@@ -131,6 +139,8 @@ public:
 	void setDyingState(bool condition) { this->dyingAnimation = condition; }
 
 	const inline std::string getCoinDropType() { return this->coinType; }
+	const inline bool isBoss() { return this->boss; }
+	const inline bool isMiniBoss() { return this->miniBoss; }
 
 	bool isRemoveable();
 	void setRemoveable();
@@ -156,6 +166,8 @@ protected:
 	int _currentHealth;
 	std::string name = "shade";
 	std::string coinType = "red";
+	bool boss = false;
+	bool miniBoss = false;
 	bool deathCreated = false;
 	bool canDropLoot = false;
 	bool dyingAnimation = true;

@@ -15,13 +15,11 @@
 #include <cmath>
 #include <iostream>
 #include <random>
+#include <set>
 
 using namespace tinyxml2; //all tinyxml2 is in a namespace because we will use so many features dont wanna write tinyxml:: all the time :D
 
 template<typename T> Items * createInstance(Graphics& graphics, Vector2 spawnPoint) { return new T(graphics, spawnPoint); }
-
-typedef std::map<std::string, Items* (*)(Graphics&, Vector2)> map_type;
-map_type classMap;
 
 Level::Level() {}
 
@@ -63,8 +61,23 @@ Level & Level::operator=(const Level & levelMap)
 	}
 	std::sort(this->mobDropList.begin(), this->mobDropList.end());
 	this->mobDropList.erase(std::unique(this->mobDropList.begin(), this->mobDropList.end()), this->mobDropList.end());
-	this->dropLootTable = levelMap.dropLootTable;
+
+	for (int i = 0; i < levelMap.dropLootTable.size(); i++) {
+		this->dropLootTable.push_back(levelMap.dropLootTable[i]);
+	}
+	std::sort(this->dropLootTable.begin(), this->dropLootTable.end());
+	this->dropLootTable.erase(std::unique(this->dropLootTable.begin(), this->dropLootTable.end()), this->dropLootTable.end());
+
 	this->areaMap = levelMap.areaMap;
+
+	this->classMap.insert(levelMap.classMap.begin(), levelMap.classMap.end());
+	std::set<std::string> values;
+	for (auto it = classMap.begin(); it != classMap.end(); it++) {
+		if (values.find(it->first) != values.end())
+			classMap.erase(it--);
+		else
+			values.insert(it->first);
+	}
 	return *this;
 }
 
@@ -400,16 +413,16 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									classMap["bat"] = &createInstance<SilverGem>;
 									Items *b = classMap["bat"](graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 										std::floor(y) * globals::SPRITE_SCALE));
-									this->dropLootTable.push_back(std::make_tuple("bat", 100, b));
-									this->mobDropList.push_back(std::make_pair("bat", 100));
+									this->dropLootTable.push_back(std::make_tuple("bat", 35, b));
+									this->mobDropList.push_back(std::make_pair("bat", 35));
 								}
 							}
 							else {
 								classMap["bat"] = &createInstance<SilverGem>;
 								Items *b = classMap["bat"](graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 									std::floor(y) * globals::SPRITE_SCALE));
-								this->dropLootTable.push_back(std::move(std::make_tuple("bat", 100, b)));
-								this->mobDropList.push_back(std::make_pair("bat", 100));
+								this->dropLootTable.push_back(std::move(std::make_tuple("bat", 35, b)));
+								this->mobDropList.push_back(std::make_pair("bat", 35));
 							}
 						}
 						else if (ss.str() == "shade") {
@@ -629,20 +642,43 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 		for (int i = 0; i < this->_enemies.size(); i++) {
 			if (this->_enemies.at(i)->getCurrentHealth() <= 0) {
 				if (this->_enemies.at(i)->isRemoveable() == true) {
+					//Add coins for all mobs
+					std::string coinType = "bronze";
+					auto cMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
+					if (cMapIt == classMap.end()) {
+						std::cout << "CREATING BRONZE COIN INSTANCE" << std::endl;
+						this->classMap["bronze"] = &createInstance<BronzeCoin>;
+						Items *c = this->classMap["bronze"](graphics, Vector2(std::floor(this->_enemies.at(i)->getX()) * globals::SPRITE_SCALE,
+							std::floor(this->_enemies.at(i)->getY()) * globals::SPRITE_SCALE));
+						this->dropLootTable.push_back(std::make_tuple("bronze", 50, c));
+					}
+					coinType = "red";
+					cMapIt = std::find_if(classMap.begin(), classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
+					if (cMapIt == classMap.end()) {
+						classMap["red"] = &createInstance<RedCoin>;
+						Items *c = classMap["red"](graphics, Vector2(std::floor(this->_enemies.at(i)->getX()) * globals::SPRITE_SCALE,
+							std::floor(this->_enemies.at(i)->getY()) * globals::SPRITE_SCALE));
+						this->dropLootTable.push_back(std::make_tuple("red", 50, c));
+					}
 					bool dropRate = (rand() % 2) != 0; //50% chance
 					this->_enemies.at(i)->setRemoveable();
-					//if (this->_enemies.at(i)->getCoinDropType() == "bronze") {
-					//	if (dropRate) {
-					//		this->_items.push_back(new BronzeCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
-					//			std::floor(this->_enemies.at(i)->getY()))));
-					//		this->itemType.push_back(2);
-					//	}
-					//}
-					//else if (this->_enemies.at(i)->getCoinDropType() == "red") {
-					//	this->_items.push_back(new RedCoin(graphics, Vector2(std::floor(this->_enemies.at(i)->getX()),
-					//		std::floor(this->_enemies.at(i)->getY()))));
-					//	this->itemType.push_back(2);
-					//}
+					std::string coin = this->_enemies.at(i)->getCoinDropType();
+					auto coinIt = std::find_if(dropLootTable.begin(), dropLootTable.end(), [&coin](const auto& t) {return std::get<0>(t) == coin; });
+					auto coinDistance = std::distance(this->dropLootTable.begin(), coinIt);
+					if (dropRate && !this->_enemies.at(i)->isMiniBoss() && !this->_enemies.at(i)->isBoss()) {
+						if (coinIt != dropLootTable.end()) {
+							this->_droppedItems.push_back(std::make_tuple(std::get<2>(dropLootTable[coinDistance]),
+								this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY()));
+							this->itemType.push_back(2);
+						}
+					}
+					else if (this->_enemies.at(i)->isMiniBoss() || !this->_enemies.at(i)->isBoss()) {
+						if (coinIt != dropLootTable.end()) {
+							this->_droppedItems.push_back(std::make_tuple(std::get<2>(dropLootTable[coinDistance]),
+								this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY()));
+							this->itemType.push_back(2);
+						}
+					}
 					std::string mob = this->_enemies.at(i)->getName();
 					auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return t.first == mob; });
 					auto distance = std::distance(this->mobDropList.begin(), it);

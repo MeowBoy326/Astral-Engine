@@ -83,6 +83,9 @@ private:
 	typedef std::map<std::string, Level (*)(std::string mapName, Graphics &graphics, Inventory &invent)> levelStorage;
 	levelStorage areaMap;
 
+	typedef std::map<std::string, Items* (*)(Graphics&, Vector2)> map_type;
+	map_type classMap;
+
 	Vector2 getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileHeight);
 };
 
