@@ -177,7 +177,9 @@ void Player::overwriteLevel(Level & level, std::string mapName)
 	it = this->mapStorage.find(mapName);
 	if (it != this->mapStorage.end()) {
 		std::cout << "found & overwritten the saved map:" << mapName << std::endl;
+		level.deallocateMem();
 		it->second = level;
+		//level.deallocateMem();
 	}
 }
 
@@ -324,10 +326,17 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 			it = this->mapStorage.find(others.at(i).getDestination());
 			if (it != this->mapStorage.end()) {
 				std::cout << "found the saved map:" << others.at(i).getDestination() << std::endl;
+				level.deallocateMem();
 				level = it->second;
+				level.deallocateMem();
+				level.generateMapItems(graphics, level.getMapName(), invent);
+				level.generateEnemies(graphics, level.getMapName());
 			}
 			else {
 				level = Level(others.at(i).getDestination(), graphics, invent);
+				//level.deallocateMem();
+				level.generateMapItems(graphics, level.getMapName(), invent);
+				level.generateEnemies(graphics, level.getMapName());
 				this->storeLevel(level);
 				std::cout << "stored level" << std::endl;
 			}

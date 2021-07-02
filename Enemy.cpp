@@ -8,6 +8,10 @@ TextManager txt;
 //Base enemy class
 Enemy::Enemy() {}
 
+Enemy::~Enemy()
+{
+}
+
 namespace enemyConstants {
 	//bool removeEnemy = false;
 }
@@ -78,7 +82,13 @@ Bat::Bat(Graphics &graphics, Vector2 spawnPoint) :
 	this->_fireX = this->_startingX;
 	this->_fireY = this->_startingY;
 	this->_fireBall = Sprite(graphics, "NpcCemet.png", 220, 33, 13, 10, this->_fireX, (this->_fireY + 10));
-	graphics.loadImage("NpcCemet.png");
+}
+
+Bat::~Bat()
+{
+	std::cout << "BAT destructor" << std::endl;
+	this->destroySprite();
+	this->_fireBall.destroySprite();
 }
 
 void Bat::update(int elapsedTime, Player &player) {
@@ -133,6 +143,7 @@ void Bat::update(int elapsedTime, Player &player) {
 
 	Enemy::update(elapsedTime, player);
 }
+
 
 void Bat::draw(Graphics &graphics) {
 	if (isVisible == true) {
@@ -201,6 +212,13 @@ std::string Bat::getName()
 
 //Shade class
 Shade::Shade() {}
+
+Shade::~Shade()
+{
+	std::cout << "Shade destructor" << std::endl;
+	this->destroySprite();
+	this->_shadeBall.destroySprite();
+}
 
 Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 	Enemy(graphics, "shade.png", 27, 7, 30, 28, spawnPoint, 140),

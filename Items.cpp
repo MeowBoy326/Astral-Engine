@@ -4,7 +4,6 @@
 #include <iostream>
 
 namespace itemConstants {
-	Inventory::InventoryItem* hPot = new Inventory::InventoryItem;
 }
 
 Items::Items()

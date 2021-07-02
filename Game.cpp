@@ -110,6 +110,9 @@ void Game::gameLoop() {
 			if (_title.getMenuChoice() == 0) {
 				std::cout << "No save data found...Starting new game!" << std::endl;
 				this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
+				this->_level.generateItems(graphics);
+				this->_level.generateEnemies(graphics, this->_level.getMapName());
+				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				this->saveGame(graphics);
 			}
@@ -688,6 +691,7 @@ int Game::loadGame(Graphics & graphics)
 	result = element->QueryIntAttribute("xCoordinate", &x);
 	result = element->QueryIntAttribute("yCoordinate", &y);
 	spawn = Vector2((int)std::ceil(x), (int)std::ceil(y));
+	this->_level.generateItems(graphics);
 	//spawn = this->_level.getPlayerSpawnPoint();
 	this->_player = Player(graphics, spawn);
 	//Load KillTable

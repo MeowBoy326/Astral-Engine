@@ -7,13 +7,14 @@
 #include <string>
 
 class Graphics;
-class Items;
-class GoldCoin;
 
 class Enemy : public AnimatedSprite {
 public:
 	Enemy();
+	virtual ~Enemy();
 	Enemy(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int width, int height, Vector2 spawnPoint, int timeToUpdate);
+	Enemy& operator=(const Enemy& levelMap);
+	Enemy(const Enemy&);
 
 	virtual void update(int elapsedTime, Player &player);
 	virtual void draw(Graphics &graphics);
@@ -62,6 +63,9 @@ class Bat : public Enemy {
 public:
 	Bat();
 	Bat(Graphics &graphics, Vector2 spawPoint);
+	~Bat();
+	Bat& operator=(const Bat& levelMap);
+	Bat(const Bat&);
 	
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
@@ -121,6 +125,7 @@ protected:
 class Shade : public Enemy {
 public:
 	Shade();
+	~Shade();
 	Shade(Graphics &graphics, Vector2 spawnPoint);
 
 	void update(int elapsedTime, Player &player);

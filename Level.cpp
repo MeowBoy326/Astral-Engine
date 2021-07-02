@@ -32,14 +32,13 @@ Level::Level(std::string mapName, Graphics &graphics, Inventory &invent) :
 
 Level & Level::operator=(const Level & levelMap)
 {
-	//this->_enemies = levelMap._enemies;
-	this->_enemies.resize(levelMap._enemies.size());
-	if (!levelMap._enemies.empty()) {
-		for (int i = 0; i < levelMap._enemies.size(); i++) {
-			this->_enemies[i] = levelMap._enemies[i];
+	for (auto& p : this->_enemies) {
+		if (p != nullptr) {
+			delete p;
+			p = NULL;
 		}
 	}
-
+	this->_enemies.clear();
 	this->_items = levelMap._items;
 	this->_npcs = levelMap._npcs;
 	this->_animatedTileInfos = levelMap._animatedTileInfos;
@@ -81,7 +80,12 @@ Level & Level::operator=(const Level & levelMap)
 	return *this;
 }
 
-Level::~Level() {}
+Level::Level(const Level &)
+{
+}
+
+Level::~Level() {
+}
 
 void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) {
 	//parse the .tmx file
@@ -393,7 +397,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					}
 				}
 			}
-			else if (ss.str() == "enemies") {
+			/*else if (ss.str() == "enemies") {
 				float x, y;
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
 				if (pObject != NULL) {
@@ -406,24 +410,6 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						if (ss.str() == "bat") {
 							this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE)));
-							if (!mobDropList.empty()) {
-								std::string mob = "bat";
-								auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return t.first == mob; });
-								if (it == mobDropList.end()) {
-									classMap["bat"] = &createInstance<SilverGem>;
-									Items *b = classMap["bat"](graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-										std::floor(y) * globals::SPRITE_SCALE));
-									this->dropLootTable.push_back(std::make_tuple("bat", 35, b));
-									this->mobDropList.push_back(std::make_pair("bat", 35));
-								}
-							}
-							else {
-								classMap["bat"] = &createInstance<SilverGem>;
-								Items *b = classMap["bat"](graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-									std::floor(y) * globals::SPRITE_SCALE));
-								this->dropLootTable.push_back(std::move(std::make_tuple("bat", 35, b)));
-								this->mobDropList.push_back(std::make_pair("bat", 35));
-							}
 						}
 						else if (ss.str() == "shade") {
 							this->_enemies.push_back(new Shade(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
@@ -433,7 +419,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						pObject = pObject->NextSiblingElement("object");
 					}
 				}
-			}
+			}*/
 			else if (ss.str() == "npc") {
 				float x, y;
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
@@ -458,43 +444,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					}
 				}
 			}
-			else if (ss.str() == "item") {
-				float x, y;
-				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
-				if (pObject != NULL) {
-					while (pObject) {
-						x = pObject->FloatAttribute("x");
-						y = pObject->FloatAttribute("y");
-						const char* name = pObject->Attribute("name");
-						std::stringstream ss;
-						ss << name;
-						if (ss.str() == "HP") {
-							if (!invent.isLooted(mapName, 0)) {
-								this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-									std::floor(y) * globals::SPRITE_SCALE)));
-								this->itemType.push_back(0);
-								std::cout << "Item HP added!" << std::endl;
-							}
-						}
-						else if (ss.str() == "permHP") {
-							if (!invent.isLooted(mapName, 1)) {
-								this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
-								this->itemType.push_back(1);
-								std::cout << "permHP added!" << std::endl;
-							}
-						}
-						else if (ss.str() == "key") {
-							if (!invent.isLooted(mapName, 3)) {
-								this->_items.push_back(new Key(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
-								this->itemType.push_back(3);
-								std::cout << "Key item added to map" << std::endl;
-							}
-						}
-
-						pObject = pObject->NextSiblingElement("object");
-					}
-				}
-			}
+			
 
 			pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
 		}
@@ -525,7 +475,6 @@ void Level::update(int elapsedTime, Player &player) {
 				std::get<2>(this->_droppedItems[i]) += -0.8;
 		}
 	}
-
 }
 
 void Level::draw(Graphics &graphics, Player &player) {
@@ -548,6 +497,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 		std::get<2>(this->_droppedItems[i]) += 0.4;
 		std::get<0>(this->_droppedItems[i])->drawDrops(graphics, std::get<1>(this->_droppedItems[i]), std::get<2>(this->_droppedItems[i]));
 	}
+
 	/* OLD code when maps/tile werent implemented
 	//Draw the background
 	//x = 0 , y = 0 because we start at top left corner of the bkBlue.png (64x64) width 64 / height 64
@@ -642,24 +592,6 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 		for (int i = 0; i < this->_enemies.size(); i++) {
 			if (this->_enemies.at(i)->getCurrentHealth() <= 0) {
 				if (this->_enemies.at(i)->isRemoveable() == true) {
-					//Add coins for all mobs
-					std::string coinType = "bronze";
-					auto cMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
-					if (cMapIt == classMap.end()) {
-						std::cout << "CREATING BRONZE COIN INSTANCE" << std::endl;
-						this->classMap["bronze"] = &createInstance<BronzeCoin>;
-						Items *c = this->classMap["bronze"](graphics, Vector2(std::floor(this->_enemies.at(i)->getX()) * globals::SPRITE_SCALE,
-							std::floor(this->_enemies.at(i)->getY()) * globals::SPRITE_SCALE));
-						this->dropLootTable.push_back(std::make_tuple("bronze", 50, c));
-					}
-					coinType = "red";
-					cMapIt = std::find_if(classMap.begin(), classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
-					if (cMapIt == classMap.end()) {
-						classMap["red"] = &createInstance<RedCoin>;
-						Items *c = classMap["red"](graphics, Vector2(std::floor(this->_enemies.at(i)->getX()) * globals::SPRITE_SCALE,
-							std::floor(this->_enemies.at(i)->getY()) * globals::SPRITE_SCALE));
-						this->dropLootTable.push_back(std::make_tuple("red", 50, c));
-					}
 					bool dropRate = (rand() % 2) != 0; //50% chance
 					this->_enemies.at(i)->setRemoveable();
 					std::string coin = this->_enemies.at(i)->getCoinDropType();
@@ -707,6 +639,154 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 	}
 }
 
+void Level::generateItems(Graphics &graphics)
+{
+	std::cout << "Generating items..." << std::endl;
+	//Add loot for each enemy.
+	std::string mobName = "bat";
+	auto mMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&mobName](const auto& t) {return t.first == mobName; });
+	if (mMapIt == classMap.end()) {
+		std::cout << "Generating silverGem" << std::endl;
+		classMap["bat"] = &createInstance<SilverGem>;
+		Items *b = classMap["bat"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
+			std::floor(240) * globals::SPRITE_SCALE));
+		this->dropLootTable.push_back(std::move(std::make_tuple("bat", 35, b)));
+		this->mobDropList.push_back(std::make_pair("bat", 35));
+	}
+
+	//Add coins for all mobs
+	std::string coinType = "bronze";
+	auto cMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
+	if (cMapIt == classMap.end()) {
+		std::cout << "Generating Bronze Coin" << std::endl;
+		this->classMap["bronze"] = &createInstance<BronzeCoin>;
+		Items *c = this->classMap["bronze"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
+			std::floor(240) * globals::SPRITE_SCALE));
+		this->dropLootTable.push_back(std::make_tuple("bronze", 50, c));
+	}
+	coinType = "red";
+	cMapIt = std::find_if(classMap.begin(), classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
+	if (cMapIt == classMap.end()) {
+		classMap["red"] = &createInstance<RedCoin>;
+		Items *c = classMap["red"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
+			std::floor(240) * globals::SPRITE_SCALE));
+		this->dropLootTable.push_back(std::make_tuple("red", 50, c));
+	}
+}
+
+void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory &invent)
+{
+	XMLDocument doc; //represents entire xml document
+	std::stringstream ss;
+	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
+	doc.LoadFile(ss.str().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
+
+	XMLElement* mapNode = doc.FirstChildElement("map");
+
+	XMLElement* pObjectGroup = mapNode->FirstChildElement("objectgroup");
+	if (pObjectGroup != NULL) {
+		while (pObjectGroup) {
+			const char* name = pObjectGroup->Attribute("name");
+			std::stringstream ss;
+			ss << name;
+			if (ss.str() == "item") {
+				float x, y;
+				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+				if (pObject != NULL) {
+					while (pObject) {
+						x = pObject->FloatAttribute("x");
+						y = pObject->FloatAttribute("y");
+						const char* name = pObject->Attribute("name");
+						std::stringstream ss;
+						ss << name;
+						if (ss.str() == "HP") {
+							if (!invent.isLooted(mapName, 0)) {
+								this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE)));
+								this->itemType.push_back(0);
+								std::cout << "Item HP added!" << std::endl;
+							}
+						}
+						else if (ss.str() == "permHP") {
+							if (!invent.isLooted(mapName, 1)) {
+								this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
+								this->itemType.push_back(1);
+								std::cout << "permHP added!" << std::endl;
+							}
+						}
+						else if (ss.str() == "key") {
+							if (!invent.isLooted(mapName, 3)) {
+								this->_items.push_back(new Key(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
+								this->itemType.push_back(3);
+								std::cout << "Key item added to map" << std::endl;
+							}
+						}
+
+						pObject = pObject->NextSiblingElement("object");
+					}
+				}
+			}
+			pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
+		}
+	}
+}
+
+void Level::generateEnemies(Graphics & graphics, std::string mapName)
+{
+	XMLDocument doc; //represents entire xml document
+	std::stringstream ss;
+	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
+	doc.LoadFile(ss.str().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
+
+	XMLElement* mapNode = doc.FirstChildElement("map");
+
+	XMLElement* pObjectGroup = mapNode->FirstChildElement("objectgroup");
+	if (pObjectGroup != NULL) {
+		while (pObjectGroup) {
+			const char* name = pObjectGroup->Attribute("name");
+			std::stringstream ss;
+			ss << name;
+	 if (ss.str() == "enemies") {
+		float x, y;
+		XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+		if (pObject != NULL) {
+			while (pObject) {
+				x = pObject->FloatAttribute("x");
+				y = pObject->FloatAttribute("y");
+				const char* name = pObject->Attribute("name");
+				std::stringstream ss;
+				ss << name;
+				if (ss.str() == "bat") {
+					std::string mobName = "bat";
+					this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+						std::floor(y) * globals::SPRITE_SCALE)));
+				}
+				else if (ss.str() == "shade") {
+					this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+						std::floor(y) * globals::SPRITE_SCALE)));
+				}
+				pObject = pObject->NextSiblingElement("object");
+			}
+		}
+	}
+
+	 pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
+		}
+	}
+}
+
+void Level::deallocateMem()
+{
+	std::cout << "Deallocating memory in this->_enemy" << std::endl;
+	for (auto p : this->_enemies) {
+		if (p != nullptr) {
+			delete p;
+			p = NULL;
+		}
+	}
+	this->_enemies.clear();
+}
+
 std::vector<Enemy*> Level::checkEnemyCollisions(const Rectangle &other) {
 	std::vector<Enemy*> others;
 	for (int i = 0; i < this->_enemies.size(); i++) {
@@ -732,7 +812,7 @@ std::vector<Enemy*> Level::checkBulletCollisions(const Rectangle &other) {
 	std::vector<Enemy*> others;
 	for (int i = 0; i < this->_enemies.size(); i++) {
 		if (this->_enemies.at(i)->getBoundingBox().collidesWith(other)) {
-			others.push_back(this->_enemies.at(i));
+			//others.push_back(this->_enemies.at(i));
 		}
 	}
 	return others;

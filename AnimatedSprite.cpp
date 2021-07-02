@@ -28,8 +28,12 @@ void AnimatedSprite::addAnimation(int frames, int x, int y, std::string name, in
 		SDL_Rect newRect = { (i + x) * width, y, width, height };
 		rectangles.push_back(newRect);
 	}
-	this->_animation.insert(std::pair<std::string, std::vector<SDL_Rect> >(name, rectangles));
-	this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
+	std::map<std::string, std::vector<SDL_Rect>>::iterator it;
+	it = this->_animation.find(name);
+	if (it == this->_animation.end()) {
+		this->_animation.insert(std::pair<std::string, std::vector<SDL_Rect> >(name, rectangles));
+		this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
+	}
 }
 
 void AnimatedSprite::addSpecialAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset)

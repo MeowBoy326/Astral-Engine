@@ -27,7 +27,6 @@ _y(posY)
 }
 
 Sprite::~Sprite() {
-
 }
 
 void Sprite::draw(Graphics &graphics, int x, int y) { //this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
@@ -220,4 +219,9 @@ void Sprite::setSourceRectW(int value) {
 
 void Sprite::setSourceRectH(int value) {
 	this->_sourceRect.h = value;
+}
+
+void Sprite::destroySprite()
+{
+	SDL_DestroyTexture(this->_spriteSheet);
 }

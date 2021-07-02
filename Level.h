@@ -28,11 +28,16 @@ public:
 	Level();
 	Level(std::string mapName, Graphics &graphics, Inventory &invent);
 	Level& operator=(const Level& levelMap);
+	Level(const Level&);
 	~Level();
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics, Player &player);
 	void checkEnemyHP(Player & player, Graphics &graphics);
+	void generateItems(Graphics &graphics);
+	void generateMapItems(Graphics &graphics, std::string mapName, Inventory &invent);
+	void generateEnemies(Graphics &graphics, std::string mapName);
+	void deallocateMem();
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
