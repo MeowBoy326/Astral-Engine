@@ -242,18 +242,18 @@ void Shade::update(int elapsedTime, Player &player) {
 		this->playAnimation(this->_direction == RIGHT ? "shadeRight" : "shadeLeft");
 
 		if (this->_direction == RIGHT) {
-			this->_x += 0.2;
+			this->_x += 0.2f;
 		}
 		else {
-			this->_x -= 0.2;
+			this->_x -= 0.2f;
 		}
 		if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
-			player.gainHealth(-12.64);
+			player.gainHealth(-12.64f);
 		}
 		if (_shadeBall.getBoundingBox().collidesWith(player.getBoundingBox())) {
 			this->_shadeBall.setX(this->_x);
 			this->_shadeBall.setY(this->_y + 60);
-			player.gainHealth(-26.69);
+			player.gainHealth(-26.69f);
 		}
 		else if (_shadeBall.getX() > this->_x + 200) {
 			this->_shadeBall.setX(this->_x);

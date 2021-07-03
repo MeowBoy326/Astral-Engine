@@ -100,7 +100,7 @@ private:
 	bool _shouldMoveUp; //keep track of if bat should move
 	bool hasHit = false;
 	int iFrameCount = 0;
-	float batExp = 2.15;
+	float batExp = 1.175f;
 	Sprite _fireBall;
 	float _fireX, _fireY;
 	double _deathAnimationTime = 800;

@@ -75,10 +75,5 @@ private:
 	std::map<int, std::vector<SDL_Rect>> _projectiles;
 	std::map<int, SDL_Rect> _bulletMap;
 	std::vector<SDL_Rect> pRect;
-
-	
 };
-
-
-
 #endif

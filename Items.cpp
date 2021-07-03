@@ -176,7 +176,7 @@ GoldCoin::GoldCoin(Graphics & graphics, Vector2 spawnPoint) :
 void GoldCoin::update(int elapsedTime, Player & player)
 {
 	this->playAnimation("Rotate");
-	this->_y += 0.4;
+	this->_y += 0.4f;
 	Items::update(elapsedTime, player);
 }
 
@@ -219,7 +219,7 @@ RedCoin::RedCoin(Graphics & graphics, Vector2 spawnPoint) :
 void RedCoin::update(int elapsedTime, Player & player)
 {
 	this->playAnimation("Rotate");
-	this->_y += 0.4;
+	this->_y += 0.4f;
 	Items::update(elapsedTime, player);
 }
 
@@ -262,7 +262,7 @@ BronzeCoin::BronzeCoin(Graphics & graphics, Vector2 spawnPoint) :
 void BronzeCoin::update(int elapsedTime, Player & player)
 {
 	this->playAnimation("Rotate");
-	this->_y += 0.4;
+	this->_y += 0.4f;
 	Items::update(elapsedTime, player);
 }
 

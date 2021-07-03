@@ -472,7 +472,7 @@ void Level::update(int elapsedTime, Player &player) {
 		if (std::get<0>(this->_droppedItems[i])->isDroppedItem()) {
 			if (this->checkDroppedItemFloorCollisions(std::get<0>(this->_droppedItems[i]), 
 				std::get<1>(this->_droppedItems[i]), std::get<2>(this->_droppedItems[i])))
-				std::get<2>(this->_droppedItems[i]) += -0.8;
+				std::get<2>(this->_droppedItems[i]) += -0.8f;
 		}
 	}
 }
@@ -494,7 +494,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 		this->_items.at(i)->draw(graphics);
 	}
 	for (int i = 0; i < this->_droppedItems.size(); i++) {
-		std::get<2>(this->_droppedItems[i]) += 0.4;
+		std::get<2>(this->_droppedItems[i]) += 0.4f;
 		std::get<0>(this->_droppedItems[i])->drawDrops(graphics, std::get<1>(this->_droppedItems[i]), std::get<2>(this->_droppedItems[i]));
 	}
 
@@ -527,7 +527,7 @@ void Level::checkItemFloorCollisions(Items* obj)
 {
 	for (int i = 0; i < this->_collisionRects.size(); i++) {
 		if (this->_collisionRects.at(i).collidesWith(obj->getBoundingBox())) {
-			obj->addY(-0.8);
+			obj->addY(-0.8f);
 		}
 	}
 }

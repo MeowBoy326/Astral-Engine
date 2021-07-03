@@ -424,7 +424,7 @@ void Player::gainHealth(float amount) {
 	if (amount < 0 && player_constants::iFrame == false) {
 		amount = amount + (this->_defense * 0.5);
 		if (amount >= 0)
-			amount = -0.15;
+			amount = -0.15f;
 		this->_currentHealth += amount;
 		std::cout << "lost " << amount << std::endl;
 		player_constants::iFrame = true;
