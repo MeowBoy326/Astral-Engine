@@ -20,6 +20,7 @@ public:
 	virtual void draw(Graphics &graphics);
 	virtual void touchPlayer(Player* player) = 0; //pure virtual implement in derived classes
 	virtual void playDeath() = 0;
+	virtual const inline int getEnemyLevel() const { return this->level; }
 	virtual float enemyExpAmount();
 
 	const inline int getMaxHealth() const { return this->_maxHealth; }
@@ -45,6 +46,7 @@ protected:
 
 	int _maxHealth;
 	int _currentHealth;
+	int level;
 	std::string name;
 	std::string coinType;
 	bool boss;
@@ -79,6 +81,7 @@ public:
 	void bulletHit(float dmg);
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
+	const inline int getEnemyLevel() const { return this->level; }
 	const inline bool getDyingState() const { return this->dyingAnimation; }
 	void setDyingState(bool condition) { this->dyingAnimation = condition; }
 	inline void setVisible(bool condition) { this->isVisible = condition; }
@@ -110,6 +113,7 @@ protected:
 
 	int _maxHealth;
 	int _currentHealth;
+	int level = 1;
 	std::string name = "bat";
 	std::string coinType = "bronze";
 	bool boss = false;
@@ -140,6 +144,7 @@ public:
 	void bulletHit(float dmg);
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
+	const inline int getEnemyLevel() const { return this->level; }
 	const inline bool getDyingState() const { return this->dyingAnimation; }
 	void setDyingState(bool condition) { this->dyingAnimation = condition; }
 
@@ -169,6 +174,7 @@ protected:
 
 	int _maxHealth;
 	int _currentHealth;
+	int level = 10;
 	std::string name = "shade";
 	std::string coinType = "red";
 	bool boss = false;

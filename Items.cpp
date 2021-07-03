@@ -57,6 +57,12 @@ HealthPotion::HealthPotion(Graphics & graphics, Vector2 spawnPoint) :
 	this->playAnimation("Blink");
 }
 
+HealthPotion::~HealthPotion()
+{
+	std::cout << "HP destructor called" << std::endl;
+	this->destroySprite();
+}
+
 void HealthPotion::addToInventory() {
 }
 
@@ -98,6 +104,12 @@ PermHP::PermHP(Graphics &graphics, Vector2 spawnPoint) :
 	this->playAnimation("Blink");
 }
 
+PermHP::~PermHP()
+{
+	std::cout << "PermHP destructor called" << std::endl;
+	this->destroySprite();
+}
+
 void PermHP::update(int elapsedTime, Player & player) {
 	this->playAnimation("Blink");
 	Items::update(elapsedTime, player);
@@ -131,6 +143,12 @@ Key::Key(Graphics &graphics, Vector2 spawnPoint) :
 	graphics.loadImage("NpcSym.png"); //loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Blink");
+}
+
+Key::~Key()
+{
+	std::cout << "Key destructor called" << std::endl;
+	this->destroySprite();
 }
 
 void Key::draw(Graphics &graphics) {
@@ -171,6 +189,12 @@ GoldCoin::GoldCoin(Graphics & graphics, Vector2 spawnPoint) :
 	graphics.loadImage("loot.png"); //loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
+}
+
+GoldCoin::~GoldCoin()
+{
+	std::cout << "GoldCoin destructor called" << std::endl;
+	this->destroySprite();
 }
 
 void GoldCoin::update(int elapsedTime, Player & player)
@@ -216,6 +240,12 @@ RedCoin::RedCoin(Graphics & graphics, Vector2 spawnPoint) :
 	this->playAnimation("Rotate");
 }
 
+RedCoin::~RedCoin()
+{
+	std::cout << "RedCoin destructor called" << std::endl;
+	this->destroySprite();
+}
+
 void RedCoin::update(int elapsedTime, Player & player)
 {
 	this->playAnimation("Rotate");
@@ -259,6 +289,12 @@ BronzeCoin::BronzeCoin(Graphics & graphics, Vector2 spawnPoint) :
 	this->playAnimation("Rotate");
 }
 
+BronzeCoin::~BronzeCoin()
+{
+	std::cout << "Bronze Coin Destructor" << std::endl;
+	this->destroySprite();
+}
+
 void BronzeCoin::update(int elapsedTime, Player & player)
 {
 	this->playAnimation("Rotate");
@@ -296,6 +332,12 @@ SilverGem::SilverGem(Graphics & graphics, Vector2 spawnPoint) :
 	graphics.loadImage("loot.png"); //loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
+}
+
+SilverGem::~SilverGem()
+{
+	std::cout << "SilverGem destructor called" << std::endl;
+	this->destroySprite();
 }
 
 void SilverGem::update(int elapsedTime, Player & player)

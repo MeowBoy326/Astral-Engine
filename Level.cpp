@@ -38,8 +38,16 @@ Level & Level::operator=(const Level & levelMap)
 			p = NULL;
 		}
 	}
+	for (auto& p : this->_items) {
+		if (p != nullptr) {
+			delete p;
+			p = NULL;
+		}
+	}
+	this->_items.clear();
 	this->_enemies.clear();
-	this->_items = levelMap._items;
+	//this->_items = levelMap._items;
+	//this->itemType = levelMap.itemType;
 	this->_npcs = levelMap._npcs;
 	this->_animatedTileInfos = levelMap._animatedTileInfos;
 	this->_animatedTileList = levelMap._animatedTileList;
@@ -54,7 +62,6 @@ Level & Level::operator=(const Level & levelMap)
 	this->_tileList = levelMap._tileList;
 	this->_tilesets = levelMap._tilesets;
 	this->_tileSize = levelMap._tileSize;
-	this->itemType = levelMap.itemType;
 	for (int i = 0; i < levelMap.mobDropList.size(); i++) {
 		this->mobDropList.push_back(levelMap.mobDropList[i]);
 	}
@@ -597,12 +604,14 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					std::string coin = this->_enemies.at(i)->getCoinDropType();
 					auto coinIt = std::find_if(dropLootTable.begin(), dropLootTable.end(), [&coin](const auto& t) {return std::get<0>(t) == coin; });
 					auto coinDistance = std::distance(this->dropLootTable.begin(), coinIt);
-					if (dropRate && !this->_enemies.at(i)->isMiniBoss() && !this->_enemies.at(i)->isBoss()) {
-						if (coinIt != dropLootTable.end()) {
+					if (dropRate && this->_enemies.at(i)->getEnemyLevel() <= 10 && !this->_enemies.at(i)->isMiniBoss() && !this->_enemies.at(i)->isBoss()) {
+						this->_items.push_back(new BronzeCoin(graphics, Vector2(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY())));
+						this->itemType.push_back(2);
+						/*if (coinIt != dropLootTable.end()) {
 							this->_droppedItems.push_back(std::make_tuple(std::get<2>(dropLootTable[coinDistance]),
 								this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY()));
 							this->itemType.push_back(2);
-						}
+						}*/
 					}
 					else if (this->_enemies.at(i)->isMiniBoss() || !this->_enemies.at(i)->isBoss()) {
 						if (coinIt != dropLootTable.end()) {
@@ -611,24 +620,23 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 							this->itemType.push_back(2);
 						}
 					}
-					std::string mob = this->_enemies.at(i)->getName();
-					auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return t.first == mob; });
-					auto distance = std::distance(this->mobDropList.begin(), it);
-					if (it != mobDropList.end()) {
-						std::random_device rd;  //Seed for the random number
-						std::mt19937 gen(rd()); //Mersenne_twister_engine with rd seed
-						std::uniform_int_distribution<> distrib(1, 100);
-						if (distrib(gen) <= mobDropList[distance].second) {
-							auto dropIt = std::find_if(dropLootTable.begin(), dropLootTable.end(), [&mob](const auto& t) {return std::get<0>(t) == mob; });
-							auto dropDistance = std::distance(this->dropLootTable.begin(), dropIt);
-							if (dropIt != dropLootTable.end()) {
-								this->_droppedItems.push_back(std::make_tuple(std::get<2>(dropLootTable[dropDistance]),
-									this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY()));
-								this->itemType.push_back(4);
-							}
-						}
-
-					}
+					//std::string mob = this->_enemies.at(i)->getName();
+					//auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return t.first == mob; });
+					//auto distance = std::distance(this->mobDropList.begin(), it);
+					//if (it != mobDropList.end()) {
+					//	std::random_device rd;  //Seed for the random number
+					//	std::mt19937 gen(rd()); //Mersenne_twister_engine with rd seed
+					//	std::uniform_int_distribution<> distrib(1, 100);
+					//	if (distrib(gen) <= mobDropList[distance].second) {
+					//		auto dropIt = std::find_if(dropLootTable.begin(), dropLootTable.end(), [&mob](const auto& t) {return std::get<0>(t) == mob; });
+					//		auto dropDistance = std::distance(this->dropLootTable.begin(), dropIt);
+					//		if (dropIt != dropLootTable.end()) {
+					//			this->_droppedItems.push_back(std::make_tuple(std::get<2>(dropLootTable[dropDistance]),
+					//				this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY()));
+					//			this->itemType.push_back(4);
+					//		}
+					//	}
+					//}
 					player.gainExp(this->_enemies.at(i)->enemyExpAmount());
 					player.addKillCount(1);
 					player.addKillTable(this->_enemies.at(i)->getName());
@@ -641,37 +649,37 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 
 void Level::generateItems(Graphics &graphics)
 {
-	std::cout << "Generating items..." << std::endl;
-	//Add loot for each enemy.
-	std::string mobName = "bat";
-	auto mMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&mobName](const auto& t) {return t.first == mobName; });
-	if (mMapIt == classMap.end()) {
-		std::cout << "Generating silverGem" << std::endl;
-		classMap["bat"] = &createInstance<SilverGem>;
-		Items *b = classMap["bat"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
-			std::floor(240) * globals::SPRITE_SCALE));
-		this->dropLootTable.push_back(std::move(std::make_tuple("bat", 35, b)));
-		this->mobDropList.push_back(std::make_pair("bat", 35));
-	}
+	//std::cout << "Generating items..." << std::endl;
+	////Add loot for each enemy.
+	//std::string mobName = "bat";
+	//auto mMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&mobName](const auto& t) {return t.first == mobName; });
+	//if (mMapIt == classMap.end()) {
+	//	std::cout << "Generating silverGem" << std::endl;
+	//	classMap["bat"] = &createInstance<SilverGem>;
+	//	Items *b = classMap["bat"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
+	//		std::floor(240) * globals::SPRITE_SCALE));
+	//	this->dropLootTable.push_back(std::move(std::make_tuple("bat", 35, b)));
+	//	this->mobDropList.push_back(std::make_pair("bat", 35));
+	//}
 
-	//Add coins for all mobs
-	std::string coinType = "bronze";
-	auto cMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
-	if (cMapIt == classMap.end()) {
-		std::cout << "Generating Bronze Coin" << std::endl;
-		this->classMap["bronze"] = &createInstance<BronzeCoin>;
-		Items *c = this->classMap["bronze"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
-			std::floor(240) * globals::SPRITE_SCALE));
-		this->dropLootTable.push_back(std::make_tuple("bronze", 50, c));
-	}
-	coinType = "red";
-	cMapIt = std::find_if(classMap.begin(), classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
-	if (cMapIt == classMap.end()) {
-		classMap["red"] = &createInstance<RedCoin>;
-		Items *c = classMap["red"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
-			std::floor(240) * globals::SPRITE_SCALE));
-		this->dropLootTable.push_back(std::make_tuple("red", 50, c));
-	}
+	////Add coins for all mobs
+	//std::string coinType = "bronze";
+	//auto cMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
+	//if (cMapIt == classMap.end()) {
+	//	std::cout << "Generating Bronze Coin" << std::endl;
+	//	this->classMap["bronze"] = &createInstance<BronzeCoin>;
+	//	Items *c = this->classMap["bronze"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
+	//		std::floor(240) * globals::SPRITE_SCALE));
+	//	this->dropLootTable.push_back(std::make_tuple("bronze", 50, c));
+	//}
+	//coinType = "red";
+	//cMapIt = std::find_if(classMap.begin(), classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
+	//if (cMapIt == classMap.end()) {
+	//	classMap["red"] = &createInstance<RedCoin>;
+	//	Items *c = classMap["red"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
+	//		std::floor(240) * globals::SPRITE_SCALE));
+	//	this->dropLootTable.push_back(std::make_tuple("red", 50, c));
+	//}
 }
 
 void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory &invent)
@@ -834,8 +842,7 @@ std::vector<Npc*> Level::checkNpcCollisions(const Rectangle &other, Graphics &gr
 
 }
 
-std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle &other, Graphics &graphics, Inventory &invent) {
-	std::vector<Items*> others;
+void Level::checkItemCollisions(Player & player, const Rectangle &other, Graphics &graphics, Inventory &invent) {
 	for (int i = 0; i < this->_items.size(); i++) {
 		if (this->_items.at(i)->getBoundingBox().collidesWith(other)) {
 			int type = itemType.at(i);
@@ -846,13 +853,13 @@ std::vector<Items*> Level::checkItemCollisions(Player & player, const Rectangle 
 				player.gainCurrency(this->_items.at(i)->getAmount());
 			else
 				invent.storeItem(type);
-			invent.addInstancedLoot(this->_mapName, type);
-			others.push_back(this->_items.at(i));
+			if (type != 2)
+				invent.addInstancedLoot(this->_mapName, type);
+			delete this->_items.at(i);
 			this->_items.erase(_items.begin() + i);
 			itemType.erase(itemType.begin() + i);
 		}
 	}
-	return others;
 }
 
 std::vector<Items*> Level::checkDroppedItemCollisions(Player & player, const Rectangle & other, Graphics & graphics, Inventory & invent)

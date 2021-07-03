@@ -46,7 +46,7 @@ public:
 	std::vector<Enemy*> checkEnemyCollisions(const Rectangle &other);
 	std::vector<Enemy*> checkBulletCollisions(const Rectangle & other);
 	std::vector<Npc*> checkNpcCollisions(const Rectangle & other, Graphics &graphics);
-	std::vector<Items*> checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
+	void checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
 	std::vector<Items*> checkDroppedItemCollisions(Player &player, const Rectangle &other, Graphics &graphics, Inventory &invent);
 	void checkItemFloorCollisions(Items* obj);
 	bool checkDroppedItemFloorCollisions(Items* obj, float x, float y);

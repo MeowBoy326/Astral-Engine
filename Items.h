@@ -34,6 +34,7 @@ class HealthPotion : public Items {
 public:
 	HealthPotion();
 	HealthPotion(Graphics &graphics, Vector2 spawnPoint);
+	~HealthPotion();
 
 	void addToInventory();
 	const inline bool isDroppedItem() { return this->wasDropped; }
@@ -55,6 +56,7 @@ class PermHP : public Items {
 public:
 	PermHP();
 	PermHP(Graphics &graphics, Vector2 spawnPoint);
+	~PermHP();
 	const inline bool isDroppedItem() { return this->wasDropped; }
 	const inline int getAmount() { return this->currencyAmount; }
 	void update(int elapsedTime, Player & player);
@@ -73,6 +75,7 @@ class GoldCoin : public Items {
 public:
 	GoldCoin();
 	GoldCoin(Graphics &graphics, Vector2 spawnPoint);
+	~GoldCoin();
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
@@ -91,6 +94,7 @@ class RedCoin : public Items {
 public:
 	RedCoin();
 	RedCoin(Graphics &graphics, Vector2 spawnPoint);
+	~RedCoin();
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
@@ -109,6 +113,7 @@ class BronzeCoin : public Items {
 public:
 	BronzeCoin();
 	BronzeCoin(Graphics &graphics, Vector2 spawnPoint);
+	~BronzeCoin();
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
@@ -127,6 +132,7 @@ class SilverGem : public Items {
 public:
 	SilverGem();
 	SilverGem(Graphics &graphics, Vector2 spawnPoint);
+	~SilverGem();
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
@@ -146,6 +152,8 @@ class Key : public Items {
 public:
 	Key();
 	Key(Graphics &graphics, Vector2 spawnPoint);
+	~Key();
+
 	const inline bool isDroppedItem() { return this->wasDropped; }
 	const inline int getAmount() { return this->currencyAmount; }
 	void draw(Graphics &graphics);
