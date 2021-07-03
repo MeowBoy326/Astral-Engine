@@ -75,14 +75,8 @@ void Game::gameLoop() {
 	{
 		printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
 	}
-	// else if ! == NULL ?
-	//Mix_PlayMusic(gMusic, -1); uncomment to play music
-
-	//Load savefile
-	std::ifstream data;
-	int x, y;
-	Vector2 spawn;
-	std::string mapname;
+	else 
+		//Mix_PlayMusic(gMusic, -1); uncomment to play music
 
 	this->_title = Title(graphics, input, event);
 	std::cout << "title loop has finished" << std::endl;
@@ -621,6 +615,7 @@ int Game::saveGame(Graphics & graphics)
 	root->InsertEndChild(element);
 	XMLError result = xml.SaveFile("SF-LOC.xml");
 	XMLCheckResult(result);
+	return 0;
 }
 
 int Game::loadGame(Graphics & graphics)
@@ -736,6 +731,7 @@ int Game::loadGame(Graphics & graphics)
 	this->_player.setCurrency(iValue);
 
 	XMLCheckResult(result);
+	return 0;
 }
 
 void Game::update(float elapsedTime, Graphics &graphics) {
