@@ -46,8 +46,7 @@ Level & Level::operator=(const Level & levelMap)
 	}
 	this->_items.clear();
 	this->_enemies.clear();
-	//this->_items = levelMap._items;
-	//this->itemType = levelMap.itemType;
+	this->itemType = levelMap.itemType;
 	this->_npcs = levelMap._npcs;
 	this->_animatedTileInfos = levelMap._animatedTileInfos;
 	this->_animatedTileList = levelMap._animatedTileList;
@@ -62,19 +61,6 @@ Level & Level::operator=(const Level & levelMap)
 	this->_tileList = levelMap._tileList;
 	this->_tilesets = levelMap._tilesets;
 	this->_tileSize = levelMap._tileSize;
-	for (int i = 0; i < levelMap.mobDropList.size(); i++) {
-		this->mobDropList.push_back(levelMap.mobDropList[i]);
-	}
-	std::sort(this->mobDropList.begin(), this->mobDropList.end());
-	this->mobDropList.erase(std::unique(this->mobDropList.begin(), this->mobDropList.end()), this->mobDropList.end());
-
-	for (int i = 0; i < levelMap.dropLootTable.size(); i++) {
-		this->dropLootTable.push_back(levelMap.dropLootTable[i]);
-	}
-	std::sort(this->dropLootTable.begin(), this->dropLootTable.end());
-	this->dropLootTable.erase(std::unique(this->dropLootTable.begin(), this->dropLootTable.end()), this->dropLootTable.end());
-
-	this->areaMap = levelMap.areaMap;
 
 	this->classMap.insert(levelMap.classMap.begin(), levelMap.classMap.end());
 	std::set<std::string> values;
@@ -123,13 +109,12 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	mapNode->QueryIntAttribute("tileheight", &tileHeight);
 	this->_tileSize = Vector2(tileWidth, tileHeight);
 
-	//Load the tilesets. GOing to start everything with P
+	//Load the tilesets.
 	XMLElement* pTileset = mapNode->FirstChildElement("tileset"); //if we have more then 1 tile set its a problem, so a work-around is linked list
 	if (pTileset != NULL) { //just in case we dont have any tiles(?) so program wont crash
 		while (pTileset) {
 			int firstgid;
 			const char* source = pTileset->FirstChildElement("image")->Attribute("source"); //returns a char* so thats why we set char* earlier
-			char* path;
 			std::stringstream ss;
 			ss << source; //ss << "content/tilesets/" << source;
 			pTileset->QueryIntAttribute("firstgid", &firstgid);
@@ -404,29 +389,6 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					}
 				}
 			}
-			/*else if (ss.str() == "enemies") {
-				float x, y;
-				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
-				if (pObject != NULL) {
-					while (pObject) {
-						x = pObject->FloatAttribute("x");
-						y = pObject->FloatAttribute("y");
-						const char* name = pObject->Attribute("name");
-						std::stringstream ss;
-						ss << name;
-						if (ss.str() == "bat") {
-							this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
-						}
-						else if (ss.str() == "shade") {
-							this->_enemies.push_back(new Shade(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
-						}
-
-						pObject = pObject->NextSiblingElement("object");
-					}
-				}
-			}*/
 			else if (ss.str() == "npc") {
 				float x, y;
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
@@ -438,21 +400,13 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						std::stringstream ss;
 						ss << name;
 						if (ss.str() == "Luna") {
-							//auto npObj = std::make_unique<Clock>(Clock(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-							//	std::floor(y) * globals::SPRITE_SCALE), ss.str()));
-							//this->_npcs.push_back(std::move(npObj));
 							this->_npcs.push_back(new Clock(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE), ss.str()));
-							std::cout << "Luna added!" << std::endl;
-							
 						}
-
 						pObject = pObject->NextSiblingElement("object");
 					}
 				}
 			}
-			
-
 			pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
 		}
 	}
@@ -473,15 +427,6 @@ void Level::update(int elapsedTime, Player &player) {
 		if (this->_items.at(i)->isDroppedItem())
 			this->checkItemFloorCollisions(this->_items.at(i));
 	}
-
-	for (int i = 0; i < this->_droppedItems.size(); i++) {
-		std::get<0>(this->_droppedItems[i])->update(elapsedTime, player);
-		if (std::get<0>(this->_droppedItems[i])->isDroppedItem()) {
-			if (this->checkDroppedItemFloorCollisions(std::get<0>(this->_droppedItems[i]), 
-				std::get<1>(this->_droppedItems[i]), std::get<2>(this->_droppedItems[i])))
-				std::get<2>(this->_droppedItems[i]) += -0.8f;
-		}
-	}
 }
 
 void Level::draw(Graphics &graphics, Player &player) {
@@ -500,11 +445,6 @@ void Level::draw(Graphics &graphics, Player &player) {
 	for (int i = 0; i < this->_items.size(); i++) {
 		this->_items.at(i)->draw(graphics);
 	}
-	for (int i = 0; i < this->_droppedItems.size(); i++) {
-		std::get<2>(this->_droppedItems[i]) += 0.4f;
-		std::get<0>(this->_droppedItems[i])->drawDrops(graphics, std::get<1>(this->_droppedItems[i]), std::get<2>(this->_droppedItems[i]));
-	}
-
 	/* OLD code when maps/tile werent implemented
 	//Draw the background
 	//x = 0 , y = 0 because we start at top left corner of the bkBlue.png (64x64) width 64 / height 64
@@ -537,17 +477,6 @@ void Level::checkItemFloorCollisions(Items* obj)
 			obj->addY(-0.8f);
 		}
 	}
-}
-
-bool Level::checkDroppedItemFloorCollisions(Items* obj, float x, float y)
-{
-	Rectangle _itemBoundingBox = Rectangle(x, y, obj->getSourceRect().w * globals::SPRITE_SCALE, obj->getSourceRect().h * globals::SPRITE_SCALE);
-	for (int i = 0; i < this->_collisionRects.size(); i++) {
-		if (this->_collisionRects.at(i).collidesWith(_itemBoundingBox)) {
-			return true;
-		}
-	}
-	return false;
 }
 
 std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { //Goes through all tiles and checks if they are colliding with other rectangle 
@@ -601,46 +530,31 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 				if (this->_enemies.at(i)->isRemoveable() == true) {
 					bool dropRate = (rand() % 2) != 0; //50% chance
 					this->_enemies.at(i)->setRemoveable();
-					std::string coin = this->_enemies.at(i)->getCoinDropType();
-					auto coinIt = std::find_if(dropLootTable.begin(), dropLootTable.end(), [&coin](const auto& t) {return std::get<0>(t) == coin; });
-					auto coinDistance = std::distance(this->dropLootTable.begin(), coinIt);
 					if (dropRate && this->_enemies.at(i)->getEnemyLevel() <= 10 && !this->_enemies.at(i)->isMiniBoss() && !this->_enemies.at(i)->isBoss()) {
 						this->_items.push_back(new BronzeCoin(graphics, Vector2(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY())));
 						this->itemType.push_back(2);
-						/*if (coinIt != dropLootTable.end()) {
-							this->_droppedItems.push_back(std::make_tuple(std::get<2>(dropLootTable[coinDistance]),
-								this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY()));
-							this->itemType.push_back(2);
-						}*/
 					}
-					else if (this->_enemies.at(i)->isMiniBoss() || !this->_enemies.at(i)->isBoss()) {
-						if (coinIt != dropLootTable.end()) {
-							this->_droppedItems.push_back(std::make_tuple(std::get<2>(dropLootTable[coinDistance]),
-								this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY()));
+					else if (this->_enemies.at(i)->isMiniBoss() || this->_enemies.at(i)->isBoss()) {
+							this->_items.push_back(new RedCoin(graphics, Vector2(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY())));
 							this->itemType.push_back(2);
+					}
+					std::string mob = this->_enemies.at(i)->getName();
+					auto cMapIt = std::find_if(this->levelDropTable.begin(), this->levelDropTable.end(), [&mob](const auto& t) { return std::get<0>(t) == mob; });
+					auto cDistance = std::distance(this->levelDropTable.begin(), cMapIt);
+					if (cMapIt != this->levelDropTable.end()) {
+						std::random_device rd; //Seed for the random number (for drop rate check)
+						std::mt19937 gen(rd()); //Mersenne twister engine with rd seed ^
+						std::uniform_int_distribution<> luckyNumber(1, 100);
+						if (luckyNumber(gen) <= std::get<2>(this->levelDropTable[cDistance])) {
+							Items *b = classMap[std::get<1>(this->levelDropTable[cDistance])](graphics, Vector2(this->_enemies.at(i)->getX(),
+								this->_enemies.at(i)->getY()));
+							this->_items.push_back(b);
+							this->itemType.push_back(4);
 						}
 					}
-					//std::string mob = this->_enemies.at(i)->getName();
-					//auto it = std::find_if(mobDropList.begin(), mobDropList.end(), [&mob](const auto& t) {return t.first == mob; });
-					//auto distance = std::distance(this->mobDropList.begin(), it);
-					//if (it != mobDropList.end()) {
-					//	std::random_device rd;  //Seed for the random number
-					//	std::mt19937 gen(rd()); //Mersenne_twister_engine with rd seed
-					//	std::uniform_int_distribution<> distrib(1, 100);
-					//	if (distrib(gen) <= mobDropList[distance].second) {
-					//		auto dropIt = std::find_if(dropLootTable.begin(), dropLootTable.end(), [&mob](const auto& t) {return std::get<0>(t) == mob; });
-					//		auto dropDistance = std::distance(this->dropLootTable.begin(), dropIt);
-					//		if (dropIt != dropLootTable.end()) {
-					//			this->_droppedItems.push_back(std::make_tuple(std::get<2>(dropLootTable[dropDistance]),
-					//				this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY()));
-					//			this->itemType.push_back(4);
-					//		}
-					//	}
-					//}
 					player.gainExp(this->_enemies.at(i)->enemyExpAmount());
 					player.addKillCount(1);
 					player.addKillTable(this->_enemies.at(i)->getName());
-					//this->_enemies.erase(this->_enemies.begin() + i);
 				}
 			}
 		}
@@ -649,37 +563,11 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 
 void Level::generateItems(Graphics &graphics)
 {
-	//std::cout << "Generating items..." << std::endl;
-	////Add loot for each enemy.
-	//std::string mobName = "bat";
-	//auto mMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&mobName](const auto& t) {return t.first == mobName; });
-	//if (mMapIt == classMap.end()) {
-	//	std::cout << "Generating silverGem" << std::endl;
-	//	classMap["bat"] = &createInstance<SilverGem>;
-	//	Items *b = classMap["bat"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
-	//		std::floor(240) * globals::SPRITE_SCALE));
-	//	this->dropLootTable.push_back(std::move(std::make_tuple("bat", 35, b)));
-	//	this->mobDropList.push_back(std::make_pair("bat", 35));
-	//}
-
-	////Add coins for all mobs
-	//std::string coinType = "bronze";
-	//auto cMapIt = std::find_if(this->classMap.begin(), this->classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
-	//if (cMapIt == classMap.end()) {
-	//	std::cout << "Generating Bronze Coin" << std::endl;
-	//	this->classMap["bronze"] = &createInstance<BronzeCoin>;
-	//	Items *c = this->classMap["bronze"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
-	//		std::floor(240) * globals::SPRITE_SCALE));
-	//	this->dropLootTable.push_back(std::make_tuple("bronze", 50, c));
-	//}
-	//coinType = "red";
-	//cMapIt = std::find_if(classMap.begin(), classMap.end(), [&coinType](const auto& t) {return t.first == coinType; });
-	//if (cMapIt == classMap.end()) {
-	//	classMap["red"] = &createInstance<RedCoin>;
-	//	Items *c = classMap["red"](graphics, Vector2(std::floor(240) * globals::SPRITE_SCALE,
-	//		std::floor(240) * globals::SPRITE_SCALE));
-	//	this->dropLootTable.push_back(std::make_tuple("red", 50, c));
-	//}
+	//Create all items that are droppable once.
+	//Note that they do not initialze / expend memory until passed through the &createInstance() function
+	std::cout << "Generating Items" << std::endl;
+	classMap["SilverGem"] = &createInstance<SilverGem>;
+	//more items below
 }
 
 void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory &invent)
@@ -690,7 +578,6 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 	doc.LoadFile(ss.str().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
 
 	XMLElement* mapNode = doc.FirstChildElement("map");
-
 	XMLElement* pObjectGroup = mapNode->FirstChildElement("objectgroup");
 	if (pObjectGroup != NULL) {
 		while (pObjectGroup) {
@@ -712,24 +599,20 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 								this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 									std::floor(y) * globals::SPRITE_SCALE)));
 								this->itemType.push_back(0);
-								std::cout << "Item HP added!" << std::endl;
 							}
 						}
 						else if (ss.str() == "permHP") {
 							if (!invent.isLooted(mapName, 1)) {
 								this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
 								this->itemType.push_back(1);
-								std::cout << "permHP added!" << std::endl;
 							}
 						}
 						else if (ss.str() == "key") {
 							if (!invent.isLooted(mapName, 3)) {
 								this->_items.push_back(new Key(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
 								this->itemType.push_back(3);
-								std::cout << "Key item added to map" << std::endl;
 							}
 						}
-
 						pObject = pObject->NextSiblingElement("object");
 					}
 				}
@@ -745,7 +628,6 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName)
 	std::stringstream ss;
 	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
 	doc.LoadFile(ss.str().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
-
 	XMLElement* mapNode = doc.FirstChildElement("map");
 
 	XMLElement* pObjectGroup = mapNode->FirstChildElement("objectgroup");
@@ -754,45 +636,79 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName)
 			const char* name = pObjectGroup->Attribute("name");
 			std::stringstream ss;
 			ss << name;
-	 if (ss.str() == "enemies") {
-		float x, y;
-		XMLElement* pObject = pObjectGroup->FirstChildElement("object");
-		if (pObject != NULL) {
-			while (pObject) {
-				x = pObject->FloatAttribute("x");
-				y = pObject->FloatAttribute("y");
-				const char* name = pObject->Attribute("name");
-				std::stringstream ss;
-				ss << name;
-				if (ss.str() == "bat") {
-					std::string mobName = "bat";
-					this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-						std::floor(y) * globals::SPRITE_SCALE)));
+			 if (ss.str() == "enemies") {
+				float x, y;
+				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+				if (pObject != NULL) {
+					while (pObject) {
+						XMLElement* pProperties = pObject->FirstChildElement("properties");
+						if (pProperties != NULL) {
+							while (pProperties) {
+								XMLElement* pProperty = pProperties->FirstChildElement("property");
+								if (pProperty != NULL) {
+									while (pProperty) {
+										const char* dropValue = "SilverGem";
+										const char* mobValue = "NA";
+
+										const char* name = pProperty->Attribute("name");
+										std::stringstream ss;
+										ss << name;
+										if (ss.str() == "drop") {
+											dropValue = pProperty->Attribute("value");
+											std::stringstream ss2;
+											ss2 << dropValue;
+										}
+										pProperty = pProperty->NextSiblingElement("property");
+										const char* mName = pProperty->Attribute("name");
+										std::stringstream mobName;
+										mobName << mName;
+										if (mobName.str() == "mobName") {
+											mobValue = pProperty->Attribute("value");
+											std::stringstream mobName2;
+											mobName2 << mobValue;
+									
+										}
+										pProperty = pProperty->NextSiblingElement("property");
+										const char* rateName = pProperty->Attribute("name");
+										std::stringstream rate;
+										int rateValue = 10; //arbitrary number
+										rate << rateName;
+										if (rate.str() == "rate") {
+											pProperty->QueryIntAttribute("value", &rateValue);
+										}
+										auto cMapIt = std::find_if(this->levelDropTable.begin(), this->levelDropTable.end(), [&mobValue](const auto& t) {return std::get<0>(t) == mobValue; });
+										if (cMapIt == levelDropTable.end()) {
+											std::cout << "Sucessfully pushed: " << mobValue << " , " << dropValue << " , " << rateValue << std::endl;
+											this->levelDropTable.push_back(std::make_tuple(mobValue, dropValue, rateValue));
+										}
+										pProperty = pProperty->NextSiblingElement("property");
+									}
+								}
+								pProperties = pProperties->NextSiblingElement("properties");
+							}
+						}
+						//Load enemies now that drops are done
+						x = pObject->FloatAttribute("x");
+						y = pObject->FloatAttribute("y");
+						const char* name = pObject->Attribute("name");
+						std::stringstream ss;
+						ss << name;
+						if (ss.str() == "bat") {
+							std::string mobName = "bat";
+							this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+								std::floor(y) * globals::SPRITE_SCALE)));
+						}
+						else if (ss.str() == "shade") {
+							this->_enemies.push_back(new Shade(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+								std::floor(y) * globals::SPRITE_SCALE)));
+						}
+						pObject = pObject->NextSiblingElement("object");
+					}
 				}
-				else if (ss.str() == "shade") {
-					this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-						std::floor(y) * globals::SPRITE_SCALE)));
-				}
-				pObject = pObject->NextSiblingElement("object");
 			}
+		pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
 		}
 	}
-
-	 pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
-		}
-	}
-}
-
-void Level::deallocateMem()
-{
-	std::cout << "Deallocating memory in this->_enemy" << std::endl;
-	for (auto p : this->_enemies) {
-		if (p != nullptr) {
-			delete p;
-			p = NULL;
-		}
-	}
-	this->_enemies.clear();
 }
 
 std::vector<Enemy*> Level::checkEnemyCollisions(const Rectangle &other) {
@@ -860,28 +776,6 @@ void Level::checkItemCollisions(Player & player, const Rectangle &other, Graphic
 			itemType.erase(itemType.begin() + i);
 		}
 	}
-}
-
-std::vector<Items*> Level::checkDroppedItemCollisions(Player & player, const Rectangle & other, Graphics & graphics, Inventory & invent)
-{
-	std::vector<Items*> others;
-	for (int i = 0; i < this->_droppedItems.size(); i++) {
-		Rectangle _itemBoundingBox = Rectangle(std::get<1>(this->_droppedItems[i]), std::get<2>(this->_droppedItems[i]), 
-			std::get<0>(this->_droppedItems[i])->getSourceRect().w * globals::SPRITE_SCALE, std::get<0>(this->_droppedItems[i])->getSourceRect().h * globals::SPRITE_SCALE);
-		if (_itemBoundingBox.collidesWith(other)) {
-			int type = itemType.at(i);
-			if (type == 1) //Permanent HP+1 item
-				player.gainMaxHealth(5);
-			else if (type == 2)
-				player.gainCurrency(std::get<0>(this->_droppedItems[i])->getAmount());
-			else
-				invent.storeItem(type);
-			others.push_back(std::get<0>(this->_droppedItems[i]));
-			this->_droppedItems.erase(_droppedItems.begin() + i);
-			itemType.erase(itemType.begin() + i);
-		}
-	}
-	return others;
 }
 
 const Vector2 Level::getPlayerSpawnPoint() const {

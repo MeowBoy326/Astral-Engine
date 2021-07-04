@@ -85,6 +85,7 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 	std::string text = textPtr;
 	this->drawNpcText(graphics, 100, 100, text, posX, posY);
 	XMLCheckResult(result);
+	return 0;
 }
 
 int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Player &player)
@@ -115,7 +116,10 @@ int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Pla
 			this->lineCounter = 1;
 			this->lineChar = 'a';
 			this->endOfChat = true;
+			XMLCheckResult(result);
 		}
+		XMLCheckResult(result);
+		return 0;
 }
 
 void Npc::resetScripts()
@@ -159,18 +163,12 @@ int Npc::loadQuests(std::string name)
 		auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
 		//push to vector
 		if (this->questTable.empty() && logIt == questLog.end()) { //check if its not in the accepted quests already
-			std::cout << "table empty...adding quest" << std::endl;
 			this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name));
 		}
 		else { //find_if algorithm with lambda function
-			std::cout << "not empty...adding quest" << std::endl;
 			auto it = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
 			if (it == questTable.end() && logIt == questLog.end()) {
 				this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name));
-				std::cout << "Pushing 2nd quest into table..." << std::endl;
-			}
-			else {
-				std::cout << "unable to add quest. It is already completed" << std::endl;
 			}
 		}
 		if (ptrElement->NextSiblingElement("Quest") != nullptr)
@@ -182,6 +180,8 @@ int Npc::loadQuests(std::string name)
 			//once rewarded and player opens menu again, mark as completed.
 		}
 	}
+	XMLCheckResult(result);
+	return 0;
 }
 
 void Npc::displayQuests(Graphics & graphics, std::string npcName, int posX, int posY, Player & player)
@@ -242,14 +242,12 @@ void Npc::acceptQuest(Graphics & graphics, std::string npcName, int posX, int po
 	 if (!questTable.empty()) {
 		this->drawNpcText(graphics, 100, 100, std::get<4>(this->questTable[selection]), posX, posY);
 		if (this->questLog.empty()) {
-			std::cout << "Quest Log is empty...Pushing quest." << std::endl;
 			this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
 				std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false));
 		}
 		else { //find_if algorithm with lambda function
 			auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
 			if (it == questLog.end()) {
-				std::cout << "Pushing 2nd quest into Quest Log..." << std::endl;
 				this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
 					std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false));
 			}
@@ -268,7 +266,6 @@ void Npc::giveRewards(Graphics & graphics, std::string npcName, int posX, int po
 		if (std::get<5>(this->questLog[distance]) != true)
 			player.addLevel(1);
 		std::get<5>(this->questLog[distance]) = true;
-		//std::cout << "Oh my god...it's jason bourne" << std::endl;
 	}
 }
 

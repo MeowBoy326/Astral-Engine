@@ -43,12 +43,7 @@ void TextManager::setTextStatus(bool status) {
 }
 
 bool TextManager::isActiveText() {
-	if (textConstants::activeText == true) {
-		return true;
-	}
-	if (textConstants::activeText == false) {
-		return false;
-	}
+	return textConstants::activeText;
 }
 
 void TextManager::drawChatBox(Graphics & graphics, Player & player) {

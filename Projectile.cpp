@@ -313,12 +313,7 @@ void Projectile::updateDmgText(float ElapsedTime) {
 
 bool Projectile::isActive()
 {
-	if (projectileConstants::active == true) {
-		return true;
-	}
-	else if (projectileConstants::active == false) {
-		return false;
-	}
+	return projectileConstants::active;
 }
 
 void Projectile::handleProjectileCollisions(std::vector<Enemy*> &others, Graphics &graphics) {

@@ -86,7 +86,6 @@ Bat::Bat(Graphics &graphics, Vector2 spawnPoint) :
 
 Bat::~Bat()
 {
-	std::cout << "BAT destructor" << std::endl;
 	this->destroySprite();
 	this->_fireBall.destroySprite();
 }
@@ -187,7 +186,6 @@ void Bat::touchPlayer(Player* player) {
 void Bat::bulletHit(float dmg) {
 	if (this->_currentHealth >= 1)
 		this->_currentHealth -= dmg;
-	//std::cout << "BAT hit! HP = " << this->_currentHealth << std::endl;
 }
 
 void Bat::setRemoveable() {
@@ -215,7 +213,6 @@ Shade::Shade() {}
 
 Shade::~Shade()
 {
-	std::cout << "Shade destructor" << std::endl;
 	this->destroySprite();
 	this->_shadeBall.destroySprite();
 }

@@ -59,7 +59,6 @@ HealthPotion::HealthPotion(Graphics & graphics, Vector2 spawnPoint) :
 
 HealthPotion::~HealthPotion()
 {
-	std::cout << "HP destructor called" << std::endl;
 	this->destroySprite();
 }
 
@@ -106,7 +105,6 @@ PermHP::PermHP(Graphics &graphics, Vector2 spawnPoint) :
 
 PermHP::~PermHP()
 {
-	std::cout << "PermHP destructor called" << std::endl;
 	this->destroySprite();
 }
 
@@ -147,7 +145,6 @@ Key::Key(Graphics &graphics, Vector2 spawnPoint) :
 
 Key::~Key()
 {
-	std::cout << "Key destructor called" << std::endl;
 	this->destroySprite();
 }
 
@@ -193,7 +190,6 @@ GoldCoin::GoldCoin(Graphics & graphics, Vector2 spawnPoint) :
 
 GoldCoin::~GoldCoin()
 {
-	std::cout << "GoldCoin destructor called" << std::endl;
 	this->destroySprite();
 }
 
@@ -242,7 +238,6 @@ RedCoin::RedCoin(Graphics & graphics, Vector2 spawnPoint) :
 
 RedCoin::~RedCoin()
 {
-	std::cout << "RedCoin destructor called" << std::endl;
 	this->destroySprite();
 }
 
@@ -291,7 +286,6 @@ BronzeCoin::BronzeCoin(Graphics & graphics, Vector2 spawnPoint) :
 
 BronzeCoin::~BronzeCoin()
 {
-	std::cout << "Bronze Coin Destructor" << std::endl;
 	this->destroySprite();
 }
 
@@ -336,12 +330,12 @@ SilverGem::SilverGem(Graphics & graphics, Vector2 spawnPoint) :
 
 SilverGem::~SilverGem()
 {
-	std::cout << "SilverGem destructor called" << std::endl;
 	this->destroySprite();
 }
 
 void SilverGem::update(int elapsedTime, Player & player)
 {
+	this->_y += 0.4f;
 	this->playAnimation("Rotate");
 	Items::update(elapsedTime, player);
 }

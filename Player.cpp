@@ -177,9 +177,7 @@ void Player::overwriteLevel(Level & level, std::string mapName)
 	it = this->mapStorage.find(mapName);
 	if (it != this->mapStorage.end()) {
 		std::cout << "found & overwritten the saved map:" << mapName << std::endl;
-		level.deallocateMem();
 		it->second = level;
-		//level.deallocateMem();
 	}
 }
 
@@ -326,15 +324,12 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 			it = this->mapStorage.find(others.at(i).getDestination());
 			if (it != this->mapStorage.end()) {
 				std::cout << "found the saved map:" << others.at(i).getDestination() << std::endl;
-				level.deallocateMem();
 				level = it->second;
-				level.deallocateMem();
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName());
 			}
 			else {
 				level = Level(others.at(i).getDestination(), graphics, invent);
-				//level.deallocateMem();
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName());
 				this->storeLevel(level);
@@ -354,7 +349,22 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 	//Also check to see if the player has a "Key"
 	for (int i = 0; i < others.size(); i++) {
 		if (this->_grounded == true && this->_lookingDown == true && invent.hasKeyStored() == true) {
-			level = Level(others.at(i).getDestination(), graphics, invent);
+			this->overwriteLevel(level, level.getMapName());
+			std::map<std::string, Level>::iterator it;
+			it = this->mapStorage.find(others.at(i).getDestination());
+			if (it != this->mapStorage.end()) {
+				std::cout << "found the saved map:" << others.at(i).getDestination() << std::endl;
+				level = it->second;
+				level.generateMapItems(graphics, level.getMapName(), invent);
+				level.generateEnemies(graphics, level.getMapName());
+			}
+			else {
+				level = Level(others.at(i).getDestination(), graphics, invent);
+				level.generateMapItems(graphics, level.getMapName(), invent);
+				level.generateEnemies(graphics, level.getMapName());
+				this->storeLevel(level);
+				std::cout << "stored level" << std::endl;
+			}
 			player_constants::mapName = others.at(i).getDestination();
 			this->_x = level.getPlayerSpawnPoint().x;
 			this->_y = level.getPlayerSpawnPoint().y;

@@ -177,7 +177,7 @@ protected:
 	int level = 10;
 	std::string name = "shade";
 	std::string coinType = "red";
-	bool boss = false;
+	bool boss = true;
 	bool miniBoss = false;
 	bool deathCreated = false;
 	bool canDropLoot = false;
