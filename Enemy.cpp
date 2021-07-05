@@ -81,22 +81,35 @@ Bat::Bat(Graphics &graphics, Vector2 spawnPoint) :
 	this->playAnimation("FlyLeft");
 	this->_fireX = this->_startingX;
 	this->_fireY = this->_startingY;
+	this->_HPBar._x = this->_startingX;
+	this->_HPBar._y = this->_startingY;
 	this->_fireBall = Sprite(graphics, "NpcCemet.png", 220, 33, 13, 10, this->_fireX, (this->_fireY + 10));
+	this->_HPBar = Sprite(graphics, "NpcCemet.png", 2, 157, 17, 7, this->_HPBar._x, this->_HPBar._y - 15);
+	this->_HPValue = Sprite(graphics, "NpcCemet.png", 3, 167, 17, 5, this->_HPBar._x + 1, this->_HPBar._y + 2);
 }
 
 Bat::~Bat()
 {
 	this->destroySprite();
 	this->_fireBall.destroySprite();
+	this->_HPBar.destroySprite();
+	this->_HPValue.destroySprite();
 }
 
 void Bat::update(int elapsedTime, Player &player) {
 	this->_fireBall.update();
+	this->_HPBar.update();
+	this->_HPValue.update();
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
 	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
 		this->playAnimation(this->_direction == RIGHT ? "FlyRight" : "FlyLeft");
 		//Move up or down
 		this->_y += this->_shouldMoveUp ? -.06 : .06;
+		this->_HPBar._y += this->_shouldMoveUp ? -.06 : .06;
+		this->_HPValue._y += this->_shouldMoveUp ? -.06 : .06;
+		float hpNum = (float)this->getCurrentHealth() / this->getMaxHealth();
+		this->_HPValue.setSourceRectW(std::floor(hpNum * 17));
+
 		if (this->_y > (this->_startingY + 30) || this->_y < this->_startingY - 30) {
 			this->_shouldMoveUp = !this->_shouldMoveUp;
 		}
@@ -148,6 +161,11 @@ void Bat::draw(Graphics &graphics) {
 	if (isVisible == true) {
 		Enemy::draw(graphics);
 		this->_fireBall.draw(graphics, this->_fireBall.getX(), this->_fireBall.getY());
+		if (this->getCurrentHealth() < this->getMaxHealth()) {
+			this->_HPBar.draw(graphics, this->_HPBar._x, this->_HPBar._y);
+			this->_HPValue.draw(graphics, this->_HPValue._x, this->_HPValue._y);
+		}
+
 	}
 }
 
@@ -215,6 +233,8 @@ Shade::~Shade()
 {
 	this->destroySprite();
 	this->_shadeBall.destroySprite();
+	this->_HPBar.destroySprite();
+	this->_HPValue.destroySprite();
 }
 
 Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
@@ -229,20 +249,31 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 	this->playAnimation("shadeRight");
 
 	this->_shadeBall = Sprite(graphics, "shadeAttack.png", 0, 0, 22, 19, this->_startingX, (this->_startingY + 60));
+	this->_HPBar = Sprite(graphics, "NpcCemet.png", 2, 157, 17, 7, this->_startingX + 50, this->_startingY - 15);
+	this->_HPValue = Sprite(graphics, "NpcCemet.png", 3, 174, 17, 5, this->_startingX + 51, this->_startingY - 12);
 	graphics.loadImage("shadeAttack.png");
 }
 
 void Shade::update(int elapsedTime, Player &player) {
 	this->_shadeBall.update();
+	this->_HPBar.update();
+	this->_HPValue.update();
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
 	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
 		this->playAnimation(this->_direction == RIGHT ? "shadeRight" : "shadeLeft");
 
+		float hpNum = (float)this->getCurrentHealth() / this->getMaxHealth();
+		this->_HPValue.setSourceRectW(std::floor(hpNum * 17));
+
 		if (this->_direction == RIGHT) {
 			this->_x += 0.2f;
+			this->_HPBar._x += 0.2f;
+			this->_HPValue._x += 0.2f;
 		}
 		else {
 			this->_x -= 0.2f;
+			this->_HPBar._x -= 0.2f;
+			this->_HPValue._x -= 0.2f;
 		}
 		if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
 			player.gainHealth(-12.64f);
@@ -296,6 +327,10 @@ void Shade::draw(Graphics &graphics) {
 	if (isVisible == true) {
 	AnimatedSprite::drawBoss(graphics, this->_x, this->_y);
 	this->_shadeBall.draw(graphics, this->_shadeBall.getX(), this->_shadeBall.getY());
+		if (this->getCurrentHealth() < this->getMaxHealth()) {
+			this->_HPBar.draw(graphics, this->_HPBar._x, this->_HPBar._y);
+			this->_HPValue.draw(graphics, this->_HPValue._x, this->_HPValue._y);
+		}
 	}
 }
 

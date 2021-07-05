@@ -105,6 +105,8 @@ private:
 	int iFrameCount = 0;
 	float batExp = 1.175f;
 	Sprite _fireBall;
+	Sprite _HPBar;
+	Sprite _HPValue;
 	float _fireX, _fireY;
 	double _deathAnimationTime = 800;
 	double _deathTimeElapsed = 0;
@@ -166,8 +168,10 @@ private:
 	int iFrameCount = 0;
 	float shadeExp = 100;
 	Sprite _shadeBall;
+	Sprite _HPBar;
+	Sprite _HPValue;
 	//float _fireX, _fireY;
-	double _deathAnimationTime = 2500;
+	double _deathAnimationTime = 800;
 	double _deathTimeElapsed = 0;
 protected:
 	Direction _direction;
