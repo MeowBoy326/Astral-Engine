@@ -36,7 +36,7 @@ public:
 	void checkEnemyHP(Player & player, Graphics &graphics);
 	void generateItems(Graphics &graphics);
 	void generateMapItems(Graphics &graphics, std::string mapName, Inventory &invent);
-	void generateEnemies(Graphics &graphics, std::string mapName);
+	void generateEnemies(Graphics &graphics, std::string mapName, Player &player);
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);

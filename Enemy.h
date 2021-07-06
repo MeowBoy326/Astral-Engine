@@ -35,6 +35,8 @@ public:
 	virtual const inline std::string getCoinDropType() { return this->coinType; }
 	virtual const inline bool isBoss() { return this->boss; }
 	virtual const inline bool isMiniBoss() { return this->miniBoss; }
+	virtual const inline float getStartingX() const { return this->_startingX; }
+	virtual const inline float getStartingY() const { return this->_startingY; }
 
 	virtual void bulletHit(float dmg);
 	virtual std::string getName();
@@ -44,6 +46,7 @@ public:
 protected:
 	Direction _direction;
 
+	float _startingX, _startingY;
 	int _maxHealth;
 	int _currentHealth;
 	int level;
@@ -89,6 +92,8 @@ public:
 	const inline std::string getCoinDropType() { return this->coinType; }
 	const inline bool isBoss() { return this->boss; }
 	const inline bool isMiniBoss() { return this->miniBoss; }
+	const inline float getStartingX() const { return this->_startingX; }
+	const inline float getStartingY() const { return this->_startingY; }
 
 	bool isRemoveable();
 	void setRemoveable();
@@ -153,6 +158,8 @@ public:
 	const inline std::string getCoinDropType() { return this->coinType; }
 	const inline bool isBoss() { return this->boss; }
 	const inline bool isMiniBoss() { return this->miniBoss; }
+	const inline float getStartingX() const { return this->_startingX; }
+	const inline float getStartingY() const { return this->_startingY; }
 
 	bool isRemoveable();
 	void setRemoveable();

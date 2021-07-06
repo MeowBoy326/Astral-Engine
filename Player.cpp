@@ -136,6 +136,41 @@ void Player::addKillTable(std::string name)
 	}
 }
 
+void Player::addBossTable(std::string name, std::string mapName, float x, float y)
+{
+	if (this->bossTable.empty())
+		this->bossTable.push_back(std::make_tuple(name, mapName, x, y, false));
+	else {
+		auto bossIt = std::find_if(this->bossTable.begin(), this->bossTable.end(), [&name](const auto& t) {return std::get<0>(t) == name; });
+		auto bDistance = std::distance(this->bossTable.begin(), bossIt);
+		if (bossIt != this->bossTable.end()) {
+			if (std::get<1>(this->bossTable[bDistance]) == mapName && (std::get<2>(this->bossTable[bDistance]) != x
+				|| std::get<3>(this->bossTable[bDistance]) != y)) //same boss/mini-boss (2 on same level) so we check the x or y as well 
+			{
+				this->bossTable.push_back(std::make_tuple(name, mapName, x, y, false));
+			}
+			else if (std::get<1>(this->bossTable[bDistance]) != mapName) {
+				this->bossTable.push_back(std::make_tuple(name, mapName, x, y, false));
+			}
+		}
+		else
+			this->bossTable.push_back(std::make_tuple(name, mapName, x, y, false));
+	}
+}
+
+void Player::completeBossTable(std::string name, std::string mapName, float x, float y)
+{
+	auto bossIt = std::find_if(this->bossTable.begin(), this->bossTable.end(), [&name](const auto& t) {return std::get<0>(t) == name; });
+	auto bDistance = std::distance(this->bossTable.begin(), bossIt);
+	if (bossIt != this->bossTable.end()) {
+		if (std::get<1>(this->bossTable[bDistance]) == mapName && std::get<2>(this->bossTable[bDistance]) == x
+			&& std::get<3>(this->bossTable[bDistance]) == y) //same boss/mini-boss (2 on same level) so we check the x or y as well 
+		{
+			std::get<4>(this->bossTable[bDistance]) = true;
+		}
+	}
+}
+
 void Player::addMultiKill(std::string name, int amount)
 {
 	if (this->killTable.empty()) {
@@ -157,11 +192,26 @@ bool Player::checkKillQuestComplete(std::string name, int count)
 {
 	for (int index = 0; index < this->killTable.size(); ++index) {
 		if (this->killTable[index].first == name && this->killTable[index].second >= count) {
-			std::cout << "Appropiate amount of mobs killed!" << std::endl;
 			return true;
 		}
-			
 	}
+	return false;
+}
+
+bool Player::checkBossCompleted(std::string name, std::string mapName, float x, float y)
+{
+	auto bossIt = std::find_if(this->bossTable.begin(), this->bossTable.end(), [&name](const auto& t) {return std::get<0>(t) == name; });
+	auto bDistance = std::distance(this->bossTable.begin(), bossIt);
+	if (bossIt != this->bossTable.end()) {
+		if (std::get<1>(this->bossTable[bDistance]) == mapName && std::get<2>(this->bossTable[bDistance]) == x
+			&& std::get<3>(this->bossTable[bDistance]) == y && std::get<4>(this->bossTable[bDistance]) == true) {
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
 	return false;
 }
 
@@ -313,7 +363,7 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 	}
 }
 
-void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent) {
+void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player) {
 	//Check if the player is grounded and holding the down arrow
 	//If so, go through the door
 	//If not, do nothing
@@ -326,12 +376,12 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 				std::cout << "found the saved map:" << others.at(i).getDestination() << std::endl;
 				level = it->second;
 				level.generateMapItems(graphics, level.getMapName(), invent);
-				level.generateEnemies(graphics, level.getMapName());
+				level.generateEnemies(graphics, level.getMapName(), player);
 			}
 			else {
 				level = Level(others.at(i).getDestination(), graphics, invent);
 				level.generateMapItems(graphics, level.getMapName(), invent);
-				level.generateEnemies(graphics, level.getMapName());
+				level.generateEnemies(graphics, level.getMapName(), player);
 				this->storeLevel(level);
 				std::cout << "stored level" << std::endl;
 			}
@@ -343,7 +393,7 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 	}
 }
 
-void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level, Graphics & graphics, Inventory & invent)
+void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level, Graphics & graphics, Inventory & invent, Player &player)
 {
 	//Check if the player is grounded and holding the down arrow
 	//Also check to see if the player has a "Key"
@@ -356,12 +406,12 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 				std::cout << "found the saved map:" << others.at(i).getDestination() << std::endl;
 				level = it->second;
 				level.generateMapItems(graphics, level.getMapName(), invent);
-				level.generateEnemies(graphics, level.getMapName());
+				level.generateEnemies(graphics, level.getMapName(), player);
 			}
 			else {
 				level = Level(others.at(i).getDestination(), graphics, invent);
 				level.generateMapItems(graphics, level.getMapName(), invent);
-				level.generateEnemies(graphics, level.getMapName());
+				level.generateEnemies(graphics, level.getMapName(), player);
 				this->storeLevel(level);
 				std::cout << "stored level" << std::endl;
 			}

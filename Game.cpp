@@ -105,9 +105,9 @@ void Game::gameLoop() {
 				std::cout << "No save data found...Starting new game!" << std::endl;
 				this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
 				this->_level.generateItems(graphics);
-				this->_level.generateEnemies(graphics, this->_level.getMapName());
 				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
+				this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
 				this->saveGame(graphics);
 			}
 			else {
@@ -613,6 +613,20 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
+	element = xml.NewElement("BossTable");
+	if (element == nullptr)
+		return XML_ERROR_PARSING_ELEMENT;
+	std::vector<std::tuple<std::string, std::string, float, float, bool>> btVec = this->_player.getBossTable();
+	for (int counter = 0; counter < btVec.size(); ++counter) {
+		XMLElement* bElement = xml.NewElement("bTable");
+		bElement->SetAttribute("mob", std::get<0>(btVec[counter]).c_str());
+		bElement->SetAttribute("map", std::get<1>(btVec[counter]).c_str());
+		bElement->SetAttribute("posX", std::get<2>(btVec[counter]));
+		bElement->SetAttribute("posY", std::get<3>(btVec[counter]));
+		bElement->SetAttribute("completed", std::get<4>(btVec[counter]));
+		element->InsertEndChild(bElement);
+	}
+	root->InsertEndChild(element);
 	XMLError result = xml.SaveFile("SF-LOC.xml");
 	XMLCheckResult(result);
 	return 0;
@@ -702,6 +716,26 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("kTable");
 	}
 	this->_player.setKillTable(kVec);
+	//Load BossTable
+	element = root->FirstChildElement("BossTable");
+	ptrVec = element->FirstChildElement("bTable");
+	std::vector<std::tuple<std::string, std::string, float, float, bool>> btVec;
+	while (ptrVec != nullptr) {
+		const char* namePtr = nullptr, *mapPtr = nullptr;
+		std::string mobName, mapName;
+		float mobX, mobY;
+		bool completed;
+		namePtr = ptrVec->Attribute("mob");
+		mobName = namePtr;
+		mapPtr = ptrVec->Attribute("map");
+		mapName = mapPtr;
+		result = ptrVec->QueryFloatAttribute("posX", &mobX);
+		result = ptrVec->QueryFloatAttribute("posY", &mobY);
+		result = ptrVec->QueryBoolAttribute("completed", &completed);
+		btVec.push_back(std::make_tuple(mobName, mapName, mobX, mobY, completed));
+		ptrVec = ptrVec->NextSiblingElement("bTable");
+	}
+	this->_player.setBossTable(btVec);
 	//Load stats
 	element = root->FirstChildElement("Stats");
 	if (element == nullptr)
@@ -730,6 +764,7 @@ int Game::loadGame(Graphics & graphics)
 	result = element->QueryIntAttribute("Celestial", &iValue);
 	this->_player.setCurrency(iValue);
 
+	this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
 	XMLCheckResult(result);
 	return 0;
 }
@@ -820,12 +855,12 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	//Check doors
 	std::vector<Door> otherDoors;
 	if ((otherDoors = this->_level.checkDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory);
+		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory, this->_player);
 	}
 
 	std::vector<Door> lockedDoors;
 	if ((lockedDoors = this->_level.checkLockedDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleLockedDoorCollision(lockedDoors, this->_level, this->_graphics, this->_inventory);
+		this->_player.handleLockedDoorCollision(lockedDoors, this->_level, this->_graphics, this->_inventory, this->_player);
 	}
 
 }

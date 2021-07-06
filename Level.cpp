@@ -537,6 +537,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					else if (this->_enemies.at(i)->isMiniBoss() || this->_enemies.at(i)->isBoss()) {
 							this->_items.push_back(new RedCoin(graphics, Vector2(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY())));
 							this->itemType.push_back(2);
+							player.completeBossTable(this->_enemies.at(i)->getName(), this->_mapName, this->_enemies.at(i)->getStartingX(), this->_enemies.at(i)->getStartingY());
 					}
 					std::string mob = this->_enemies.at(i)->getName();
 					auto cMapIt = std::find_if(this->levelDropTable.begin(), this->levelDropTable.end(), [&mob](const auto& t) { return std::get<0>(t) == mob; });
@@ -555,6 +556,10 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					player.gainExp(this->_enemies.at(i)->enemyExpAmount());
 					player.addKillCount(1);
 					player.addKillTable(this->_enemies.at(i)->getName());
+					if (this->_enemies.at(i)->isBoss() || this->_enemies.at(i)->isMiniBoss()) {
+						delete this->_enemies.at(i);
+						this->_enemies.erase(this->_enemies.begin() + i);
+					}
 				}
 			}
 		}
@@ -622,7 +627,7 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 	}
 }
 
-void Level::generateEnemies(Graphics & graphics, std::string mapName)
+void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &player)
 {
 	XMLDocument doc; //represents entire xml document
 	std::stringstream ss;
@@ -699,8 +704,11 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName)
 								std::floor(y) * globals::SPRITE_SCALE)));
 						}
 						else if (ss.str() == "shade") {
-							this->_enemies.push_back(new Shade(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
+							if (!player.checkBossCompleted(ss.str(), mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)) {
+								this->_enemies.push_back(new Shade(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE)));
+								player.addBossTable(ss.str(), mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE);
+							}
 						}
 						pObject = pObject->NextSiblingElement("object");
 					}

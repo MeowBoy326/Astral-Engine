@@ -45,8 +45,8 @@ public:
 	//Event handling
 	void handleTileCollisions(std::vector<Rectangle> &others);
 	void handleSlopeCollisions(std::vector<Slope> &others);
-	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent);
-	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent);
+	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
+	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
 	void handleNpcCollisions(std::vector<Npc*>& others, Graphics &graphics, int lineCount);
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
@@ -54,10 +54,15 @@ public:
 	const float getY() const; //getting variables not changes const make sure it doesnt
 	std::string enemyName;
 	void addKillTable(std::string name);
+	void addBossTable(std::string name, std::string mapName, float x, float y);
+	void setBossTable(std::vector<std::tuple<std::string, std::string, float, float, bool>> table) { this->bossTable = table; }
+	inline const std::vector<std::tuple<std::string, std::string, float, float, bool>> getBossTable() const { return this->bossTable; }
+	void completeBossTable(std::string name, std::string mapName, float x, float y);
 	void addMultiKill(std::string name, int amount);
 	inline const std::vector<std::pair<std::string, int>> getKillTable() const { return this->killTable; }
 	inline void setKillTable(std::vector<std::pair<std::string, int>> table) { this->killTable = table; }
 	bool checkKillQuestComplete(std::string name, int count);
+	bool checkBossCompleted(std::string name, std::string mapName, float x, float y);
 	void storeLevel(Level &level);
 	void overwriteLevel(Level &level, std::string mapName);
 	
@@ -138,6 +143,8 @@ private:
 	Sprite _statSelection;
 
 	std::vector<std::pair<std::string, int>> killTable;
+	//name, mapName, initial x & y
+	std::vector<std::tuple<std::string, std::string, float, float, bool>> bossTable;
 	std::map<std::string, Level> mapStorage;
 protected:
 	double _timeToUpdate = 2500;

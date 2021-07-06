@@ -307,10 +307,6 @@ void Shade::update(int elapsedTime, Player &player) {
 		}
 		if (timerRespawn > respawnTime && isVisible == false && dyingAnimation == false) {
 			timerRespawn = 0;
-			this->isVisible = true;
-			this->_currentHealth = this->_maxHealth;
-			this->removeEnemy = false;
-			this->canDropLoot = false;
 			_deathTimeElapsed = 0;
 		}
 	}
