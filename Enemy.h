@@ -196,4 +196,5 @@ protected:
 	double respawnTime = 6000;
 	double timerRespawn = 0;
 	bool isVisible = true;
+	bool isIdle = true;
 };

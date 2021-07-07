@@ -18,24 +18,37 @@
 
 using namespace tinyxml2;
 
-bool activeProjectile = false;
 namespace {
 	const int FPS = 50;
 	// remove 5 *
 	const int MAX_FRAME_TIME = 5* 1000 / FPS; //Max amount of time a frame is allowed to last
+	int selection = 1;
+	int npcSelection = 1;
+	int questSelection = 1;
+	int lineNum = 0;
+	int currentLine = 0;
+	int sceneTimer = 0;
+	int sceneMaxTime = 0;
+
 	bool title = true;
 	bool GAMEOVER = false;
 	bool activeTalk = false;
 	bool activeInventory = false;
 	bool activeStatMenu = false;
-	int selection = 1;
-	int npcSelection = 1;
-	int questSelection = 1;
+	bool activeProjectile = false;
+	bool activeCutscene = false;
 	bool pickUp = false;
 	bool nextLine = false;
+
+	float sceneX = 0;
+	float sceneY = 0;
+	float targetX = 0;
+	float targetY = 0;
+	float xMod = 0;
+	float yMod = 0;
+
 	std::string npcName;
-	int lineNum = 0;
-	int currentLine = 0;
+	std::string sceneDir;
 }
 
 Game::Game() { //constructor
@@ -51,17 +64,7 @@ Game::Game() { //constructor
 	this->gameLoop(); //start game
 }
 
-Game::~Game() { //deconstructor
-	
-}
-
-std::ifstream& GoLine(std::ifstream& file, unsigned int num) {
-	file.seekg(std::ios::beg);
-	for (int i = 0; i < num - 1; ++i) {
-		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	}
-	return file;
-}
+Game::~Game() {}
 
 void Game::gameLoop() {
 	Graphics graphics;
@@ -79,26 +82,19 @@ void Game::gameLoop() {
 		//Mix_PlayMusic(gMusic, -1); uncomment to play music
 
 	this->_title = Title(graphics, input, event);
-	std::cout << "title loop has finished" << std::endl;
 	this->_gameOver = GameOver(graphics);
-	//this->_title.Start();
-	//this->_level = Level("cave", graphics); //intialize level: Map name , spawn point, graphics
-	//this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 	this->_camera = Camera();
-	//this->_bullet = Bullet(graphics, this->_level.getBulletSpawnPoint());
 	this->_bullet = Projectile(graphics, this->_player);
 	this->_chatBox = TextManager(graphics, this->_player);
-	//this->_player = Player(graphics, 100, 100); //We only now need x, y of char when we create. intialize player
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
-	//Camera::Init();
 
 	int LAST_UPDATE_TIME = SDL_GetTicks(); 
 	//Above ^ gets the amount of miliseconds since the SDL library was intialized
 	//must start before loop
 	//Start the game loop
 	while (true) {
-		input.beginNewFrame(); //resets our released key pressed keys first time around doesnt matter already set to false but good to reset anyway
+		input.beginNewFrame();
 		if (title == true) {
 			title = _title.Start(graphics, input, event);
 			if (_title.getMenuChoice() == 0) {
@@ -138,323 +134,335 @@ void Game::gameLoop() {
 			}
 
 			this->_graphics = graphics; //updated graphics
-			this->updateGameOver(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME)); //take standard min : elapsed time ms and max frame time
+			//take standard min : elapsed time ms and max frame time
+			this->updateGameOver(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
 
-			LAST_UPDATE_TIME = CURRENT_TIME_MS; //loop will go again and current time - new last update will tell us how long next frame will take
+			//loop will go again and current time - new last update will tell us how long next frame will take
+			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 
 			this->drawGameOver(graphics);
 		}
 
-		if (title == false && GAMEOVER == false) {
-
-
-		if (SDL_PollEvent(&event)) {
-			if (event.type == SDL_KEYDOWN) {
-				if (event.key.repeat == 0) {
-					input.keyDownEvent(event); //if we are holding key start keydown event
+		if (title == false && GAMEOVER == false && activeCutscene == true) {
+			if (SDL_PollEvent(&event)) {
+				if (event.type == SDL_KEYDOWN) {
+					if (event.key.repeat == 0) {
+						input.keyDownEvent(event); //if we are holding key start keydown event
+					}
+				}
+				else if (event.type == SDL_KEYUP) { // if key was released
+					input.keyUpEvent(event);
+				}
+				else if (event.type == SDL_QUIT) {
+					return; //when the game ends or user exits
 				}
 			}
-			else if (event.type == SDL_KEYUP) { // if key was released
-				input.keyUpEvent(event);
-			}
-			else if (event.type == SDL_QUIT) {
-				return; //when the game ends or user exits
-			}
-		}
-		if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {
-			this->saveGame(graphics);
-			std::cout << "Quitting Game..." << std::endl;
-			return; //quit game if ESC was pressed
-		}
-		else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true) { 
-			if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
-				this->_player.moveLeft();
-			}
-			else if (activeTalk == true) {
-				std::cout << "impaired action" << std::endl;
-			}
-			 
-		}
-		else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true) {
-			if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
-				this->_player.moveRight();
-			}
-			else if (activeTalk == true) {
-				std::cout << "impaired action" << std::endl;
-			}
-			
-		}
 
-		if (input.isKeyHeld(SDL_SCANCODE_UP) == true) {
-			if (activeTalk == false && activeInventory == false && activeStatMenu == false)
-				this->_player.lookUp();
-		}
-		else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true) {
-			if (activeTalk == false && activeInventory == false && activeStatMenu == false)
-				this->_player.lookDown();
-		}
-		if (input.wasKeyReleased(SDL_SCANCODE_UP) == true) {
-			if (activeTalk == false && activeInventory == false && activeStatMenu == false)
-				this->_player.stopLookingUp();
-		}
-		if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true) {
-			if (activeTalk == false && activeInventory == false && activeStatMenu == false)
-				this->_player.stopLookingDown();
-		}
-
-		if (input.wasKeyPressed(SDL_SCANCODE_SPACE) == true){ //IF is imporannt make sure not to do else if otherwise u cannot move and jump!
-			if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
-				this->_player.jump();
-			}
-			else if (activeTalk == true) {
-				std::cout << "impaired action" << std::endl;
-			}
-			
-		}
-		if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT)) { //if player isnt moving left or right(at all) do stopMoving function
-			this->_player.stopMoving();
-		}
-		//bullet
-		if (input.wasKeyPressed(SDL_SCANCODE_E) == true) {
-			if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
-
-				if (_player.lookingUp() == true) {
-					this->_bullet.shootUp(graphics, this->_player);;
-				}
-				else if (_player.lookingDown() == true) {
-					this->_bullet.shootDown(graphics, this->_player);;
-				}
-
-				else if (_player.lookingLeft() == true) {
-					this->_bullet.shootLeft(graphics, this->_player);;
-				}
-
-				else if (_player.lookingRight() == true) {
-					this->_bullet.shootBullet(graphics, this->_player);
-				}
-				//this->_bullet.shootBullet(graphics, this->_player);
-			}
-			
-			else if (activeTalk == true) {
-				std::cout << "impaired action" << std::endl;
-			}
-		}
-
-		if (input.wasKeyPressed(SDL_SCANCODE_Q) == true && activeInventory == false && activeStatMenu == false) {
-			if (activeTalk == false && npcName != ""){
-				activeTalk = true;
-				this->_chatBox.setTextStatus(true);
-				this->_chatBox.drawChatBox(graphics, this->_player);
-				this->_npc.setNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
-				this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
-				this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-				this->_npc.loadQuests(npcName);
-			}
-			else if (activeTalk == true) {
-				activeTalk = false;
-				this->_chatBox.setTextStatus(false);
-				this->_npc.resetScripts();
-			}
-		}
-
-		if (activeTalk) {
 			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-				//chat
-				if (this->_npc.getQuestState() == true) {
+				this->_level.removeCutscene("");
+				activeCutscene = false;
+				sceneTimer = 0;
+			}
+			const int CURRENT_TIME_MS = SDL_GetTicks();
+			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
+			this->_graphics = graphics; //updated graphics
+			//take standard min : elapsed time ms and max frame time
+			this->updateCutscene(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
+			LAST_UPDATE_TIME = CURRENT_TIME_MS;
+			this->drawCutscene(graphics);
+		}
+
+		if (title == false && GAMEOVER == false && activeCutscene == false) {
+			if (SDL_PollEvent(&event)) {
+				if (event.type == SDL_KEYDOWN) {
+					if (event.key.repeat == 0) {
+						input.keyDownEvent(event); //if we are holding key start keydown event
+					}
+				}
+				else if (event.type == SDL_KEYUP) { // if key was released
+					input.keyUpEvent(event);
+				}
+				else if (event.type == SDL_QUIT) {
+					return; //when the game ends or user exits
+				}
+			}
+			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {
+				this->saveGame(graphics);
+				std::cout << "Quitting Game..." << std::endl;
+				return; //quit game if ESC was pressed
+			}
+			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true) { 
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
+					this->_player.moveLeft();
+				}
+				else if (activeTalk == true) {
+					std::cout << "impaired action" << std::endl;
+				}
+			 
+			}
+			else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
+					this->_player.moveRight();
+				}
+				else if (activeTalk == true) {
+					std::cout << "impaired action" << std::endl;
+				}
+			
+			}
+
+			if (input.isKeyHeld(SDL_SCANCODE_UP) == true) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+					this->_player.lookUp();
+			}
+			else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+					this->_player.lookDown();
+			}
+			if (input.wasKeyReleased(SDL_SCANCODE_UP) == true) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+					this->_player.stopLookingUp();
+			}
+			if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+					this->_player.stopLookingDown();
+			}
+
+			if (input.wasKeyPressed(SDL_SCANCODE_SPACE) == true){
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
+					this->_player.jump();
+				}
+				else if (activeTalk == true) {
+					std::cout << "impaired action" << std::endl;
+				}
+			
+			}
+			if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT)) {
+				//if player isnt moving left or right(at all) do stopMoving function
+				this->_player.stopMoving();
+			}
+			//bullet
+			if (input.wasKeyPressed(SDL_SCANCODE_E) == true) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
+					if (_player.lookingUp() == true) {
+						this->_bullet.shootUp(graphics, this->_player);;
+					}
+					else if (_player.lookingDown() == true) {
+						this->_bullet.shootDown(graphics, this->_player);;
+					}
+
+					else if (_player.lookingLeft() == true) {
+						this->_bullet.shootLeft(graphics, this->_player);;
+					}
+
+					else if (_player.lookingRight() == true) {
+						this->_bullet.shootBullet(graphics, this->_player);
+					}
+				}
+				else if (activeTalk == true) {
+					std::cout << "impaired action" << std::endl;
+				}
+			}
+
+			if (input.wasKeyPressed(SDL_SCANCODE_Q) == true && activeInventory == false && activeStatMenu == false) {
+				if (activeTalk == false && npcName != ""){
+					activeTalk = true;
+					this->_chatBox.setTextStatus(true);
+					this->_chatBox.drawChatBox(graphics, this->_player);
+					this->_npc.setNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
+					this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
+					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+					this->_npc.loadQuests(npcName);
+				}
+				else if (activeTalk == true) {
 					activeTalk = false;
 					this->_chatBox.setTextStatus(false);
-					this->_npc.setNpcTalk(false);
-					this->_npc.setQuestMenuState(false);
-					this->_npc.setQuestState(false);
-					this->_npc.setQuestDone(false);
-					this->_npc.setNoQuest(false);
 					this->_npc.resetScripts();
-					npcSelection = 1;
-					questSelection = 1;
 				}
-				else if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
-					this->_npc.setNpcTalk(true);
-					this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
-				}
-				else if (npcSelection == 1 && this->_npc.getNpcTalk()) {
-					this->_npc.playNext(npcName, graphics, this->_player.getX(), this->_player.getY(), this->_player);
-					if (this->_npc.getChatStatus()) {
-						this->_npc.setNpcTalk(false);
+			}
+
+			if (activeTalk) {
+				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+					//chat
+					if (this->_npc.getQuestState() == true) {
 						activeTalk = false;
 						this->_chatBox.setTextStatus(false);
+						this->_npc.setNpcTalk(false);
+						this->_npc.setQuestMenuState(false);
+						this->_npc.setQuestState(false);
+						this->_npc.setQuestDone(false);
+						this->_npc.setNoQuest(false);
 						this->_npc.resetScripts();
+						npcSelection = 1;
+						questSelection = 1;
 					}
-				}
-				//quests
-				else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
-					this->_npc.setNpcTalk(true);
-					this->_npc.setQuestMenuState(true);
-					this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
-				}
-				else if (npcSelection == 2 && this->_npc.getNpcTalk() && this->_npc.checkNoQuests() == false) {
-					if (questSelection == 1) {
-						this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
+					else if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
+						this->_npc.setNpcTalk(true);
+						this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 					}
-					else if (questSelection == 2) {
-						this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
+					else if (npcSelection == 1 && this->_npc.getNpcTalk()) {
+						this->_npc.playNext(npcName, graphics, this->_player.getX(), this->_player.getY(), this->_player);
+						if (this->_npc.getChatStatus()) {
+							this->_npc.setNpcTalk(false);
+							activeTalk = false;
+							this->_chatBox.setTextStatus(false);
+							this->_npc.resetScripts();
+						}
 					}
-				}
-				else if (this->_npc.checkNoQuests()) {
-					activeTalk = false;
-					this->_chatBox.setTextStatus(false);
-					this->_npc.setNpcTalk(false);
-					this->_npc.setQuestMenuState(false);
-					this->_npc.setQuestState(false);
-					this->_npc.setQuestDone(false);
-					this->_npc.setNoQuest(false);
-					this->_npc.resetScripts();
-					npcSelection = 1;
-					questSelection = 1;
-				}
+					//quests
+					else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
+						this->_npc.setNpcTalk(true);
+						this->_npc.setQuestMenuState(true);
+						this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
+					}
+					else if (npcSelection == 2 && this->_npc.getNpcTalk() && this->_npc.checkNoQuests() == false) {
+						if (questSelection == 1) {
+							this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), 
+								this->_player, questSelection - 1);
+						}
+						else if (questSelection == 2) {
+							this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), 
+								this->_player, questSelection - 1);
+						}
+					}
+					else if (this->_npc.checkNoQuests()) {
+						activeTalk = false;
+						this->_chatBox.setTextStatus(false);
+						this->_npc.setNpcTalk(false);
+						this->_npc.setQuestMenuState(false);
+						this->_npc.setQuestState(false);
+						this->_npc.setQuestDone(false);
+						this->_npc.setNoQuest(false);
+						this->_npc.resetScripts();
+						npcSelection = 1;
+						questSelection = 1;
+					}
 					
-			}
+				}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_DELETE) == true) {
-				this->_npc.setNpcTalk(false);
-				this->_chatBox.setTextStatus(false);
-				activeTalk = false;
-				this->_npc.setQuestMenuState(false);
-				this->_npc.resetScripts();
-			}
+				if (input.wasKeyPressed(SDL_SCANCODE_DELETE) == true) {
+					this->_npc.setNpcTalk(false);
+					this->_chatBox.setTextStatus(false);
+					activeTalk = false;
+					this->_npc.setQuestMenuState(false);
+					this->_npc.resetScripts();
+				}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getNpcTalk() == false && this->_npc.getQuestMenuState() == false) {
-				if (npcSelection == 1)
-					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-				else if (npcSelection != 1) {
-					npcSelection--;
-					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+				if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getNpcTalk() == false 
+					&& this->_npc.getQuestMenuState() == false) {
+					if (npcSelection == 1)
+						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+					else if (npcSelection != 1) {
+						npcSelection--;
+						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+					}
+				}
+				else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getNpcTalk() == false 
+					&& this->_npc.getQuestMenuState() == false) {
+					if (npcSelection == 2)
+						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+					else if (npcSelection != 2) {
+						npcSelection++;
+						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+					}
+				}
+				else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getQuestMenuState() == true) {
+					if (questSelection == 1)
+						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+					else {
+						questSelection--;
+						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+					}
+				}
+				else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getQuestMenuState() == true) {
+					if (questSelection == 2)
+						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+					else {
+						questSelection++;
+						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+					}
 				}
 			}
-			else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getNpcTalk() == false && this->_npc.getQuestMenuState() == false) {
-				if (npcSelection == 2)
-					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-				else if (npcSelection != 2) {
-					npcSelection++;
-					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-				}
-			}
-			else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getQuestMenuState() == true) {
-				if (questSelection == 1)
-					this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-				else {
-					questSelection--;
-					this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-				}
-			}
-			else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getQuestMenuState() == true) {
-				if (questSelection == 2)
-					this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-				else {
-					questSelection++;
-					this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-				}
-			}
-		}
 
-		if (input.wasKeyPressed(SDL_SCANCODE_F1) == true) {
-			if (!activeStatMenu) {
-				selection = 1;
-				activeStatMenu = true;
-				this->_player.drawStatMenu(graphics, this->_player, selection);
-			}
-			else
-				activeStatMenu = false;
-		}
-
-		if (activeStatMenu) {
-			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-				this->_player.statChoice(selection);
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
-				if (selection == 1)
-					this->_player.drawStatMenu(graphics, this->_player, selection);
-				else if (selection != 1) {
-					selection--;
+			if (input.wasKeyPressed(SDL_SCANCODE_F1) == true) {
+				if (!activeStatMenu) {
+					selection = 1;
+					activeStatMenu = true;
 					this->_player.drawStatMenu(graphics, this->_player, selection);
 				}
+				else
+					activeStatMenu = false;
 			}
-			else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
-				if (selection == 3)
-					this->_player.drawStatMenu(graphics, this->_player, selection);
-				else if (selection != 3) {
-					selection++;
-					this->_player.drawStatMenu(graphics, this->_player, selection);
+
+			if (activeStatMenu) {
+				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+					this->_player.statChoice(selection);
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
+					if (selection == 1)
+						this->_player.drawStatMenu(graphics, this->_player, selection);
+					else if (selection != 1) {
+						selection--;
+						this->_player.drawStatMenu(graphics, this->_player, selection);
+					}
+				}
+				else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
+					if (selection == 3)
+						this->_player.drawStatMenu(graphics, this->_player, selection);
+					else if (selection != 3) {
+						selection++;
+						this->_player.drawStatMenu(graphics, this->_player, selection);
+					}
 				}
 			}
-		}
 
-		if (input.wasKeyPressed(SDL_SCANCODE_TAB) == true && activeStatMenu == false && activeTalk == false) {
-			if (activeInventory == false) {
-				activeInventory = true;
-				this->_inventory.draw(graphics, this->_player);
+			if (input.wasKeyPressed(SDL_SCANCODE_TAB) == true && activeStatMenu == false && activeTalk == false) {
+				if (activeInventory == false) {
+					activeInventory = true;
+					this->_inventory.draw(graphics, this->_player);
+				}
+
+				else if (activeInventory == true) {
+					activeInventory = false;
+				}
 			}
 
-			else if (activeInventory == true) {
-				activeInventory = false;
+			if (input.wasKeyPressed(SDL_SCANCODE_Z) == true) {
+				if (pickUp == false) {
+					pickUp = true;
+				}
+				else if (pickUp == true) {
+					pickUp = false;
+				}
 			}
-		}
+			if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
+				_inventory.useItem(0, this->_player);
+				std::cout << "game: useItem called" << std::endl;
+			}
 
-		if (input.wasKeyPressed(SDL_SCANCODE_Z) == true) {
-			if (pickUp == false) {
-				pickUp = true;
+			if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
+				if (_bullet.checkDmg() == 1) {
+					_bullet.setDmg(2);
+				}
+				else if (_bullet.checkDmg() == 2) {
+					_bullet.setDmg(1);
+				}
 			}
-			else if (pickUp == true) {
-				pickUp = false;
-			}
-		}
-		if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
-			_inventory.useItem(0, this->_player);
-			std::cout << "game: useItem called" << std::endl;
-		}
-
-		if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
-			if (_bullet.checkDmg() == 1) {
-				_bullet.setDmg(2);
-			}
-			else if (_bullet.checkDmg() == 2) {
-				_bullet.setDmg(1);
-			}
-		}
 
 		const int CURRENT_TIME_MS = SDL_GetTicks();
 		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
 		this->_graphics = graphics; //updated graphics
-		this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics); //take standard min : elapsed time ms and max frame time
-																 //if (this->_bullet.isActive() == true) {
-																 //	this->updateBullet(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
-																 //}
-																 //this->updateBullet(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
-		LAST_UPDATE_TIME = CURRENT_TIME_MS; //loop will go again and current time - new last update will tell us how long next frame will take
-		//cout << "last update Time: " << LAST_UPDATE_TIME << endl;
+		//take standard min : elapsed time ms and max frame time
+		this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
+		//loop will go again and current time - new last update will tell us how long next frame will take
+		LAST_UPDATE_TIME = CURRENT_TIME_MS;
 		this->draw(graphics);
-		/*if (activeTalk == true) {
-			this->drawNpcChat(graphics);
-		}*/
-		}//title
-
-
+		}
 	}
-
-}
-
-
-
-void Game::drawBullet(Graphics &graphics) {
-	this->_bullet.draw(graphics, this->_player);
-
-	graphics.flip(); 
 }
 
 void Game::drawTitle(Graphics &graphics) {
 	graphics.clear(); //clear any drawings MUST do
-
 	this->_title.draw(graphics);
-
 	graphics.flip(); 
 }
 
@@ -468,17 +476,15 @@ void Game::updateGameOver(float elapsedTime) {
 
 void Game::drawGameOver(Graphics &graphics) {
 	graphics.clear();
-
 	this->_gameOver.draw(graphics);
-
 	graphics.flip();
 }
 
 void Game::draw(Graphics &graphics) {
 	graphics.clear(); //clear any drawings MUST do
-
-	this->_level.draw(graphics, this->_player); //need to draw level before player (below) so player is on top of level and not behind it!
-	this->_player.draw(graphics); //what and where to draw
+	this->_level.draw(graphics, this->_player);
+	//need to draw level before player (below) so player is on top of level and not behind it!
+	this->_player.draw(graphics);
 	this->_bullet.draw(graphics, this->_player);
 	this->_bullet.drawUp(graphics, this->_player);
 	this->_bullet.drawDown(graphics, this->_player);
@@ -488,12 +494,7 @@ void Game::draw(Graphics &graphics) {
 	this->_bullet.drawDmgText(graphics);
 
 	if (activeTalk == true) {
-		//if (this->_npc.getQuestState())
-		//	this->_npc.checkQuest(graphics, npcName + ".xml", this->_player.getX(), this->_player.getY(), this->_player);
-		//else
-		//	this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 		if (this->_npc.getNpcTalk() && npcSelection == 1) {
-			//std::cout << "draw first option" << std::endl;
 			this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 		}
 		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && !this->_npc.getQuestState()) {
@@ -503,36 +504,50 @@ void Game::draw(Graphics &graphics) {
 		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && this->_npc.getQuestState() && this->_npc.checkNoQuests() == false) {
 			this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
 		}
-			//this->_npc.checkQuest(graphics, npcName + ".xml", this->_player.getX(), this->_player.getY(), this->_player);
 		else {
 			this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
 		}
 		this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
 	}
-	/*if (activeTalk == true && nextLine == false) {
-		this->_npc.runScript(npcName, graphics, this->_player.getX(), this->_player.getY());
-	}
-
-	if (activeTalk == true && nextLine == true) {
-		this->_npc.playNextScript(npcName, graphics, this->_player.getX(), this->_player.getY(), currentLine);
-	}*/
-
 	this->_hud.draw(graphics, this->_player);
-	if (activeInventory == true) {
+	if (activeInventory == true)
 		this->_inventory.draw(graphics, this->_player);
-	}
 	if (activeStatMenu)
 		this->_player.drawStatMenu(graphics, this->_player, selection);
-		
 	this->_player.drawHPNumbers(graphics);
 	this->_player.drawExpNumbers(graphics);
 	this->_player.drawCurrentMapName(graphics);
-
 	graphics.flip(); //Render everything above
 }
 
-void Game::updateBullet(float elapsedTime) {
-	this->_bullet.update(elapsedTime, this->_player);
+void Game::drawCutscene(Graphics &graphics) {
+	this->_level.draw(graphics, this->_player);
+	//need to draw level before player (below) so player is on top of level and not behind it!
+	this->_player.draw(graphics);
+	graphics.flip(); //Render everything above
+}
+
+int Game::loadCutscene(std::string name)
+{
+	XMLDocument xml;
+	std::string fileName = name + ".xml";
+	xml.LoadFile(fileName.c_str());
+	XMLError result;
+	XMLNode* root = xml.FirstChild();
+	if (root == nullptr)
+		return XML_ERROR_FILE_READ_ERROR;
+	XMLElement* element = root->FirstChildElement("Camera");
+	const char* textPtr;
+	std::string text;
+	textPtr = element->Attribute("mob");
+	text = textPtr;
+	targetX = this->_level.getSceneX(text);
+	targetY = this->_level.getSceneY(text);
+	element->QueryFloatAttribute("xmod", &xMod);
+	element->QueryFloatAttribute("ymod", &yMod);
+	element->QueryIntAttribute("cTime", &sceneMaxTime);
+	textPtr = element->Attribute("dir");
+	sceneDir = textPtr;
 }
 
 int Game::saveGame(Graphics & graphics)
@@ -786,9 +801,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 
 	std::vector<Npc*> otherNpc;
 	if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
-		//this->_player.getNpcName(otherNpc, graphics);
 		npcName = this->_player.getNpcName(otherNpc, graphics);
-
 	}
 	//this will ensure when we are no long colliding with npc, set name to blank so we cant talk to an npc far away
 	if (otherNpc.size() == 0) {
@@ -812,11 +825,6 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		this->_player.handleSlopeCollisions(otherSlopes);
 	}
 
-	std::vector<Items*> otherItems;
-	//if ((otherItems = this->_level.checkItemFloorCollisions(this->_level.)))
-	/*
-	* TODO: Fix HP loss and find other usages in the future (currently handling in enemy class)
-	*/
 	//Check enemies
 	//std::vector<Enemy*> otherEnemies;
 	//if ((otherEnemies = this->_level.checkEnemyCollisions(this->_player.getBoundingBox())).size() > 0) {
@@ -835,34 +843,84 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	}
 
 	if (pickUp == true) {
-		//std::vector<Items*> itemPickUp;
-		//std::vector<Items*> droppedItemPickUp;
 		this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics, this->_inventory);
-		//if ((itemPickUp = this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics, this->_inventory)).size() > 0) {
-		//}
-		//else if ((droppedItemPickUp = this->_level.checkDroppedItemCollisions(this->_player, this->_player.getBoundingBox(), graphics, this->_inventory)).size() > 0) {
-
-		//}
 		pickUp = false; 
 	}
-
-	/*
-	std::vector<Npc*> otherNpc;
-	if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
-		this->_player.handleNpcCollisions(otherNpc, graphics);
-	}*/
 
 	//Check doors
 	std::vector<Door> otherDoors;
 	if ((otherDoors = this->_level.checkDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
 		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory, this->_player);
 	}
-
 	std::vector<Door> lockedDoors;
 	if ((lockedDoors = this->_level.checkLockedDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
 		this->_player.handleLockedDoorCollision(lockedDoors, this->_level, this->_graphics, this->_inventory, this->_player);
 	}
 
+	std::vector<Rectangle> cutScenes;
+	if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
+		//std::cout << "COLLIDING WITH CUTSCENE OBJECT!" << std::endl;
+		std::string sceneName = this->_level.getCutscene();
+		this->loadCutscene(sceneName);
+		sceneX = this->_player.getX();
+		sceneY = this->_player.getY();
+		activeCutscene = true;
+	}
+}
+
+void Game::updateCutscene(float elapsedTime, Graphics & graphics)
+{
+	this->_player.update(elapsedTime);
+	if (sceneDir == "left") {
+		if (sceneX >= targetX + 300)
+			sceneX -= xMod;
+
+		if (sceneY >= targetY)
+			sceneY -= yMod;
+		else if (sceneY <= targetY)
+			sceneY += yMod;
+	}
+	else {
+		if (sceneX <= targetX - 300) {
+			sceneY += xMod;
+		}
+		if (sceneY >= targetY)
+			sceneY -= yMod;
+		else if (sceneY <= targetY)
+			sceneY += yMod;
+	}
+	this->_camera.sceneUpdate(sceneX, sceneY);
+	this->_level.update(elapsedTime, this->_player);
+
+	sceneTimer += elapsedTime;
+	if (sceneTimer >= sceneMaxTime) {
+		this->_level.removeCutscene("");
+		activeCutscene = false;
+		sceneTimer = 0;
+	}
+
+	//Check collisions
+	std::vector<Rectangle> others;
+	//set vector = the result of the checkTileCollisions function
+	//checkTile wants another rectangle to check against. So its going to check all the collisions rect
+	//against whatever we give it (player bounding box)
+	//if it returns at least 1, handle Tile collision!
+	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+		//Player collided with atleast 1 title
+		this->_player.handleTileCollisions(others);
+	}
+
+	//Check slope
+	std::vector<Slope> otherSlopes;
+	if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
+		this->_player.handleSlopeCollisions(otherSlopes);
+	}
+
+	std::vector<Rectangle> cutScenes;
+	if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
+		//std::cout << "COLLIDING WITH CUTSCENE OBJECT!" << std::endl;
+		activeCutscene = true;
+	}
 }
 
 

@@ -25,8 +25,12 @@ void Camera::Update(float elapsedTime, Player &player)
 {
 	m_rect.x = player.getX() - (globals::SCREEN_WIDTH / 2);
 	m_rect.y = player.getY() - (globals::SCREEN_HEIGHT / 2);
+}
 
-	GetRect();
+void Camera::sceneUpdate(float x, float y)
+{
+	m_rect.x = x - (globals::SCREEN_WIDTH / 2);
+	m_rect.y = y - (globals::SCREEN_HEIGHT / 2);
 }
 
 

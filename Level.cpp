@@ -52,6 +52,8 @@ Level & Level::operator=(const Level & levelMap)
 	this->_animatedTileList = levelMap._animatedTileList;
 	this->_backgroundTexture = levelMap._backgroundTexture;
 	this->_collisionRects = levelMap._collisionRects;
+	this->_cutsceneRects = levelMap._cutsceneRects;
+	this->_cutsceneName = levelMap._cutsceneName;
 	this->_doorList = levelMap._doorList;
 	this->_lockDoor = levelMap._lockDoor;
 	this->_mapName = levelMap._mapName;
@@ -286,6 +288,30 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					}
 				}
 			}
+			else if (ss.str() == "cutscenes") {
+				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+				if (pObject != NULL) {
+					while (pObject) {
+						float x, y, width, height;
+						x = pObject->FloatAttribute("x");
+						y = pObject->FloatAttribute("y");
+						width = pObject->FloatAttribute("width");
+						height = pObject->FloatAttribute("height");
+						this->_cutsceneRects.push_back(Rectangle(
+							std::ceil(x) * globals::SPRITE_SCALE,
+							std::ceil(y) * globals::SPRITE_SCALE,
+							std::ceil(width) * globals::SPRITE_SCALE,
+							std::ceil(height) * globals::SPRITE_SCALE));
+
+						const char* name = pObject->Attribute("name");
+						std::stringstream ss;
+						ss << name;
+						this->_cutsceneName = ss.str();
+
+						pObject = pObject->NextSiblingElement("object");
+					}
+				}
+			}
 			//Other object groups go here with an else if (ss.str() == "whatever")
 			else if (ss.str() == "slopes") {
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
@@ -479,6 +505,31 @@ void Level::checkItemFloorCollisions(Items* obj)
 	}
 }
 
+float Level::getSceneX(std::string name)
+{
+	for (int i = 0; i < this->_enemies.size(); ++i) {
+		if (this->_enemies.at(i)->getName() == name)
+			return this->_enemies.at(i)->getX();
+	}
+	return 0.0f;
+}
+
+float Level::getSceneY(std::string name)
+{
+	for (int i = 0; i < this->_enemies.size(); ++i) {
+		if (this->_enemies.at(i)->getName() == name)
+			return this->_enemies.at(i)->getY();
+	}
+	return 0.0f;
+}
+
+void Level::removeCutscene(std::string name)
+{
+	for (int i = 0; i < this->_cutsceneRects.size(); i++) { //loop through our collision rects come from tiles
+		this->_cutsceneRects.erase(this->_cutsceneRects.begin() + i);
+	}
+}
+
 std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { //Goes through all tiles and checks if they are colliding with other rectangle 
 	//(player enemy or anything) and it will add it to a list and return that list of rectangles and return every rectangle we are colliding with might be 
 	//more than 1
@@ -489,7 +540,17 @@ std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { //Go
 		}
 	}
 	return others; //return whatever collision rects we are colliding with
+}
 
+std::vector<Rectangle> Level::checkCutsceneCollisions(const Rectangle & other)
+{
+	std::vector<Rectangle> others;
+	for (int i = 0; i < this->_cutsceneRects.size(); i++) { //loop through our collision rects come from tiles
+		if (this->_cutsceneRects.at(i).collidesWith(other)) { //Check if any of our collision rects collides with other
+			others.push_back(this->_cutsceneRects.at(i)); //if it does add it to the others list
+		}
+	}
+	return others; //return whatever collision rects we are colliding with
 }
 
 std::vector<Slope> Level::checkSlopeCollisions(const Rectangle &other) {

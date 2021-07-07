@@ -14,8 +14,6 @@
 #include "Items.h"
 #include "GameOver.h"
 
-// No longer can foward declare due to using it now class Graphics;
-
 class Game {
 public:
 	Game();
@@ -23,40 +21,29 @@ public:
 private:
 	void gameLoop();
 	void draw(Graphics &graphics);
-	void drawBullet(Graphics &graphics);
+	void drawCutscene(Graphics &graphics);
 	void drawTitle(Graphics & graphics);
+	void drawGameOver(Graphics & graphics);
 	void updateTitle(float elapsedTime);
 	void updateGameOver(float elapsedTime);
-	void drawGameOver(Graphics & graphics);
 	void update(float elapsedTime, Graphics &graphics);
-	void updateBullet(float elapsedTime);
+	void updateCutscene(float elapsedTime, Graphics &graphics);
+	int loadCutscene(std::string name);
+	void startCutscene(std::string name);
 	int saveGame(Graphics &graphics);
 	int loadGame(Graphics &graphics);
 
 	Player _player;
-
 	Level _level;
-
 	HUD _hud;
-
 	Camera _camera;
-
 	Projectile _bullet;
-
 	Title _title;
-
 	GameOver _gameOver;
-
 	TextManager _chatBox;
-
 	Inventory _inventory;
-
 	Npc _npc;
-
-	Clock _clock;
-
-	Graphics _graphics; //store graphics object
+	Graphics _graphics;
 };
-
 #endif
 

@@ -260,35 +260,43 @@ void Shade::update(int elapsedTime, Player &player) {
 	this->_HPValue.update();
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
 	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
-		this->playAnimation(this->_direction == RIGHT ? "shadeRight" : "shadeLeft");
-
-		float hpNum = (float)this->getCurrentHealth() / this->getMaxHealth();
-		this->_HPValue.setSourceRectW(std::floor(hpNum * 17));
-
-		if (this->_direction == RIGHT) {
-			this->_x += 0.2f;
-			this->_HPBar._x += 0.2f;
-			this->_HPValue._x += 0.2f;
+		if ((this->_direction == RIGHT && player.getX() > this->_x + 650) || (this->_direction == LEFT &&
+			player.getX() <= this->_x - 650)) {
+			this->playAnimation("shadeIdle");
+			isIdle = true;
 		}
 		else {
-			this->_x -= 0.2f;
-			this->_HPBar._x -= 0.2f;
-			this->_HPValue._x -= 0.2f;
-		}
-		if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
-			player.gainHealth(-12.64f);
-		}
-		if (_shadeBall.getBoundingBox().collidesWith(player.getBoundingBox())) {
-			this->_shadeBall.setX(this->_x);
-			this->_shadeBall.setY(this->_y + 60);
-			player.gainHealth(-26.69f);
-		}
-		else if (_shadeBall.getX() > this->_x + 200) {
-			this->_shadeBall.setX(this->_x);
-			this->_shadeBall.setY(this->_y + 60);
-		}
-		else {
-			this->_shadeBall.addX(player.getX() > this->_x ? .8 : -.8);
+			isIdle = false;
+			this->playAnimation(this->_direction == RIGHT ? "shadeRight" : "shadeLeft");
+
+			float hpNum = (float)this->getCurrentHealth() / this->getMaxHealth();
+			this->_HPValue.setSourceRectW(std::floor(hpNum * 17));
+
+			if (this->_direction == RIGHT) {
+				this->_x += 0.2f;
+				this->_HPBar._x += 0.2f;
+				this->_HPValue._x += 0.2f;
+			}
+			else {
+				this->_x -= 0.2f;
+				this->_HPBar._x -= 0.2f;
+				this->_HPValue._x -= 0.2f;
+			}
+			if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
+				player.gainHealth(-12.64f);
+			}
+			if (_shadeBall.getBoundingBox().collidesWith(player.getBoundingBox())) {
+				this->_shadeBall.setX(this->_x);
+				this->_shadeBall.setY(this->_y + 60);
+				player.gainHealth(-26.69f);
+			}
+			else if (_shadeBall.getX() > this->_x + 200) {
+				this->_shadeBall.setX(this->_x);
+				this->_shadeBall.setY(this->_y + 60);
+			}
+			else {
+				this->_shadeBall.addX(player.getX() > this->_x ? .8 : -.8);
+			}
 		}
 	}
 
@@ -322,10 +330,11 @@ void Shade::bulletHit(float dmg) {
 void Shade::draw(Graphics &graphics) {
 	if (isVisible == true) {
 	AnimatedSprite::drawBoss(graphics, this->_x, this->_y);
-	this->_shadeBall.draw(graphics, this->_shadeBall.getX(), this->_shadeBall.getY());
-		if (this->getCurrentHealth() < this->getMaxHealth()) {
-			this->_HPBar.draw(graphics, this->_HPBar._x, this->_HPBar._y);
-			this->_HPValue.draw(graphics, this->_HPValue._x, this->_HPValue._y);
+	if (isIdle == false)
+		this->_shadeBall.draw(graphics, this->_shadeBall.getX(), this->_shadeBall.getY());
+	if (this->getCurrentHealth() < this->getMaxHealth()) {
+		this->_HPBar.draw(graphics, this->_HPBar._x, this->_HPBar._y);
+		this->_HPValue.draw(graphics, this->_HPValue._x, this->_HPValue._y);
 		}
 	}
 }
@@ -344,7 +353,7 @@ void Shade::dropLoot(Player &player) {
 }
 
 void Shade::setupAnimations() {
-	this->addAnimation(4, 1, 9, "shadeIdle", 30, 28, Vector2(0, 0));
+	this->addSpecialAnimation(3, 1, 6, "shadeIdle", 30, 32, Vector2(0, 0));
 	this->addAnimation(4, 1, 73, "shadeLeft", 30, 28, Vector2(0, 0));
 	this->addAnimation(4, 1, 118, "shadeRight", 30, 28, Vector2(0, 0));
 	this->addAnimation(6, 1, 168, "shadeDie", 30, 28, Vector2(0, 0));

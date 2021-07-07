@@ -39,6 +39,7 @@ public:
 	void generateEnemies(Graphics &graphics, std::string mapName, Player &player);
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
+	std::vector<Rectangle> checkCutsceneCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
 	std::vector<Door> checkDoorCollisions(const Rectangle &other);
 	std::vector<Door> checkLockedDoorCollisions(const Rectangle &other);
@@ -48,6 +49,11 @@ public:
 	void checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
 	void checkItemFloorCollisions(Items* obj);
 
+	std::string getCutscene() const { return this->_cutsceneName; }
+	float getSceneX(std::string name);
+	float getSceneY(std::string name);
+	void removeCutscene(std::string name);
+
 	inline const std::string getMapName() const { return this->_mapName; }
 	const Vector2 getPlayerSpawnPoint() const;
 	//debug
@@ -55,6 +61,7 @@ public:
 
 private:
 	std::string _mapName; 
+	std::string _cutsceneName;
 	Vector2 _spawnPoint;
 	Vector2 _bulletPoint;
 
@@ -68,6 +75,7 @@ private:
 	std::vector<AnimatedTile> _animatedTileList;
 	std::vector<AnimatedTileInfo> _animatedTileInfos;
 	std::vector<Rectangle> _collisionRects; 
+	std::vector<Rectangle> _cutsceneRects;
 	std::vector<Slope> _slopes; //list of slopes
 	std::vector<Door> _doorList;
 	std::vector<Door> _lockDoor;
