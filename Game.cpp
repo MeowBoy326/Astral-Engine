@@ -39,6 +39,7 @@ namespace {
 	bool activeCutscene = false;
 	bool pickUp = false;
 	bool nextLine = false;
+	bool stopScroll = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -831,6 +832,8 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	//	this->_player.handleEnemyCollisions(otherEnemies);
 	//}
 
+	this->_level.checkEnemyTileCollision().size() > 0;
+
 	std::vector<Enemy*> projectileHit;
 	if ((projectileHit = this->_level.checkEnemyCollisions(this->_bullet.getProjectileBBox())).size() > 0) {
 		this->_bullet.handleProjectileCollisions(projectileHit, graphics);
@@ -871,18 +874,17 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 {
 	this->_player.update(elapsedTime);
-	if (sceneDir == "left") {
-		if (sceneX >= targetX + 300)
+	if (stopScroll == false) {
+		if (sceneX >= targetX + 300) {
 			sceneX -= xMod;
-
-		if (sceneY >= targetY)
-			sceneY -= yMod;
-		else if (sceneY <= targetY)
-			sceneY += yMod;
-	}
-	else {
-		if (sceneX <= targetX - 300) {
-			sceneY += xMod;
+			if (sceneX <= targetX + 300)
+				stopScroll = true;
+		}
+		else if (sceneX <= targetX - 150) {
+			sceneX += xMod;
+			if (sceneX >= targetX - 150) {
+				stopScroll = true;
+			}
 		}
 		if (sceneY >= targetY)
 			sceneY -= yMod;
@@ -909,6 +911,8 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 		//Player collided with atleast 1 title
 		this->_player.handleTileCollisions(others);
 	}
+
+	this->_level.checkEnemyTileCollision().size() > 0;
 
 	//Check slope
 	std::vector<Slope> otherSlopes;

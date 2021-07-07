@@ -542,6 +542,22 @@ std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { //Go
 	return others; //return whatever collision rects we are colliding with
 }
 
+std::vector<Rectangle> Level::checkEnemyTileCollision()
+{
+	std::vector<Rectangle> others; 
+	for (int i = 0; i < this->_enemies.size(); i++) {
+		for (int j = 0; j < this->_collisionRects.size(); j++) {
+			if (this->_collisionRects.at(j).collidesWith(this->_enemies.at(i)->getBoundingBox())) {
+				others.push_back(this->_collisionRects.at(j));
+			}
+		}
+	}
+	for (int x = 0; x < this->_enemies.size(); x++) {
+		this->_enemies.at(x)->handleEnemyTileCollision(others);
+	}
+	return others;
+}
+
 std::vector<Rectangle> Level::checkCutsceneCollisions(const Rectangle & other)
 {
 	std::vector<Rectangle> others;

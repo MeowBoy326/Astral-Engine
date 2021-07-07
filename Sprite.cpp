@@ -161,8 +161,8 @@ void Sprite::update() {
 	this->_boundingBox = Rectangle(this->_x, this->_y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE);
 }
 
-void Sprite::updateBoss(int y) {
-	this->_boundingBox = Rectangle(this->_x, y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE + 30);
+void Sprite::updateBoss(float y) {
+	this->_boundingBox = Rectangle(this->_x, y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE);
 }
 
 void Sprite::updateBullet(int bX, int bY, int bW, int bH) {

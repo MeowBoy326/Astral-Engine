@@ -39,6 +39,7 @@ public:
 	void generateEnemies(Graphics &graphics, std::string mapName, Player &player);
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
+	std::vector<Rectangle> checkEnemyTileCollision();
 	std::vector<Rectangle> checkCutsceneCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
 	std::vector<Door> checkDoorCollisions(const Rectangle &other);

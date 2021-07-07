@@ -27,6 +27,10 @@ void Enemy::update(int elapsedTime, Player &player) {
 	AnimatedSprite::update(elapsedTime);
 }
 
+void Enemy::handleEnemyTileCollision(std::vector<Rectangle>& others)
+{
+}
+
 void Enemy::bulletHit(float dmg) {
 	this->_currentHealth -= dmg;
 	std::cout << "hit! HP = " << this->_currentHealth << std::endl;
@@ -212,6 +216,10 @@ void Bat::setRemoveable() {
 	}
 }
 
+void Bat::handleEnemyTileCollision(std::vector<Rectangle>& others)
+{
+}
+
 bool Bat::isRemoveable() {
 	return removeEnemy;
 }
@@ -238,7 +246,7 @@ Shade::~Shade()
 }
 
 Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
-	Enemy(graphics, "shade.png", 27, 7, 30, 28, spawnPoint, 140),
+	Enemy(graphics, "shade.png", 27, 7, 32, 32, spawnPoint, 140),
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
@@ -255,6 +263,11 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 }
 
 void Shade::update(int elapsedTime, Player &player) {
+	if (this->_dy <= this->GRAVITY_CAP) {
+		//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
+		this->_dy += this->GRAVITY * elapsedTime;
+	}
+	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
 	this->_shadeBall.update();
 	this->_HPBar.update();
 	this->_HPValue.update();
@@ -274,13 +287,13 @@ void Shade::update(int elapsedTime, Player &player) {
 
 			if (this->_direction == RIGHT) {
 				this->_x += 0.4f;
-				this->_HPBar._x += 0.2f;
-				this->_HPValue._x += 0.2f;
+				this->_HPBar._x += 0.4f;
+				this->_HPValue._x += 0.4f;
 			}
 			else {
 				this->_x -= 0.4f;
-				this->_HPBar._x -= 0.2f;
-				this->_HPValue._x -= 0.2f;
+				this->_HPBar._x -= 0.4f;
+				this->_HPValue._x -= 0.4f;
 			}
 			if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
 				player.gainHealth(-12.64f);
@@ -319,7 +332,7 @@ void Shade::update(int elapsedTime, Player &player) {
 		}
 	}
 
-	AnimatedSprite::updateBoss(elapsedTime, player.getY());
+	AnimatedSprite::updateBoss(elapsedTime, this->_y);
 }
 
 void Shade::bulletHit(float dmg) {
@@ -353,10 +366,10 @@ void Shade::dropLoot(Player &player) {
 }
 
 void Shade::setupAnimations() {
-	this->addSpecialAnimation(3, 1, 6, "shadeIdle", 30, 32, Vector2(0, 0));
-	this->addAnimation(4, 1, 73, "shadeLeft", 30, 28, Vector2(0, 0));
-	this->addAnimation(4, 1, 118, "shadeRight", 30, 28, Vector2(0, 0));
-	this->addAnimation(6, 1, 168, "shadeDie", 30, 28, Vector2(0, 0));
+	this->addSpecialAnimation(3, 0, 16, "shadeIdle", 29, 39, Vector2(0, -60));
+	this->addAnimation(4, 1, 73, "shadeLeft", 30, 28, Vector2(0, -60));
+	this->addAnimation(4, 1, 118, "shadeRight", 30, 28, Vector2(0, -60));
+	this->addAnimation(6, 1, 168, "shadeDie", 30, 28, Vector2(0, -60));
 }
 
 void Shade::playDeath() {
@@ -369,6 +382,36 @@ void Shade::playAttack() {
 
 void Shade::touchPlayer(Player* player) {
 	player->gainHealth(-1.0f);
+}
+
+void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
+{
+	for (int i = 0; i < others.size(); i++) {
+		sides::Side collisionSide = Sprite::getCollisionSide(others.at(i));
+		if (collisionSide != sides::NONE) {
+			switch (collisionSide) {
+			case sides::TOP:
+				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
+				this->_y = others.at(i).getBottom() + 1; //no longer go through things, stops us
+				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
+					//this->_dx = 0; //stop movement on x-axis
+					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
+				}
+				break;
+			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
+				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				this->_dy = 0;
+				this->_grounded = true; //we are on ground since it pushed it back up
+				break;
+			case sides::LEFT:
+				this->_x = others.at(i).getRight() + 1;
+				break;
+			case sides::RIGHT:
+				this->_x = others.at(i).getLeft() - this->_boundingBox.getWidth() - 1;
+				break;
+			}
+		}
+	}
 }
 
 bool Shade::isRemoveable() {

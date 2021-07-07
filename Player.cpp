@@ -632,8 +632,6 @@ void Player::update(float elapsedTime) {
 	//Move by dy
 	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
 
-	//cout << this->_x << " , " << this->_y << endl;
-
 	//iFrame timer
 	if (player_constants::iFrame == true) {
 		this->_timeElapsed += elapsedTime;

@@ -38,6 +38,8 @@ public:
 	virtual const inline float getStartingX() const { return this->_startingX; }
 	virtual const inline float getStartingY() const { return this->_startingY; }
 
+	virtual void handleEnemyTileCollision(std::vector<Rectangle> &others);
+
 	virtual void bulletHit(float dmg);
 	virtual std::string getName();
 
@@ -94,6 +96,8 @@ public:
 	const inline bool isMiniBoss() { return this->miniBoss; }
 	const inline float getStartingX() const { return this->_startingX; }
 	const inline float getStartingY() const { return this->_startingY; }
+
+	void handleEnemyTileCollision(std::vector<Rectangle> &others);
 
 	bool isRemoveable();
 	void setRemoveable();
@@ -161,6 +165,8 @@ public:
 	const inline float getStartingX() const { return this->_startingX; }
 	const inline float getStartingY() const { return this->_startingY; }
 
+	void handleEnemyTileCollision(std::vector<Rectangle> &others);
+
 	bool isRemoveable();
 	void setRemoveable();
 
@@ -182,7 +188,6 @@ private:
 	double _deathTimeElapsed = 0;
 protected:
 	Direction _direction;
-
 	int _maxHealth;
 	int _currentHealth;
 	int level = 10;
@@ -193,6 +198,10 @@ protected:
 	bool deathCreated = false;
 	bool canDropLoot = false;
 	bool dyingAnimation = true;
+	bool _grounded = true;
+	float _dy = 0;
+	const float GRAVITY = 0.002f;
+	const float GRAVITY_CAP = 0.8f;
 	double respawnTime = 6000;
 	double timerRespawn = 0;
 	bool isVisible = true;

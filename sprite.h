@@ -24,7 +24,7 @@ public:
 	virtual ~Sprite();
 	virtual void update();
 	virtual void updateBullet(int bX, int bY, int bW, int bH);
-	virtual void updateBoss(int y);
+	virtual void updateBoss(float y);
 	const Rectangle getProjectileBBox() const;
 	void draw(Graphics &graphics, int x, int y);
 	void drawHPBar(Graphics &graphics, int x, int y);
