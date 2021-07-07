@@ -273,12 +273,12 @@ void Shade::update(int elapsedTime, Player &player) {
 			this->_HPValue.setSourceRectW(std::floor(hpNum * 17));
 
 			if (this->_direction == RIGHT) {
-				this->_x += 0.2f;
+				this->_x += 0.4f;
 				this->_HPBar._x += 0.2f;
 				this->_HPValue._x += 0.2f;
 			}
 			else {
-				this->_x -= 0.2f;
+				this->_x -= 0.4f;
 				this->_HPBar._x -= 0.2f;
 				this->_HPValue._x -= 0.2f;
 			}
