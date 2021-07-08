@@ -29,6 +29,10 @@ namespace {
 	int currentLine = 0;
 	int sceneTimer = 0;
 	int sceneMaxTime = 0;
+	int sceneType = 0;
+	int sceneLines = 0;
+	int sceneLineCounter = 1;
+	char sceneLineChar = 'a';
 
 	bool title = true;
 	bool GAMEOVER = false;
@@ -40,6 +44,7 @@ namespace {
 	bool pickUp = false;
 	bool nextLine = false;
 	bool stopScroll = false;
+	bool sceneTalkDone = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -50,6 +55,7 @@ namespace {
 
 	std::string npcName;
 	std::string sceneDir;
+	std::string sceneName;
 }
 
 Game::Game() { //constructor
@@ -522,9 +528,16 @@ void Game::draw(Graphics &graphics) {
 }
 
 void Game::drawCutscene(Graphics &graphics) {
-	this->_level.draw(graphics, this->_player);
-	//need to draw level before player (below) so player is on top of level and not behind it!
-	this->_player.draw(graphics);
+	if (sceneType == 1) {
+		graphics.clear();
+		this->startCutscene(sceneName);
+	}
+
+	else if (sceneType == 2) {
+		this->_level.draw(graphics, this->_player);
+		//need to draw level before player (below) so player is on top of level and not behind it!
+		this->_player.draw(graphics);
+	}
 	graphics.flip(); //Render everything above
 }
 
@@ -537,18 +550,51 @@ int Game::loadCutscene(std::string name)
 	XMLNode* root = xml.FirstChild();
 	if (root == nullptr)
 		return XML_ERROR_FILE_READ_ERROR;
-	XMLElement* element = root->FirstChildElement("Camera");
-	const char* textPtr;
-	std::string text;
-	textPtr = element->Attribute("mob");
-	text = textPtr;
-	targetX = this->_level.getSceneX(text);
-	targetY = this->_level.getSceneY(text);
-	element->QueryFloatAttribute("xmod", &xMod);
-	element->QueryFloatAttribute("ymod", &yMod);
-	element->QueryIntAttribute("cTime", &sceneMaxTime);
-	textPtr = element->Attribute("dir");
-	sceneDir = textPtr;
+	XMLElement* element = root->FirstChildElement("Type");
+	element->QueryIntAttribute("type", &sceneType);
+	if (sceneType == 1) {
+		element = root->FirstChildElement("Talk");
+		element->QueryIntAttribute("textTime", &sceneMaxTime);
+	}
+	if (sceneType == 2) {
+		element = root->FirstChildElement("Camera");
+		const char* textPtr;
+		std::string text;
+		textPtr = element->Attribute("mob");
+		text = textPtr;
+		targetX = this->_level.getSceneX(text);
+		targetY = this->_level.getSceneY(text);
+		element->QueryFloatAttribute("xmod", &xMod);
+		element->QueryFloatAttribute("ymod", &yMod);
+		element->QueryIntAttribute("cTime", &sceneMaxTime);
+		textPtr = element->Attribute("dir");
+		sceneDir = textPtr;
+	}
+}
+
+int Game::startCutscene(std::string name)
+{
+	XMLDocument xml;
+	std::string fileName = name + ".xml";
+	xml.LoadFile(fileName.c_str());
+	XMLError result;
+	XMLNode* root = xml.FirstChild();
+	if (root == nullptr)
+		return XML_ERROR_FILE_READ_ERROR;
+	XMLElement* element = root->FirstChildElement("Type");
+	element->QueryIntAttribute("type", &sceneType);
+	if (sceneType == 1) {
+		element = root->FirstChildElement("Talk");
+		result = element->QueryIntAttribute("lines", &sceneLines);
+		const char* textPtr = nullptr;
+		if (sceneLineCounter <= sceneLines) {
+			textPtr = element->Attribute((char*)&sceneLineChar);
+			std::string text;
+			text = textPtr;
+			this->_player.showSceneDialogue(this->_graphics, text);
+			XMLCheckResult(result);
+		}
+	}
 }
 
 int Game::saveGame(Graphics & graphics)
@@ -863,8 +909,9 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	std::vector<Rectangle> cutScenes;
 	if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
 		//std::cout << "COLLIDING WITH CUTSCENE OBJECT!" << std::endl;
-		std::string sceneName = this->_level.getCutscene();
-		this->loadCutscene(sceneName);
+		std::string cutSceneName = this->_level.getCutscene();
+		this->loadCutscene(cutSceneName);
+		sceneName = cutSceneName;
 		sceneX = this->_player.getX();
 		sceneY = this->_player.getY();
 		activeCutscene = true;
@@ -874,33 +921,50 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 {
 	this->_player.update(elapsedTime);
-	if (stopScroll == false) {
-		if (sceneX >= targetX + 300) {
-			sceneX -= xMod;
-			if (sceneX <= targetX + 300)
-				stopScroll = true;
+	if (sceneType == 1) {
+		sceneTimer += elapsedTime;
+		if (sceneTimer >= sceneMaxTime && sceneLineChar != 'd') {
+			sceneLineChar++;
+			sceneLineCounter++;
+			sceneTimer = 0;
 		}
-		else if (sceneX <= targetX - 150) {
-			sceneX += xMod;
-			if (sceneX >= targetX - 150) {
-				stopScroll = true;
+		else if (sceneLineChar == 'd') {
+			this->_level.removeCutscene("");
+			activeCutscene = false;
+			sceneTimer = 0;
+			sceneLineChar = 'a';
+			sceneLineCounter = 1;
+		}
+	}
+
+	else if (sceneType == 2) {
+		if (stopScroll == false) {
+			if (sceneX >= targetX + 300) {
+				sceneX -= xMod;
+				if (sceneX <= targetX + 300)
+					stopScroll = true;
 			}
+			else if (sceneX <= targetX - 150) {
+				sceneX += xMod;
+				if (sceneX >= targetX - 150) {
+					stopScroll = true;
+				}
+			}
+			if (sceneY >= targetY)
+				sceneY -= yMod;
+			else if (sceneY <= targetY)
+				sceneY += yMod;
 		}
-		if (sceneY >= targetY)
-			sceneY -= yMod;
-		else if (sceneY <= targetY)
-			sceneY += yMod;
-	}
-	this->_camera.sceneUpdate(sceneX, sceneY);
-	this->_level.update(elapsedTime, this->_player);
+		this->_camera.sceneUpdate(sceneX, sceneY);
+		this->_level.update(elapsedTime, this->_player);
 
-	sceneTimer += elapsedTime;
-	if (sceneTimer >= sceneMaxTime) {
-		this->_level.removeCutscene("");
-		activeCutscene = false;
-		sceneTimer = 0;
+		sceneTimer += elapsedTime;
+		if (sceneTimer >= sceneMaxTime) {
+			this->_level.removeCutscene("");
+			activeCutscene = false;
+			sceneTimer = 0;
+		}
 	}
-
 	//Check collisions
 	std::vector<Rectangle> others;
 	//set vector = the result of the checkTileCollisions function

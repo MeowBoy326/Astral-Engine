@@ -29,7 +29,7 @@ private:
 	void update(float elapsedTime, Graphics &graphics);
 	void updateCutscene(float elapsedTime, Graphics &graphics);
 	int loadCutscene(std::string name);
-	void startCutscene(std::string name);
+	int startCutscene(std::string name);
 	int saveGame(Graphics &graphics);
 	int loadGame(Graphics &graphics);
 

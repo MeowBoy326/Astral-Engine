@@ -21,6 +21,7 @@ public:
 	void draw(Graphics &graphics);
 	void drawStatMenu(Graphics &graphics, Player &player, int selection);
 	void drawCurrentMapName(Graphics &graphics);
+	void showSceneDialogue(Graphics &graphics, std::string text);
 	void update(float elapsedTime);
 
 	//Player handling

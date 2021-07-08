@@ -690,3 +690,8 @@ void Player::drawCurrentMapName(Graphics &graphics) {
 		this->_txt->drawMapName(graphics, player_constants::mapName, this->getX(), this->getY());
 	}
 }
+
+void Player::showSceneDialogue(Graphics & graphics, std::string text)
+{
+	this->_txt->drawSceneDialogue(graphics, this->getX(), this->getY(), text);
+}
