@@ -591,6 +591,10 @@ int Game::startCutscene(std::string name)
 			textPtr = element->Attribute((char*)&sceneLineChar);
 			std::string text;
 			text = textPtr;
+			if (text.length() > 80)
+				sceneMaxTime = 6500;
+			else
+				element->QueryIntAttribute("textTime", &sceneMaxTime);
 			this->_player.showSceneDialogue(this->_graphics, text);
 			XMLCheckResult(result);
 		}
