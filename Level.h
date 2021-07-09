@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include <queue>
-
 #include "Global.h"
 #include "Tile.h"
 #include "Rectangle.h"
@@ -13,6 +12,7 @@
 #include "AnimatedTile.h"
 #include "Door.h"
 
+class TextManager;
 class Graphics; //foward decalre
 class Enemy;
 class Projectile;
@@ -71,6 +71,7 @@ private:
 	std::string _cutsceneName;
 	Vector2 _spawnPoint;
 	Vector2 _bulletPoint;
+	TextManager* _txt;
 
 	Vector2 _size; //width height of entire map, not what we see but the entire map
 	Vector2 _tileSize; //maps will all have same tile size so only 1 vector2

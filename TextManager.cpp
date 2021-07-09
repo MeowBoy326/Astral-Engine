@@ -38,6 +38,10 @@ TextManager::TextManager(Graphics &graphics, const std::string &filePath, int so
 	this->_TboundingBox = Rectangle(this->_textX, this->_textY, width * globals::SPRITE_SCALE, height * globals::SPRITE_SCALE);
 }
 
+TextManager::~TextManager()
+{
+}
+
 void TextManager::setTextStatus(bool status) {
 	textConstants::activeText = status;
 }

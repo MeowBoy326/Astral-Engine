@@ -489,8 +489,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 		this->_projectiles.at(i)->draw(graphics);
 	}
 	for (int i = 0; i < this->dmgVector.size(); i++) {
-		TextManager txt; 
-		txt.drawDmg(graphics, std::get<0>(this->dmgVector[i]), std::get<1>(this->dmgVector[i]),
+		_txt->drawDmg(graphics, std::get<0>(this->dmgVector[i]), std::get<1>(this->dmgVector[i]),
 			std::get<2>(this->dmgVector[i]));
 	}
 

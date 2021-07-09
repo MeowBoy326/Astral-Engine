@@ -20,7 +20,7 @@ public:
 	TextManager(Graphics & graphics, Player & player);
 	TextManager(Graphics &graphics, const std::string &filePath, int sourceX, int sourceY, int width, int height,
 		float posX, float posY);
-
+	~TextManager();
 	void setTextStatus(bool status);
 	bool isActiveText();
 
