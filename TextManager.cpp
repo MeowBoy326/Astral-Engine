@@ -15,8 +15,8 @@ TextManager::TextManager() {}
 TextManager::TextManager(Graphics & graphics, Player & player)  {
 	int posx = player.getX();
 	int posy = player.getY();
-	this->_chatBox = Sprite(graphics, "npcTextBox.png", 0, 0, 243, 23, posx, posy);
-	graphics.loadImage("npcTextBox.png"); //loads sprite sheet in
+	this->_chatBox = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 0, 243, 23, posx, posy);
+	graphics.loadImage("data\\npc\\npcTextBox.png"); //loads sprite sheet in
 	this->drawChatBox(graphics, player);
 }
 
@@ -57,7 +57,7 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
 	} 
-	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 18);
 	SDL_Surface *surface = TTF_RenderText_Solid(font, str.c_str(), color);;
 	SDL_Rect destinationRectangle = { posX - 260 , posY + 105, surface->w, surface->h };;
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);;
@@ -68,7 +68,7 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 		if (str[index] == '$' && str[index + 1] == 'n') {
 			count++;
 			if (count == 1) {
-				TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+				TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 18);
 				SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
 				SDL_Rect destinationRectangle = { posX - 260 , posY + 105, surface->w, surface->h }; //where on screen we will be drawing
 				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -78,7 +78,7 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 				SDL_DestroyTexture(tex);
 			}
 			else if (count == 2) {
-				TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+				TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 18);
 				SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
 				SDL_Rect destinationRectangle = { posX - 260 , posY + 135, surface->w, surface->h }; //where on screen we will be drawing
 				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -91,7 +91,7 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 			index += 2;
 		}
 		if (str[index] == '$' && str[index + 1] == 'e') {
-			TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+			TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 18);
 			SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
 			SDL_Rect destinationRectangle = { posX - 260 , posY + 165, surface->w, surface->h }; //where on screen we will be drawing
 			SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -114,7 +114,7 @@ void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, con
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
 	}
-	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 18);
 	SDL_Surface *surface = TTF_RenderText_Solid(font, str.c_str(), color);;
 	SDL_Rect destinationRectangle = { posX - 320 , posY - 85, surface->w, surface->h };;
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);;
@@ -125,7 +125,7 @@ void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, con
 		if (str[index] == '$' && str[index + 1] == 'n') {
 			count++;
 			if (count == 1) {
-				TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 17);
+				TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 17);
 				SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
 				SDL_Rect destinationRectangle = { posX - 315 , posY - 85, surface->w, surface->h }; //where on screen we will be drawing
 				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -135,7 +135,7 @@ void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, con
 				SDL_DestroyTexture(tex);
 			}
 			else if (count == 2) {
-				TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 17);
+				TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 17);
 				SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
 				SDL_Rect destinationRectangle = { posX - 315 , posY - 65, surface->w, surface->h }; //where on screen we will be drawing
 				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -148,7 +148,7 @@ void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, con
 			index += 2;
 		}
 		if (str[index] == '$' && str[index + 1] == 'e') {
-			TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 17);
+			TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 17);
 			SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
 			SDL_Rect destinationRectangle = { posX - 225 , posY - 45, surface->w, surface->h }; //where on screen we will be drawing
 			SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -158,7 +158,7 @@ void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, con
 			SDL_DestroyTexture(tex);
 		}
 		else if (str[index] == '$' && str[index + 1] == 'h') {
-			TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 32);
+			TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 32);
 			SDL_Surface *surface = TTF_RenderText_Solid(font, temp.c_str(), color);
 			SDL_Rect destinationRectangle = { posX - 265 , posY - 45, surface->w, surface->h }; //where on screen we will be drawing
 			SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -184,7 +184,7 @@ void TextManager::drawDmg(Graphics & graphics, int x, int y, double dmg)
 	SDL_Color color = { 255, 0, 0, 255 };
 	int precisionVal = 2;
 	std::string dmgNum = std::to_string(dmg).substr(0, std::to_string(dmg).find(".") + precisionVal + 1);
-	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 18);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 18);
 	surface = TTF_RenderText_Solid(iFont, dmgNum.c_str(), color);
 
 	SDL_Rect destinationRectangle = { x, y - 30, surface->w, surface->h }; //where on screen we will be drawing
@@ -210,7 +210,7 @@ void TextManager::drawMapName(Graphics & graphics, std::string &mapName, int x, 
 		fontSize -= mapName.length() * 1.2;
 	}
 	std::transform(mapName.begin(), mapName.end(), mapName.begin(), ::toupper);
-	TTF_Font *iFont = TTF_OpenFont("OptimusPrinceps.ttf", fontSize);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\OptimusPrinceps.ttf", fontSize);
 
 	//Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
 	surface = TTF_RenderText_Solid(iFont, mapName.c_str(), color);
@@ -247,7 +247,7 @@ void TextManager::drawVersion(Graphics & graphics, int x, int y)
 	SDL_Color color = { 255, 255, 255, 255 };
 	std::string version = "Version 15.4 Alpha 07/07/2021";
 	int fontSize = 12;
-	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", fontSize);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", fontSize);
 
 	//Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
 	surface = TTF_RenderText_Solid(iFont, version.c_str(), color);
@@ -281,7 +281,7 @@ void TextManager::drawDeveloper(Graphics & graphics, int x, int y)
 	SDL_Color color = { 255, 255, 255, 255 };
 	std::string version = "Developed By Arhum Z. Nayyar";
 	int fontSize = 12;
-	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", fontSize);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", fontSize);
 
 	//Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
 	surface = TTF_RenderText_Solid(iFont, version.c_str(), color);
@@ -313,7 +313,7 @@ void TextManager::drawHPNumber(Graphics & graphics, int x, int y, float hp, SDL_
 	SDL_Surface *surface;
 	int precisionVal = 2;
 	std::string dmgNum = std::to_string(hp).substr(0, std::to_string(hp).find(".") + precisionVal + 1);
-	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 14);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 14);
 	surface = TTF_RenderText_Solid(iFont, dmgNum.c_str(), color);
 
 	SDL_Rect destinationRectangle = { x - 15, y, surface->w, surface->h }; //where on screen we will be drawing
@@ -334,7 +334,7 @@ void TextManager::drawPercentNumber(Graphics & graphics, int x, int y, double ex
 	int precisionVal = 2;
 	std::string percentNum = std::to_string(exp).substr(0, std::to_string(exp).find(".") + precisionVal + 1) +"%";
 	//std::string expNum = std::to_string(exp) + "%";
-	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 14);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 14);
 	surface = TTF_RenderText_Solid(iFont, percentNum.c_str(), color);
 
 	SDL_Rect destinationRectangle = { x - 15, y, surface->w, surface->h }; //where on screen we will be drawing
@@ -348,7 +348,7 @@ void TextManager::drawPercentNumber(Graphics & graphics, int x, int y, double ex
 
 void TextManager::drawNpcName(Graphics & graphics, int x, int y, const std::string & name, SDL_Color color)
 {
-	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 14);
+	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 14);
 	SDL_Surface *surface = TTF_RenderText_Solid(font, name.c_str(), color);;
 	SDL_Rect destinationRectangle = { x - 260 , y + 50, surface->w, surface->h };;
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);;
@@ -361,7 +361,7 @@ void TextManager::drawNpcName(Graphics & graphics, int x, int y, const std::stri
 
 void TextManager::drawQuestText(Graphics & graphics, int x, int y, const std::string & text, SDL_Color color)
 {
-	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 18);
+	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 18);
 	SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), color);
 	SDL_Rect destinationRectangle = { x - 260 , y + 105, surface->w, surface->h }; //where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -381,7 +381,7 @@ void TextManager::drawStats(Graphics & graphics, int posX, int posY, float hPoin
 	std::string pts = std::to_string(hPoints).substr(0, std::to_string(hPoints).find(".") + precisionVal + 1).c_str();
 	std::string points = std::to_string(hPoints).substr(0, std::to_string(hPoints).find(".") + precisionVal + 1);
 	SDL_Surface *surface, *dmgSurface, *defSurface, *availableSurface;
-	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 24);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
 	surface = TTF_RenderText_Solid(iFont, std::to_string(hPoints).substr(0, std::to_string(hPoints).find(".") + precisionVal + 1).c_str(), color);
 	dmgSurface = TTF_RenderText_Solid(iFont, std::to_string(dmgPoints).substr(0, std::to_string(dmgPoints).find(".") + precisionVal + 1).c_str(), color);
 	defSurface = TTF_RenderText_Solid(iFont, std::to_string(defPoints).substr(0, std::to_string(defPoints).find(".") + precisionVal + 1).c_str(), color);
@@ -419,7 +419,7 @@ void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::
 	}
 
 	SDL_Surface *surface;
-	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 12);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 12);
 	surface = TTF_RenderText_Solid(iFont, str.c_str(), color);
 	SDL_Rect destinationRectangle = { posX, posY, surface->w, surface->h }; //where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
@@ -440,7 +440,7 @@ void TextManager::drawCurrency(Graphics & graphics, int x, int y, const std::str
 	}
 
 	SDL_Surface *surface;
-	TTF_Font *iFont = TTF_OpenFont("Arcadia.ttf", 18);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 18);
 	surface = TTF_RenderText_Solid(iFont, str.c_str(), color);
 	SDL_Rect destinationRectangle = { x, y, surface->w, surface->h }; //where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);

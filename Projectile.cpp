@@ -27,14 +27,14 @@ Projectile::Projectile(Graphics & graphics, Player & player)
 {
 	int posx = player.getX();
 	int posy = player.getY();
-	this->_bullet = Sprite(graphics, "Bullet.png", 66, 0, 12, 11, posx, posy);
-	//	this->_currentHealthBar = Sprite(graphics, "Textbox.png", 0, 25, 39, 5, 83, 72);
+	this->_bullet = Sprite(graphics, "data\\graphics\\Bullet.png", 66, 0, 12, 11, posx, posy);
+	//	this->_currentHealthBar = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 25, 39, 5, 83, 72);
 	std::cout << "sprite added" << std::endl;
-	graphics.loadImage("Bullet.png"); //loads sprite sheet in
+	graphics.loadImage("data\\graphics\\Bullet.png"); //loads sprite sheet in
 	std::cout << "sprite loaded" << std::endl;
 
-	this->_Gun = Sprite(graphics, "Arms.png", 52, 10, 10, 5, (posx - 10), (posy + 10));
-	graphics.loadImage("Arms.png");
+	this->_Gun = Sprite(graphics, "data\\graphics\\Arms.png", 52, 10, 10, 5, (posx - 10), (posy + 10));
+	graphics.loadImage("data\\graphics\\Arms.png");
 }
 
 Projectile::~Projectile()

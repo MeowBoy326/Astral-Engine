@@ -16,6 +16,7 @@
 #include <iostream>
 #include <random>
 #include <set>
+#include <filesystem>
 
 using namespace tinyxml2; //all tinyxml2 is in a namespace because we will use so many features dont wanna write tinyxml:: all the time :D
 
@@ -87,8 +88,9 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	XMLDocument doc; //represents entire xml document
 	std::stringstream ss;
 	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
-	doc.LoadFile(ss.str().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
-
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
+	cwd.append(mapName + ".tmx");
+	doc.LoadFile(cwd.string().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
 	XMLElement* mapNode = doc.FirstChildElement("map"); //doc is the root of the xml doc, the first child element from the root called map we are selecting
 
 	/* Save File function
@@ -118,7 +120,8 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 			int firstgid;
 			const char* source = pTileset->FirstChildElement("image")->Attribute("source"); //returns a char* so thats why we set char* earlier
 			std::stringstream ss;
-			ss << source; //ss << "content/tilesets/" << source;
+			//ss << source; //ss << "content/tilesets/" << source;
+			ss << "data/maps/" << source;
 			pTileset->QueryIntAttribute("firstgid", &firstgid);
 			SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(ss.str()));
 			//create a tilset variable and add it to our list of tilesets
@@ -657,7 +660,9 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 	XMLDocument doc; //represents entire xml document
 	std::stringstream ss;
 	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
-	doc.LoadFile(ss.str().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
+	cwd.append(mapName + ".tmx");
+	doc.LoadFile(cwd.string().c_str());
 
 	XMLElement* mapNode = doc.FirstChildElement("map");
 	XMLElement* pObjectGroup = mapNode->FirstChildElement("objectgroup");
@@ -709,7 +714,9 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 	XMLDocument doc; //represents entire xml document
 	std::stringstream ss;
 	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
-	doc.LoadFile(ss.str().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
+	cwd.append(mapName + ".tmx");
+	doc.LoadFile(cwd.string().c_str());
 	XMLElement* mapNode = doc.FirstChildElement("map");
 
 	XMLElement* pObjectGroup = mapNode->FirstChildElement("objectgroup");

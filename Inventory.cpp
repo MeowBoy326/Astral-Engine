@@ -9,10 +9,10 @@ Inventory::Inventory()
 Inventory::Inventory(Graphics & graphics, Player & player)
 {
 	this->_player = player;
-	this->_iMenu = Sprite(graphics, "TextBox.png", 0, 87, 40, 45, 35, 70); //x, y, width, height, screen pos x, screen pos y
-	this->_hpPot = Sprite(graphics, "NpcSym.png", 32, 83, 13, 11, 35, 70);
-	this->_key = Sprite(graphics, "NpcSym.png", 194, 4, 12, 10, 35, 70);
-	this->_silverGem = Sprite(graphics, "loot.png", 72, 50, 16, 16, 35, 70);
+	this->_iMenu = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 87, 40, 45, 35, 70); //x, y, width, height, screen pos x, screen pos y
+	this->_hpPot = Sprite(graphics, "data\\maps\\NpcSym.png", 32, 83, 13, 11, 35, 70);
+	this->_key = Sprite(graphics, "data\\maps\\NpcSym.png", 194, 4, 12, 10, 35, 70);
+	this->_silverGem = Sprite(graphics, "data\\maps\\loot.png", 72, 50, 16, 16, 35, 70);
 }
 
 void Inventory::storeItem(int type)

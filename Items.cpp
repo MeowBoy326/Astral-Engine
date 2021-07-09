@@ -48,10 +48,10 @@ HealthPotion::HealthPotion()
 }
 
 HealthPotion::HealthPotion(Graphics & graphics, Vector2 spawnPoint) :
-	Items(graphics, "NpcSym.png", 288, 1, 14, 15, spawnPoint, 140),
+	Items(graphics, "data\\maps\\NpcSym.png", 288, 1, 14, 15, spawnPoint, 140),
 	hpGain(3)
 {
-	graphics.loadImage("NpcSym.png"); //loads sprite sheet in
+	graphics.loadImage("data\\maps\\NpcSym.png"); //loads sprite sheet in
 	//this->addToInventory();
 	this->setupAnimations();
 	this->playAnimation("Blink");
@@ -94,10 +94,10 @@ void HealthPotion::setupAnimations()
 PermHP::PermHP() {};
 
 PermHP::PermHP(Graphics &graphics, Vector2 spawnPoint) :
-	Items(graphics, "NpcSym.png", 288, 1, 14, 15, spawnPoint, 140),
+	Items(graphics, "data\\maps\\NpcSym.png", 288, 1, 14, 15, spawnPoint, 140),
 	maxHPgain(5)
 {
-	graphics.loadImage("NpcSym.png"); //loads sprite sheet in
+	graphics.loadImage("data\\maps\\NpcSym.png"); //loads sprite sheet in
 	//this->addToInventory();
 	this->setupAnimations();
 	this->playAnimation("Blink");
@@ -136,9 +136,9 @@ void PermHP::setupAnimations() {
 Key::Key() {};
 
 Key::Key(Graphics &graphics, Vector2 spawnPoint) :
-	Items(graphics, "NpcSym.png", 194, 4, 16, 16, spawnPoint, 140)
+	Items(graphics, "data\\maps\\NpcSym.png", 194, 4, 16, 16, spawnPoint, 140)
 {
-	graphics.loadImage("NpcSym.png"); //loads sprite sheet in
+	graphics.loadImage("data\\maps\\NpcSym.png"); //loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Blink");
 }
@@ -180,10 +180,10 @@ GoldCoin::GoldCoin()
 }
 
 GoldCoin::GoldCoin(Graphics & graphics, Vector2 spawnPoint) :
-	Items(graphics, "loot.png", 1, 1, 16, 16, spawnPoint, 140),
+	Items(graphics, "data\\maps\\loot.png", 1, 1, 16, 16, spawnPoint, 140),
 	amountGain(100)
 {
-	graphics.loadImage("loot.png"); //loads sprite sheet in
+	graphics.loadImage("data\\maps\\loot.png"); //loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
 }
@@ -228,10 +228,10 @@ RedCoin::RedCoin()
 }
 
 RedCoin::RedCoin(Graphics & graphics, Vector2 spawnPoint) :
-	Items(graphics, "loot.png", 1, 23, 16, 16, spawnPoint, 140),
+	Items(graphics, "data\\maps\\loot.png", 1, 23, 16, 16, spawnPoint, 140),
 	amountGain(1000)
 {
-	graphics.loadImage("loot.png"); //loads sprite sheet in
+	graphics.loadImage("data\\maps\\loot.png"); //loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
 }
@@ -276,10 +276,10 @@ BronzeCoin::BronzeCoin()
 }
 
 BronzeCoin::BronzeCoin(Graphics & graphics, Vector2 spawnPoint) :
-	Items(graphics, "loot.png", 96, 23, 16, 16, spawnPoint, 140),
+	Items(graphics, "data\\maps\\loot.png", 96, 23, 16, 16, spawnPoint, 140),
 	amountGain(1)
 {
-	graphics.loadImage("loot.png"); //loads sprite sheet in
+	graphics.loadImage("data\\maps\\loot.png"); //loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
 }
@@ -320,10 +320,10 @@ SilverGem::SilverGem()
 }
 
 SilverGem::SilverGem(Graphics & graphics, Vector2 spawnPoint) :
-	Items(graphics, "loot.png", 72, 50, 16, 16, spawnPoint, 140),
+	Items(graphics, "data\\maps\\loot.png", 72, 50, 16, 16, spawnPoint, 140),
 	amountGain(1)
 {
-	graphics.loadImage("loot.png"); //loads sprite sheet in
+	graphics.loadImage("data\\maps\\loot.png"); //loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
 }

@@ -4,6 +4,7 @@
 #include "Npc.h"
 #include "Input.h"
 #include "tinyxml2.h";
+#include <filesystem>
 
 using namespace tinyxml2;
 
@@ -15,10 +16,10 @@ Npc::Npc(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int
 	_maxHealth(10),
 	_currentHealth(10)
 {
-	this->_txtBox = new Sprite(graphics, "npcTextBox.png", 0, 0, 76, 24, 505, 499);
-	//this->_npcBox = Sprite(graphics, "npcTextBox.png", 63, 149, 32, 32, 505, 499);
-	//this->_chatSelection = Sprite(graphics, "npcTextBox.png", 0, 147, 46, 18, 15, 15);
-	graphics.loadImage("npcTextBox.png"); //loads sprite sheet in
+	this->_txtBox = new Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 0, 76, 24, 505, 499);
+	//this->_npcBox = Sprite(graphics, "data\\npc\\npcTextBox.png", 63, 149, 32, 32, 505, 499);
+	//this->_chatSelection = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
+	graphics.loadImage("data\\npc\\npcTextBox.png"); //loads sprite sheet in
 }
 
 void Npc::update(int elapsedTime, Player &player) {
@@ -47,11 +48,11 @@ void Npc::npcSelection(Graphics & graphics, int posX, int posY, int selection)
 
 void Npc::setNpcIcon(Graphics & graphics, const std::string name, int posX, int posY)
 {
-	this->_chatSelection = new Sprite(graphics, "npcTextBox.png", 0, 147, 46, 18, 15, 15);
-	this->_questSelection = new Sprite(graphics, "npcTextBox.png", 0, 147, 46, 18, 15, 15);
+	this->_chatSelection = new Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
+	this->_questSelection = new Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
 	//graphics.loadImage(name+".png");
-	this->_npcIcon = new Sprite(graphics, name + ".png", 0, 0, 28, 28, posX, posY);
-	this->_npcBox = new Sprite(graphics, "npcTextBox.png", 63, 149, 32, 32, posX, posY);
+	this->_npcIcon = new Sprite(graphics, "data\\npc\\" + name + ".png", 0, 0, 28, 28, posX, posY);
+	this->_npcBox = new Sprite(graphics, "data\\npc\\npcTextBox.png", 63, 149, 32, 32, posX, posY);
 }
 
 void Npc::drawNpcIcon(Graphics & graphics, const std::string name, int posX, int posY)
@@ -66,8 +67,9 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 	this->endOfChat = false;
 	XMLDocument xml;
 	XMLError result;
-	name += ".xml";
-	result = xml.LoadFile(name.c_str());
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
+	cwd.append(name + ".xml");
+	result = xml.LoadFile(cwd.string().c_str());
 	if (result != tinyxml2::XML_SUCCESS)
 		std::cout << "Could not read the file!";
 	XMLNode* root = xml.FirstChild();
@@ -92,8 +94,9 @@ int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Pla
 {
 	//if (questState == false) {
 		XMLDocument xml;
-		name += ".xml";
-		xml.LoadFile(name.c_str());
+		std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
+		cwd.append(name + ".xml");
+		xml.LoadFile(cwd.string().c_str());
 		XMLError result;
 		XMLNode* root = xml.FirstChild();
 		if (root == nullptr)
@@ -135,8 +138,11 @@ int Npc::loadQuests(std::string name)
 	std::cout << "loading quests for: " << name << std::endl;
 	XMLDocument xml;
 	XMLError result;
-	std::string fileName = name + ".xml";
-	result = xml.LoadFile(fileName.c_str());
+
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
+	cwd.append(name + ".xml");
+	result = xml.LoadFile(cwd.string().c_str());
+
 	if (result != tinyxml2::XML_SUCCESS)
 		std::cout << "Could not read the file!";
 	XMLNode* root = xml.FirstChild();
@@ -298,7 +304,7 @@ bool Npc::checkQuest(Graphics & graphics, std::string name, int posX, int posY, 
 Clock::Clock() {}
 
 Clock::Clock(Graphics &graphics, Vector2 spawnPoint, std::string name) :
-	Npc(graphics, "female.png", 2, 33, 30, 30, spawnPoint, 140),
+	Npc(graphics, "data\\npc\\female.png", 2, 33, 30, 30, spawnPoint, 140),
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false)

@@ -15,6 +15,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 using namespace tinyxml2;
 
@@ -62,12 +63,12 @@ Game::Game() { //constructor
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 	//Initialize SDL_mixer
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-	{
-		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-		
-	}
-	//TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 24);
+	//if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	//{
+	//	printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+	//	
+	//}
+	//TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
 	this->gameLoop(); //start game
 }
 
@@ -79,14 +80,14 @@ void Game::gameLoop() {
 	SDL_Event event;
 
 	//music
-	Mix_Music *gMusic = NULL;
-	gMusic = Mix_LoadMUS("Astral.wav");;
-	if (gMusic == NULL)
-	{
-		printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
-	}
-	else 
-		//Mix_PlayMusic(gMusic, -1); uncomment to play music
+	//Mix_Music *gMusic = NULL;
+	//gMusic = Mix_LoadMUS("data\\bgm\\Astral.wav");;
+	//if (gMusic == NULL)
+	//{
+	//	printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
+	//}
+	//else 
+	//	Mix_PlayMusic(gMusic, -1); uncomment to play music
 
 	this->_title = Title(graphics, input, event);
 	this->_gameOver = GameOver(graphics);
@@ -545,7 +546,10 @@ int Game::loadCutscene(std::string name)
 {
 	XMLDocument xml;
 	std::string fileName = name + ".xml";
-	xml.LoadFile(fileName.c_str());
+
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "cutscenes";
+	cwd.append(name + ".xml");
+	xml.LoadFile(cwd.string().c_str());
 	XMLError result;
 	XMLNode* root = xml.FirstChild();
 	if (root == nullptr)
@@ -555,6 +559,7 @@ int Game::loadCutscene(std::string name)
 	if (sceneType == 1) {
 		element = root->FirstChildElement("Talk");
 		element->QueryIntAttribute("textTime", &sceneMaxTime);
+		result = element->QueryIntAttribute("lines", &sceneLines);
 	}
 	if (sceneType == 2) {
 		element = root->FirstChildElement("Camera");
@@ -575,8 +580,9 @@ int Game::loadCutscene(std::string name)
 int Game::startCutscene(std::string name)
 {
 	XMLDocument xml;
-	std::string fileName = name + ".xml";
-	xml.LoadFile(fileName.c_str());
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "cutscenes";
+	cwd.append(name + ".xml");
+	xml.LoadFile(cwd.string().c_str());
 	XMLError result;
 	XMLNode* root = xml.FirstChild();
 	if (root == nullptr)
@@ -693,7 +699,9 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(bElement);
 	}
 	root->InsertEndChild(element);
-	XMLError result = xml.SaveFile("SF-LOC.xml");
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
+	cwd.append("SF-LOC.xml");
+	XMLError result = xml.SaveFile(cwd.string().c_str());
 	XMLCheckResult(result);
 	return 0;
 }
@@ -701,7 +709,10 @@ int Game::saveGame(Graphics & graphics)
 int Game::loadGame(Graphics & graphics)
 {
 	XMLDocument xml;
-	xml.LoadFile("SF-LOC.xml");
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
+	cwd.append("SF-LOC.xml");
+	xml.LoadFile(cwd.string().c_str());
+
 	XMLError result;
 	XMLNode* root = xml.FirstChild();
 	if (root == nullptr)
@@ -912,7 +923,6 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 
 	std::vector<Rectangle> cutScenes;
 	if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
-		//std::cout << "COLLIDING WITH CUTSCENE OBJECT!" << std::endl;
 		std::string cutSceneName = this->_level.getCutscene();
 		this->loadCutscene(cutSceneName);
 		sceneName = cutSceneName;
@@ -927,12 +937,12 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 	this->_player.update(elapsedTime);
 	if (sceneType == 1) {
 		sceneTimer += elapsedTime;
-		if (sceneTimer >= sceneMaxTime && sceneLineChar != 'd') {
+		if (sceneTimer >= sceneMaxTime && sceneLineCounter <= sceneLines) {
 			sceneLineChar++;
 			sceneLineCounter++;
 			sceneTimer = 0;
 		}
-		else if (sceneLineChar == 'd') {
+		 if (sceneLineCounter > sceneLines) {
 			this->_level.removeCutscene("");
 			activeCutscene = false;
 			sceneTimer = 0;
@@ -990,7 +1000,6 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 
 	std::vector<Rectangle> cutScenes;
 	if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
-		//std::cout << "COLLIDING WITH CUTSCENE OBJECT!" << std::endl;
 		activeCutscene = true;
 	}
 }

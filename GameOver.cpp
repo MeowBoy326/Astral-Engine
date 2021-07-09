@@ -16,21 +16,20 @@ GameOver::GameOver()
 
 GameOver::GameOver(Graphics & graphics) :
 //graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
-AnimatedSprite(graphics, "endGame.png", 0, 0, 640, 480, 0, 0, 340)
+AnimatedSprite(graphics, "data\\graphics\\endGame.png", 0, 0, 640, 480, 0, 0, 340)
 {
 
-	graphics.loadImage("endGame.png"); //loads sprite sheet in
+	graphics.loadImage("data\\graphics\\endGame.png"); //loads sprite sheet in
 
 	this->setupAnimations();
 	this->playAnimation("NG0");
 
-	this->_defeat = Sprite(graphics, "title.png", 2, 0, 241, 68, 300, 100);
+	this->_defeat = Sprite(graphics, "data\\graphics\\title.png", 2, 0, 241, 68, 300, 100);
 	//x, y, width, height, screen pos x, screen pos y
-	std::cout << "sprite added" << std::endl;
-	graphics.loadImage("title.png"); //loads sprite sheet in
+	graphics.loadImage("data\\graphics\\title.png"); //loads sprite sheet in
 
-	this->_endGame = Sprite(graphics, "startGame.png", 0, 7, 213, 51, 210, 400);
-	graphics.loadImage("startGame.png");
+	this->_endGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 7, 213, 51, 210, 400);
+	graphics.loadImage("data\\graphics\\startGame.png");
 }
 
 

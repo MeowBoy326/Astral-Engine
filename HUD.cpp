@@ -6,18 +6,18 @@ HUD::HUD() {}
 
 HUD::HUD(Graphics &graphics, Player &player) {
 	this->_player = player;
-	//this->_healthBarSprite = Sprite(graphics, "TextBox.png", 0, 40, 76, 8, 35, 70); //x, y, width, height, screen pos x, screen pos y
-	this->_healthBarSprite = Sprite(graphics, "TextBox.png", 0, 162, 76, 19, 35, 70);
-	this->_currentHealthBar = Sprite(graphics, "Textbox.png", 19, 183, 56, 5, 83, 72);
-	//this->_currentHealthBar = Sprite(graphics, "Textbox.png", 0, 25, 40, 5, 83, 72);
-	//this->_healthNumber1 = Sprite(graphics, "TextBox.png", 0, 56, 8, 8, 66, 70);
+	//this->_healthBarSprite = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 40, 76, 8, 35, 70); //x, y, width, height, screen pos x, screen pos y
+	this->_healthBarSprite = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 162, 76, 19, 35, 70);
+	this->_currentHealthBar = Sprite(graphics, "data\\graphics\\TextBox.png", 19, 183, 56, 5, 83, 72);
+	//this->_currentHealthBar = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 25, 40, 5, 83, 72);
+	//this->_healthNumber1 = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 56, 8, 8, 66, 70);
 
-	this->_lvWord = Sprite(graphics, "TextBox.png", 81, 81, 11, 7, 38, 55);
-	this->_lvNumber = Sprite(graphics, "TextBox.png", 0, 56, 8, 8, 66, 52);
-	this->_expBarValue = Sprite(graphics, "TextBox.png", 0, 31, 1, 8, 83, 52);
-	//this->_slash = Sprite(graphics, "TextBox.png", 72, 48, 8, 8, 100, 36);
-	//this->_dashes = Sprite(graphics, "TextBox.png", 81, 51, 15, 11, 132, 26);
-	this->_expBar = Sprite(graphics, "TextBox.png", 0, 144, 84, 8, 83, 52);
+	this->_lvWord = Sprite(graphics, "data\\graphics\\TextBox.png", 81, 81, 11, 7, 38, 55);
+	this->_lvNumber = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 56, 8, 8, 66, 52);
+	this->_expBarValue = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 31, 1, 8, 83, 52);
+	//this->_slash = Sprite(graphics, "data\\graphics\\TextBox.png", 72, 48, 8, 8, 100, 36);
+	//this->_dashes = Sprite(graphics, "data\\graphics\\TextBox.png", 81, 51, 15, 11, 132, 26);
+	this->_expBar = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 144, 84, 8, 83, 52);
 }
 
 void HUD::update(int ElapsedTime, Player &player) {

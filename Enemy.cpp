@@ -74,7 +74,7 @@ float Enemy::enemyExpAmount() {
 Bat::Bat() {}
 
 Bat::Bat(Graphics &graphics, Vector2 spawnPoint) :
-	Enemy(graphics, "NpcCemet.png", 32, 32, 16, 16, spawnPoint, 140),
+	Enemy(graphics, "data\\enemy\\NpcCemet.png", 32, 32, 16, 16, spawnPoint, 140),
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
@@ -87,9 +87,9 @@ Bat::Bat(Graphics &graphics, Vector2 spawnPoint) :
 	this->_fireY = this->_startingY;
 	this->_HPBar._x = this->_startingX;
 	this->_HPBar._y = this->_startingY;
-	this->_fireBall = Sprite(graphics, "NpcCemet.png", 220, 33, 13, 10, this->_fireX, (this->_fireY + 10));
-	this->_HPBar = Sprite(graphics, "NpcCemet.png", 2, 157, 17, 7, this->_HPBar._x, this->_HPBar._y - 15);
-	this->_HPValue = Sprite(graphics, "NpcCemet.png", 3, 167, 17, 5, this->_HPBar._x + 1, this->_HPBar._y + 2);
+	this->_fireBall = Sprite(graphics, "data\\enemy\\NpcCemet.png", 220, 33, 13, 10, this->_fireX, (this->_fireY + 10));
+	this->_HPBar = Sprite(graphics, "data\\enemy\\NpcCemet.png", 2, 157, 17, 7, this->_HPBar._x, this->_HPBar._y - 15);
+	this->_HPValue = Sprite(graphics, "data\\enemy\\NpcCemet.png", 3, 167, 17, 5, this->_HPBar._x + 1, this->_HPBar._y + 2);
 }
 
 Bat::~Bat()
@@ -246,7 +246,7 @@ Shade::~Shade()
 }
 
 Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
-	Enemy(graphics, "shade.png", 27, 7, 32, 32, spawnPoint, 140),
+	Enemy(graphics, "data\\enemy\\shade.png", 27, 7, 32, 32, spawnPoint, 140),
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
@@ -256,10 +256,10 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 	this->setupAnimations();
 	this->playAnimation("shadeRight");
 
-	this->_shadeBall = Sprite(graphics, "shadeAttack.png", 0, 0, 22, 19, this->_startingX, (this->_startingY + 60));
-	this->_HPBar = Sprite(graphics, "NpcCemet.png", 2, 157, 17, 7, this->_startingX + 50, this->_startingY - 15);
-	this->_HPValue = Sprite(graphics, "NpcCemet.png", 3, 174, 17, 5, this->_startingX + 51, this->_startingY - 12);
-	graphics.loadImage("shadeAttack.png");
+	this->_shadeBall = Sprite(graphics, "data\\enemy\\shadeAttack.png", 0, 0, 22, 19, this->_startingX, (this->_startingY + 60));
+	this->_HPBar = Sprite(graphics, "data\\enemy\\NpcCemet.png", 2, 157, 17, 7, this->_startingX + 50, this->_startingY - 15);
+	this->_HPValue = Sprite(graphics, "data\\enemy\\NpcCemet.png", 3, 174, 17, 5, this->_startingX + 51, this->_startingY - 12);
+	graphics.loadImage("data\\enemy\\shadeAttack.png");
 }
 
 void Shade::update(int elapsedTime, Player &player) {

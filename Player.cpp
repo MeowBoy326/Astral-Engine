@@ -32,7 +32,7 @@ Player::Player() {}
 
 Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	//graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
-	AnimatedSprite(graphics, "MyChar.png", 0, 0, 16, 16, spawnPoint.x, spawnPoint.y, 100), 
+	AnimatedSprite(graphics, "data\\graphics\\MyChar.png", 0, 0, 16, 16, spawnPoint.x, spawnPoint.y, 100), 
 	_dx(0),
 	_dy(0),
 	_facing(RIGHT),
@@ -42,14 +42,14 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	_maxHealth(100.0f),
 	_currentHealth(100.0f)
 {
-	graphics.loadImage("MyChar.png"); //loads sprite sheet in
+	graphics.loadImage("data\\graphics\\MyChar.png"); //loads sprite sheet in
 
 	this->setupAnimations();
 	this->playAnimation("RunRight");
 
-	this->_statMenu = Sprite(graphics, "npcTextBox.png", 40, 88, 71, 52, this->_x, (this->_y - 10));
-	this->_statSelection = Sprite(graphics, "npcTextBox.png", 0, 147, 46, 18, 15, 15);
-	graphics.loadImage("npcTextBox.png");
+	this->_statMenu = Sprite(graphics, "data\\npc\\npcTextBox.png", 40, 88, 71, 52, this->_x, (this->_y - 10));
+	this->_statSelection = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
+	graphics.loadImage("data\\npc\\npcTextBox.png");
 	//graphics.loadImage("")
 }
 

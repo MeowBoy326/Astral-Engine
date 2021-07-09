@@ -46,6 +46,6 @@ protected:
 	float _textX, _textY; //x,y pos of sprite
 private:
 	Sprite _chatBox;
-	TTF_Font *font = TTF_OpenFont("Arcadia.ttf", 20);
+	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 20);
 };
 #endif
