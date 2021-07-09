@@ -37,7 +37,6 @@ private:
 	Level _level;
 	HUD _hud;
 	Camera _camera;
-	Projectile _bullet;
 	Title _title;
 	GameOver _gameOver;
 	TextManager _chatBox;

@@ -92,7 +92,6 @@ void Game::gameLoop() {
 	this->_title = Title(graphics, input, event);
 	this->_gameOver = GameOver(graphics);
 	this->_camera = Camera();
-	this->_bullet = Projectile(graphics, this->_player);
 	this->_chatBox = TextManager(graphics, this->_player);
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
@@ -170,6 +169,13 @@ void Game::gameLoop() {
 				this->_level.removeCutscene("");
 				activeCutscene = false;
 				sceneTimer = 0;
+				sceneLineChar = 'a';
+				sceneLineCounter = 1;
+				sceneMaxTime = 0;
+				//input.beginNewFrame();
+				this->_player.stopLookingDown();
+				this->_player.addCutSceneTable(sceneName);
+				continue;
 			}
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
@@ -250,24 +256,8 @@ void Game::gameLoop() {
 			}
 			//bullet
 			if (input.wasKeyPressed(SDL_SCANCODE_E) == true) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
-					if (_player.lookingUp() == true) {
-						this->_bullet.shootUp(graphics, this->_player);;
-					}
-					else if (_player.lookingDown() == true) {
-						this->_bullet.shootDown(graphics, this->_player);;
-					}
-
-					else if (_player.lookingLeft() == true) {
-						this->_bullet.shootLeft(graphics, this->_player);;
-					}
-
-					else if (_player.lookingRight() == true) {
-						this->_bullet.shootBullet(graphics, this->_player);
-					}
-				}
-				else if (activeTalk == true) {
-					std::cout << "impaired action" << std::endl;
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
+					this->_level.generateProjectile(graphics, this->_player);
 				}
 			}
 
@@ -442,18 +432,14 @@ void Game::gameLoop() {
 					pickUp = false;
 				}
 			}
-			if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
+			if (input.wasKeyPressed(SDL_SCANCODE_R) == true) {
 				_inventory.useItem(0, this->_player);
-				std::cout << "game: useItem called" << std::endl;
 			}
-
+			if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
+				//Add weapon swap here
+			}
 			if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
-				if (_bullet.checkDmg() == 1) {
-					_bullet.setDmg(2);
-				}
-				else if (_bullet.checkDmg() == 2) {
-					_bullet.setDmg(1);
-				}
+				//Add weapon swap here
 			}
 
 		const int CURRENT_TIME_MS = SDL_GetTicks();
@@ -493,14 +479,7 @@ void Game::draw(Graphics &graphics) {
 	this->_level.draw(graphics, this->_player);
 	//need to draw level before player (below) so player is on top of level and not behind it!
 	this->_player.draw(graphics);
-	this->_bullet.draw(graphics, this->_player);
-	this->_bullet.drawUp(graphics, this->_player);
-	this->_bullet.drawDown(graphics, this->_player);
-	this->_bullet.drawLeft(graphics, this->_player);
-	this->_bullet.drawGun(graphics, this->_player);
 	this->_chatBox.drawChatBox(graphics, this->_player);
-	this->_bullet.drawDmgText(graphics);
-
 	if (activeTalk == true) {
 		if (this->_npc.getNpcTalk() && npcSelection == 1) {
 			this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
@@ -699,6 +678,14 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(bElement);
 	}
 	root->InsertEndChild(element);
+	element = xml.NewElement("SceneTable");
+	std::vector<std::string> csVec = this->_player.getSceneTable();
+	for (int counter = 0; counter < csVec.size(); ++counter) {
+		XMLElement* csElement = xml.NewElement("csTable");
+		csElement->SetAttribute("sceneName", csVec[counter].c_str());
+		element->InsertEndChild(csElement);
+	}
+	root->InsertEndChild(element);
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
 	cwd.append("SF-LOC.xml");
 	XMLError result = xml.SaveFile(cwd.string().c_str());
@@ -813,6 +800,19 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("bTable");
 	}
 	this->_player.setBossTable(btVec);
+	//Load completed cutscenes
+	element = root->FirstChildElement("SceneTable");
+	ptrVec = element->FirstChildElement("csTable");
+	std::vector<std::string> csVec;
+	while (ptrVec != nullptr) {
+		const char* namePtr = nullptr;
+		std::string cScene;
+		namePtr = ptrVec->Attribute("sceneName");
+		cScene = namePtr;
+		csVec.push_back(cScene);
+		ptrVec = ptrVec->NextSiblingElement("csTable");
+	}
+	this->_player.setCutsceneTable(csVec);
 	//Load stats
 	element = root->FirstChildElement("Stats");
 	if (element == nullptr)
@@ -853,11 +853,6 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	}*/
 	this->_camera.Update(elapsedTime, this->_player);
 	this->_level.update(elapsedTime, this->_player);
-	this->_bullet.update(elapsedTime, this->_player);
-	this->_bullet.updateUp(elapsedTime, this->_player);
-	this->_bullet.updateDown(elapsedTime, this->_player);
-	this->_bullet.updateLeft(elapsedTime, this->_player);
-	this->_bullet.updateDmgText(elapsedTime);
     //hud goes on top of everything
 	this->_hud.update(elapsedTime, this->_player);
 
@@ -887,24 +882,11 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		this->_player.handleSlopeCollisions(otherSlopes);
 	}
 
-	//Check enemies
-	//std::vector<Enemy*> otherEnemies;
-	//if ((otherEnemies = this->_level.checkEnemyCollisions(this->_player.getBoundingBox())).size() > 0) {
-	//	this->_player.handleEnemyCollisions(otherEnemies);
-	//}
-
 	this->_level.checkEnemyTileCollision().size() > 0;
-
-	std::vector<Enemy*> projectileHit;
-	if ((projectileHit = this->_level.checkEnemyCollisions(this->_bullet.getProjectileBBox())).size() > 0) {
-		this->_bullet.handleProjectileCollisions(projectileHit, graphics);
-	}
+	this->_level.checkProjectileCollisions(this->_player);
 	this->_level.checkEnemyHP(this->_player, this->_graphics);
-
-	std::vector<Rectangle> otherProjectile;
-	if ((otherProjectile = this->_level.checkTileCollisions(this->_bullet.getProjectileBBox())).size() > 0) {
-		this->_bullet.handleProjectileTileCollision(otherProjectile);
-	}
+	this->_level.checkProjectileBounds(this->_player);
+	this->_level.checkProjectileTileCollisions();
 
 	if (pickUp == true) {
 		this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics, this->_inventory);
@@ -924,11 +906,16 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	std::vector<Rectangle> cutScenes;
 	if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
 		std::string cutSceneName = this->_level.getCutscene();
-		this->loadCutscene(cutSceneName);
-		sceneName = cutSceneName;
-		sceneX = this->_player.getX();
-		sceneY = this->_player.getY();
-		activeCutscene = true;
+		if (this->_player.checkCutSceneCompleted(cutSceneName)) {
+			this->_level.removeCutscene("");
+		}
+		else {
+			this->loadCutscene(cutSceneName);
+			sceneName = cutSceneName;
+			sceneX = this->_player.getX();
+			sceneY = this->_player.getY();
+			activeCutscene = true;
+		}
 	}
 }
 
@@ -948,6 +935,10 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 			sceneTimer = 0;
 			sceneLineChar = 'a';
 			sceneLineCounter = 1;
+			sceneMaxTime = 0;
+			this->_player.stopLookingDown();
+			this->_player.addCutSceneTable(sceneName);
+			return;
 		}
 	}
 
@@ -977,6 +968,12 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 			this->_level.removeCutscene("");
 			activeCutscene = false;
 			sceneTimer = 0;
+			sceneLineChar = 'a';
+			sceneLineCounter = 1;
+			sceneMaxTime = 0;
+			this->_player.stopLookingDown();
+			this->_player.addCutSceneTable(sceneName);
+			return;
 		}
 	}
 	//Check collisions

@@ -19,6 +19,7 @@ public:
 	Player();
 	Player(Graphics &graphics, Vector2 spawnPoint);
 	void draw(Graphics &graphics);
+	void drawGun(Graphics &graphics);
 	void drawStatMenu(Graphics &graphics, Player &player, int selection);
 	void drawCurrentMapName(Graphics &graphics);
 	void showSceneDialogue(Graphics &graphics, std::string text);
@@ -64,6 +65,10 @@ public:
 	inline void setKillTable(std::vector<std::pair<std::string, int>> table) { this->killTable = table; }
 	bool checkKillQuestComplete(std::string name, int count);
 	bool checkBossCompleted(std::string name, std::string mapName, float x, float y);
+	inline const std::vector<std::string> getSceneTable() const { return this->cutSceneTable; }
+	inline void setCutsceneTable(std::vector<std::string> table) { this->cutSceneTable = table; }
+	void addCutSceneTable(std::string name);
+	bool checkCutSceneCompleted(std::string name);
 	void storeLevel(Level &level);
 	void overwriteLevel(Level &level, std::string mapName);
 	
@@ -142,11 +147,13 @@ private:
 	TextManager* _txt;
 	Sprite _statMenu;
 	Sprite _statSelection;
+	Sprite _Gun;
 
 	std::vector<std::pair<std::string, int>> killTable;
 	//name, mapName, initial x & y
 	std::vector<std::tuple<std::string, std::string, float, float, bool>> bossTable;
 	std::map<std::string, Level> mapStorage;
+	std::vector<std::string> cutSceneTable;
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;

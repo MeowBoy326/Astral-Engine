@@ -1,67 +1,50 @@
 #pragma once
 
-#include "SDL.h"
-#include "sprite.h"
-#include "Graphics.h"
+#include "AnimatedSprite.h"
 #include "Player.h"
-#include "Camera.h"
 #include <vector>
 #include <map>
 #include <string>
 
-//using namespace QuickSDL;
-
 class TextManager;
+class Graphics;
 
-class Projectile : public Sprite
+class Projectile : public AnimatedSprite
 {
 public:
 	Projectile();
-	Projectile(Graphics &graphics, Player &player);
-	~Projectile();
+	Projectile(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int width, int height, Vector2 spawnPoint, int timeToUpdate);
+	virtual ~Projectile();
 
-	void shootBullet(Graphics &graphics, Player &player);
-	void shootUp(Graphics & graphics, Player & player);
-	void shootDown(Graphics & graphics, Player & player);
-	void shootLeft(Graphics & graphics, Player & player);
-	void updateUp(float ElapsedTime, Player & player);
-	void updateDown(float ElapsedTime, Player & player);
-	void updateLeft(float ElapsedTime, Player & player);
-	void update(float ElapsedTime, Player &player);
-	void drawUp(Graphics & graphics, Player & player);
-	void drawDown(Graphics & graphics, Player & player);
-	void drawLeft(Graphics & graphics, Player & player);
-	int checkBullets(std::vector<int> bVec);
-	void draw(Graphics &graphics, Player &player);
-	void drawGun(Graphics &graphics, Player &player);
-	void drawDmgText(Graphics & graphics);
-	void updateDmgText(float ElapsedTime);
-	bool isActive();
+	virtual void update(int elapsedTime, Player &player);
+	virtual void draw(Graphics &graphics);
 
-	void handleProjectileCollisions(std::vector<Enemy*>& others, Graphics & graphics);
-	void handleProjectileTileCollision(std::vector<Rectangle>& others);
-	void setDmg(double dmg);
-	double checkDmg();
-
-	const float getX() const;
-	const float getY() const; //getting variables not changes const make sure it doesnt
+	virtual Direction getProjectileDirection() { return this->_direction; }
 	
 private:
-	TextManager* _txt;
-	Sprite _bullet;
-	Sprite _Gun;
-	float _shootDx, _shootDy; //(dx (delta x) is change in x postition during frame)
-	std::vector<int> bulletList;
-	std::vector<SDL_Rect> bulletVec; //right
-	std::vector<SDL_Rect> bulletUp;
-	std::vector<SDL_Rect> bulletDown;
-	std::vector<SDL_Rect> bulletLeft;
-	std::map<int, std::vector<SDL_Rect>> _bulletMap;
-	//std::map<std::string, std::vector<SDL_Rect>> _animation;
-	std::map<int, int> _bulletTime;
 
-	double _timeElapsed = 0; //for timer
 protected:
-	double _timeToUpdate = 1400;
+	float _startingX, _startingY;
+	Direction _direction;
 };
+
+class SilverBullet : public Projectile {
+public:
+	SilverBullet();
+	SilverBullet(Graphics & graphics, Vector2 spawnPoint, Direction dir);
+	~SilverBullet();
+
+	void update(int elapsedTime, Player &player);
+	void draw(Graphics &graphics);
+
+	Direction getProjectileDirection() { return this->_direction; }
+
+	void animationDone(std::string currentAnimation);
+	void setupAnimations();
+private:
+protected:
+	float _startingX, _startingY;
+	Direction _direction;
+};
+
 

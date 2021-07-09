@@ -130,8 +130,8 @@ void Bat::update(int elapsedTime, Player &player) {
 			this->_fireBall.setY(this->_y);
 		}
 		else {
-			this->_fireBall.addX(player.getX() > this->_x ? .2 : -.2);
-			this->_fireBall.addY(player.getY() > this->_y ? .2 : -.2);
+			this->_fireBall.addX(player.getX() > this->_x ? .06 : -.06);
+			this->_fireBall.addY(player.getY() > this->_y ? .06 : -.06);
 		}
 	}
 	else if (this->getCurrentHealth() <= 0) {
@@ -257,8 +257,8 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 	this->playAnimation("shadeRight");
 
 	this->_shadeBall = Sprite(graphics, "data\\enemy\\shadeAttack.png", 0, 0, 22, 19, this->_startingX, (this->_startingY + 60));
-	this->_HPBar = Sprite(graphics, "data\\enemy\\NpcCemet.png", 2, 157, 17, 7, this->_startingX + 50, this->_startingY - 15);
-	this->_HPValue = Sprite(graphics, "data\\enemy\\NpcCemet.png", 3, 174, 17, 5, this->_startingX + 51, this->_startingY - 12);
+	this->_HPBar = Sprite(graphics, "data\\enemy\\NpcCemet.png", 2, 157, 17, 7, this->_startingX + 56, this->_startingY - 15);
+	this->_HPValue = Sprite(graphics, "data\\enemy\\NpcCemet.png", 3, 174, 17, 5, this->_startingX + 57, this->_startingY - 12);
 	graphics.loadImage("data\\enemy\\shadeAttack.png");
 }
 
@@ -268,6 +268,8 @@ void Shade::update(int elapsedTime, Player &player) {
 		this->_dy += this->GRAVITY * elapsedTime;
 	}
 	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
+	//this->_HPBar._y += this->_dy * elapsedTime;
+	//this->_HPValue._y += this->_dy * elapsedTime;
 	this->_shadeBall.update();
 	this->_HPBar.update();
 	this->_HPValue.update();
@@ -286,14 +288,18 @@ void Shade::update(int elapsedTime, Player &player) {
 			this->_HPValue.setSourceRectW(std::floor(hpNum * 17));
 
 			if (this->_direction == RIGHT) {
-				this->_x += 0.4f;
-				this->_HPBar._x += 0.4f;
-				this->_HPValue._x += 0.4f;
+				this->_x += 0.07f;
+				this->_HPBar._x += 0.07f;
+				this->_HPValue._x += 0.07f;
+				this->_HPBar._y = this->_y - 65;
+				this->_HPValue._y = this->_y - 62;
 			}
 			else {
-				this->_x -= 0.4f;
-				this->_HPBar._x -= 0.4f;
-				this->_HPValue._x -= 0.4f;
+				this->_x -= 0.07f;
+				this->_HPBar._x -= 0.07f;
+				this->_HPValue._x -= 0.07f;
+				this->_HPBar._y = this->_y - 65;
+				this->_HPValue._y = this->_y - 62;
 			}
 			if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
 				player.gainHealth(-12.64f);
@@ -393,6 +399,8 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 			case sides::TOP:
 				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
 				this->_y = others.at(i).getBottom() + 1; //no longer go through things, stops us
+				//this->_HPBar._y = others.at(i).getTop() + 1;
+				//this->_HPValue._y = others.at(i).getTop() + 1;
 				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					//this->_dx = 0; //stop movement on x-axis
 					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
@@ -400,6 +408,8 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				break;
 			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
 				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
 				this->_grounded = true; //we are on ground since it pushed it back up
 				break;

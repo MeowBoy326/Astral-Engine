@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "TextManager.h"
 #include "Enemy.h"
+#include "Projectile.h"
 #include "Npc.h"
 #include "Items.h"
 #include <SDL.h>
@@ -456,6 +457,16 @@ void Level::update(int elapsedTime, Player &player) {
 		if (this->_items.at(i)->isDroppedItem())
 			this->checkItemFloorCollisions(this->_items.at(i));
 	}
+	for (int i = 0; i < this->_projectiles.size(); i++) {
+		this->_projectiles.at(i)->update(elapsedTime, player);
+	}
+	for (int i = 0; i < this->dmgVector.size(); i++) {
+		std::get<3>(this->dmgVector[i]) += elapsedTime;
+		std::get<1>(this->dmgVector[i]) -= 0.25;
+		if (std::get<3>(this->dmgVector[i]) >= 1500) {
+			this->dmgVector.erase(this->dmgVector.begin() + i);
+		}
+	}
 }
 
 void Level::draw(Graphics &graphics, Player &player) {
@@ -474,6 +485,15 @@ void Level::draw(Graphics &graphics, Player &player) {
 	for (int i = 0; i < this->_items.size(); i++) {
 		this->_items.at(i)->draw(graphics);
 	}
+	for (int i = 0; i < this->_projectiles.size(); i++) {
+		this->_projectiles.at(i)->draw(graphics);
+	}
+	for (int i = 0; i < this->dmgVector.size(); i++) {
+		TextManager txt; 
+		txt.drawDmg(graphics, std::get<0>(this->dmgVector[i]), std::get<1>(this->dmgVector[i]),
+			std::get<2>(this->dmgVector[i]));
+	}
+
 	/* OLD code when maps/tile werent implemented
 	//Draw the background
 	//x = 0 , y = 0 because we start at top left corner of the bkBlue.png (64x64) width 64 / height 64
@@ -504,6 +524,59 @@ void Level::checkItemFloorCollisions(Items* obj)
 	for (int i = 0; i < this->_collisionRects.size(); i++) {
 		if (this->_collisionRects.at(i).collidesWith(obj->getBoundingBox())) {
 			obj->addY(-0.8f);
+		}
+	}
+}
+
+void Level::checkProjectileCollisions(Player & player) {
+	for (int i = 0; i < this->_enemies.size(); ++i) {
+		for (int j = 0; j < this->_projectiles.size(); ++j) {
+			if (this->_enemies.at(i)->getBoundingBox().collidesWith(this->_projectiles.at(j)->getBoundingBox()) &&
+				this->_enemies.at(i)->getCurrentHealth() > 0) {
+				this->_enemies.at(i)->bulletHit(player.getDmgMod());
+				this->dmgVector.push_back(std::make_tuple(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY(),
+					player.getDmgMod(), 0));
+				delete this->_projectiles.at(j);
+				this->_projectiles.erase(this->_projectiles.begin() + j);
+			}
+		}
+	}
+}
+
+void Level::checkProjectileTileCollisions()
+{
+	for (int i = 0; i < this->_collisionRects.size(); ++i) {
+		for (int j = 0; j < this->_projectiles.size(); ++j) {
+			if (this->_collisionRects.at(i).collidesWith(this->_projectiles.at(j)->getBoundingBox())) {
+				delete this->_projectiles.at(j);
+				this->_projectiles.erase(this->_projectiles.begin() + j);
+			}
+		}
+	}
+}
+
+void Level::checkProjectileBounds(Player & player)
+{
+	for (int i = 0; i < this->_projectiles.size(); ++i) {
+		if (this->_projectiles[i]->getProjectileDirection() == LEFT && 
+			this->_projectiles[i]->getX() <= player.getX() - 450) {
+			delete this->_projectiles[i];
+			this->_projectiles.erase(this->_projectiles.begin() + i);
+		}
+		else if (this->_projectiles[i]->getProjectileDirection() == RIGHT &&
+			this->_projectiles[i]->getX() >= player.getX() + 450) {
+			delete this->_projectiles[i];
+			this->_projectiles.erase(this->_projectiles.begin() + i);
+		}
+		else if (this->_projectiles[i]->getProjectileDirection() == UP &&
+			this->_projectiles[i]->getY() <= player.getY() - 450) {
+			delete this->_projectiles[i];
+			this->_projectiles.erase(this->_projectiles.begin() + i);
+		}
+		else if (this->_projectiles[i]->getProjectileDirection() == DOWN &&
+			this->_projectiles[i]->getY() >= player.getY() + 450) {
+			delete this->_projectiles[i];
+			this->_projectiles.erase(this->_projectiles.begin() + i);
 		}
 	}
 }
@@ -801,6 +874,43 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 		pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
 		}
 	}
+}
+
+void Level::generateProjectile(Graphics & graphics, Player & player)
+{
+	int pX = player.getX(), pY = player.getY();
+	Direction pDir = player.facingDir();
+	if (pDir == RIGHT && player.lookingDown() == false && player.lookingUp() == false) {
+		pX += 35;
+		pY += 5;
+	}
+	else if (pDir == LEFT && player.lookingDown() == false && player.lookingUp() == false) {
+		pX -= 15;
+		pY += 5;
+	}
+	if (player.lookingDown() == true) {
+		pDir = DOWN;
+		if (player.facingDir() == RIGHT) {
+			pX += 12;
+			pY += 10;
+		}
+		else {
+			pX -= 15;
+			pY += 10;
+		}
+	}
+	else if (player.lookingUp() == true) {
+		pDir = UP;
+		if (player.facingDir() == RIGHT) {
+			pX += 12;
+			pY -= 10;
+		}
+		else {
+			pX -= 15;
+			pY -= 10;
+		}
+	}
+	this->_projectiles.push_back(new SilverBullet(graphics, Vector2(pX, pY), pDir));
 }
 
 std::vector<Enemy*> Level::checkEnemyCollisions(const Rectangle &other) {

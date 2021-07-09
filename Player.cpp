@@ -50,7 +50,8 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	this->_statMenu = Sprite(graphics, "data\\npc\\npcTextBox.png", 40, 88, 71, 52, this->_x, (this->_y - 10));
 	this->_statSelection = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
 	graphics.loadImage("data\\npc\\npcTextBox.png");
-	//graphics.loadImage("")
+	this->_Gun = Sprite(graphics, "data\\graphics\\Arms.png", 52, 10, 10, 5, (this->_x - 10), (this->_y + 10));
+	graphics.loadImage("data\\graphics\\Arms.png");
 }
 
 void Player::setupAnimations() {
@@ -212,6 +213,21 @@ bool Player::checkBossCompleted(std::string name, std::string mapName, float x, 
 	}
 	else
 		return false;
+	return false;
+}
+
+void Player::addCutSceneTable(std::string name)
+{
+	this->cutSceneTable.push_back(name);
+}
+
+bool Player::checkCutSceneCompleted(std::string name)
+{
+	for (int i = 0; i < this->cutSceneTable.size(); ++i) {
+		if (this->cutSceneTable[i] == name) {
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -672,6 +688,44 @@ void Player::update(float elapsedTime) {
 
 void Player::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
+	this->drawGun(graphics);
+}
+
+void Player::drawGun(Graphics & graphics)
+{
+	if (this->lookingLeft() && !this->lookingUp() && !this->lookingDown()) {
+		_Gun.setSourceRectX(52);
+		_Gun.setSourceRectY(10);
+		this->_Gun.draw(graphics, this->getX() - 8, this->getY() + 14);
+		}
+	else if (this->lookingRight() && !this->lookingUp() && !this->lookingDown()) {
+		_Gun.setSourceRectX(57);
+		_Gun.setSourceRectY(26);
+		_Gun.setSourceRectH(6);
+		this->_Gun.draw(graphics, this->getX() + 19, this->getY() + 16);
+		}
+	else if ((this->lookingUp() == true) && (this->_facing == RIGHT)) {
+		_Gun.setSourceRectX(57);
+		_Gun.setSourceRectY(34);
+		this->_Gun.draw(graphics, this->getX() + 19, this->getY() + 16);
+		}
+	else if ((this->lookingUp() == true) && (this->_facing == LEFT)) {
+		_Gun.setSourceRectX(57);
+		_Gun.setSourceRectY(50);
+		this->_Gun.draw(graphics, this->getX() - 1, this->getY() + 14);
+	}
+	else if ((this->lookingDown() == true) && (this->_facing == LEFT)) {
+		_Gun.setSourceRectX(59);
+		_Gun.setSourceRectY(70);
+		_Gun.setSourceRectH(10);
+		this->_Gun.draw(graphics, this->getX() - 4, this->getY() + 14);
+	}
+	else if ((this->lookingDown() == true) && (this->_facing == RIGHT)) {
+		_Gun.setSourceRectX(54);
+		_Gun.setSourceRectY(86);
+		_Gun.setSourceRectH(10);
+		this->_Gun.draw(graphics, this->getX() + 20, this->getY() + 14);
+	}	
 }
 
 void Player::drawStatMenu(Graphics &graphics, Player &player, int selection) {

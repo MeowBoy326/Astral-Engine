@@ -15,10 +15,12 @@
 
 class Graphics; //foward decalre
 class Enemy;
+class Projectile;
 class Npc;
 class Player;
 class Inventory;
 class Items;
+
 struct SDL_Texture; //foward declare
 struct SDL_Rect;
 struct Tileset;
@@ -37,6 +39,7 @@ public:
 	void generateItems(Graphics &graphics);
 	void generateMapItems(Graphics &graphics, std::string mapName, Inventory &invent);
 	void generateEnemies(Graphics &graphics, std::string mapName, Player &player);
+	void generateProjectile(Graphics &graphics, Player &player);
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkEnemyTileCollision();
@@ -49,6 +52,9 @@ public:
 	std::vector<Npc*> checkNpcCollisions(const Rectangle & other, Graphics &graphics);
 	void checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
 	void checkItemFloorCollisions(Items* obj);
+	void checkProjectileCollisions(Player &player);
+	void checkProjectileTileCollisions();
+	void checkProjectileBounds(Player &player);
 
 	std::string getCutscene() const { return this->_cutsceneName; }
 	float getSceneX(std::string name);
@@ -81,10 +87,12 @@ private:
 	std::vector<Door> _doorList;
 	std::vector<Door> _lockDoor;
 	std::vector<Enemy*> _enemies; //polymorphism to call the update and draw for the bat and not Enemy's functions, so needs to be a pointer for poly to work
+	std::vector<Projectile*> _projectiles;
 	std::vector<Npc*> _npcs;
 	std::vector<Items*> _items;
 	std::vector<int> itemType;
 	std::vector<std::tuple<std::string, std::string, int>> levelDropTable; //mob name, item name, drop rate %
+	std::vector<std::tuple<float, float, float, int>> dmgVector;
 
 	//Private loads a map only call level within level class
 	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); //wont need size or spawn because it will be parsed out of the xml within this function later

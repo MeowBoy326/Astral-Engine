@@ -415,3 +415,6 @@ SF-LOC.xml
 *.xml
 *.txt
 *.dsnapshot
+*.ico
+resource.h
+SDLProject.rc
