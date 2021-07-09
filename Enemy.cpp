@@ -289,6 +289,8 @@ void Shade::update(int elapsedTime, Player &player) {
 
 			if (this->_direction == RIGHT) {
 				this->_x += 0.07f;
+				if (this->_boundingBox.collidesWith(player.getBoundingBox()))
+					this->_x -= 0.07f;
 				this->_HPBar._x += 0.07f;
 				this->_HPValue._x += 0.07f;
 				this->_HPBar._y = this->_y - 65;
@@ -296,6 +298,8 @@ void Shade::update(int elapsedTime, Player &player) {
 			}
 			else {
 				this->_x -= 0.07f;
+				if (this->_boundingBox.collidesWith(player.getBoundingBox()))
+					this->_x += 0.07f;
 				this->_HPBar._x -= 0.07f;
 				this->_HPValue._x -= 0.07f;
 				this->_HPBar._y = this->_y - 65;
