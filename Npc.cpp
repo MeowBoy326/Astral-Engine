@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "tinyxml2.h";
 #include <filesystem>
+#include "AESCipher.h"
 
 using namespace tinyxml2;
 
@@ -69,7 +70,11 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 	XMLError result;
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
 	cwd.append(name + ".xml");
-	result = xml.LoadFile(cwd.string().c_str());
+	std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "npc";
+	nCwd.append("temp.xml");
+	AESCipher cipher;
+	cipher.AESDecrypt(cwd.string(), nCwd.string());
+	result = xml.LoadFile(nCwd.string().c_str());
 	if (result != tinyxml2::XML_SUCCESS)
 		std::cout << "Could not read the file!";
 	XMLNode* root = xml.FirstChild();
@@ -86,6 +91,7 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 	textPtr = element->Attribute((char*)&this->lineChar);
 	std::string text = textPtr;
 	this->drawNpcText(graphics, 100, 100, text, posX, posY);
+	cipher.AESEncrypt(nCwd.string(), cwd.string());
 	XMLCheckResult(result);
 	return 0;
 }
@@ -96,7 +102,11 @@ int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Pla
 		XMLDocument xml;
 		std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
 		cwd.append(name + ".xml");
-		xml.LoadFile(cwd.string().c_str());
+		std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "npc";
+		nCwd.append("temp.xml");
+		AESCipher cipher;
+		cipher.AESDecrypt(cwd.string(), nCwd.string());
+		xml.LoadFile(nCwd.string().c_str());
 		XMLError result;
 		XMLNode* root = xml.FirstChild();
 		if (root == nullptr)
@@ -113,12 +123,14 @@ int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Pla
 			std::string text;
 			text = textPtr;
 			this->drawNpcText(graphics, 100, 100, text, posX, posY);
+			cipher.AESEncrypt(nCwd.string(), cwd.string());
 			XMLCheckResult(result);
 		}
 		else {
 			this->lineCounter = 1;
 			this->lineChar = 'a';
 			this->endOfChat = true;
+			cipher.AESEncrypt(nCwd.string(), cwd.string());
 			XMLCheckResult(result);
 		}
 		XMLCheckResult(result);
@@ -141,7 +153,11 @@ int Npc::loadQuests(std::string name)
 
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
 	cwd.append(name + ".xml");
-	result = xml.LoadFile(cwd.string().c_str());
+	std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "npc";
+	nCwd.append("temp.xml");
+	AESCipher cipher;
+	cipher.AESDecrypt(cwd.string(), nCwd.string());
+	result = xml.LoadFile(nCwd.string().c_str());
 
 	if (result != tinyxml2::XML_SUCCESS)
 		std::cout << "Could not read the file!";
@@ -186,6 +202,7 @@ int Npc::loadQuests(std::string name)
 			//once rewarded and player opens menu again, mark as completed.
 		}
 	}
+	cipher.AESEncrypt(nCwd.string(), cwd.string());
 	XMLCheckResult(result);
 	return 0;
 }

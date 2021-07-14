@@ -18,6 +18,7 @@
 #include <filesystem>
 
 using namespace tinyxml2;
+using namespace CryptoPP;
 
 namespace {
 	const int FPS = 50;
@@ -63,12 +64,12 @@ Game::Game() { //constructor
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 	//Initialize SDL_mixer
-	//if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-	//{
-	//	printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-	//	
-	//}
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+	}
 	//TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
+	this->cipher = AESCipher();
 	this->gameLoop(); //start game
 }
 
@@ -80,14 +81,14 @@ void Game::gameLoop() {
 	SDL_Event event;
 
 	//music
-	//Mix_Music *gMusic = NULL;
-	//gMusic = Mix_LoadMUS("data\\bgm\\Astral.wav");;
-	//if (gMusic == NULL)
-	//{
-	//	printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
-	//}
-	//else 
-	//	Mix_PlayMusic(gMusic, -1); uncomment to play music
+	Mix_Music *gMusic = NULL;
+	gMusic = Mix_LoadMUS("data\\bgm\\Astral.wav");;
+	if (gMusic == NULL)
+	{
+		printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
+	}
+	else 
+		//Mix_PlayMusic(gMusic, -1);
 
 	this->_title = Title(graphics, input, event);
 	this->_gameOver = GameOver(graphics);
@@ -111,6 +112,9 @@ void Game::gameLoop() {
 				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
+				if (!cipher.verifyHash("cave", this->_player)) {
+					std::exit(0);
+				}
 				this->saveGame(graphics);
 			}
 			else {
@@ -687,8 +691,11 @@ int Game::saveGame(Graphics & graphics)
 	}
 	root->InsertEndChild(element);
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
-	cwd.append("SF-LOC.xml");
+	cwd.append("temp.xml");
 	XMLError result = xml.SaveFile(cwd.string().c_str());
+	std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "profile";
+	nCwd.append("SF-LOC.xml");
+	this->cipher.AESEncrypt(cwd.string(), nCwd.string());
 	XMLCheckResult(result);
 	return 0;
 }
@@ -698,7 +705,10 @@ int Game::loadGame(Graphics & graphics)
 	XMLDocument xml;
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
 	cwd.append("SF-LOC.xml");
-	xml.LoadFile(cwd.string().c_str());
+	std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "profile";
+	nCwd.append("temp.xml");
+	this->cipher.AESDecrypt(cwd.string(), nCwd.string());
+	xml.LoadFile(nCwd.string().c_str());
 
 	XMLError result;
 	XMLNode* root = xml.FirstChild();
@@ -842,6 +852,10 @@ int Game::loadGame(Graphics & graphics)
 	this->_player.setCurrency(iValue);
 
 	this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
+	if (!cipher.verifyHash(mapName, this->_player)) {
+		std::exit(0);
+	}
+	this->saveGame(graphics);
 	XMLCheckResult(result);
 	return 0;
 }

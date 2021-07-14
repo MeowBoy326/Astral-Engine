@@ -462,7 +462,7 @@ void Level::update(int elapsedTime, Player &player) {
 	}
 	for (int i = 0; i < this->dmgVector.size(); i++) {
 		std::get<3>(this->dmgVector[i]) += elapsedTime;
-		std::get<1>(this->dmgVector[i]) -= 0.25;
+		std::get<1>(this->dmgVector[i]) -= 0.05;
 		if (std::get<3>(this->dmgVector[i]) >= 1500) {
 			this->dmgVector.erase(this->dmgVector.begin() + i);
 		}

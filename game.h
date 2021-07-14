@@ -13,6 +13,9 @@
 #include "Inventory.h"
 #include "Items.h"
 #include "GameOver.h"
+#include <stdlib.h>
+#include <cryptoPP/aes.h>
+#include "AESCipher.h"
 
 class Game {
 public:
@@ -43,6 +46,7 @@ private:
 	Inventory _inventory;
 	Npc _npc;
 	Graphics _graphics;
+	AESCipher cipher;
 };
 #endif
 

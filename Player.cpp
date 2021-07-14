@@ -7,6 +7,7 @@
 #include "Npc.h"
 #include "Items.h"
 #include <time.h>
+#include "AESCipher.h"
 
 namespace player_constants {
 	const float WALK_SPEED = 0.2f;
@@ -247,6 +248,16 @@ void Player::overwriteLevel(Level & level, std::string mapName)
 	}
 }
 
+const std::string Player::getMapHash(std::string mapName)
+{
+	std::map<std::string, std::string>::iterator it;
+	it = this->mapHash.find(mapName);
+	if (it != this->mapHash.end())
+		return it->second;
+	else
+		return "NULL";
+}
+
 void Player::moveLeft() {
 	if (this->_lookingDown == true && this->_grounded == true) //while facing backwards if we are on the ground and looking down that means char
 	//is turned around and interacting with something so don't allow movement!
@@ -383,8 +394,13 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 	//Check if the player is grounded and holding the down arrow
 	//If so, go through the door
 	//If not, do nothing
+	AESCipher cipher;
 	for (int i = 0; i < others.size(); i++) {
 		if (this->_grounded == true && this->_lookingDown == true) {
+			if (!cipher.verifyHash(others.at(i).getDestination(), player)) {
+				std::cout << "Unable to set level to new level : Hash check failed!" << std::endl;
+				return;
+			}
 			this->overwriteLevel(level, level.getMapName());
 			std::map<std::string, Level>::iterator it;
 			it = this->mapStorage.find(others.at(i).getDestination());
@@ -413,8 +429,16 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 {
 	//Check if the player is grounded and holding the down arrow
 	//Also check to see if the player has a "Key"
+	AESCipher cipher;
 	for (int i = 0; i < others.size(); i++) {
-		if (this->_grounded == true && this->_lookingDown == true && invent.hasKeyStored() == true) {
+		if (this->_grounded == true && this->_lookingDown == true) {
+			if (!cipher.verifyHash(others.at(i).getDestination(), player)) {
+				std::cout << "Unable to set level to new level : Hash check failed!" << std::endl;
+				return;
+			}
+			if (!invent.hasKeyStored()) {
+				return;
+			}
 			this->overwriteLevel(level, level.getMapName());
 			std::map<std::string, Level>::iterator it;
 			it = this->mapStorage.find(others.at(i).getDestination());

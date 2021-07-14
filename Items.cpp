@@ -196,7 +196,7 @@ GoldCoin::~GoldCoin()
 void GoldCoin::update(int elapsedTime, Player & player)
 {
 	this->playAnimation("Rotate");
-	this->_y += 0.4f;
+	this->_y += 0.12f;
 	Items::update(elapsedTime, player);
 }
 
@@ -244,7 +244,7 @@ RedCoin::~RedCoin()
 void RedCoin::update(int elapsedTime, Player & player)
 {
 	this->playAnimation("Rotate");
-	this->_y += 0.4f;
+	this->_y += 0.12f;
 	Items::update(elapsedTime, player);
 }
 
@@ -292,7 +292,7 @@ BronzeCoin::~BronzeCoin()
 void BronzeCoin::update(int elapsedTime, Player & player)
 {
 	this->playAnimation("Rotate");
-	this->_y += 0.4f;
+	this->_y += 0.12f;
 	Items::update(elapsedTime, player);
 }
 
@@ -335,7 +335,7 @@ SilverGem::~SilverGem()
 
 void SilverGem::update(int elapsedTime, Player & player)
 {
-	this->_y += 0.4f;
+	this->_y += 0.12f;
 	this->playAnimation("Rotate");
 	Items::update(elapsedTime, player);
 }

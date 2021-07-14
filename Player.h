@@ -71,6 +71,7 @@ public:
 	bool checkCutSceneCompleted(std::string name);
 	void storeLevel(Level &level);
 	void overwriteLevel(Level &level, std::string mapName);
+	const std::string getMapHash(std::string mapName);
 	
 
 	//Health handling
@@ -157,6 +158,11 @@ private:
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;
+
+	std::map<std::string, std::string> mapHash = { {"caveFork", "3A7BAB38CA5251CEF5730229C33921ED36330570BC3433E0EB2BF500D08EA408"},
+	{"cave", "824B7290A622AF0D7A4FC36C2176DC2EE37966BB23632B668F0C6259AC42A182"}, 
+	{"caverns","9B0403E445129E983F5285D1A61A26683796D9433F41A1357AF1CFDA8EF598DB"},
+	{"Profaned Capital", "0F8FB75847CF398985D9296B7ECC4E9E061A8F1EFEE70C2B69222F4A49D05737"} };
 };
 
 #endif
