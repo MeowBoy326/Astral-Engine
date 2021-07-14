@@ -46,6 +46,13 @@ Level & Level::operator=(const Level & levelMap)
 			p = NULL;
 		}
 	}
+	for (auto & p : this->_projectiles) {
+		if (p != nullptr) {
+			delete p;
+			p = NULL;
+		}
+	}
+	this->_projectiles.clear();
 	this->_items.clear();
 	this->_enemies.clear();
 	this->itemType = levelMap.itemType;
