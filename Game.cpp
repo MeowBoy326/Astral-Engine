@@ -890,6 +890,14 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		this->_player.handleTileCollisions(others);
 	}
 
+	if ((others = this->_level.checkLavaCollisions(this->_player.getBoundingBox())).size() > 0) {
+		this->_player.handleLavaCollisions(others);
+	}
+
+	if ((others = this->_level.checkPoisonCollisions(this->_player.getBoundingBox())).size() > 0) {
+		this->_player.handlePoisonCollisions(others);
+	}
+
 	//Check slope
 	std::vector<Slope> otherSlopes;
 	if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {

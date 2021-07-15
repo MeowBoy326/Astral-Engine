@@ -44,6 +44,8 @@ public:
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkEnemyTileCollision();
 	std::vector<Rectangle> checkCutsceneCollisions(const Rectangle &other);
+	std::vector<Rectangle> checkLavaCollisions(const Rectangle &other);
+	std::vector<Rectangle> checkPoisonCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
 	std::vector<Door> checkDoorCollisions(const Rectangle &other);
 	std::vector<Door> checkLockedDoorCollisions(const Rectangle &other);
@@ -84,6 +86,8 @@ private:
 	std::vector<AnimatedTileInfo> _animatedTileInfos;
 	std::vector<Rectangle> _collisionRects; 
 	std::vector<Rectangle> _cutsceneRects;
+	std::vector<Rectangle> _lavaRects;
+	std::vector<Rectangle> _poisonRects;
 	std::vector<Slope> _slopes; //list of slopes
 	std::vector<Door> _doorList;
 	std::vector<Door> _lockDoor;

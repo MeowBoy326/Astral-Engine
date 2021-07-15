@@ -63,6 +63,8 @@ Level & Level::operator=(const Level & levelMap)
 	this->_collisionRects = levelMap._collisionRects;
 	this->_cutsceneRects = levelMap._cutsceneRects;
 	this->_cutsceneName = levelMap._cutsceneName;
+	this->_lavaRects = levelMap._lavaRects;
+	this->_poisonRects = levelMap._poisonRects;
 	this->_doorList = levelMap._doorList;
 	this->_lockDoor = levelMap._lockDoor;
 	this->_mapName = levelMap._mapName;
@@ -318,6 +320,44 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						std::stringstream ss;
 						ss << name;
 						this->_cutsceneName = ss.str();
+
+						pObject = pObject->NextSiblingElement("object");
+					}
+				}
+			}
+			else if (ss.str() == "lava") {
+				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+				if (pObject != NULL) {
+					while (pObject) {
+						float x, y, width, height;
+						x = pObject->FloatAttribute("x");
+						y = pObject->FloatAttribute("y");
+						width = pObject->FloatAttribute("width");
+						height = pObject->FloatAttribute("height");
+						this->_lavaRects.push_back(Rectangle(
+							std::ceil(x) * globals::SPRITE_SCALE,
+							std::ceil(y) * globals::SPRITE_SCALE,
+							std::ceil(width) * globals::SPRITE_SCALE,
+							std::ceil(height) * globals::SPRITE_SCALE));
+
+						pObject = pObject->NextSiblingElement("object");
+					}
+				}
+			}
+			else if (ss.str() == "poison") {
+				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+				if (pObject != NULL) {
+					while (pObject) {
+						float x, y, width, height;
+						x = pObject->FloatAttribute("x");
+						y = pObject->FloatAttribute("y");
+						width = pObject->FloatAttribute("width");
+						height = pObject->FloatAttribute("height");
+						this->_poisonRects.push_back(Rectangle(
+							std::ceil(x) * globals::SPRITE_SCALE,
+							std::ceil(y) * globals::SPRITE_SCALE,
+							std::ceil(width) * globals::SPRITE_SCALE,
+							std::ceil(height) * globals::SPRITE_SCALE));
 
 						pObject = pObject->NextSiblingElement("object");
 					}
@@ -649,6 +689,26 @@ std::vector<Rectangle> Level::checkCutsceneCollisions(const Rectangle & other)
 		}
 	}
 	return others; //return whatever collision rects we are colliding with
+}
+
+std::vector<Rectangle> Level::checkLavaCollisions(const Rectangle & other)
+{
+	std::vector<Rectangle> others;
+	for (int i = 0; i < this->_lavaRects.size(); i++) { 
+		if (this->_lavaRects.at(i).collidesWith(other))
+			others.push_back(this->_lavaRects.at(i));
+	}
+	return others;
+}
+
+std::vector<Rectangle> Level::checkPoisonCollisions(const Rectangle & other)
+{
+	std::vector<Rectangle> others;
+	for (int i = 0; i < this->_poisonRects.size(); i++) {
+		if (this->_poisonRects.at(i).collidesWith(other))
+			others.push_back(this->_poisonRects.at(i));
+	}
+	return others;
 }
 
 std::vector<Slope> Level::checkSlopeCollisions(const Rectangle &other) {

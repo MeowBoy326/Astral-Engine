@@ -38,6 +38,7 @@ public:
 	void drawPercentNumber(Graphics & graphics, int x, int y, double exp, SDL_Color color = { 255, 255, 255, 255 });
 	void drawNpcName(Graphics & graphics, int x, int y, const std::string &name, SDL_Color color = { 255, 255, 255, 255 });
 	void drawQuestText(Graphics & graphics, int x, int y, const std::string &name, SDL_Color color = { 255, 255, 255 ,255 });
+	void drawPlayerStatus(Graphics & graphics, int x, int y, const std::string &text, SDL_Color color = { 255, 255, 255, 255 });
 protected:
 	SDL_Rect _textSourceRect; //where on the spritesheet to get the sprite from
 	SDL_Rect _chatRect;

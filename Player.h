@@ -22,6 +22,7 @@ public:
 	void drawGun(Graphics &graphics);
 	void drawStatMenu(Graphics &graphics, Player &player, int selection);
 	void drawCurrentMapName(Graphics &graphics);
+	void drawStatusEffect(Graphics &graphics);
 	void showSceneDialogue(Graphics &graphics, std::string text);
 	void update(float elapsedTime);
 
@@ -46,6 +47,8 @@ public:
 
 	//Event handling
 	void handleTileCollisions(std::vector<Rectangle> &others);
+	void handleLavaCollisions(std::vector<Rectangle> &others);
+	void handlePoisonCollisions(std::vector<Rectangle> &others);
 	void handleSlopeCollisions(std::vector<Slope> &others);
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
@@ -78,6 +81,7 @@ public:
 	void drawHPNumbers(Graphics &graphics);
 	void setIFrame(bool condition);
 	void gainHealth(float amount);
+	void gainHPFromStatus(float amount);
 	void gainMaxHealth(float amount);
 	const inline float getMaxHealth() const { return this->_maxHealth; }
 	const inline float getCurrentHealth() const { return this->_currentHealth; }
@@ -130,6 +134,7 @@ private:
 	bool _lookingUp;
 	bool _lookingDown;
 	bool iFrame;
+	bool isPoisoned = false;
 
 	int _requiredExp;
 	int _statPoints = 25;
@@ -158,11 +163,15 @@ private:
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;
+	double _poisonDOTTimer = 0;
+	double _poisonDuration = 0;
+
 
 	std::map<std::string, std::string> mapHash = { {"caveFork", "3A7BAB38CA5251CEF5730229C33921ED36330570BC3433E0EB2BF500D08EA408"},
-	{"cave", "824B7290A622AF0D7A4FC36C2176DC2EE37966BB23632B668F0C6259AC42A182"}, 
+	{"cave", "ABE2CD4DD7F14DF15A3008135BF88AFA97E83DA2EEBE47B22CBE0B973486538E"}, 
 	{"caverns","9B0403E445129E983F5285D1A61A26683796D9433F41A1357AF1CFDA8EF598DB"},
-	{"Profaned Capital", "0F8FB75847CF398985D9296B7ECC4E9E061A8F1EFEE70C2B69222F4A49D05737"} };
+	{"Profaned Capital", "0F8FB75847CF398985D9296B7ECC4E9E061A8F1EFEE70C2B69222F4A49D05737"},
+	{"Collapsed Cave", "7F118CC74D6A46A8E087DD40BA9CF67070F9088FE088A7DD3728C84BFA14875C"} };
 };
 
 #endif

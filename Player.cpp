@@ -368,6 +368,19 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 	}
 }
 
+void Player::handleLavaCollisions(std::vector<Rectangle>& others)
+{
+	for (int i = 0; i < others.size(); i++) {
+		this->gainHPFromStatus(-0.02);
+	}
+}
+
+void Player::handlePoisonCollisions(std::vector<Rectangle>& others)
+{
+	if (!this->isPoisoned)
+		this->isPoisoned = true;
+}
+
 //handles collisions with all slopes the player is colliding with
 void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 	for (int i = 0; i < others.size(); i++) {
@@ -535,6 +548,14 @@ void Player::gainHealth(float amount) {
 	}
 }
 
+void Player::gainHPFromStatus(float amount)
+{   //This function is a constant tick.
+	//It does not give the player iFrames
+	if (amount < 0) {
+		this->_currentHealth += amount;
+	}
+}
+
 void Player::gainMaxHealth(float amount) { 
 	this->_maxHealth += amount; 
 	this->_currentHealth += _maxHealth - _currentHealth;
@@ -672,6 +693,21 @@ void Player::update(float elapsedTime) {
 	//Move by dy
 	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
 
+	//Poison timer
+	if (this->isPoisoned) {
+		this->_poisonDuration += elapsedTime;
+		this->_poisonDOTTimer += elapsedTime;
+		if (this->_poisonDOTTimer >= 1000) {
+			this->gainHPFromStatus(-3.45);
+			this->_poisonDOTTimer = 0;
+		}
+		if (this->_poisonDuration >= 8000) {
+			this->_poisonDOTTimer = 0;
+			this->_poisonDuration = 0;
+			this->isPoisoned = false;
+		}
+	}
+
 	//iFrame timer
 	if (player_constants::iFrame == true) {
 		this->_timeElapsed += elapsedTime;
@@ -713,6 +749,8 @@ void Player::update(float elapsedTime) {
 void Player::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
 	this->drawGun(graphics);
+	if (this->isPoisoned)
+		this->drawStatusEffect(graphics);
 }
 
 void Player::drawGun(Graphics & graphics)
@@ -767,6 +805,11 @@ void Player::drawCurrentMapName(Graphics &graphics) {
 	if (player_constants::showMapName == true) {
 		this->_txt->drawMapName(graphics, player_constants::mapName, this->getX(), this->getY());
 	}
+}
+
+void Player::drawStatusEffect(Graphics & graphics)
+{
+	this->_txt->drawPlayerStatus(graphics, this->_x, this->_y, "POISONED");
 }
 
 void Player::showSceneDialogue(Graphics & graphics, std::string text)
