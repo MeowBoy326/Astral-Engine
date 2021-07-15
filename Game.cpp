@@ -64,7 +64,9 @@ namespace {
 	Mix_Chunk *sePlHit = NULL;
 	Mix_Chunk *sePlDie = NULL;
 	Mix_Chunk *enHurt = NULL;
+	Mix_Chunk *gameOver = NULL;
 	bool walkSound = false;
+	bool deathSound = false;
 }
 
 Game::Game() { //constructor
@@ -100,6 +102,7 @@ void Game::gameLoop() {
 	sePlHit = Mix_LoadWAV("data\\sound\\sePlHit.wav");
 	sePlDie = Mix_LoadWAV("data\\sound\\sePlDie.wav");
 	enHurt = Mix_LoadWAV("data\\sound\\enemyHurt.wav");
+	gameOver = Mix_LoadWAV("data\\sound\\gameOver.wav");
 	Mix_PlayChannel(321, seWalk, -1);
 	Mix_Pause(321);
 	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 32);
@@ -159,8 +162,18 @@ void Game::gameLoop() {
 				}
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true) {
+				this->_inventory = Inventory(graphics, this->_player);
 				this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
+				this->_level.generateItems(graphics);
+				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
+				this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
+				if (!cipher.verifyHash("cave", this->_player)) {
+					std::exit(0);
+				}
+				this->saveGame(graphics);
+				BGM = "null";
+				deathSound = false;
 				GAMEOVER = false;
 			}
 
@@ -170,7 +183,7 @@ void Game::gameLoop() {
 
 			//loop will go again and current time - new last update will tell us how long next frame will take
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
-
+			Mix_PauseMusic();
 			this->drawGameOver(graphics);
 		}
 
@@ -482,7 +495,13 @@ void Game::gameLoop() {
 			if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
 				//Add weapon swap here
 			}
-
+			if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
+				if (!deathSound) {
+					Mix_PlayChannel(-1, sePlDie, 0);
+					deathSound = true;
+				}
+				this->_player.startDeath();
+			}
 		const int CURRENT_TIME_MS = SDL_GetTicks();
 		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
 		this->_graphics = graphics; //updated graphics
@@ -899,14 +918,16 @@ int Game::loadGame(Graphics & graphics)
 
 void Game::update(float elapsedTime, Graphics &graphics) {
 	this->_player.update(elapsedTime); 
+
+	if (this->_player.getCurrentHealth() <= 0 && this->_player.checkDeathPlayed()) {
+		GAMEOVER = true;
+		Mix_PlayChannel(-1, gameOver, 0);
+	}
+	else {
 	if (this->_player.getPlayerHit()) {
-		std::cout << "playing player hit sound" << std::endl;
 		Mix_PlayChannel(-1, sePlHit, 0);
 		this->_player.setPlayerHit(false);
 	}
-	/*if (this->_player.getCurrentHealth() <= 0) {
-		GAMEOVER = true;
-	}*/
 	this->_camera.Update(elapsedTime, this->_player);
 	this->_level.update(elapsedTime, this->_player);
     //hud goes on top of everything
@@ -1000,6 +1021,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 			activeCutscene = true;
 		}
 	}
+  }
 }
 
 void Game::updateCutscene(float elapsedTime, Graphics & graphics)

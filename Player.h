@@ -25,6 +25,7 @@ public:
 	void drawStatusEffect(Graphics &graphics, const std::string text);
 	void showSceneDialogue(Graphics &graphics, std::string text);
 	void update(float elapsedTime);
+	bool checkDeathPlayed() const { return this->deathPlayed; }
 
 	//Player handling
 	void moveLeft(); 	//Move player left by -dx
@@ -35,6 +36,7 @@ public:
 	void stopLookingUp();
 	void lookDown();
 	void stopLookingDown();
+	void startDeath();
 	virtual void animationDone(std::string currentAnimation);
 	std::string getMap();
 	bool lookingUp();
@@ -141,9 +143,11 @@ private:
 	bool isPoisoned = false;
 	bool isBurning = false;
 	bool gotHit = false;
+	bool _playerDeathSound = false;
+	bool deathPlayed = false;
 
 	int _requiredExp;
-	int _statPoints = 25;
+	int _statPoints = 1;
 	int _playerLevel = 0;
 	int _soulLevel = 0;
 	int _requiredKill;
@@ -171,6 +175,7 @@ protected:
 	double _timeForMapName = 3000;
 	double _poisonDOTTimer = 0;
 	double _poisonDuration = 0;
+	double _deathAnimationTimer = 0;
 
 
 	std::map<std::string, std::string> mapHash = { {"caveFork", "0E7FACC7CFB6885B84FBA9624B83EEE59056B0E2E0D8C7E46F5CFD9B4D842CBD"},

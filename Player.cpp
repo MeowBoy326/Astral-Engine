@@ -68,9 +68,15 @@ void Player::setupAnimations() {
 	this->addAnimation(1, 6, 16, "LookDownRight", 16, 16, Vector2(0, 0));
 	this->addAnimation(1, 7, 0, "LookBackwardsLeft", 16, 16, Vector2(0, 0));
 	this->addAnimation(1, 7, 16, "LookBackwardsRight", 16, 16, Vector2(0, 0));
+	this->addAnimation(7, 0, 72, "PlayerDead", 16, 16, Vector2(0, 0));
 }
 
-void Player::animationDone(std::string currentAnimation) {}
+void Player::animationDone(std::string currentAnimation) {
+	if (this->_currentHealth <= 0) {
+		if (!this->deathPlayed)
+			this->deathPlayed = true;
+	}
+}
 
 std::string Player::getMap() {
 	return player_constants::mapName;
@@ -302,6 +308,8 @@ void Player::jump() {
 
 void Player::stopMoving() {
 	this->_dx = 0.0f;
+	if (this->_currentHealth <= 0)
+		return;
 	if (this->_lookingUp == false && this->_lookingDown == false) {
 		this->playAnimation(this->_facing == RIGHT ? "IdleRight" : "IdleLeft"); //if player is facing right call IdleRight otherwise use IdleLeft
 	}
@@ -334,6 +342,11 @@ void Player::lookDown() {
 
 void Player::stopLookingDown() {
 	this->_lookingDown = false;
+}
+
+void Player::startDeath()
+{
+	this->playAnimation("PlayerDead");
 }
 
 //void handleTileCollisions
@@ -684,6 +697,10 @@ Direction Player::facingDir()
 }
 
 void Player::update(float elapsedTime) {
+
+	if (this->_currentHealth <= 0) {
+		this->_deathAnimationTimer += elapsedTime;
+	}
 	//Apply gravity
 	if (this->_dy <= player_constants::GRAVITY_CAP) {
 		//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
@@ -710,8 +727,8 @@ void Player::update(float elapsedTime) {
 		}
 	}
 
-	//iFrame timer
-	if (player_constants::iFrame == true) {
+		//iFrame timer
+	if (player_constants::iFrame == true && this->_currentHealth > 0) {
 		this->_timeElapsed += elapsedTime;
 		if (this->getBlink())
 			this->showBlink(false);
@@ -745,7 +762,7 @@ void Player::update(float elapsedTime) {
 		std::cout << "Soul Level increased to: " << this->getSoulLevel() << std::endl;
 	}
 
-	//Show map name timer
+		//Show map name timer
 	if (player_constants::showMapName == true) {
 		this->_mapTimeElapsed += elapsedTime;
 		if (this->_mapTimeElapsed > this->_timeForMapName) {
@@ -767,6 +784,8 @@ void Player::draw(Graphics &graphics) {
 
 void Player::drawGun(Graphics & graphics)
 {
+	if (this->_currentHealth <= 0)
+		return;
 	if (this->lookingLeft() && !this->lookingUp() && !this->lookingDown()) {
 		_Gun.setSourceRectX(52);
 		_Gun.setSourceRectY(10);
