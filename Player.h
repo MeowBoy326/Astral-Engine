@@ -22,7 +22,7 @@ public:
 	void drawGun(Graphics &graphics);
 	void drawStatMenu(Graphics &graphics, Player &player, int selection);
 	void drawCurrentMapName(Graphics &graphics);
-	void drawStatusEffect(Graphics &graphics);
+	void drawStatusEffect(Graphics &graphics, const std::string text);
 	void showSceneDialogue(Graphics &graphics, std::string text);
 	void update(float elapsedTime);
 
@@ -47,7 +47,7 @@ public:
 
 	//Event handling
 	void handleTileCollisions(std::vector<Rectangle> &others);
-	void handleLavaCollisions(std::vector<Rectangle> &others);
+	void handleLavaCollisions(std::vector<Rectangle> &others, Graphics &graphics);
 	void handlePoisonCollisions(std::vector<Rectangle> &others);
 	void handleSlopeCollisions(std::vector<Slope> &others);
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
@@ -75,6 +75,7 @@ public:
 	void storeLevel(Level &level);
 	void overwriteLevel(Level &level, std::string mapName);
 	const std::string getMapHash(std::string mapName);
+	bool isGrounded() const { return this->_grounded; }
 	
 
 	//Health handling
@@ -83,6 +84,9 @@ public:
 	void gainHealth(float amount);
 	void gainHPFromStatus(float amount);
 	void gainMaxHealth(float amount);
+	void setBurning(bool condition) { this->isBurning = condition; }
+	void setPlayerHit(bool condition) { this->gotHit = condition; }
+	const inline bool getPlayerHit() const { return this->gotHit; }
 	const inline float getMaxHealth() const { return this->_maxHealth; }
 	const inline float getCurrentHealth() const { return this->_currentHealth; }
 	inline void setMaxHealth(float hp) { this->_maxHealth = hp; }
@@ -135,6 +139,8 @@ private:
 	bool _lookingDown;
 	bool iFrame;
 	bool isPoisoned = false;
+	bool isBurning = false;
+	bool gotHit = false;
 
 	int _requiredExp;
 	int _statPoints = 25;
@@ -167,11 +173,11 @@ protected:
 	double _poisonDuration = 0;
 
 
-	std::map<std::string, std::string> mapHash = { {"caveFork", "3A7BAB38CA5251CEF5730229C33921ED36330570BC3433E0EB2BF500D08EA408"},
-	{"cave", "ABE2CD4DD7F14DF15A3008135BF88AFA97E83DA2EEBE47B22CBE0B973486538E"}, 
-	{"caverns","9B0403E445129E983F5285D1A61A26683796D9433F41A1357AF1CFDA8EF598DB"},
-	{"Profaned Capital", "0F8FB75847CF398985D9296B7ECC4E9E061A8F1EFEE70C2B69222F4A49D05737"},
-	{"Collapsed Cave", "7F118CC74D6A46A8E087DD40BA9CF67070F9088FE088A7DD3728C84BFA14875C"} };
+	std::map<std::string, std::string> mapHash = { {"caveFork", "0E7FACC7CFB6885B84FBA9624B83EEE59056B0E2E0D8C7E46F5CFD9B4D842CBD"},
+	{"cave", "716A93E3471AC932B4551DC9850BBFF8AE8DA73FD2995870C5A1F8E8B279845D"}, 
+	{"caverns","E002BFAD719E4F50C1079F32D9336FD1EF62DD5DA3F47105A6DBAB6899C00034"},
+	{"Profaned Capital", "E369441882DCB81AEC0C4264BE4A3B652F897883CD45DF0961397AA6258AEE9E"},
+	{"Collapsed Cave", "1E13E409152AD978DC342258CDAC01E36AE99CF5C62438D35531D02B81DFD616"} };
 };
 
 #endif

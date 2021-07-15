@@ -58,6 +58,7 @@ public:
 	void checkProjectileTileCollisions();
 	void checkProjectileBounds(Player &player);
 
+	std::string getMapBGM() const { return this->_mapBGM; }
 	std::string getCutscene() const { return this->_cutsceneName; }
 	float getSceneX(std::string name);
 	float getSceneY(std::string name);
@@ -65,12 +66,16 @@ public:
 
 	inline const std::string getMapName() const { return this->_mapName; }
 	const Vector2 getPlayerSpawnPoint() const;
-	//debug
-	const Vector2 getBulletSpawnPoint() const;
+
+	bool isEnemyDead() const { return this->enemyDead; }
+	void setEnemyDead(bool condition) { this->enemyDead = condition; }
 
 private:
+	bool enemyDead = false;
+
 	std::string _mapName; 
 	std::string _cutsceneName;
+	std::string _mapBGM;
 	Vector2 _spawnPoint;
 	Vector2 _bulletPoint;
 	TextManager* _txt;

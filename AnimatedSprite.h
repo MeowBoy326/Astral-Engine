@@ -52,7 +52,8 @@ public:
 	void drawBullet(Graphics &graphics, int x, int y);
 	void drawLoot(Graphics &graphics, int x, int y);
 
-	
+	void showBlink(bool condition) { this->_visible = condition; }
+	bool getBlink() const { return this->_visible; }
 
 protected:
 	double _timeToUpdate;

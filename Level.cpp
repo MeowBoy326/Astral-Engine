@@ -74,6 +74,7 @@ Level & Level::operator=(const Level & levelMap)
 	this->_tileList = levelMap._tileList;
 	this->_tilesets = levelMap._tilesets;
 	this->_tileSize = levelMap._tileSize;
+	this->_mapBGM = levelMap._mapBGM;
 
 	this->classMap.insert(levelMap.classMap.begin(), levelMap.classMap.end());
 	std::set<std::string> values;
@@ -122,6 +123,18 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	mapNode->QueryIntAttribute("tilewidth", &tileWidth);
 	mapNode->QueryIntAttribute("tileheight", &tileHeight);
 	this->_tileSize = Vector2(tileWidth, tileHeight);
+
+	//Load BGM
+	XMLElement* propsNode = mapNode->FirstChildElement("properties");
+	if (propsNode != NULL) {
+		const char* propsName = propsNode->FirstChildElement("property")->Attribute("name");
+		std::stringstream ssProp;
+		ssProp << propsName;
+		if (ssProp.str() == "BGM") {
+			const char* getBGMName = propsNode->FirstChildElement("property")->Attribute("value");
+			this->_mapBGM = getBGMName;
+		}	
+	}
 
 	//Load the tilesets.
 	XMLElement* pTileset = mapNode->FirstChildElement("tileset"); //if we have more then 1 tile set its a problem, so a work-around is linked list
@@ -775,6 +788,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					player.gainExp(this->_enemies.at(i)->enemyExpAmount());
 					player.addKillCount(1);
 					player.addKillTable(this->_enemies.at(i)->getName());
+					this->enemyDead = true;
 					if (this->_enemies.at(i)->isBoss() || this->_enemies.at(i)->isMiniBoss()) {
 						delete this->_enemies.at(i);
 						this->_enemies.erase(this->_enemies.begin() + i);
@@ -1049,11 +1063,6 @@ void Level::checkItemCollisions(Player & player, const Rectangle &other, Graphic
 const Vector2 Level::getPlayerSpawnPoint() const {
 	return 
 		this->_spawnPoint;
-}
-//debug
-const Vector2 Level::getBulletSpawnPoint() const {
-	return
-		this->_bulletPoint;
 }
 
 Vector2 Level::getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileHeight) {

@@ -368,10 +368,11 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 	}
 }
 
-void Player::handleLavaCollisions(std::vector<Rectangle>& others)
+void Player::handleLavaCollisions(std::vector<Rectangle>& others, Graphics &graphics)
 {
 	for (int i = 0; i < others.size(); i++) {
 		this->gainHPFromStatus(-0.02);
+		this->isBurning = true;
 	}
 }
 
@@ -541,6 +542,7 @@ void Player::gainHealth(float amount) {
 		this->_currentHealth += amount;
 		std::cout << "lost " << amount << std::endl;
 		player_constants::iFrame = true;
+		this->gotHit = true;
 	}
 	else if (amount > 0) {
 		this->_currentHealth += amount;
@@ -711,10 +713,18 @@ void Player::update(float elapsedTime) {
 	//iFrame timer
 	if (player_constants::iFrame == true) {
 		this->_timeElapsed += elapsedTime;
+		if (this->getBlink())
+			this->showBlink(false);
+		else if (!this->getBlink())
+			this->showBlink(true);
+		
 		if (this->_timeElapsed > this->_timeToUpdate) {
 			this->_timeElapsed -= this->_timeToUpdate;
 			player_constants::iFrame = false;
 		}
+	}
+	else {
+		this->showBlink(true);
 	}
 
 	if (this->getCurrentExp() >= this->getRequiredExp()) {
@@ -750,7 +760,9 @@ void Player::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
 	this->drawGun(graphics);
 	if (this->isPoisoned)
-		this->drawStatusEffect(graphics);
+		this->drawStatusEffect(graphics, "POISONED");
+	if (this->isBurning)
+		this->drawStatusEffect(graphics, "BURNING");
 }
 
 void Player::drawGun(Graphics & graphics)
@@ -807,9 +819,9 @@ void Player::drawCurrentMapName(Graphics &graphics) {
 	}
 }
 
-void Player::drawStatusEffect(Graphics & graphics)
+void Player::drawStatusEffect(Graphics & graphics, const std::string text)
 {
-	this->_txt->drawPlayerStatus(graphics, this->_x, this->_y, "POISONED");
+	this->_txt->drawPlayerStatus(graphics, this->_x, this->_y, text);
 }
 
 void Player::showSceneDialogue(Graphics & graphics, std::string text)

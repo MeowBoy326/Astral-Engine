@@ -58,6 +58,13 @@ namespace {
 	std::string npcName;
 	std::string sceneDir;
 	std::string sceneName;
+	std::string BGM = "Astral.wav";
+
+	Mix_Music *gMusic = NULL;
+	Mix_Chunk *sePlHit = NULL;
+	Mix_Chunk *sePlDie = NULL;
+	Mix_Chunk *enHurt = NULL;
+	bool walkSound = false;
 }
 
 Game::Game() { //constructor
@@ -81,14 +88,27 @@ void Game::gameLoop() {
 	SDL_Event event;
 
 	//music
-	Mix_Music *gMusic = NULL;
-	gMusic = Mix_LoadMUS("data\\bgm\\Astral.wav");;
+	Mix_AllocateChannels(350);
+	Mix_Chunk *sBullet = NULL;
+	Mix_Chunk *seWalk = NULL;
+	Mix_Chunk *seJump = NULL;
+
+	gMusic = Mix_LoadMUS("data\\sound\\Astral.wav");
+	sBullet = Mix_LoadWAV("data\\sound\\sbullet.wav");
+	seWalk = Mix_LoadWAV("data\\sound\\seWalk.wav");
+	seJump = Mix_LoadWAV("data\\sound\\seJump.wav");
+	sePlHit = Mix_LoadWAV("data\\sound\\sePlHit.wav");
+	sePlDie = Mix_LoadWAV("data\\sound\\sePlDie.wav");
+	enHurt = Mix_LoadWAV("data\\sound\\enemyHurt.wav");
+	Mix_PlayChannel(321, seWalk, -1);
+	Mix_Pause(321);
+	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 32);
 	if (gMusic == NULL)
 	{
 		printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
 	}
 	else 
-		//Mix_PlayMusic(gMusic, -1);
+		Mix_PlayMusic(gMusic, -1);
 
 	this->_title = Title(graphics, input, event);
 	this->_gameOver = GameOver(graphics);
@@ -212,6 +232,11 @@ void Game::gameLoop() {
 			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true) { 
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 					this->_player.moveLeft();
+					if (this->_player.isGrounded() && walkSound == false) {
+						//Mix_PlayChannel(321, seWalk, -1);
+						Mix_Resume(321);
+						walkSound = true;
+					}
 				}
 				else if (activeTalk == true) {
 					std::cout << "impaired action" << std::endl;
@@ -221,11 +246,21 @@ void Game::gameLoop() {
 			else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 					this->_player.moveRight();
+					if (this->_player.isGrounded() && walkSound == false) {
+						Mix_Resume(321);
+						walkSound = true;
+					}
+						
 				}
 				else if (activeTalk == true) {
 					std::cout << "impaired action" << std::endl;
 				}
 			
+			}
+
+			if (input.wasKeyReleased(SDL_SCANCODE_LEFT) == true || input.wasKeyReleased(SDL_SCANCODE_RIGHT) == true) {
+				Mix_Pause(321);
+				walkSound = false;
 			}
 
 			if (input.isKeyHeld(SDL_SCANCODE_UP) == true) {
@@ -248,6 +283,7 @@ void Game::gameLoop() {
 			if (input.wasKeyPressed(SDL_SCANCODE_SPACE) == true){
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 					this->_player.jump();
+					Mix_PlayChannel(-1, seJump, 0);
 				}
 				else if (activeTalk == true) {
 					std::cout << "impaired action" << std::endl;
@@ -262,6 +298,7 @@ void Game::gameLoop() {
 			if (input.wasKeyPressed(SDL_SCANCODE_E) == true) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
 					this->_level.generateProjectile(graphics, this->_player);
+					Mix_PlayChannel(-1, sBullet, 0);
 				}
 			}
 
@@ -862,6 +899,11 @@ int Game::loadGame(Graphics & graphics)
 
 void Game::update(float elapsedTime, Graphics &graphics) {
 	this->_player.update(elapsedTime); 
+	if (this->_player.getPlayerHit()) {
+		std::cout << "playing player hit sound" << std::endl;
+		Mix_PlayChannel(-1, sePlHit, 0);
+		this->_player.setPlayerHit(false);
+	}
 	/*if (this->_player.getCurrentHealth() <= 0) {
 		GAMEOVER = true;
 	}*/
@@ -869,6 +911,17 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	this->_level.update(elapsedTime, this->_player);
     //hud goes on top of everything
 	this->_hud.update(elapsedTime, this->_player);
+
+	if (!this->_level.getMapBGM().empty()) {
+		if (BGM != this->_level.getMapBGM()) {
+			std::string bgmMusic = "data\\sound\\";
+			bgmMusic.append(this->_level.getMapBGM());
+			BGM = this->_level.getMapBGM();
+			gMusic = Mix_LoadMUS(bgmMusic.c_str());
+			Mix_PlayMusic(gMusic, -1);
+		}
+	}
+
 
 	std::vector<Npc*> otherNpc;
 	if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
@@ -891,7 +944,10 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	}
 
 	if ((others = this->_level.checkLavaCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleLavaCollisions(others);
+		this->_player.handleLavaCollisions(others, graphics);
+	}
+	else {
+		this->_player.setBurning(false);
 	}
 
 	if ((others = this->_level.checkPoisonCollisions(this->_player.getBoundingBox())).size() > 0) {
@@ -907,6 +963,11 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	this->_level.checkEnemyTileCollision().size() > 0;
 	this->_level.checkProjectileCollisions(this->_player);
 	this->_level.checkEnemyHP(this->_player, this->_graphics);
+	if (this->_level.isEnemyDead()) {
+		Mix_PlayChannel(-1, enHurt, 0);
+		this->_level.setEnemyDead(false);
+	}
+
 	this->_level.checkProjectileBounds(this->_player);
 	this->_level.checkProjectileTileCollisions();
 
