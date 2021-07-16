@@ -38,6 +38,7 @@ public:
 
 	void update(int elapsedTime);
 	void updateBoss(int elapstedTime, int y);
+	void updateFBall(int elapsedTime, int y);
 	void updateScript(int elapsedTime);
 	//void updateBullet(int elapsedTime);
 

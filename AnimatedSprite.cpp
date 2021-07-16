@@ -158,6 +158,25 @@ void AnimatedSprite::updateBoss(int elapsedTime, int y) {
 	}
 }
 
+void AnimatedSprite::updateFBall(int elapsedTime, int y)
+{
+	Sprite::updateFBall(); //since we extend we can call like this
+
+	this->_timeElapsed += elapsedTime;
+	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ change frame
+		this->_timeElapsed -= this->_timeToUpdate;
+		if (this->_frameIndex < this->_animation[this->_currentAnimation].size() - 1) {
+			this->_frameIndex++; //increment by 1
+		}
+		else {
+			if (this->_currentAnimationOnce == true) {
+				this->setVisible(false);
+			}
+			this->stopAnimation();
+		}
+	}
+}
+
 void AnimatedSprite::updateScript(int elapsedTime) { //timer checks when to go to next frame in animation
 	Sprite::update(); //since we extend we can call like this
 
