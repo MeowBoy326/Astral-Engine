@@ -514,13 +514,13 @@ void JellyFish::update(int elapsedTime, Player &player) {
 			}
 		}
 		if (this->_delayAttack == false && this->_resettingPos == false && this->_y - 15 < player.getY() && 
-			(int)this->_x + 20 == (int)player.getX()) {
+			//(int)this->_x + 20 == (int)player.getX()) This was the center. Now we use a range with the checkInRange.
+		    checkInRange(this->_x - 15, this->_x + this->_sourceRect.w + 15, player.getX())) {
 				this->_JellyAttack = true;
 		}
 		if (this->_resettingPos == true && this->_delayAttack == false) {
 			this->_y -= 0.18;
 			if (this->_y <= this->_startingY) {
-				std::cout << "reset pos...y <= starting y" << std::endl;
 				this->_resettingPos = false;
 				this->_delayAttack = true;
 			}
@@ -528,7 +528,6 @@ void JellyFish::update(int elapsedTime, Player &player) {
 		if (this->_delayAttack == true && this->_resettingPos == false) {
 			this->_delayTimer += elapsedTime;
 			if (this->_delayTimer >= 88) {
-				std::cout << "Delay over. " << std::endl;
 				this->_delayAttack = false;
 				this->_delayTimer = 0;
 			}

@@ -672,7 +672,7 @@ void Player::statChoice(int selection)
 		this->_statPoints--;
 	}
 	else if (selection == 2 && this->_statPoints > 0) {
-		this->_dmgMod += 1.02;
+		this->_dmgMod += 1.014;
 		this->_statPoints--;
 		//
 	}
@@ -815,7 +815,7 @@ void Player::update(float elapsedTime) {
 		if (this->getCurrentExp() >= this->getRequiredExp()) {
 			this->addLevel(1);
 			this->setCurrentExp(0);
-			this->_defense += 0.05 + (this->_soulLevel * 0.14);
+			this->_defense += 0.03 + (this->_soulLevel * 0.11);
 			this->_statPoints += 2;
 			std::cout << "Level up to: " << this->getLevel() << std::endl;
 		}

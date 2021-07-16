@@ -49,4 +49,11 @@ struct Vector2 {
 
 };
 
+namespace {
+	bool checkInRange(int low, int high, int x) {
+		return ((x - high)*(x - low) <= 0);
+	}
+}
+
+
 #endif

@@ -113,7 +113,7 @@ private:
 	bool _shouldMoveLeft;
 	bool hasHit = false;
 	int iFrameCount = 0;
-	float batExp = 1.175f;
+	float batExp = 2.175f;
 	Sprite _fireBall;
 	Sprite _HPBar;
 	Sprite _HPValue;
@@ -180,7 +180,7 @@ private:
 	bool _shouldMoveUp; //keep track of if bat should move
 	bool hasHit = false;
 	int iFrameCount = 0;
-	float shadeExp = 100;
+	float shadeExp = 350;
 	Sprite _shadeBall;
 	Sprite _HPBar;
 	Sprite _HPValue;
@@ -257,7 +257,7 @@ private:
 	bool _shouldMoveUp; //keep track of if bat should move
 	bool hasHit = false;
 	int iFrameCount = 0;
-	float JellyFishExp = 1.175f;
+	float JellyFishExp = 3.575f;
 	Sprite _fireBall;
 	Sprite _HPBar;
 	Sprite _HPValue;
