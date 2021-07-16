@@ -65,6 +65,8 @@ Level & Level::operator=(const Level & levelMap)
 	this->_cutsceneName = levelMap._cutsceneName;
 	this->_lavaRects = levelMap._lavaRects;
 	this->_poisonRects = levelMap._poisonRects;
+	this->_waterRects = levelMap._waterRects;
+	this->_ladderRects = levelMap._ladderRects;
 	this->_doorList = levelMap._doorList;
 	this->_lockDoor = levelMap._lockDoor;
 	this->_mapName = levelMap._mapName;
@@ -376,6 +378,44 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					}
 				}
 			}
+			else if (ss.str() == "water") {
+				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+				if (pObject != NULL) {
+					while (pObject) {
+						float x, y, width, height;
+						x = pObject->FloatAttribute("x");
+						y = pObject->FloatAttribute("y");
+						width = pObject->FloatAttribute("width");
+						height = pObject->FloatAttribute("height");
+						this->_waterRects.push_back(Rectangle(
+							std::ceil(x) * globals::SPRITE_SCALE,
+							std::ceil(y) * globals::SPRITE_SCALE,
+							std::ceil(width) * globals::SPRITE_SCALE,
+							std::ceil(height) * globals::SPRITE_SCALE));
+
+						pObject = pObject->NextSiblingElement("object");
+					}
+				}
+			}
+			else if (ss.str() == "ladder") {
+			XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+			if (pObject != NULL) {
+				while (pObject) {
+					float x, y, width, height;
+					x = pObject->FloatAttribute("x");
+					y = pObject->FloatAttribute("y");
+					width = pObject->FloatAttribute("width");
+					height = pObject->FloatAttribute("height");
+					this->_ladderRects.push_back(Rectangle(
+						std::ceil(x) * globals::SPRITE_SCALE,
+						std::ceil(y) * globals::SPRITE_SCALE,
+						std::ceil(width) * globals::SPRITE_SCALE,
+						std::ceil(height) * globals::SPRITE_SCALE));
+
+					pObject = pObject->NextSiblingElement("object");
+				}
+			}
+			}
 			//Other object groups go here with an else if (ss.str() == "whatever")
 			else if (ss.str() == "slopes") {
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
@@ -592,9 +632,16 @@ void Level::checkProjectileCollisions(Player & player) {
 		for (int j = 0; j < this->_projectiles.size(); ++j) {
 			if (this->_enemies.at(i)->getBoundingBox().collidesWith(this->_projectiles.at(j)->getBoundingBox()) &&
 				this->_enemies.at(i)->getCurrentHealth() > 0) {
-				this->_enemies.at(i)->bulletHit(player.getDmgMod());
+				double damage = player.getDmgMod();
+				if (this->_enemies.at(i)->getEnemyLevel() > player.getLevel()) {
+					if (this->_enemies.at(i)->getEnemyLevel() - player.getLevel() >= 2)
+						damage = damage * 0.66;
+					else
+						damage = damage * 0.88;
+				}
+				this->_enemies.at(i)->bulletHit(damage);
 				this->dmgVector.push_back(std::make_tuple(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY(),
-					player.getDmgMod(), 0));
+					damage, 0));
 				delete this->_projectiles.at(j);
 				this->_projectiles.erase(this->_projectiles.begin() + j);
 			}
@@ -618,22 +665,22 @@ void Level::checkProjectileBounds(Player & player)
 {
 	for (int i = 0; i < this->_projectiles.size(); ++i) {
 		if (this->_projectiles[i]->getProjectileDirection() == LEFT && 
-			this->_projectiles[i]->getX() <= player.getX() - 450) {
+			this->_projectiles[i]->getX() <= this->_projectiles[i]->getProjectileStartingX() - 250) {
 			delete this->_projectiles[i];
 			this->_projectiles.erase(this->_projectiles.begin() + i);
 		}
 		else if (this->_projectiles[i]->getProjectileDirection() == RIGHT &&
-			this->_projectiles[i]->getX() >= player.getX() + 450) {
+			this->_projectiles[i]->getX() >= this->_projectiles[i]->getProjectileStartingX() + 250) {
 			delete this->_projectiles[i];
 			this->_projectiles.erase(this->_projectiles.begin() + i);
 		}
 		else if (this->_projectiles[i]->getProjectileDirection() == UP &&
-			this->_projectiles[i]->getY() <= player.getY() - 450) {
+			this->_projectiles[i]->getY() <= this->_projectiles[i]->getProjectileStartingY() - 250) {
 			delete this->_projectiles[i];
 			this->_projectiles.erase(this->_projectiles.begin() + i);
 		}
 		else if (this->_projectiles[i]->getProjectileDirection() == DOWN &&
-			this->_projectiles[i]->getY() >= player.getY() + 450) {
+			this->_projectiles[i]->getY() >= this->_projectiles[i]->getProjectileStartingY() + 250) {
 			delete this->_projectiles[i];
 			this->_projectiles.erase(this->_projectiles.begin() + i);
 		}
@@ -684,12 +731,13 @@ std::vector<Rectangle> Level::checkEnemyTileCollision()
 		for (int j = 0; j < this->_collisionRects.size(); j++) {
 			if (this->_collisionRects.at(j).collidesWith(this->_enemies.at(i)->getBoundingBox())) {
 				others.push_back(this->_collisionRects.at(j));
+				this->_enemies.at(i)->handleEnemyTileCollision(others);
 			}
 		}
 	}
-	for (int x = 0; x < this->_enemies.size(); x++) {
+	/*for (int x = 0; x < this->_enemies.size(); x++) {
 		this->_enemies.at(x)->handleEnemyTileCollision(others);
-	}
+	}*/
 	return others;
 }
 
@@ -720,6 +768,26 @@ std::vector<Rectangle> Level::checkPoisonCollisions(const Rectangle & other)
 	for (int i = 0; i < this->_poisonRects.size(); i++) {
 		if (this->_poisonRects.at(i).collidesWith(other))
 			others.push_back(this->_poisonRects.at(i));
+	}
+	return others;
+}
+
+std::vector<Rectangle> Level::checkWaterCollisions(const Rectangle & other)
+{
+	std::vector<Rectangle> others;
+	for (int i = 0; i < this->_waterRects.size(); i++) {
+		if (this->_waterRects.at(i).collidesWith(other))
+			others.push_back(this->_waterRects.at(i));
+	}
+	return others;
+}
+
+std::vector<Rectangle> Level::checkLadderCollisions(const Rectangle & other)
+{
+	std::vector<Rectangle> others;
+	for (int i = 0; i < this->_ladderRects.size(); i++) {
+		if (this->_ladderRects.at(i).collidesWith(other))
+			others.push_back(this->_ladderRects.at(i));
 	}
 	return others;
 }
@@ -938,6 +1006,11 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 						if (ss.str() == "bat") {
 							std::string mobName = "bat";
 							this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+								std::floor(y) * globals::SPRITE_SCALE)));
+						}
+						else if (ss.str() == "JellyFish") {
+							std::string mobName = "JellyFish";
+							this->_enemies.push_back(new JellyFish(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE)));
 						}
 						else if (ss.str() == "shade") {

@@ -47,6 +47,7 @@ namespace {
 	bool nextLine = false;
 	bool stopScroll = false;
 	bool sceneTalkDone = false;
+	bool isClimbing = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -209,6 +210,11 @@ void Game::gameLoop() {
 				sceneLineChar = 'a';
 				sceneLineCounter = 1;
 				sceneMaxTime = 0;
+				sceneX = 0;
+				sceneY = 0;
+				targetX = 0;
+				targetY = 0;
+				stopScroll = false;
 				//input.beginNewFrame();
 				this->_player.stopLookingDown();
 				this->_player.addCutSceneTable(sceneName);
@@ -237,12 +243,12 @@ void Game::gameLoop() {
 					return; //when the game ends or user exits
 				}
 			}
-			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {
+			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
 				this->saveGame(graphics);
 				std::cout << "Quitting Game..." << std::endl;
 				return; //quit game if ESC was pressed
 			}
-			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true) { 
+			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 					this->_player.moveLeft();
 					if (this->_player.isGrounded() && walkSound == false) {
@@ -256,7 +262,7 @@ void Game::gameLoop() {
 				}
 			 
 			}
-			else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true) {
+			else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true && this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 					this->_player.moveRight();
 					if (this->_player.isGrounded() && walkSound == false) {
@@ -276,24 +282,29 @@ void Game::gameLoop() {
 				walkSound = false;
 			}
 
-			if (input.isKeyHeld(SDL_SCANCODE_UP) == true) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+			if (input.isKeyHeld(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 					this->_player.lookUp();
+					if (isClimbing) {
+						this->_player.setClimbing(true);
+						this->_player.moveUp();
+					}
+				}
 			}
-			else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true) {
+			else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
 					this->_player.lookDown();
 			}
-			if (input.wasKeyReleased(SDL_SCANCODE_UP) == true) {
+			if (input.wasKeyReleased(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
 					this->_player.stopLookingUp();
 			}
-			if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true) {
+			if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
 					this->_player.stopLookingDown();
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_SPACE) == true){
+			if (input.wasKeyPressed(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0){
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
 					this->_player.jump();
 					Mix_PlayChannel(-1, seJump, 0);
@@ -303,19 +314,20 @@ void Game::gameLoop() {
 				}
 			
 			}
-			if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT)) {
+			if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT) && this->_player.getCurrentHealth() > 0) {
 				//if player isnt moving left or right(at all) do stopMoving function
 				this->_player.stopMoving();
 			}
 			//bullet
-			if (input.wasKeyPressed(SDL_SCANCODE_E) == true) {
+			if (input.wasKeyPressed(SDL_SCANCODE_E) == true && this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
 					this->_level.generateProjectile(graphics, this->_player);
 					Mix_PlayChannel(-1, sBullet, 0);
 				}
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_Q) == true && activeInventory == false && activeStatMenu == false) {
+			if (input.wasKeyPressed(SDL_SCANCODE_Q) == true && activeInventory == false && activeStatMenu == false 
+				&& this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && npcName != ""){
 					activeTalk = true;
 					this->_chatBox.setTextStatus(true);
@@ -333,7 +345,7 @@ void Game::gameLoop() {
 			}
 
 			if (activeTalk) {
-				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && this->_player.getCurrentHealth() > 0) {
 					//chat
 					if (this->_npc.getQuestState() == true) {
 						activeTalk = false;
@@ -435,7 +447,7 @@ void Game::gameLoop() {
 				}
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_F1) == true) {
+			if (input.wasKeyPressed(SDL_SCANCODE_F1) == true && this->_player.getCurrentHealth() > 0) {
 				if (!activeStatMenu) {
 					selection = 1;
 					activeStatMenu = true;
@@ -467,7 +479,8 @@ void Game::gameLoop() {
 				}
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_TAB) == true && activeStatMenu == false && activeTalk == false) {
+			if (input.wasKeyPressed(SDL_SCANCODE_I) == true && activeStatMenu == false && activeTalk == false 
+				&& this->_player.getCurrentHealth() > 0) {
 				if (activeInventory == false) {
 					activeInventory = true;
 					this->_inventory.draw(graphics, this->_player);
@@ -478,7 +491,7 @@ void Game::gameLoop() {
 				}
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_Z) == true) {
+			if (input.wasKeyPressed(SDL_SCANCODE_Z) == true && this->_player.getCurrentHealth() > 0) {
 				if (pickUp == false) {
 					pickUp = true;
 				}
@@ -486,7 +499,7 @@ void Game::gameLoop() {
 					pickUp = false;
 				}
 			}
-			if (input.wasKeyPressed(SDL_SCANCODE_R) == true) {
+			if (input.wasKeyPressed(SDL_SCANCODE_R) == true && this->_player.getCurrentHealth() > 0) {
 				_inventory.useItem(0, this->_player);
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
@@ -965,7 +978,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	}
 
 	if ((others = this->_level.checkLavaCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleLavaCollisions(others, graphics);
+		this->_player.handleLavaCollisions(others);
 	}
 	else {
 		this->_player.setBurning(false);
@@ -973,6 +986,25 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 
 	if ((others = this->_level.checkPoisonCollisions(this->_player.getBoundingBox())).size() > 0) {
 		this->_player.handlePoisonCollisions(others);
+	}
+	if ((others = this->_level.checkWaterCollisions(this->_player.getBoundingBox())).size() > 0) {
+		this->_player.handleWaterCollisions(others);
+	}
+	else {
+		this->_player.setDrowning(false);
+	}
+	if ((others = this->_level.checkLadderCollisions(this->_player.getBoundingBox())).size() > 0) {
+		if (this->_player.handleLadderCollisions(others)) {
+			isClimbing = true;
+		}
+		else {
+			isClimbing = false;
+			this->_player.setClimbing(false);
+		}
+	}
+	else {
+		isClimbing = false;
+		this->_player.setClimbing(false);
 	}
 
 	//Check slope
@@ -1026,6 +1058,8 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 
 void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 {
+	this->_player.setPlayerDX(0);
+	this->_player.setPlayerDY(0);
 	this->_player.update(elapsedTime);
 	if (sceneType == 1) {
 		sceneTimer += elapsedTime;
@@ -1076,6 +1110,11 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 			sceneLineChar = 'a';
 			sceneLineCounter = 1;
 			sceneMaxTime = 0;
+			sceneX = 0;
+			sceneY = 0;
+			targetX = 0;
+			targetY = 0;
+			stopScroll = false;
 			this->_player.stopLookingDown();
 			this->_player.addCutSceneTable(sceneName);
 			return;
