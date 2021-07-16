@@ -10,11 +10,11 @@
 #include "AESCipher.h"
 
 namespace player_constants {
-	const float WALK_SPEED = 0.2f;
-	const float JUMP_DISTANCE = 0.7f;
+	float WALK_SPEED = 0.2f;
+	float JUMP_DISTANCE = 0.7f;
 
-	const float GRAVITY = 0.002f;
-	const float GRAVITY_CAP = 0.8f;
+	float GRAVITY = 0.002f;
+	float GRAVITY_CAP = 0.8f;
 
 	bool iFrame = false;
 	bool showMapName = false;
@@ -287,6 +287,11 @@ void Player::moveRight() {
 	this->_facing = RIGHT;
 }
 
+void Player::moveUp()
+{
+	this->_dy = -player_constants::WALK_SPEED;
+}
+
 
 
 void Player::jump() {
@@ -353,6 +358,8 @@ void Player::startDeath()
 //handles collisions with all tiles the player is colliding with
 void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 	//Figure out what side the collision happened on and move the player accordingly
+	if (this->_climbing)
+		return;
 	for (int i = 0; i < others.size(); i++) {
 		sides::Side collisionSide = Sprite::getCollisionSide(others.at(i));
 		if (collisionSide != sides::NONE) {
@@ -381,7 +388,7 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 	}
 }
 
-void Player::handleLavaCollisions(std::vector<Rectangle>& others, Graphics &graphics)
+void Player::handleLavaCollisions(std::vector<Rectangle>& others)
 {
 	for (int i = 0; i < others.size(); i++) {
 		this->gainHPFromStatus(-0.02);
@@ -393,6 +400,47 @@ void Player::handlePoisonCollisions(std::vector<Rectangle>& others)
 {
 	if (!this->isPoisoned)
 		this->isPoisoned = true;
+}
+
+void Player::handleWaterCollisions(std::vector<Rectangle>& others)
+{
+	for (int i = 0; i < others.size(); i++) {
+		//this->gainHPFromStatus(-0.02);
+		if (this->_air >= 0.0f)
+			this->_air -= 0.0168;
+		this->isDrowning = true;
+	}
+}
+
+bool Player::handleLadderCollisions(std::vector<Rectangle>& others)
+{
+	for (int i = 0; i < others.size(); i++) {
+		sides::Side collisionSide = Sprite::getCollisionSide(others.at(i));
+		if (collisionSide != sides::NONE) {
+			switch (collisionSide) {
+			case sides::TOP:
+				break; //going down the ladder
+				//this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
+				//this->_y = others.at(i).getBottom() + 1; //no longer go through things, stops us
+				//if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
+				//	this->_dx = 0; //stop movement on x-axis
+				//	this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
+				//}
+				//this->_climbing = false;
+				//return false;
+				//break;
+			case sides::BOTTOM: //going up the ladder
+				//hit the top (bottom) of tile push us back up ontop of tile
+				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				this->_dy = 0;
+				this->_grounded = true; //we are on ground since it pushed it back up
+				this->_climbing = false;
+				return false;
+				break;
+			}
+		}
+	}
+	return true;
 }
 
 //handles collisions with all slopes the player is colliding with
@@ -701,75 +749,97 @@ void Player::update(float elapsedTime) {
 	if (this->_currentHealth <= 0) {
 		this->_deathAnimationTimer += elapsedTime;
 	}
-	//Apply gravity
-	if (this->_dy <= player_constants::GRAVITY_CAP) {
-		//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
-		this->_dy += player_constants::GRAVITY * elapsedTime;
-	}
-
-	//Move by dx
-	this->_x += this->_dx * elapsedTime; //elapsedTime will move by a certain amount based on frame rate keeping thing moving smoothly
-	//Move by dy
-	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
-
-	//Poison timer
-	if (this->isPoisoned) {
-		this->_poisonDuration += elapsedTime;
-		this->_poisonDOTTimer += elapsedTime;
-		if (this->_poisonDOTTimer >= 1000) {
-			this->gainHPFromStatus(-3.45);
-			this->_poisonDOTTimer = 0;
+	else {
+		//Apply gravity
+		if (this->_dy <= player_constants::GRAVITY_CAP) {
+			//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
+			this->_dy += player_constants::GRAVITY * elapsedTime;
 		}
-		if (this->_poisonDuration >= 8000) {
-			this->_poisonDOTTimer = 0;
-			this->_poisonDuration = 0;
-			this->isPoisoned = false;
+
+		//Move by dx
+		this->_x += this->_dx * elapsedTime; //elapsedTime will move by a certain amount based on frame rate keeping thing moving smoothly
+		//Move by dy
+		this->_y += this->_dy * elapsedTime; //Gravity move them by Y
+
+		if (this->isDrowning) {
+			player_constants::WALK_SPEED = 0.09f;
+			player_constants::JUMP_DISTANCE = 0.55f;
+			player_constants::GRAVITY = 0.0009;
+			player_constants::GRAVITY_CAP = 0.45f;
 		}
-	}
+		if (!this->isDrowning && this->_air != 100.0f) {
+			this->_air += 0.05;
+			if (this->_air >= 99.0f)
+				this->_air = 100.0f;
+		}
+		if (this->isDrowning && this->_air <= 0.0f)
+			this->_currentHealth -= 0.08;
+		if (!this->isDrowning && player_constants::WALK_SPEED != 0.2f) {
+			player_constants::WALK_SPEED = 0.2f;
+			player_constants::JUMP_DISTANCE = 0.7f;
+			player_constants::GRAVITY = 0.002f;
+			player_constants::GRAVITY_CAP = 0.8f;
+		}
+		//Poison timer
+		if (this->isPoisoned) {
+			this->_poisonDuration += elapsedTime;
+			this->_poisonDOTTimer += elapsedTime;
+			if (this->_poisonDOTTimer >= 1000) {
+				this->gainHPFromStatus(-3.45);
+				this->_poisonDOTTimer = 0;
+			}
+			if (this->_poisonDuration >= 8000) {
+				this->_poisonDOTTimer = 0;
+				this->_poisonDuration = 0;
+				this->isPoisoned = false;
+			}
+		}
 
 		//iFrame timer
-	if (player_constants::iFrame == true && this->_currentHealth > 0) {
-		this->_timeElapsed += elapsedTime;
-		if (this->getBlink())
-			this->showBlink(false);
-		else if (!this->getBlink())
-			this->showBlink(true);
-		
-		if (this->_timeElapsed > this->_timeToUpdate) {
-			this->_timeElapsed -= this->_timeToUpdate;
-			player_constants::iFrame = false;
+		if (player_constants::iFrame == true && this->_currentHealth > 0) {
+			this->_timeElapsed += elapsedTime;
+			if (this->getBlink())
+				this->showBlink(false);
+			else if (!this->getBlink())
+				this->showBlink(true);
+
+			if (this->_timeElapsed > this->_timeToUpdate) {
+				this->_timeElapsed -= this->_timeToUpdate;
+				player_constants::iFrame = false;
+			}
 		}
-	}
-	else {
-		this->showBlink(true);
-	}
+		else {
+			this->showBlink(true);
+		}
 
-	if (this->getCurrentExp() >= this->getRequiredExp()) {
-		this->addLevel(1);
-		this->setCurrentExp(0);
-		this->_defense += 0.05 + (this->_soulLevel * 0.14);
-		this->_statPoints += 2;
-		std::cout << "Level up to: " << this->getLevel() << std::endl;
-	}
+		if (this->getCurrentExp() >= this->getRequiredExp()) {
+			this->addLevel(1);
+			this->setCurrentExp(0);
+			this->_defense += 0.05 + (this->_soulLevel * 0.14);
+			this->_statPoints += 2;
+			std::cout << "Level up to: " << this->getLevel() << std::endl;
+		}
 
-	if (this->getKillCount() >= this->getRequiredKills()) {
-		this->addSoulLevel(1);
-		this->_soulStrength += 1;
-		srand((unsigned)time(NULL));
-		this->_dmgMod += this->_soulStrength + ((double)(rand() % 90 + 10) / 100);
-		std::cout << "damage mod is: " << this->_dmgMod << std::endl;
-		//cout << "damage mod is: " << this->dmgMod;
-		std::cout << "Soul Level increased to: " << this->getSoulLevel() << std::endl;
-	}
+		if (this->getKillCount() >= this->getRequiredKills()) {
+			this->addSoulLevel(1);
+			this->_soulStrength += 1;
+			srand((unsigned)time(NULL));
+			this->_dmgMod += this->_soulStrength + ((double)(rand() % 90 + 10) / 100);
+			std::cout << "damage mod is: " << this->_dmgMod << std::endl;
+			//cout << "damage mod is: " << this->dmgMod;
+			std::cout << "Soul Level increased to: " << this->getSoulLevel() << std::endl;
+		}
 
 		//Show map name timer
-	if (player_constants::showMapName == true) {
-		this->_mapTimeElapsed += elapsedTime;
-		if (this->_mapTimeElapsed > this->_timeForMapName) {
-			this->_mapTimeElapsed -= this->_timeForMapName;
-			player_constants::showMapName = false;
+		if (player_constants::showMapName == true) {
+			this->_mapTimeElapsed += elapsedTime;
+			if (this->_mapTimeElapsed > this->_timeForMapName) {
+				this->_mapTimeElapsed -= this->_timeForMapName;
+				player_constants::showMapName = false;
+			}
 		}
 	}
+	
 	AnimatedSprite::update(elapsedTime);
 }
 
@@ -780,6 +850,10 @@ void Player::draw(Graphics &graphics) {
 		this->drawStatusEffect(graphics, "POISONED");
 	if (this->isBurning)
 		this->drawStatusEffect(graphics, "BURNING");
+	if (this->isDrowning)
+		this->drawStatusEffect(graphics, "AIR: " + std::to_string((int)this->_air));
+	if (!this->isDrowning && this->_air != 100.0f)
+		this->drawStatusEffect(graphics, "AIR: " + std::to_string((int)this->_air));
 }
 
 void Player::drawGun(Graphics & graphics)

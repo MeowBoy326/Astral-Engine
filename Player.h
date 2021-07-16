@@ -30,6 +30,7 @@ public:
 	//Player handling
 	void moveLeft(); 	//Move player left by -dx
 	void moveRight(); 	//Move player right by +dx
+	void moveUp();
 	void jump();
 	void stopMoving();
 	void lookUp();
@@ -37,6 +38,8 @@ public:
 	void lookDown();
 	void stopLookingDown();
 	void startDeath();
+	void setPlayerDX(float dx) { this->_dx = dx; }
+	void setPlayerDY(float dy) { this->_dy = dy; }
 	virtual void animationDone(std::string currentAnimation);
 	std::string getMap();
 	bool lookingUp();
@@ -49,8 +52,10 @@ public:
 
 	//Event handling
 	void handleTileCollisions(std::vector<Rectangle> &others);
-	void handleLavaCollisions(std::vector<Rectangle> &others, Graphics &graphics);
+	void handleLavaCollisions(std::vector<Rectangle> &others);
 	void handlePoisonCollisions(std::vector<Rectangle> &others);
+	void handleWaterCollisions(std::vector<Rectangle> &others);
+	bool handleLadderCollisions(std::vector<Rectangle> &others);
 	void handleSlopeCollisions(std::vector<Slope> &others);
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
@@ -78,6 +83,7 @@ public:
 	void overwriteLevel(Level &level, std::string mapName);
 	const std::string getMapHash(std::string mapName);
 	bool isGrounded() const { return this->_grounded; }
+	void setClimbing(bool condition) { this->_climbing = condition; }
 	
 
 	//Health handling
@@ -87,6 +93,7 @@ public:
 	void gainHPFromStatus(float amount);
 	void gainMaxHealth(float amount);
 	void setBurning(bool condition) { this->isBurning = condition; }
+	void setDrowning(bool condition) { this->isDrowning = condition; }
 	void setPlayerHit(bool condition) { this->gotHit = condition; }
 	const inline bool getPlayerHit() const { return this->gotHit; }
 	const inline float getMaxHealth() const { return this->_maxHealth; }
@@ -131,17 +138,20 @@ private:
 	float _dx, _dy; //(dx (delta x) is change in x postition during frame)
 	float _maxHealth;
 	float _currentHealth;
+	float _air = 100;
 	float _exp = 0;
 	float STAT_AGIL = 1;
 	float STAT_STR = 1;
 	float STAT_AVOID = 1;
 
 	bool _grounded; //true if we are, false if we are in the air
+	bool _climbing;
 	bool _lookingUp;
 	bool _lookingDown;
 	bool iFrame;
 	bool isPoisoned = false;
 	bool isBurning = false;
+	bool isDrowning = false;
 	bool gotHit = false;
 	bool _playerDeathSound = false;
 	bool deathPlayed = false;
@@ -178,11 +188,12 @@ protected:
 	double _deathAnimationTimer = 0;
 
 
-	std::map<std::string, std::string> mapHash = { {"caveFork", "0E7FACC7CFB6885B84FBA9624B83EEE59056B0E2E0D8C7E46F5CFD9B4D842CBD"},
-	{"cave", "716A93E3471AC932B4551DC9850BBFF8AE8DA73FD2995870C5A1F8E8B279845D"}, 
-	{"caverns","E002BFAD719E4F50C1079F32D9336FD1EF62DD5DA3F47105A6DBAB6899C00034"},
+	std::map<std::string, std::string> mapHash = { {"cave", "AA2A8CCC6AAFABC74C64CC51A584C83BC9FC7503917FBEAA667DAE458E8D826C"},
+	{"caveFork", "639852D2AEA3972FC43C0B9A8A4E9E4BC3255249FE9FE19618AF5DBFC22EEB64"},
+	{"caverns","2259C461E83B84C243F8CD51A96A2500B5757F1D2FFA25DAF9EF439AE08D50A1"},
 	{"Profaned Capital", "E369441882DCB81AEC0C4264BE4A3B652F897883CD45DF0961397AA6258AEE9E"},
-	{"Collapsed Cave", "1E13E409152AD978DC342258CDAC01E36AE99CF5C62438D35531D02B81DFD616"} };
+	{"Collapsed Cave", "1E13E409152AD978DC342258CDAC01E36AE99CF5C62438D35531D02B81DFD616"}, 
+	{"cave depths", "6ECA70749B3B3FB7CCEFDA1D6BBED4A8E136C4FFAB7C213614F06AA968E09AB7"} };
 };
 
 #endif
