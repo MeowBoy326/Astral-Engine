@@ -48,7 +48,9 @@ SilverBullet::SilverBullet()
 
 SilverBullet::SilverBullet(Graphics & graphics, Vector2 spawnPoint, Direction dir) :
 	Projectile(graphics, "data\\graphics\\Bullet.png", 12, 2, 17, 9, spawnPoint, 140),
-	_direction(dir)
+	_direction(dir),
+	_startingX(spawnPoint.x),
+	_startingY(spawnPoint.y)
 {
 	graphics.loadImage("data\\graphics\\Bullet.png");
 	this->setupAnimations();
@@ -63,19 +65,19 @@ void SilverBullet::update(int elapsedTime, Player & player)
 {
 	if (_direction == LEFT) {
 		this->playAnimation("ShootLeft");
-		this->_x -= 0.33;
+		this->_x -= 0.83;
 	}
 	else if (_direction == RIGHT) {
 		this->playAnimation("ShootRight");
-		this->_x += 0.33;
+		this->_x += 0.83;
 	}
 	else if (_direction == UP) {
 		this->playAnimation("ShootUp");
-		this->_y -= 0.33;
+		this->_y -= 0.83;
 	}
 	else if (_direction == DOWN) {
 		this->playAnimation("ShootDown");
-		this->_y += 0.33;
+		this->_y += 0.83;
 	}
 
 	Projectile::update(elapsedTime, player);

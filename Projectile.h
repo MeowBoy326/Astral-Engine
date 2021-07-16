@@ -20,6 +20,8 @@ public:
 	virtual void draw(Graphics &graphics);
 
 	virtual Direction getProjectileDirection() { return this->_direction; }
+	virtual float getProjectileStartingX() { return this->_startingX; }
+	virtual float getProjectileStartingY() { return this->_startingY; }
 	
 private:
 
@@ -38,6 +40,8 @@ public:
 	void draw(Graphics &graphics);
 
 	Direction getProjectileDirection() { return this->_direction; }
+	float getProjectileStartingX() { return this->_startingX; }
+	float getProjectileStartingY() { return this->_startingY; }
 
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
