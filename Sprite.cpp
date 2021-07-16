@@ -35,6 +35,13 @@ void Sprite::draw(Graphics &graphics, int x, int y) { //this will do all the dra
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle); 
 	}
 
+void Sprite::drawFBall(Graphics & graphics, int x, int y)
+{
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 1.55, this->_sourceRect.h * 1.55 }; //where on screen we will be drawing
+//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
+	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
+}
+
 void Sprite::drawHPBar(Graphics & graphics, int x, int y)
 {
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 3.0, this->_sourceRect.h * 3.0 }; //where on screen we will be drawing
@@ -163,6 +170,11 @@ void Sprite::update() {
 
 void Sprite::updateBoss(float y) {
 	this->_boundingBox = Rectangle(this->_x, y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE);
+}
+
+void Sprite::updateFBall()
+{
+	this->_boundingBox = Rectangle(this->_x, this->_y, this->_sourceRect.w * 1.60, this->_sourceRect.h * 1.60);
 }
 
 void Sprite::updateBullet(int bX, int bY, int bW, int bH) {
