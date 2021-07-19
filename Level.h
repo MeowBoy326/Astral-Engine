@@ -61,6 +61,7 @@ public:
 	void checkProjectileCollisions(Player &player);
 	void checkProjectileTileCollisions();
 	void checkProjectileBounds(Player &player);
+	void checkProjectileBreakableLayer();
 
 	std::string getMapBGM() const { return this->_mapBGM; }
 	std::string getCutscene() const { return this->_cutsceneName; }
@@ -90,6 +91,7 @@ private:
 	SDL_Texture* _backgroundTexture; //bkBlue.png
 
 	std::vector<Tile> _tileList;
+	std::vector<Tile> _breakTileList;
 	std::vector<Tileset> _tilesets;
 	std::vector<AnimatedTile> _animatedTileList;
 	std::vector<AnimatedTileInfo> _animatedTileInfos;
@@ -110,6 +112,7 @@ private:
 	std::vector<int> itemType;
 	std::vector<std::tuple<std::string, std::string, int>> levelDropTable; //mob name, item name, drop rate %
 	std::vector<std::tuple<float, float, float, int>> dmgVector;
+	std::vector<Vector2> _breakableLayers;
 
 	//Private loads a map only call level within level class
 	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); //wont need size or spawn because it will be parsed out of the xml within this function later

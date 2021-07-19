@@ -1064,6 +1064,11 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		this->_player.handleTileCollisions(others);
 	}
 
+	if ((others = this->_level.checkBreakableTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+		//Player collided with atleast 1 title
+		this->_player.handleTileCollisions(others);
+	}
+
 	if ((others = this->_level.checkLavaCollisions(this->_player.getBoundingBox())).size() > 0) {
 		this->_player.handleLavaCollisions(others);
 	}
@@ -1114,7 +1119,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		Mix_PlayChannel(-1, enHurt, 0);
 		this->_level.setEnemyDead(false);
 	}
-
+	this->_level.checkProjectileBreakableLayer();
 	this->_level.checkProjectileBounds(this->_player);
 	this->_level.checkProjectileTileCollisions();
 

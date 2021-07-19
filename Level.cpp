@@ -78,6 +78,8 @@ Level & Level::operator=(const Level & levelMap)
 	this->_tilesets = levelMap._tilesets;
 	this->_tileSize = levelMap._tileSize;
 	this->_mapBGM = levelMap._mapBGM;
+	this->_breakableLayers = levelMap._breakableLayers;
+	this->_breakTileList = levelMap._breakTileList;
 
 	this->classMap.insert(levelMap.classMap.begin(), levelMap.classMap.end());
 	std::set<std::string> values;
@@ -189,6 +191,117 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	if (pLayer != NULL) {
 		while (pLayer) { //loop through all layers
 			//Loading the data element
+			//XMLElement* brkLayer = pLayer->FirstChildElement("name");
+
+				const char* lyrName = pLayer->Attribute("name");
+				std::stringstream ssProp;
+				ssProp << lyrName;
+				if (ssProp.str() == "breakLayer") {
+					//const char* getBGMName = propsNode->FirstChildElement("property")->Attribute("value");
+					//this->_mapBGM = getBGMName;
+					std::cout << "Found Break Layer!" << std::endl;
+					XMLElement* pData = pLayer->FirstChildElement("data");
+					if (pData != NULL) {
+						while (pData) {
+							//Loading the tile element
+							XMLElement* pTile = pData->FirstChildElement("tile");
+							if (pTile != NULL) { //loop through tiles
+								int tileCounter = 0; //add this because we need to know what tile we are on thru the loop
+								while (pTile) {
+									//build each individual tile here
+									//if gid is 0, no tile should be drawn, continue loop.
+									if (pTile->IntAttribute("gid") == 0) {
+										tileCounter++;
+										if (pTile->NextSiblingElement("tile")) { //just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
+											pTile = pTile->NextSiblingElement("tile"); //we are doing this because if its a 0 it will never make it down below to move on
+											continue; //because we are writing continue will go back to the while loop and go onto the next tile
+										}
+										else {
+											break; //last tile, no more, break.
+										}
+									}
+									//get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
+									int gid = pTile->IntAttribute("gid");
+									int closest = 0;
+									Tileset tls;
+									for (int i = 0; i < this->_tilesets.size(); i++) {
+										if (this->_tilesets[i].FirstGid <= gid) { //the very first gid on a tileset, is the very lowest gid we can possibly have
+											//so if its lower then the gid we are at, then its the one we want
+											if (this->_tilesets[i].FirstGid > closest) {
+												closest = this->_tilesets[i].FirstGid;
+												//This is the tileset we want
+												tls = this->_tilesets.at(i);
+											}
+										}
+									}
+
+									//if it cant find any tileset
+									if (tls.FirstGid == -1) {
+										//no tileset was found for this gid
+										tileCounter++;
+										if (pTile->NextSiblingElement("tile")) {
+											pTile = pTile->NextSiblingElement("tile");
+											continue;
+										}
+										else {
+											break;
+										}
+									}
+									//Get the position of the tile in the level (confusing part)
+									int xx = 0; //we need an x and y. We have a lot of variables so xx!
+									int yy = 0;
+									xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
+									//So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
+									//Next tilecounter is 1 and 1 mod 20 is 1. 1 * 16 = 16 So our 2nd tile will be at an x of 16 (across) and that just works....
+									xx *= tileWidth;
+									yy += tileHeight * (tileCounter / width);
+									//tileHeight is 16. So we start at 0. Tilecounter is 0 / 20 = 0 * tileHeight (16) = 0 so our yy would be 0
+									//Say our tile counter is at 20 (so 2nd row 1st tile for our map cave) 16 * (20/20[1]) = 16. 0 + 16 = 16
+									//So it will draw the tile at a Y of 16. This algotrithm gets us to the right spot on the map
+									Vector2 finalTilePosition = Vector2(xx, yy);
+
+									//calculate the position of the tile in the tileset 
+									Vector2 finalTilesetPosition = this->getTilesetPosition(tls, gid, tileWidth, tileHeight);
+
+									//Build the actual tile and add it to the level's tile list
+									bool isAnimatedTile = false;
+									AnimatedTileInfo ati;
+									for (int i = 0; i < _animatedTileInfos.size(); i++) {
+										if (this->_animatedTileInfos.at(i).StartTileID == gid) {
+											ati = this->_animatedTileInfos.at(i);
+											isAnimatedTile = true;
+											break;
+										}
+									}
+									if (isAnimatedTile == true) {
+										std::vector<Vector2> tilesetPositions;
+										for (int i = 0; i < ati.TileIDS.size(); i++) {
+											tilesetPositions.push_back(this->getTilesetPosition(tls, ati.TileIDS.at(i), tileWidth, tileHeight));
+										}
+										AnimatedTile tile(tilesetPositions, ati.Duration, tls.Texture, Vector2(tileWidth, tileHeight), finalTilePosition);
+										this->_animatedTileList.push_back(tile);
+									}
+									else { //not animated tile, create static one
+										Tile tile(tls.Texture, Vector2(tileWidth, tileHeight), finalTilesetPosition, finalTilePosition);
+										this->_breakableLayers.push_back(Vector2(finalTilePosition.x * globals::SPRITE_SCALE, finalTilePosition.y * globals::SPRITE_SCALE));
+										std::cout << "tile width/height = " << tileWidth << "," << tileHeight << std::endl;
+										std::cout << "finalTSetPos = " << finalTilesetPosition.x << "," << finalTilesetPosition.y << std::endl;
+										std::cout << "finalTilePosition = " << finalTilePosition.x << "," << finalTilePosition.y << std::endl;
+										//this->_tileList.push_back(tile);
+										this->_breakTileList.push_back(tile);
+									}
+									tileCounter++;
+									pTile = pTile->NextSiblingElement("tile");
+								}
+							}
+							break;
+							//pData = pData->NextSiblingElement("data");
+						}
+					}
+					break;
+					//pLayer = pLayer->NextSiblingElement("layer");
+				}
+
 			XMLElement* pData = pLayer->FirstChildElement("data");
 			if (pData != NULL) {
 				while (pData) {
@@ -593,6 +706,9 @@ void Level::draw(Graphics &graphics, Player &player) {
 	for (int i = 0; i < this->_tileList.size(); i++) {
 		this->_tileList.at(i).draw(graphics); //loop thru all tiles and draw them
 	}
+	for (int i = 0; i < this->_breakTileList.size(); i++) {
+		this->_breakTileList.at(i).draw(graphics);
+	}
 	for (int i = 0; i < this->_animatedTileList.size(); i++) {
 		this->_animatedTileList.at(i).draw(graphics);
 	}
@@ -704,6 +820,36 @@ void Level::checkProjectileBounds(Player & player)
 			delete this->_projectiles[i];
 			this->_projectiles.erase(this->_projectiles.begin() + i);
 		}
+	}
+}
+
+void Level::checkProjectileBreakableLayer()
+{
+	std::vector<Rectangle> bLayerList;
+	for (int i = 0; i < this->_breakableLayers.size(); i++) {
+		Rectangle bLayers = { this->_breakableLayers.at(i).x, this->_breakableLayers.at(i).y, 16, 16 };
+		//std::cout << "bLay X = " << this->_breakableLayers.at(i).x << "bLay Y=" << this->_breakableLayers.at(i).y << std::endl;
+		bLayerList.push_back(bLayers);
+	}
+	//std::cout << "bLayerList size = " << bLayerList.size() << std::endl;
+	if (bLayerList.size() > 0 && this->_projectiles.size() > 0) {
+		for (int i = 0; i < this->_projectiles.size(); i++) {
+			for (int j = 0; j < bLayerList.size(); j++) {
+				if (bLayerList.at(j).collidesWith(this->_projectiles.at(i)->getBoundingBox())) {
+					std::cout << "yes sirrrr" << std::endl;
+					for (int x = 0; x < this->_breakTileList.size(); x++) {
+						if (bLayerList.at(j).getLeft() == this->_breakTileList.at(x).getTilePosition().x &&
+							bLayerList.at(j).getTop() == this->_breakTileList.at(x).getTilePosition().y) {
+							this->_breakTileList.erase(this->_breakTileList.begin() + i);
+							//this->_breakableLayers.erase(this->_breakableLayers.begin() + i);
+						}
+					}
+					
+				}
+			}
+		}
+
+
 	}
 }
 
