@@ -42,6 +42,7 @@ public:
 	void generateProjectile(Graphics &graphics, Player &player);
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
+	std::vector<Rectangle> checkBreakableTileCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkEnemyTileCollision();
 	std::vector<Rectangle> checkEnemyProjectileTileCollision();
 	std::vector<Rectangle> checkCutsceneCollisions(const Rectangle &other);
@@ -112,7 +113,6 @@ private:
 	std::vector<int> itemType;
 	std::vector<std::tuple<std::string, std::string, int>> levelDropTable; //mob name, item name, drop rate %
 	std::vector<std::tuple<float, float, float, int>> dmgVector;
-	std::vector<Vector2> _breakableLayers;
 
 	//Private loads a map only call level within level class
 	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); //wont need size or spawn because it will be parsed out of the xml within this function later

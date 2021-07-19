@@ -78,7 +78,6 @@ Level & Level::operator=(const Level & levelMap)
 	this->_tilesets = levelMap._tilesets;
 	this->_tileSize = levelMap._tileSize;
 	this->_mapBGM = levelMap._mapBGM;
-	this->_breakableLayers = levelMap._breakableLayers;
 	this->_breakTileList = levelMap._breakTileList;
 
 	this->classMap.insert(levelMap.classMap.begin(), levelMap.classMap.end());
@@ -283,11 +282,6 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									}
 									else { //not animated tile, create static one
 										Tile tile(tls.Texture, Vector2(tileWidth, tileHeight), finalTilesetPosition, finalTilePosition);
-										this->_breakableLayers.push_back(Vector2(finalTilePosition.x * globals::SPRITE_SCALE, finalTilePosition.y * globals::SPRITE_SCALE));
-										std::cout << "tile width/height = " << tileWidth << "," << tileHeight << std::endl;
-										std::cout << "finalTSetPos = " << finalTilesetPosition.x << "," << finalTilesetPosition.y << std::endl;
-										std::cout << "finalTilePosition = " << finalTilePosition.x << "," << finalTilePosition.y << std::endl;
-										//this->_tileList.push_back(tile);
 										this->_breakTileList.push_back(tile);
 									}
 									tileCounter++;
@@ -825,31 +819,14 @@ void Level::checkProjectileBounds(Player & player)
 
 void Level::checkProjectileBreakableLayer()
 {
-	std::vector<Rectangle> bLayerList;
-	for (int i = 0; i < this->_breakableLayers.size(); i++) {
-		Rectangle bLayers = { this->_breakableLayers.at(i).x, this->_breakableLayers.at(i).y, 16, 16 };
-		//std::cout << "bLay X = " << this->_breakableLayers.at(i).x << "bLay Y=" << this->_breakableLayers.at(i).y << std::endl;
-		bLayerList.push_back(bLayers);
-	}
-	//std::cout << "bLayerList size = " << bLayerList.size() << std::endl;
-	if (bLayerList.size() > 0 && this->_projectiles.size() > 0) {
-		for (int i = 0; i < this->_projectiles.size(); i++) {
-			for (int j = 0; j < bLayerList.size(); j++) {
-				if (bLayerList.at(j).collidesWith(this->_projectiles.at(i)->getBoundingBox())) {
-					std::cout << "yes sirrrr" << std::endl;
-					for (int x = 0; x < this->_breakTileList.size(); x++) {
-						if (bLayerList.at(j).getLeft() == this->_breakTileList.at(x).getTilePosition().x &&
-							bLayerList.at(j).getTop() == this->_breakTileList.at(x).getTilePosition().y) {
-							this->_breakTileList.erase(this->_breakTileList.begin() + i);
-							//this->_breakableLayers.erase(this->_breakableLayers.begin() + i);
-						}
-					}
-					
-				}
+	for (int i = 0; i < this->_projectiles.size(); i++) {
+		for (int j = 0; j < this->_breakTileList.size(); j++) {
+			Rectangle brTile = { this->_breakTileList.at(j).getTilePosition().x, this->_breakTileList.at(j).getTilePosition().y,
+			16, 16 };
+			if (brTile.collidesWith(this->_projectiles.at(i)->getBoundingBox())) {
+				this->_breakTileList.erase(this->_breakTileList.begin() + j);
 			}
 		}
-
-
 	}
 }
 
@@ -888,6 +865,19 @@ std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { //Go
 		}
 	}
 	return others; //return whatever collision rects we are colliding with
+}
+
+std::vector<Rectangle> Level::checkBreakableTileCollisions(const Rectangle & other)
+{
+	std::vector<Rectangle> others;
+	for (int i = 0; i < this->_breakTileList.size(); i++) {
+		Rectangle brTile = { this->_breakTileList.at(i).getTilePosition().x, this->_breakTileList.at(i).getTilePosition().y,
+		16, 16 };
+		if (other.collidesWith(brTile)) {
+			others.push_back(brTile);
+		}
+	}
+	return others;
 }
 
 std::vector<Rectangle> Level::checkEnemyTileCollision()
