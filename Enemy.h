@@ -39,6 +39,8 @@ public:
 	virtual const inline float getStartingY() const { return this->_startingY; }
 
 	virtual void handleEnemyTileCollision(std::vector<Rectangle> &others);
+	virtual const Rectangle getEnemyProjectileBoundingBox() { return this->getBoundingBox(); }
+	virtual void handleEnemyProjectileTileCollision() { return; }
 
 	virtual void bulletHit(float dmg);
 	virtual std::string getName();
@@ -96,8 +98,9 @@ public:
 	const inline bool isMiniBoss() { return this->miniBoss; }
 	const inline float getStartingX() const { return this->_startingX; }
 	const inline float getStartingY() const { return this->_startingY; }
-
+	const Rectangle getEnemyProjectileBoundingBox() { return this->_fireBall.getBoundingBox(); }
 	void handleEnemyTileCollision(std::vector<Rectangle> &others);
+	void handleEnemyProjectileTileCollision() { this->_fireBall.setX(this->_x); this->_fireBall.setY(this->_y); }
 
 	bool isRemoveable();
 	void setRemoveable();
@@ -287,4 +290,80 @@ protected:
 	double respawnTime = 6000;
 	double timerRespawn = 0;
 	bool isVisible = true;
+};
+
+class Ghost : public Enemy {
+public:
+	Ghost();
+	Ghost(Graphics &graphics, Vector2 spawPoint);
+	~Ghost();
+	Ghost& operator=(const Ghost& levelMap);
+	Ghost(const Ghost&);
+
+	void update(int elapsedTime, Player &player);
+	void draw(Graphics &graphics);
+	void touchPlayer(Player* player);
+	void playDeath();
+	void animationDone(std::string currentAnimation);
+	void setupAnimations();
+	void dropLoot(Player &player);
+	void playAttack();
+
+	void bulletHit(float dmg);
+	const inline int getMaxHealth() const { return this->_maxHealth; }
+	const inline int getCurrentHealth() const { return this->_currentHealth; }
+	const inline int getEnemyLevel() const { return this->level; }
+	const inline bool getDyingState() const { return this->dyingAnimation; }
+	void setDyingState(bool condition) { this->dyingAnimation = condition; }
+	inline void setVisible(bool condition) { this->isVisible = condition; }
+
+	const inline std::string getCoinDropType() { return this->coinType; }
+	const inline bool isBoss() { return this->boss; }
+	const inline bool isMiniBoss() { return this->miniBoss; }
+	const inline float getStartingX() const { return this->_startingX; }
+	const inline float getStartingY() const { return this->_startingY; }
+
+	void handleEnemyTileCollision(std::vector<Rectangle> &others);
+
+	bool isRemoveable();
+	void setRemoveable();
+
+	bool removeEnemy = false;
+
+	float enemyExpAmount();
+
+	std::string getName();
+private:
+	float _startingX, _startingY;
+	bool _shouldMoveUp; //keep track of if bat should move
+	bool hasHit = false;
+	int iFrameCount = 0;
+	float GhostExp = 3.575f;
+	Sprite _HPBar;
+	Sprite _HPValue;
+	bool _GhostAttack = false;
+	bool _delayAttack = false;
+	float _delayTimer = 0;
+	double _deathAnimationTime = 800;
+	double _deathTimeElapsed = 0;
+protected:
+	Direction _direction;
+	bool _grounded = true;
+	float _dy = 0;
+	const float GRAVITY = 0.002f;
+	const float GRAVITY_CAP = 0.8f;
+	int _maxHealth;
+	int _currentHealth;
+	int level = 5;
+	std::string name = "Ghost";
+	std::string coinType = "bronze";
+	bool boss = false;
+	bool miniBoss = false;
+	bool deathCreated = false;
+	bool canDropLoot = false;
+	bool dyingAnimation = true;
+	double respawnTime = 6000;
+	double timerRespawn = 0;
+	bool isVisible = true;
+
 };

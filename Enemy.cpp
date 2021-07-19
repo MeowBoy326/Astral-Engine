@@ -136,8 +136,8 @@ void Bat::update(int elapsedTime, Player &player) {
 			this->_fireBall.setY(this->_y);
 		}
 		else {
-			this->_fireBall.addX(player.getX() > this->_x ? .08 : -.08);
-			this->_fireBall.addY(player.getY() > this->_y ? .08 : -.08);
+			this->_fireBall.addX(player.getX() > this->_x ? .04 : -.04);
+			this->_fireBall.addY(player.getY() > this->_y ? .04 : -.04);
 		}
 	}
 	else if (this->getCurrentHealth() <= 0) {
@@ -670,6 +670,232 @@ float JellyFish::enemyExpAmount() {
 }
 
 std::string JellyFish::getName()
+{
+	return this->name;
+}
+
+//Ghost class
+Ghost::Ghost() {}
+
+Ghost::Ghost(Graphics &graphics, Vector2 spawnPoint) :
+	Enemy(graphics, "data\\enemy\\NpcWeed.png", 0, 186, 22, 29, spawnPoint, 280),
+	_startingX(spawnPoint.x),
+	_startingY(spawnPoint.y),
+	_shouldMoveUp(false),
+	_maxHealth(10),
+	_currentHealth(10)
+{
+	this->setupAnimations();
+	this->playAnimation("GhostLeft");
+	this->_HPBar._x = this->_startingX;
+	this->_HPBar._y = this->_startingY;
+	this->_HPBar = Sprite(graphics, "data\\enemy\\NpcCemet.png", 2, 157, 17, 7, this->_HPBar._x + 25, this->_HPBar._y - 15);
+	this->_HPValue = Sprite(graphics, "data\\enemy\\NpcCemet.png", 3, 167, 17, 5, this->_HPBar._x + 1, this->_HPBar._y + 2);
+}
+
+Ghost::~Ghost()
+{
+	this->destroySprite();
+	this->_HPBar.destroySprite();
+	this->_HPValue.destroySprite();
+}
+
+void Ghost::update(int elapsedTime, Player &player) {
+	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
+	this->_HPBar.update();
+	this->_HPValue.update();
+	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
+	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
+		if (!this->_GhostAttack && !this->_delayAttack)
+			this->playAnimation(this->_direction == RIGHT ? "GhostRight" : "GhostLeft");
+		
+		if (this->_direction == LEFT) {
+			//Stay idle frame until player is in range
+			if (!this->_delayAttack && player.getX() < this->_x - 225) {
+				this->playAnimation("GhostLeft");
+			}
+			else {
+				this->_delayAttack = true;
+			}
+
+			if (this->_delayAttack) {
+				this->_sourceRect.w = 50;
+				this->_sourceRect.h = 50;
+				this->_x = this->_startingX - 15;
+				this->_y = this->_startingY - 35;
+				this->playAnimation("GhostAttackLeft");
+				this->_GhostAttack = true;
+			}
+			if (this->_GhostAttack) {
+				this->_delayTimer += elapsedTime;
+				this->setBoundingBox(this->_x - 500, this->_y, 5500, 5500);
+				if (this->_delayTimer >= 940 && this->getBoundingBox().collidesWith(player.getBoundingBox())) {
+					player.gainHealth(-150);
+					this->_delayTimer = 0;
+					this->_delayAttack = false;
+				}
+			}
+		}
+		else {
+			//Stay idle frame until player is in range
+			if (!this->_delayAttack && this->_x + 225 > player.getX()) {
+				this->playAnimation("GhostRight");
+			}
+			else {
+				this->_delayAttack = true;
+			}
+
+			if (this->_delayAttack) {
+				this->_sourceRect.w = 50;
+				this->_sourceRect.h = 50;
+				this->_x = this->_startingX - 15;
+				this->_y = this->_startingY - 35;
+				this->playAnimation("GhostAttackRight");
+				this->_GhostAttack = true;
+			}
+			if (this->_GhostAttack) {
+				this->_delayTimer += elapsedTime;
+				this->setBoundingBox(this->_x, this->_y, 5500, 5500);
+				if (this->_delayTimer >= 940 && this->getBoundingBox().collidesWith(player.getBoundingBox())) {
+					player.gainHealth(-150);
+					this->_delayTimer = 0;
+					this->_delayAttack = false;
+				}
+			}
+		}
+
+		float hpNum = (float)this->getCurrentHealth() / this->getMaxHealth();
+		this->_HPValue.setSourceRectW(std::floor(hpNum * 17));
+	}
+	else if (this->getCurrentHealth() <= 0) {
+		_deathTimeElapsed += elapsedTime;
+		if (isVisible == false)
+			timerRespawn += elapsedTime;
+		if (_deathTimeElapsed > _deathAnimationTime && isVisible == true && dyingAnimation == true) {
+			this->dyingAnimation = false;
+			this->_deathTimeElapsed = 0;
+			this->isVisible = false;
+		}
+		else if (_deathTimeElapsed < _deathAnimationTime && isVisible == true) {
+			this->dyingAnimation = true;
+			this->playAnimation("GhostDie");
+		}
+		if (timerRespawn > respawnTime && isVisible == false && dyingAnimation == false) {
+			timerRespawn = 0;
+			this->isVisible = true;
+			this->_currentHealth = this->_maxHealth;
+			this->removeEnemy = false;
+			this->canDropLoot = false;
+			_deathTimeElapsed = 0;
+		}
+	}
+
+	Enemy::update(elapsedTime, player);
+}
+
+
+void Ghost::draw(Graphics &graphics) {
+	if (isVisible == true) {
+		Enemy::draw(graphics);
+		if (this->getCurrentHealth() < this->getMaxHealth()) {
+			this->_HPBar.draw(graphics, this->_HPBar._x, this->_HPBar._y);
+			this->_HPValue.draw(graphics, this->_HPValue._x, this->_HPValue._y);
+		}
+	}
+}
+
+void Ghost::animationDone(std::string currentAnimation) {
+	if (this->getCurrentHealth() <= 0) {
+		if (this->canDropLoot == false) {
+			this->removeEnemy = true;
+			this->canDropLoot = true;
+		}
+	}
+	if (this->_GhostAttack) {
+		this->isVisible = false;
+	}
+}
+
+void Ghost::dropLoot(Player &player) {
+
+}
+
+void Ghost::setupAnimations() {
+	this->addAnimation(1, 0, 185, "GhostLeft", 22, 29, Vector2(0, 0));
+	this->addAnimation(1, 0, 217, "GhostRight", 22, 29, Vector2(0, 0));
+	this->addAnimation(5, 0, 185, "GhostAttackLeft", 22, 29, Vector2(0, 0));
+	this->addAnimation(5, 0, 217, "GhostAttackRight", 22, 29, Vector2(0, 0));
+	this->addAnimation(7, 0, 270, "GhostDie", 16, 16, Vector2(0, 0));
+}
+
+void Ghost::playDeath() {
+	this->playAnimation("GhostDie", true);
+}
+
+void Ghost::playAttack() {
+
+}
+
+void Ghost::touchPlayer(Player* player) {
+	player->gainHealth(-1.0f);
+}
+
+void Ghost::bulletHit(float dmg) {
+	if (this->_currentHealth >= 1)
+		this->_currentHealth -= dmg;
+}
+
+void Ghost::setRemoveable() {
+	if (removeEnemy == true) {
+		removeEnemy = false;
+	}
+}
+
+void Ghost::handleEnemyTileCollision(std::vector<Rectangle>& others)
+{
+	if (this->_GhostAttack)
+		return;
+	for (int i = 0; i < others.size(); i++) {
+		sides::Side collisionSide = Sprite::getCollisionSide(others.at(i));
+		if (collisionSide != sides::NONE) {
+			switch (collisionSide) {
+			case sides::TOP:
+				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
+				this->_y = others.at(i).getBottom() + 1; //no longer go through things, stops us
+				//this->_HPBar._y = others.at(i).getTop() + 1;
+				//this->_HPValue._y = others.at(i).getTop() + 1;
+				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
+					//this->_dx = 0; //stop movement on x-axis
+					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
+				}
+				break;
+			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
+				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				this->_dy = 0;
+				this->_grounded = true; //we are on ground since it pushed it back up
+				break;
+			case sides::LEFT:
+				this->_x = others.at(i).getRight() + 1;
+				break;
+			case sides::RIGHT:
+				this->_x = others.at(i).getLeft() - this->_boundingBox.getWidth() - 1;
+				break;
+			}
+		}
+	}
+}
+
+bool Ghost::isRemoveable() {
+	return removeEnemy;
+}
+
+float Ghost::enemyExpAmount() {
+	return Ghost::GhostExp;
+}
+
+std::string Ghost::getName()
 {
 	return this->name;
 }
