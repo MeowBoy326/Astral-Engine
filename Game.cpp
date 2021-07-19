@@ -27,6 +27,7 @@ namespace {
 	int selection = 1;
 	int npcSelection = 1;
 	int questSelection = 1;
+	int saveSelection = 1;
 	int lineNum = 0;
 	int currentLine = 0;
 	int sceneTimer = 0;
@@ -43,6 +44,8 @@ namespace {
 	bool activeStatMenu = false;
 	bool activeProjectile = false;
 	bool activeCutscene = false;
+	bool activeSave = false;
+	bool activeSaveMenu = false;
 	bool pickUp = false;
 	bool nextLine = false;
 	bool stopScroll = false;
@@ -89,7 +92,6 @@ void Game::gameLoop() {
 	Graphics graphics;
 	Input input;
 	SDL_Event event;
-
 	//music
 	Mix_AllocateChannels(350);
 	Mix_Chunk *sBullet = NULL;
@@ -243,13 +245,86 @@ void Game::gameLoop() {
 					return; //when the game ends or user exits
 				}
 			}
-			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
-				this->saveGame(graphics);
-				std::cout << "Quitting Game..." << std::endl;
-				return; //quit game if ESC was pressed
+
+			if (activeSave && input.wasKeyPressed(SDL_SCANCODE_A) && this->_player.getCurrentHealth() > 0) {
+				activeSaveMenu = true;
 			}
+
+			if (activeSaveMenu) {
+				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+					if (saveSelection == 1)
+						this->saveGame(graphics);
+					activeSaveMenu = false;
+					activeSave = false;	
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
+					if (saveSelection == 1)
+						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+					else if (saveSelection != 1) {
+						saveSelection--;
+						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+					}
+				}
+				else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
+					if (saveSelection == 2)
+						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+					else if (saveSelection != 2) {
+						saveSelection++;
+						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+					}
+				}
+			}
+
+			//bullet
+			if (input.wasKeyPressed(SDL_SCANCODE_X) && input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)
+				&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
+				std::cout << "Bullet right up diag test..." << std::endl;
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
+					this->_level.generateProjectile(graphics, this->_player);
+					Mix_PlayChannel(-1, sBullet, 0);
+				}
+			}
+
+			else if (input.wasKeyPressed(SDL_SCANCODE_X) == true && this->_player.getCurrentHealth() > 0) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false
+					&& !activeSaveMenu) {
+					/*if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)) {
+						this->_level.generateProjectile(graphics, this->_player);
+						Mix_PlayChannel(-1, sBullet, 0);
+					}*/
+					/*else if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_LEFT)) {
+						this->_level.generateProjectile(graphics, this->_player);
+						Mix_PlayChannel(-1, sBullet, 0);
+					}*/
+					this->_level.generateProjectile(graphics, this->_player);
+					Mix_PlayChannel(-1, sBullet, 0);
+				}
+			}
+			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
+				activeInventory = false;
+				activeSave = false;
+				activeSaveMenu = false;
+				activeTalk = false;
+				this->_chatBox.setTextStatus(false);
+				this->_npc.setNpcTalk(false);
+				this->_npc.setQuestMenuState(false);
+				this->_npc.setQuestState(false);
+				this->_npc.setQuestDone(false);
+				this->_npc.setNoQuest(false);
+				this->_npc.resetScripts();
+				npcSelection = 1;
+				questSelection = 1;
+				activeStatMenu = false;
+			}
+			//if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0
+			//	&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
+
+			//	//this->saveGame(graphics);
+			//	//std::cout << "Quitting Game..." << std::endl;
+			//	//return; //quit game if ESC was pressed
+			//}
 			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.moveLeft();
 					if (this->_player.isGrounded() && walkSound == false) {
 						//Mix_PlayChannel(321, seWalk, -1);
@@ -263,7 +338,7 @@ void Game::gameLoop() {
 			 
 			}
 			else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.moveRight();
 					if (this->_player.isGrounded() && walkSound == false) {
 						Mix_Resume(321);
@@ -282,8 +357,12 @@ void Game::gameLoop() {
 				walkSound = false;
 			}
 
+			/*if (isClimbing && input.wasKeyPressed(SDL_SCANCODE_UP)) {
+				this->_player.setClimbing(true);
+			}*/
+
 			if (input.isKeyHeld(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.lookUp();
 					if (isClimbing) {
 						this->_player.setClimbing(true);
@@ -292,20 +371,25 @@ void Game::gameLoop() {
 				}
 			}
 			else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.lookDown();
+					if (isClimbing) {
+						this->_player.setClimbing(true);
+						this->_player.moveDown();
+					}
+				}
 			}
 			if (input.wasKeyReleased(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
 					this->_player.stopLookingUp();
 			}
 			if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false)
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
 					this->_player.stopLookingDown();
 			}
 
 			if (input.wasKeyPressed(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0){
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.jump();
 					Mix_PlayChannel(-1, seJump, 0);
 				}
@@ -318,16 +402,9 @@ void Game::gameLoop() {
 				//if player isnt moving left or right(at all) do stopMoving function
 				this->_player.stopMoving();
 			}
-			//bullet
-			if (input.wasKeyPressed(SDL_SCANCODE_E) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
-					this->_level.generateProjectile(graphics, this->_player);
-					Mix_PlayChannel(-1, sBullet, 0);
-				}
-			}
-
-			if (input.wasKeyPressed(SDL_SCANCODE_Q) == true && activeInventory == false && activeStatMenu == false 
-				&& this->_player.getCurrentHealth() > 0) {
+			
+			if (input.wasKeyPressed(SDL_SCANCODE_A) == true && activeInventory == false && activeStatMenu == false 
+				&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
 				if (activeTalk == false && npcName != ""){
 					activeTalk = true;
 					this->_chatBox.setTextStatus(true);
@@ -447,7 +524,7 @@ void Game::gameLoop() {
 				}
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_F1) == true && this->_player.getCurrentHealth() > 0) {
+			if (input.wasKeyPressed(SDL_SCANCODE_D) == true && this->_player.getCurrentHealth() > 0) {
 				if (!activeStatMenu) {
 					selection = 1;
 					activeStatMenu = true;
@@ -479,7 +556,7 @@ void Game::gameLoop() {
 				}
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_I) == true && activeStatMenu == false && activeTalk == false 
+			if (input.wasKeyPressed(SDL_SCANCODE_S) == true && activeStatMenu == false && activeTalk == false 
 				&& this->_player.getCurrentHealth() > 0) {
 				if (activeInventory == false) {
 					activeInventory = true;
@@ -499,7 +576,7 @@ void Game::gameLoop() {
 					pickUp = false;
 				}
 			}
-			if (input.wasKeyPressed(SDL_SCANCODE_R) == true && this->_player.getCurrentHealth() > 0) {
+			if (input.wasKeyPressed(SDL_SCANCODE_C) == true && this->_player.getCurrentHealth() > 0) {
 				_inventory.useItem(0, this->_player);
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
@@ -574,6 +651,8 @@ void Game::draw(Graphics &graphics) {
 		this->_inventory.draw(graphics, this->_player);
 	if (activeStatMenu)
 		this->_player.drawStatMenu(graphics, this->_player, selection);
+	if (activeSaveMenu)
+		this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
 	this->_player.drawHPNumbers(graphics);
 	this->_player.drawExpNumbers(graphics);
 	this->_player.drawCurrentMapName(graphics);
@@ -1007,6 +1086,12 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		this->_player.setClimbing(false);
 	}
 
+	if ((others = this->_level.checkSaveCollisions(this->_player.getBoundingBox())).size() > 0) {
+		activeSave = true;
+	}
+	else
+		activeSave = false;
+
 	//Check slope
 	std::vector<Slope> otherSlopes;
 	if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
@@ -1014,6 +1099,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	}
 
 	this->_level.checkEnemyTileCollision().size() > 0;
+	this->_level.checkEnemyProjectileTileCollision().size() > 0;
 	this->_level.checkProjectileCollisions(this->_player);
 	this->_level.checkEnemyHP(this->_player, this->_graphics);
 	if (this->_level.isEnemyDead()) {
