@@ -67,6 +67,7 @@ Level & Level::operator=(const Level & levelMap)
 	this->_poisonRects = levelMap._poisonRects;
 	this->_waterRects = levelMap._waterRects;
 	this->_ladderRects = levelMap._ladderRects;
+	this->_saveRects = levelMap._saveRects;
 	this->_doorList = levelMap._doorList;
 	this->_lockDoor = levelMap._lockDoor;
 	this->_mapName = levelMap._mapName;
@@ -414,7 +415,26 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 
 					pObject = pObject->NextSiblingElement("object");
 				}
+			  }
 			}
+			else if (ss.str() == "saves") {
+			XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+			if (pObject != NULL) {
+				while (pObject) {
+					float x, y, width, height;
+					x = pObject->FloatAttribute("x");
+					y = pObject->FloatAttribute("y");
+					width = pObject->FloatAttribute("width");
+					height = pObject->FloatAttribute("height");
+					this->_saveRects.push_back(Rectangle(
+						std::ceil(x) * globals::SPRITE_SCALE,
+						std::ceil(y) * globals::SPRITE_SCALE,
+						std::ceil(width) * globals::SPRITE_SCALE,
+						std::ceil(height) * globals::SPRITE_SCALE));
+
+					pObject = pObject->NextSiblingElement("object");
+				}
+			  }
 			}
 			//Other object groups go here with an else if (ss.str() == "whatever")
 			else if (ss.str() == "slopes") {
@@ -741,6 +761,20 @@ std::vector<Rectangle> Level::checkEnemyTileCollision()
 	return others;
 }
 
+std::vector<Rectangle> Level::checkEnemyProjectileTileCollision()
+{
+	std::vector<Rectangle> others;
+	for (int i = 0; i < this->_enemies.size(); i++) {
+		for (int j = 0; j < this->_collisionRects.size(); j++) {
+			if (this->_collisionRects.at(j).collidesWith(this->_enemies.at(i)->getEnemyProjectileBoundingBox())) {
+				others.push_back(this->_collisionRects.at(j));
+				this->_enemies.at(i)->handleEnemyProjectileTileCollision();
+			}
+		}
+	}
+	return others;
+}
+
 std::vector<Rectangle> Level::checkCutsceneCollisions(const Rectangle & other)
 {
 	std::vector<Rectangle> others;
@@ -788,6 +822,16 @@ std::vector<Rectangle> Level::checkLadderCollisions(const Rectangle & other)
 	for (int i = 0; i < this->_ladderRects.size(); i++) {
 		if (this->_ladderRects.at(i).collidesWith(other))
 			others.push_back(this->_ladderRects.at(i));
+	}
+	return others;
+}
+
+std::vector<Rectangle> Level::checkSaveCollisions(const Rectangle & other)
+{
+	std::vector<Rectangle> others;
+	for (int i = 0; i < this->_saveRects.size(); i++) {
+		if (this->_saveRects.at(i).collidesWith(other))
+			others.push_back(this->_saveRects.at(i));
 	}
 	return others;
 }
@@ -1011,6 +1055,11 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 						else if (ss.str() == "JellyFish") {
 							std::string mobName = "JellyFish";
 							this->_enemies.push_back(new JellyFish(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+								std::floor(y) * globals::SPRITE_SCALE)));
+						}
+						else if (ss.str() == "Ghost") {
+							std::string mobName = "Ghost";
+							this->_enemies.push_back(new Ghost(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE)));
 						}
 						else if (ss.str() == "shade") {

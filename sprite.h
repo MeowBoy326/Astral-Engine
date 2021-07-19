@@ -33,6 +33,8 @@ public:
 	void drawLevelBar(Graphics &graphics, int x, int y);
 	void drawStatMenu(Graphics &graphics, int x, int y);
 	void drawStatSelection(Graphics &graphics, int x, int y);
+	void drawSaveMenu(Graphics &graphics, int x, int y);
+	void drawSaveSelection(Graphics &graphics, int x, int y);
 	void drawQuestSelection(Graphics &graphics, int x, int y);
 	void drawiMenu(Graphics & graphics, int x, int y);
 	void drawChat(Graphics & graphics, int x, int y);
@@ -45,6 +47,7 @@ public:
 	void drawProjectile(Graphics & graphics, SDL_Rect rect);
 
 	const Rectangle getBoundingBox() const;
+	void setBoundingBox(int x, int y, int width, int height);
 	const sides::Side getCollisionSide(Rectangle &other) const; //get collision side of bounding box and rectangle that gets passed in]
 
 	const inline float getX() const { return this->_x; }

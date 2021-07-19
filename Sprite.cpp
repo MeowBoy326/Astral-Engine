@@ -69,6 +69,20 @@ void Sprite::drawStatSelection(Graphics & graphics, int x, int y)
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
+void Sprite::drawSaveMenu(Graphics & graphics, int x, int y)
+{
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 2, this->_sourceRect.h * 2 }; //where on screen we will be drawing
+//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
+	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
+}
+
+void Sprite::drawSaveSelection(Graphics & graphics, int x, int y)
+{
+	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 2, this->_sourceRect.h * 2 }; //where on screen we will be drawing
+//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
+	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
+}
+
 void Sprite::drawQuestSelection(Graphics & graphics, int x, int y)
 {
 	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 11.8, this->_sourceRect.h * 2 }; //where on screen we will be drawing
@@ -190,6 +204,11 @@ const Rectangle Sprite::getProjectileBBox() const {
 const Rectangle Sprite::getBoundingBox() const {
 	return 
 		this->_boundingBox;
+}
+
+void Sprite::setBoundingBox(int x, int y, int width, int height)
+{
+	this->_boundingBox = Rectangle(x, y, width, height);
 }
 
 //Side getCollisionSide

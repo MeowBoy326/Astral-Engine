@@ -21,6 +21,7 @@ public:
 	void draw(Graphics &graphics);
 	void drawGun(Graphics &graphics);
 	void drawStatMenu(Graphics &graphics, Player &player, int selection);
+	void drawSaveMenu(Graphics &graphics, Player &player, int selection);
 	void drawCurrentMapName(Graphics &graphics);
 	void drawStatusEffect(Graphics &graphics, const std::string text);
 	void showSceneDialogue(Graphics &graphics, std::string text);
@@ -30,7 +31,8 @@ public:
 	//Player handling
 	void moveLeft(); 	//Move player left by -dx
 	void moveRight(); 	//Move player right by +dx
-	void moveUp();
+	void moveUp(); //For ladders
+	void moveDown();
 	void jump();
 	void stopMoving();
 	void lookUp();
@@ -173,6 +175,8 @@ private:
 	TextManager* _txt;
 	Sprite _statMenu;
 	Sprite _statSelection;
+	Sprite _saveMenu;
+	Sprite _saveSelection;
 	Sprite _Gun;
 
 	std::vector<std::pair<std::string, int>> killTable;
@@ -188,12 +192,12 @@ protected:
 	double _deathAnimationTimer = 0;
 
 
-	std::map<std::string, std::string> mapHash = { {"cave", "AA2A8CCC6AAFABC74C64CC51A584C83BC9FC7503917FBEAA667DAE458E8D826C"},
-	{"caveFork", "639852D2AEA3972FC43C0B9A8A4E9E4BC3255249FE9FE19618AF5DBFC22EEB64"},
-	{"caverns","2259C461E83B84C243F8CD51A96A2500B5757F1D2FFA25DAF9EF439AE08D50A1"},
+	std::map<std::string, std::string> mapHash = { {"cave", "7C0FC7E3B18B453F7418C7DF699BDC7CC45B1CAF420C5A195DEAA67467D09F28"},
+	{"caveFork", "9D146228905B72A787A2C64C11C5754EE195C7B8C1A466FE21ED30F220403CA5"},
+	{"caverns","9052D19263CB470069AE3F75DF23DADDD3F5212518EE8D465353FD74BA597E1C"},
 	{"Profaned Capital", "E369441882DCB81AEC0C4264BE4A3B652F897883CD45DF0961397AA6258AEE9E"},
-	{"Collapsed Cave", "1E13E409152AD978DC342258CDAC01E36AE99CF5C62438D35531D02B81DFD616"}, 
-	{"cave depths", "6ECA70749B3B3FB7CCEFDA1D6BBED4A8E136C4FFAB7C213614F06AA968E09AB7"} };
+	{"Collapsed Cave", "706CED1B166438892981CBCC498E38653E9B9DF4EE79B72A8879DF2D4DAEC6D4"}, 
+	{"cave depths", "A33687C4DCBD21A27A417C64E923D7C34ABE77C501DF0CA69388E728B9FE1314"} };
 };
 
 #endif

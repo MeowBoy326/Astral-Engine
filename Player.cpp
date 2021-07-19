@@ -50,6 +50,8 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 
 	this->_statMenu = Sprite(graphics, "data\\npc\\npcTextBox.png", 40, 88, 71, 52, this->_x, (this->_y - 10));
 	this->_statSelection = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
+	this->_saveMenu = Sprite(graphics, "data\\npc\\npcTextBox.png", 155, 51, 76, 26, this->_x, (this->_y - 10));
+	this->_saveSelection = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 173, 31, 18, 15, 15);
 	graphics.loadImage("data\\npc\\npcTextBox.png");
 	this->_Gun = Sprite(graphics, "data\\graphics\\Arms.png", 52, 10, 10, 5, (this->_x - 10), (this->_y + 10));
 	graphics.loadImage("data\\graphics\\Arms.png");
@@ -290,6 +292,11 @@ void Player::moveRight() {
 void Player::moveUp()
 {
 	this->_dy = -player_constants::WALK_SPEED;
+}
+
+void Player::moveDown()
+{
+	this->_dy = +player_constants::WALK_SPEED;
 }
 
 
@@ -751,7 +758,7 @@ void Player::update(float elapsedTime) {
 	}
 	else {
 		//Apply gravity
-		if (this->_dy <= player_constants::GRAVITY_CAP) {
+		if (this->_dy <= player_constants::GRAVITY_CAP && !_climbing) {
 			//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
 			this->_dy += player_constants::GRAVITY * elapsedTime;
 		}
@@ -760,6 +767,9 @@ void Player::update(float elapsedTime) {
 		this->_x += this->_dx * elapsedTime; //elapsedTime will move by a certain amount based on frame rate keeping thing moving smoothly
 		//Move by dy
 		this->_y += this->_dy * elapsedTime; //Gravity move them by Y
+
+		if (_climbing)
+			this->_dy = 0;
 
 		if (this->isDrowning) {
 			player_constants::WALK_SPEED = 0.09f;
@@ -904,6 +914,15 @@ void Player::drawStatMenu(Graphics &graphics, Player &player, int selection) {
 	if (selection == 3)
 		_statSelection.drawStatSelection(graphics, this->_x - 285, this->_y - -25);
 	this->_txt->drawStats(graphics, this->_x - 115, this->_y - 65, this->_maxHealth, this->_dmgMod, this->_defense, this->_statPoints);
+}
+
+void Player::drawSaveMenu(Graphics & graphics, Player & player, int selection)
+{
+	_saveMenu.drawSaveMenu(graphics, this->_x - 50, this->_y + 80);
+	if (selection == 1)
+		_saveSelection.drawSaveSelection(graphics, this->_x - 35, this->_y + 85);
+	if (selection == 2)
+		_saveSelection.drawSaveSelection(graphics, this->_x + 40, this->_y + 85);
 }
 
 void Player::drawCurrentMapName(Graphics &graphics) {
