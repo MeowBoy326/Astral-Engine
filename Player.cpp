@@ -700,6 +700,10 @@ void Player::setLevel(int num) {
 
 void Player::addLevel(int num) {
 	this->_playerLevel += num;
+	this->setCurrentExp(0);
+	this->_defense += 0.03 + (this->_soulLevel * 0.11);
+	this->_statPoints += 2;
+	std::cout << "Level up to: " << this->getLevel() << std::endl;
 }
 
 int Player::getSoulLevel() {
