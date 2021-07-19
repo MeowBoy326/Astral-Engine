@@ -708,8 +708,7 @@ void Ghost::update(int elapsedTime, Player &player) {
 	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
 		if (!this->_GhostAttack && !this->_delayAttack)
 			this->playAnimation(this->_direction == RIGHT ? "GhostRight" : "GhostLeft");
-		
-		if (this->_direction == LEFT) {
+		if (this->_direction == LEFT && checkInRange(this->_y - 45, this->_y + 45, player.getY())) {
 			//Stay idle frame until player is in range
 			if (!this->_delayAttack && player.getX() < this->_x - 225) {
 				this->playAnimation("GhostLeft");
@@ -736,7 +735,7 @@ void Ghost::update(int elapsedTime, Player &player) {
 				}
 			}
 		}
-		else {
+		else if (this->_direction == RIGHT && checkInRange(this->_y - 45, this->_y + 45, player.getY())) {
 			//Stay idle frame until player is in range
 			if (!this->_delayAttack && this->_x + 225 > player.getX()) {
 				this->playAnimation("GhostRight");

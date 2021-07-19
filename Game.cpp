@@ -71,6 +71,7 @@ namespace {
 	Mix_Chunk *gameOver = NULL;
 	bool walkSound = false;
 	bool deathSound = false;
+	bool jumpSound = false;
 }
 
 Game::Game() { //constructor
@@ -388,15 +389,22 @@ void Game::gameLoop() {
 					this->_player.stopLookingDown();
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0){
+			if (input.isKeyHeld(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0){
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.jump();
-					Mix_PlayChannel(-1, seJump, 0);
+					if (!jumpSound)
+						Mix_PlayChannel(-1, seJump, 0);
+					jumpSound = true;
 				}
 				else if (activeTalk == true) {
 					std::cout << "impaired action" << std::endl;
 				}
-			
+			}
+			if (input.wasKeyReleased(SDL_SCANCODE_SPACE) && this->_player.getCurrentHealth() > 0) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					this->_player.setPlayerDY(0);
+					jumpSound = false;
+				}
 			}
 			if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT) && this->_player.getCurrentHealth() > 0) {
 				//if player isnt moving left or right(at all) do stopMoving function
