@@ -51,6 +51,9 @@ public:
 	virtual void setupAnimations();
 	Direction facingDir();
 	Direction _facing;
+	Surface _currentSurface = NOTHING;
+	Rectangle _lastCollidedFloorRect;
+	Slope _lastCollidedSlope;
 
 	//Event handling
 	void handleTileCollisions(std::vector<Rectangle> &others);

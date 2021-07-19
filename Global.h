@@ -9,6 +9,12 @@ namespace globals {
 	const float PROJECTILE_SCALE = 1.2f; 
 }
 
+enum Surface {
+	NOTHING,
+	RECTANGLE,
+	SLOPE
+};
+
 namespace sides {
 	enum Side {
 		TOP,

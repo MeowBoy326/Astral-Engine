@@ -306,6 +306,7 @@ void Player::jump() {
 		this->_dy = 0;
 		this->_dy -= player_constants::JUMP_DISTANCE;
 		this->_grounded = false;
+		this->_currentSurface = NOTHING;
 	}
 }
 
@@ -383,6 +384,8 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
 				this->_grounded = true; //we are on ground since it pushed it back up
+				this->_lastCollidedFloorRect = others.at(i);
+				this->_currentSurface = RECTANGLE;
 				break;
 			case sides::LEFT:
 				this->_x = others.at(i).getRight() + 1;
@@ -469,6 +472,8 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 			this->_y = newY - this->_boundingBox.getHeight();
 			this->_grounded = true;
 		}
+		this->_lastCollidedSlope = others.at(i);
+		this->_currentSurface = SLOPE;
 	}
 }
 
@@ -761,10 +766,31 @@ void Player::update(float elapsedTime) {
 		this->_deathAnimationTimer += elapsedTime;
 	}
 	else {
+		if (_currentSurface == RECTANGLE) {
+			if (getBoundingBox().getRight() < _lastCollidedFloorRect.getLeft() || getBoundingBox().getLeft() > _lastCollidedFloorRect.getRight()) {
+				_grounded = false;
+				_currentSurface = NOTHING;
+			}
+		}
+		else if (_currentSurface == SLOPE) {
+			if (getBoundingBox().getLeft() < _lastCollidedSlope.getP1().x && getBoundingBox().getRight() < _lastCollidedSlope.getP1().x
+				&& getBoundingBox().getLeft() < _lastCollidedSlope.getP2().x && getBoundingBox().getRight() < _lastCollidedSlope.getP2().x) {
+				_grounded = false;
+			}
+			if (getBoundingBox().getLeft() > _lastCollidedSlope.getP1().x && getBoundingBox().getRight() > _lastCollidedSlope.getP1().x
+				&& getBoundingBox().getLeft() > _lastCollidedSlope.getP2().x && getBoundingBox().getRight() > _lastCollidedSlope.getP2().x) {
+				_grounded = false;
+			}
+		}
 		//Apply gravity
-		if (this->_dy <= player_constants::GRAVITY_CAP && !_climbing) {
-			//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
-			this->_dy += player_constants::GRAVITY * elapsedTime;
+		//if (this->_dy <= player_constants::GRAVITY_CAP && !_climbing) {
+		//	//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
+		//	this->_dy += player_constants::GRAVITY * elapsedTime;
+		//}
+		if (!_grounded || _currentSurface == SLOPE || !_climbing) {
+			if (this->_dy <= player_constants::GRAVITY_CAP) {
+				this->_dy += player_constants::GRAVITY * elapsedTime;
+			}
 		}
 
 		//Move by dx
