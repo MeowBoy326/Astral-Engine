@@ -852,13 +852,8 @@ void Player::update(float elapsedTime) {
 			this->showBlink(true);
 		}
 
-		if (this->getCurrentExp() >= this->getRequiredExp()) {
+		if (this->getCurrentExp() >= this->getRequiredExp())
 			this->addLevel(1);
-			this->setCurrentExp(0);
-			this->_defense += 0.03 + (this->_soulLevel * 0.11);
-			this->_statPoints += 2;
-			std::cout << "Level up to: " << this->getLevel() << std::endl;
-		}
 
 		if (this->getKillCount() >= this->getRequiredKills()) {
 			this->addSoulLevel(1);
