@@ -1255,6 +1255,12 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 									std::floor(y) * globals::SPRITE_SCALE)));
 								player.addBossTable(ss.str(), mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE);
 							}
+							else { //if the boss was defeated already make sure that the boss arena is set to false
+								if (this->_arenaName == ss.str()) {
+									this->_arenaName.clear();
+									this->arenaActive = false;
+								}
+							}
 						}
 						pObject = pObject->NextSiblingElement("object");
 					}
