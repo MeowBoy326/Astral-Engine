@@ -21,29 +21,49 @@ public:
 			return this->_slope;
 		}
 
-		const bool collidesWith(const Rectangle &other) const {
+		const bool collidesWith(const Rectangle &other) {
 			//rectangle we are passing in is the player or monster that is running on a slope
-			return
-				(other.getRight() >= this->_p2.x &&
-					other.getLeft() <= this->_p1.x &&
+			if ((other.getRight() >= this->_p2.x &&
+				other.getLeft() <= this->_p1.x &&
+				other.getTop() <= this->_p2.y &&
+				other.getBottom() >= this->_p1.y) ||
+				(other.getRight() >= this->_p1.x &&
+					other.getLeft() <= this->_p2.x &&
+					other.getTop() <= this->_p1.y &&
+					other.getBottom() >= this->_p2.y)) {
+				if (isInsideSlope(other.getBottom(), other.getRight())) {
+					return true;
+				}
+			}
+
+			else if ((other.getLeft() <= this->_p1.x &&
+				other.getRight() >= this->_p2.x &&
+				other.getTop() <= this->_p1.y &&
+				other.getBottom() >= this->_p2.y) ||
+				(other.getLeft() <= this->_p2.x &&
+					other.getRight() >= this->_p1.x &&
 					other.getTop() <= this->_p2.y &&
-					other.getBottom() >= this->_p1.y) ||
-					(other.getRight() >= this->_p1.x &&
-						other.getLeft() <= this->_p2.x &&
-						other.getTop() <= this->_p1.y &&
-						other.getBottom() >= this->_p2.y) ||
-						(other.getLeft() <= this->_p1.x &&
-							other.getRight() >= this->_p2.x &&
-							other.getTop() <= this->_p1.y &&
-							other.getBottom() >= this->_p2.y) ||
-							(other.getLeft() <= this->_p2.x &&
-								other.getRight() >= this->_p1.x &&
-								other.getTop() <= this->_p2.y &&
-								other.getBottom() >= this->_p1.y); 
+					other.getBottom() >= this->_p1.y)) {
+				if (isInsideSlope(other.getBottom(), other.getLeft())) {
+					return true;
+				}
+			}
 			//checks every possible case to see if we are colliding with a rectangle and if any of these are true
 			//that means we are colliding with a slope somewhere
+			return false;
 		}
 
+		bool isInsideSlope(int rectY, int rectX) {
+			float m = _slope;
+			int b = (_p1.y - (_slope * fabs(_p1.x)));
+
+			float slopeY = m * rectX + b;
+			if (rectY >= slopeY) {
+				return true;
+			}
+			else
+				return false;
+		}
 		const inline Vector2 getP1() const { return this->_p1; }
 		const inline Vector2 getP2() const { return this->_p2; }
 private:
