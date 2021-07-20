@@ -172,7 +172,6 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							if (pFrame != NULL) {
 								while (pFrame) {
 									ati.TileIDS.push_back(pFrame->IntAttribute("tileid") + firstgid);
-									std::cout << "Animated Tile ID: " << pFrame->IntAttribute("tileid") << std::endl;
 									ati.Duration = pFrame->IntAttribute("duration");
 									pFrame = pFrame->NextSiblingElement("frame");
 								}
@@ -194,15 +193,10 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	if (pLayer != NULL) {
 		while (pLayer) { //loop through all layers
 			//Loading the data element
-			//XMLElement* brkLayer = pLayer->FirstChildElement("name");
-
 				const char* lyrName = pLayer->Attribute("name");
 				std::stringstream ssProp;
 				ssProp << lyrName;
 				if (ssProp.str() == "breakLayer") {
-					//const char* getBGMName = propsNode->FirstChildElement("property")->Attribute("value");
-					//this->_mapBGM = getBGMName;
-					std::cout << "Found Break Layer!" << std::endl;
 					XMLElement* pData = pLayer->FirstChildElement("data");
 					if (pData != NULL) {
 						while (pData) {
@@ -279,7 +273,6 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									if (isAnimatedTile == true) {
 										std::vector<Vector2> tilesetPositions;
 										for (int i = 0; i < ati.TileIDS.size(); i++) {
-											std::cout << "ati.TileIDS.at(i) = " << ati.TileIDS.at(i) << std::endl; 
 											tilesetPositions.push_back(this->getTilesetPosition(tls, ati.TileIDS.at(i), tileWidth, tileHeight));
 										}
 										AnimatedTile tile(tilesetPositions, ati.Duration, tls.Texture, Vector2(tileWidth, tileHeight), finalTilePosition);
@@ -1385,9 +1378,11 @@ Vector2 Level::getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileH
 	int tilesetWidth, tilesetHeight;
 	//pass in texture, format, access, width, height. We dont care about format or access so NULL and then reference to width/height
 	SDL_QueryTexture(tls.Texture, NULL, NULL, &tilesetWidth, &tilesetHeight);
-	int tsxx = gid % (tilesetWidth / tileWidth) - 1;
-	tsxx *= tileWidth; //we need to know where in our tileset where we are drawing from based on our gid alone
-
+	//Get the tileset X position Subtract the gid - first gid of the tileset
+	//then modulo (TS width / T width)
+	int tsxx = (gid - tls.FirstGid) % (tilesetWidth / tileWidth);
+	tsxx *= tileWidth;
+	//Same as above but for the tileset Y position
 	int tsyy = 0;
 	int amt = ((gid - tls.FirstGid) / (tilesetWidth / tileWidth));
 	tsyy = tileHeight * amt;
