@@ -76,6 +76,7 @@ public:
 
 	bool isEnemyDead() const { return this->enemyDead; }
 	void setEnemyDead(bool condition) { this->enemyDead = condition; }
+	bool isArenaActive() const { return this->arenaActive; }
 
 private:
 	bool enemyDead = false;

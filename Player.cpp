@@ -521,6 +521,8 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 				std::cout << "Unable to set level to new level : Hash check failed!" << std::endl;
 				return;
 			}
+			if (level.isArenaActive())
+				return;
 			this->overwriteLevel(level, level.getMapName());
 			std::map<std::string, Level>::iterator it;
 			it = this->mapStorage.find(others.at(i).getDestination());
@@ -559,6 +561,8 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 			if (!invent.hasKeyStored()) {
 				return;
 			}
+			if (level.isArenaActive())
+				return;
 			this->overwriteLevel(level, level.getMapName());
 			std::map<std::string, Level>::iterator it;
 			it = this->mapStorage.find(others.at(i).getDestination());
