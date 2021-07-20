@@ -57,6 +57,7 @@ public:
 
 	//Event handling
 	void handleTileCollisions(std::vector<Rectangle> &others);
+	void handleArenaCollisions(std::vector<Rectangle> &others);
 	void handleLavaCollisions(std::vector<Rectangle> &others);
 	void handlePoisonCollisions(std::vector<Rectangle> &others);
 	void handleWaterCollisions(std::vector<Rectangle> &others);
@@ -198,7 +199,7 @@ protected:
 	std::map<std::string, std::string> mapHash = { {"cave", "7B00FCFBE2CC327D32B5B3D58A1BD7DD56C37C2C5533AA1AFE959CE7D3ADBC42"},
 	{"caveFork", "9D146228905B72A787A2C64C11C5754EE195C7B8C1A466FE21ED30F220403CA5"},
 	{"caverns","7555D4274A94F2C283E8429FB4791CE6CC2C80E070EC1144E67C0902F8BD4027"},
-	{"Profaned Capital", "0AC633E9903815B1AD8739C7E70760AFA1F4965FD59BD476F4D883F84E99ADA0"},
+	{"Profaned Capital", "44F8AAC69619122EB1BD509767689A1DF11BB16555E7E0F8757E97D462EE89A8"},
 	{"Collapsed Cave", "C6876F557AC3629A4765E10619B471DF1DC81D2CE1EB4766DF95426C607F212B"}, 
 	{"cave depths", "A33687C4DCBD21A27A417C64E923D7C34ABE77C501DF0CA69388E728B9FE1314"} };
 };

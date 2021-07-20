@@ -236,6 +236,21 @@ const sides::Side Sprite::getCollisionSide(Rectangle &other) const {
 		sides::NONE;
 }
 
+const sides::Side Sprite::getArenaCollisionSide(Rectangle & other) const
+{
+	int amtRight, amtLeft, amtTop, amtBottom;
+	amtRight = this->getBoundingBox().getRight();
+	amtLeft = this->getBoundingBox().getLeft();
+	amtBottom = this->getBoundingBox().getBottom();
+	amtTop = this->getBoundingBox().getTop();
+
+	return other.getRight() == amtRight ? sides::RIGHT :
+		other.getLeft() == amtLeft ? sides::LEFT :
+		other.getBottom() == amtBottom ? sides::BOTTOM :
+		other.getTop() == amtTop ? sides::TOP :
+		sides::NONE;
+}
+
 void Sprite::setSourceRectX(int value) {
 	this->_sourceRect.x = value;
 }

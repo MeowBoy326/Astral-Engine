@@ -398,6 +398,39 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 	}
 }
 
+void Player::handleArenaCollisions(std::vector<Rectangle>& others)
+{
+	//Figure out what side the collision happened on and move the player accordingly
+	for (int i = 0; i < others.size(); i++) {
+		sides::Side collisionSide = Sprite::getArenaCollisionSide(others.at(i));
+		if (collisionSide != sides::NONE) {
+			switch (collisionSide) {
+			case sides::TOP:
+				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
+				this->_y += 2; //no longer go through things, stops us
+				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
+					this->_dx = 0; //stop movement on x-axis
+					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
+				}
+				break;
+			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
+				this->_y -= 2;
+				this->_dy = 0;
+				this->_grounded = true; //we are on ground since it pushed it back up
+				this->_lastCollidedFloorRect = others.at(i);
+				this->_currentSurface = RECTANGLE;
+				break;
+			case sides::LEFT:
+				this->_x += 2;
+				break;
+			case sides::RIGHT:
+				this->_x -= 2;
+				break;
+			}
+		}
+	}
+}
+
 void Player::handleLavaCollisions(std::vector<Rectangle>& others)
 {
 	for (int i = 0; i < others.size(); i++) {

@@ -51,6 +51,7 @@ public:
 	std::vector<Rectangle> checkWaterCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkLadderCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkSaveCollisions(const Rectangle &other);
+	std::vector<Rectangle> checkArenaCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
 	std::vector<Door> checkDoorCollisions(const Rectangle &other);
 	std::vector<Door> checkLockedDoorCollisions(const Rectangle &other);
@@ -78,9 +79,11 @@ public:
 
 private:
 	bool enemyDead = false;
+	bool arenaActive = false;
 
 	std::string _mapName; 
 	std::string _cutsceneName;
+	std::string _arenaName;
 	std::string _mapBGM;
 	Vector2 _spawnPoint;
 	Vector2 _bulletPoint;
@@ -103,6 +106,7 @@ private:
 	std::vector<Rectangle> _waterRects;
 	std::vector<Rectangle> _ladderRects;
 	std::vector<Rectangle> _saveRects;
+	std::vector<Rectangle> _arenaRects;
 	std::vector<Slope> _slopes; //list of slopes
 	std::vector<Door> _doorList;
 	std::vector<Door> _lockDoor;

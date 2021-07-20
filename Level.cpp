@@ -79,6 +79,9 @@ Level & Level::operator=(const Level & levelMap)
 	this->_tileSize = levelMap._tileSize;
 	this->_mapBGM = levelMap._mapBGM;
 	this->_breakTileList = levelMap._breakTileList;
+	this->_arenaRects = levelMap._arenaRects;
+	this->_arenaName = levelMap._arenaName;
+	this->arenaActive = levelMap.arenaActive;
 
 	this->classMap.insert(levelMap.classMap.begin(), levelMap.classMap.end());
 	std::set<std::string> values;
@@ -169,6 +172,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							if (pFrame != NULL) {
 								while (pFrame) {
 									ati.TileIDS.push_back(pFrame->IntAttribute("tileid") + firstgid);
+									std::cout << "Animated Tile ID: " << pFrame->IntAttribute("tileid") << std::endl;
 									ati.Duration = pFrame->IntAttribute("duration");
 									pFrame = pFrame->NextSiblingElement("frame");
 								}
@@ -275,6 +279,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									if (isAnimatedTile == true) {
 										std::vector<Vector2> tilesetPositions;
 										for (int i = 0; i < ati.TileIDS.size(); i++) {
+											std::cout << "ati.TileIDS.at(i) = " << ati.TileIDS.at(i) << std::endl; 
 											tilesetPositions.push_back(this->getTilesetPosition(tls, ati.TileIDS.at(i), tileWidth, tileHeight));
 										}
 										AnimatedTile tile(tilesetPositions, ati.Duration, tls.Texture, Vector2(tileWidth, tileHeight), finalTilePosition);
@@ -542,6 +547,31 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					pObject = pObject->NextSiblingElement("object");
 				}
 			  }
+			}
+			else if (ss.str() == "arena") {
+			XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+			if (pObject != NULL) {
+				while (pObject) {
+					float x, y, width, height;
+					x = pObject->FloatAttribute("x");
+					y = pObject->FloatAttribute("y");
+					width = pObject->FloatAttribute("width");
+					height = pObject->FloatAttribute("height");
+					this->_arenaRects.push_back(Rectangle(
+						std::ceil(x) * globals::SPRITE_SCALE,
+						std::ceil(y) * globals::SPRITE_SCALE,
+						std::ceil(width) * globals::SPRITE_SCALE,
+						std::ceil(height) * globals::SPRITE_SCALE));
+
+					const char* name = pObject->Attribute("name");
+					std::stringstream ss;
+					ss << name;
+					this->_arenaName = ss.str();
+					this->arenaActive = true;
+
+					pObject = pObject->NextSiblingElement("object");
+				}
+			}
 			}
 			//Other object groups go here with an else if (ss.str() == "whatever")
 			else if (ss.str() == "slopes") {
@@ -974,6 +1004,19 @@ std::vector<Rectangle> Level::checkSaveCollisions(const Rectangle & other)
 	return others;
 }
 
+std::vector<Rectangle> Level::checkArenaCollisions(const Rectangle & other)
+{
+	std::vector<Rectangle> others;
+	if (!arenaActive)
+		return others;
+	for (int i = 0; i < this->_arenaRects.size(); i++) { //loop through our collision rects come from tiles
+		if (this->_arenaRects.at(i).collidesWith(other)) { //Check if any of our collision rects collides with other
+			others.push_back(this->_arenaRects.at(i)); //if it does add it to the others list
+		}
+	}
+	return others; //return whatever collision rects we are colliding with
+}
+
 std::vector<Slope> Level::checkSlopeCollisions(const Rectangle &other) {
 	std::vector<Slope> others;
 	for (int i = 0; i < this->_slopes.size(); i++) {
@@ -1040,6 +1083,12 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					player.addKillTable(this->_enemies.at(i)->getName());
 					this->enemyDead = true;
 					if (this->_enemies.at(i)->isBoss() || this->_enemies.at(i)->isMiniBoss()) {
+						if (arenaActive) {
+							if (this->_enemies.at(i)->getName() == this->_arenaName) {
+								arenaActive = false;
+								this->_arenaName.clear();
+							}
+						}
 						delete this->_enemies.at(i);
 						this->_enemies.erase(this->_enemies.begin() + i);
 					}

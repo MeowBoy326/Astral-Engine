@@ -134,7 +134,7 @@ void Game::gameLoop() {
 			title = _title.Start(graphics, input, event);
 			if (_title.getMenuChoice() == 0) {
 				std::cout << "No save data found...Starting new game!" << std::endl;
-				this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
+				this->_level = Level("Profaned Capital", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
 				this->_level.generateItems(graphics);
 				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
@@ -1060,13 +1060,18 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	//against whatever we give it (player bounding box)
 	//if it returns at least 1, handle Tile collision!
 	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-		//Player collided with atleast 1 title
+		//Player collided with atleast 1 tile
 		this->_player.handleTileCollisions(others);
 	}
 
 	if ((others = this->_level.checkBreakableTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-		//Player collided with atleast 1 title
+		//Player collided with atleast 1 tile
 		this->_player.handleTileCollisions(others);
+	}
+
+	if ((others = this->_level.checkArenaCollisions(this->_player.getBoundingBox())).size() > 0) {
+		//Player collided with atleast 1 tile
+		this->_player.handleArenaCollisions(others);
 	}
 
 	if ((others = this->_level.checkLavaCollisions(this->_player.getBoundingBox())).size() > 0) {
