@@ -1385,11 +1385,11 @@ Vector2 Level::getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileH
 	int tilesetWidth, tilesetHeight;
 	//pass in texture, format, access, width, height. We dont care about format or access so NULL and then reference to width/height
 	SDL_QueryTexture(tls.Texture, NULL, NULL, &tilesetWidth, &tilesetHeight);
-	int tsxx = gid % (tilesetWidth / tileWidth) - 1;
+	int tsxx = (gid - 1) % (tilesetWidth / tileWidth);
 	tsxx *= tileWidth; //we need to know where in our tileset where we are drawing from based on our gid alone
 
 	int tsyy = 0;
-	int amt = ((gid - tls.FirstGid) / (tilesetWidth / tileWidth));
+	int amt = ((gid - 1) / (tilesetWidth / tileWidth));
 	tsyy = tileHeight * amt;
 	Vector2 finalTilesetPosition = Vector2(tsxx, tsyy);
 	return finalTilesetPosition;
