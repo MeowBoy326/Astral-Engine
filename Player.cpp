@@ -824,7 +824,7 @@ void Player::update(float elapsedTime) {
 		//	//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
 		//	this->_dy += player_constants::GRAVITY * elapsedTime;
 		//}
-		if (!_grounded || _currentSurface == SLOPE || !_climbing) {
+		if (!_climbing && (!_grounded || _currentSurface == SLOPE)) {
 			if (this->_dy <= player_constants::GRAVITY_CAP) {
 				this->_dy += player_constants::GRAVITY * elapsedTime;
 			}
