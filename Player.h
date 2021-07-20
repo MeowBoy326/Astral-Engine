@@ -85,6 +85,10 @@ public:
 	inline void setCutsceneTable(std::vector<std::string> table) { this->cutSceneTable = table; }
 	void addCutSceneTable(std::string name);
 	bool checkCutSceneCompleted(std::string name);
+	inline const std::vector<std::string> getLockedDoorTable() const { return this->lockedDoorTable; }
+	inline void setLockedDoorTable(std::vector<std::string> table) { this->lockedDoorTable = table; }
+	void addLockedDoorTable(std::string name);
+	bool checkLockedDoorCompleted(std::string name);
 	void storeLevel(Level &level);
 	void overwriteLevel(Level &level, std::string mapName);
 	const std::string getMapHash(std::string mapName);
@@ -188,6 +192,7 @@ private:
 	std::vector<std::tuple<std::string, std::string, float, float, bool>> bossTable;
 	std::map<std::string, Level> mapStorage;
 	std::vector<std::string> cutSceneTable;
+	std::vector<std::string> lockedDoorTable;
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;
@@ -196,9 +201,9 @@ protected:
 	double _deathAnimationTimer = 0;
 
 
-	std::map<std::string, std::string> mapHash = { {"cave", "CDBC6E6246D10D827D9D53A9F3F400ED4A7EC96A162737E563B850160612C64A"},
+	std::map<std::string, std::string> mapHash = { {"cave", "0DD8979ED8AFD7641E3F80519A1D7376A80DAE2A326DC668D5462B33B7E93993"},
 	{"caveFork", "9D146228905B72A787A2C64C11C5754EE195C7B8C1A466FE21ED30F220403CA5"},
-	{"caverns","7555D4274A94F2C283E8429FB4791CE6CC2C80E070EC1144E67C0902F8BD4027"},
+	{"caverns","0DD8979ED8AFD7641E3F80519A1D7376A80DAE2A326DC668D5462B33B7E93993"},
 	{"Profaned Capital", "93E5009A5D25EBB298DE05CE3D72EAB5CD8A1247E14803A85B86CF0A261E983E"},
 	{"Collapsed Cave", "C6876F557AC3629A4765E10619B471DF1DC81D2CE1EB4766DF95426C607F212B"}, 
 	{"cave depths", "A33687C4DCBD21A27A417C64E923D7C34ABE77C501DF0CA69388E728B9FE1314"},

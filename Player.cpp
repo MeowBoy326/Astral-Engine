@@ -240,6 +240,24 @@ bool Player::checkCutSceneCompleted(std::string name)
 	return false;
 }
 
+void Player::addLockedDoorTable(std::string name)
+{
+	if (std::find(this->lockedDoorTable.begin(), this->lockedDoorTable.end(), name) != this->lockedDoorTable.end())
+		return;
+	else
+		this->lockedDoorTable.push_back(name);
+}
+
+bool Player::checkLockedDoorCompleted(std::string name)
+{
+	for (int i = 0; i < this->lockedDoorTable.size(); ++i) {
+		if (this->lockedDoorTable[i] == name) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Player::storeLevel(Level & level)
 {
 	this->mapStorage[level.getMapName()] = level;
@@ -558,7 +576,7 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 				std::cout << "Unable to set level to new level : Hash check failed!" << std::endl;
 				return;
 			}
-			if (!invent.hasKeyStored()) {
+			if (!this->checkLockedDoorCompleted(others.at(i).getDestination()) && !invent.hasKeyStored()) {
 				return;
 			}
 			if (level.isArenaActive())
@@ -583,6 +601,7 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 			this->_x = level.getPlayerSpawnPoint().x;
 			this->_y = level.getPlayerSpawnPoint().y;
 			player_constants::showMapName = true;
+			this->addLockedDoorTable(others.at(i).getDestination());
 		}
 	}
 }
@@ -646,9 +665,12 @@ void Player::setIFrame(bool condition) {
 
 void Player::gainHealth(float amount) {
 	if (amount < 0 && player_constants::iFrame == false) {
-		amount = amount + (this->_defense * 0.5);
+		if (amount < -35)
+			amount = amount + (this->_defense * 1.5);
+		else
+			amount = amount + (this->_defense * 0.5);
 		if (amount >= 0)
-			amount = -0.15f;
+			amount = -1.0f;
 		this->_currentHealth += amount;
 		std::cout << "lost " << amount << std::endl;
 		player_constants::iFrame = true;
@@ -716,17 +738,22 @@ void Player::gainCurrency(int num)
 void Player::statChoice(int selection)
 {
 	if (selection == 1 && this->_statPoints > 0) {
-		this->_maxHealth += 10 + (this->_soulLevel * 0.5 + 0.08);
+		this->_maxHealth += 10 + (this->_soulLevel * 0.7 + 0.38);
 		this->_currentHealth = this->_maxHealth;
 		this->_statPoints--;
 	}
 	else if (selection == 2 && this->_statPoints > 0) {
-		this->_dmgMod += 1.014;
+		if (this->_dmgMod < 5)
+			this->_dmgMod += 1.12;
+		else
+			this->_dmgMod += 0.44;
 		this->_statPoints--;
-		//
 	}
 	else if (selection == 3 && this->_statPoints > 0) {
-		this->_defense += 0.25 + (this->_soulLevel * 0.5);
+		if (this->_defense <= 7.65)
+			this->_defense += 2.25 + (this->_soulLevel * 0.5);
+		else
+			this->_defense += 1.15 + (this->_soulLevel * 0.2);
 		this->_statPoints--;
 	}
 }
@@ -743,7 +770,7 @@ void Player::setLevel(int num) {
 void Player::addLevel(int num) {
 	this->_playerLevel += num;
 	this->setCurrentExp(0);
-	this->_defense += 0.03 + (this->_soulLevel * 0.11);
+	this->_defense += 0.15 + (this->_soulLevel * 0.11);
 	this->_statPoints += 2;
 	std::cout << "Level up to: " << this->getLevel() << std::endl;
 }
@@ -894,11 +921,12 @@ void Player::update(float elapsedTime) {
 
 		if (this->getKillCount() >= this->getRequiredKills()) {
 			this->addSoulLevel(1);
-			this->_soulStrength += 1;
+			this->_soulStrength += 0.32;
 			srand((unsigned)time(NULL));
 			this->_dmgMod += this->_soulStrength + ((double)(rand() % 90 + 10) / 100);
+			std::cout << "damaged gained: " << this->_dmgMod + this->_soulStrength + ((double)(rand() % 90 + 10) / 100) <<
+				std::endl;
 			std::cout << "damage mod is: " << this->_dmgMod << std::endl;
-			//cout << "damage mod is: " << this->dmgMod;
 			std::cout << "Soul Level increased to: " << this->getSoulLevel() << std::endl;
 		}
 

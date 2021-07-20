@@ -838,6 +838,7 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(bElement);
 	}
 	root->InsertEndChild(element);
+	//Cutscenes
 	element = xml.NewElement("SceneTable");
 	std::vector<std::string> csVec = this->_player.getSceneTable();
 	for (int counter = 0; counter < csVec.size(); ++counter) {
@@ -846,6 +847,16 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(csElement);
 	}
 	root->InsertEndChild(element);
+	//Locked Doors (unlocked)
+	element = xml.NewElement("LockedDoorTable");
+	std::vector<std::string> ldVec = this->_player.getLockedDoorTable();
+	for (int counter = 0; counter < ldVec.size(); ++counter) {
+		XMLElement* ldElement = xml.NewElement("ldTable");
+		ldElement->SetAttribute("lockName", ldVec[counter].c_str());
+		element->InsertEndChild(ldElement);
+	}
+	root->InsertEndChild(element);
+	//Finalize save
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
 	cwd.append("temp.xml");
 	XMLError result = xml.SaveFile(cwd.string().c_str());
@@ -979,6 +990,19 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("csTable");
 	}
 	this->_player.setCutsceneTable(csVec);
+	//Load unlocked doors
+	element = root->FirstChildElement("LockedDoorTable");
+	ptrVec = element->FirstChildElement("ldTable");
+	std::vector<std::string> ldVec;
+	while (ptrVec != nullptr) {
+		const char* namePtr = nullptr;
+		std::string ldName;
+		namePtr = ptrVec->Attribute("lockName");
+		ldName = namePtr;
+		ldVec.push_back(ldName);
+		ptrVec = ptrVec->NextSiblingElement("ldTable");
+	}
+	this->_player.setLockedDoorTable(ldVec);
 	//Load stats
 	element = root->FirstChildElement("Stats");
 	if (element == nullptr)
