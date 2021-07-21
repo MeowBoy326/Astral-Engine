@@ -44,15 +44,15 @@ ArenaEffect::~ArenaEffect()
 }
 
 ArenaEffect::ArenaEffect(Graphics &graphics, Vector2 spawnPoint) :
-	Effects(graphics, "data\\graphics\\arenaBlue.png", 0, 0, 16, 16, spawnPoint, 60),
+	Effects(graphics, "data\\graphics\\arenaBlue.png", 0, 0, 100, 100, spawnPoint, 60),
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y)
 {
 	this->setupAnimations();
 	this->playAnimation("ArenaRight");
-	this->_x = _startingX;
+	this->_x = _startingX - 45;
 	this->_y = _startingY;
-	this->_sourceRect.w = 16;
+	this->_sourceRect.w = 50;
 	this->_sourceRect.h = 280;
 }
 
@@ -76,7 +76,7 @@ void ArenaEffect::animationDone(std::string currentAnimation)
 
 void ArenaEffect::setupAnimations()
 {
-	this->addAnimation(50, 0, 0, "ArenaRight", 16, 16, Vector2(0, 0));
+	this->addAnimation(50, 0, 0, "ArenaRight", 100, 100, Vector2(0, 0));
 	//this->addAnimation(3, 2, 32, "ArenaLeft", 16, 16, Vector2(0, 0));
 	//this->addAnimation(3, 2, 32, "ArenaUp", 16, 16, Vector2(0, 0));
 	//this->addAnimation(3, 2, 32, "ArenaDown", 16, 16, Vector2(0, 0));
