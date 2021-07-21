@@ -55,6 +55,8 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	graphics.loadImage("data\\npc\\npcTextBox.png");
 	this->_Gun = Sprite(graphics, "data\\graphics\\Arms.png", 52, 10, 10, 5, (this->_x - 10), (this->_y + 10));
 	graphics.loadImage("data\\graphics\\Arms.png");
+	this->_JetPack = Sprite(graphics, "data\\graphics\\exhaust.png", 54, 1, 13, 20, (this->_x - 10), (this->_y + 10));
+	graphics.loadImage("data\\graphics\\exhaust.png");
 }
 
 void Player::setupAnimations() {
@@ -258,6 +260,27 @@ bool Player::checkLockedDoorCompleted(std::string name)
 	return false;
 }
 
+void Player::addEquipment(std::string name)
+{
+	if (std::find(this->equipmentTable.begin(), this->equipmentTable.end(), name) != this->equipmentTable.end())
+		return;
+	else {
+		this->equipmentTable.push_back(name);
+		std::cout << "Added " << name << " to equipment" << std::endl;
+	}
+
+}
+
+bool Player::checkEquipmentUnlocked(std::string name)
+{
+	for (int i = 0; i < this->equipmentTable.size(); ++i) {
+		if (this->equipmentTable[i] == name) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Player::storeLevel(Level & level)
 {
 	this->mapStorage[level.getMapName()] = level;
@@ -335,6 +358,23 @@ void Player::jump() {
 		this->_dy -= player_constants::JUMP_DISTANCE;
 		this->_grounded = false;
 		this->_climbing = false;
+	}
+}
+
+void Player::useJetPack()
+{
+	if (this->_fuel <= 0.0f) {
+		this->_fuel = 0.0f;
+		isFlying = false;
+	}
+	else {
+		if (!this->_climbing && !this->isDrowning) {
+			isFlying = true;
+			this->_dy -= 0.2f;
+			this->_fuel -= 0.0423;
+			this->_grounded = false;
+			this->_climbing = false;
+		}
 	}
 }
 
@@ -849,37 +889,35 @@ void Player::update(float elapsedTime) {
 		this->_deathAnimationTimer += elapsedTime;
 	}
 	else {
-		if (_currentSurface == RECTANGLE) {
-			if (getBoundingBox().getRight() < _lastCollidedFloorRect.getLeft() || getBoundingBox().getLeft() > _lastCollidedFloorRect.getRight()) {
-				_grounded = false;
-				_currentSurface = NOTHING;
-			}
-		}
-		else if (_currentSurface == SLOPE) {
-			if (getBoundingBox().getLeft() < _lastCollidedSlope.getP1().x && getBoundingBox().getRight() < _lastCollidedSlope.getP1().x
-				&& getBoundingBox().getLeft() < _lastCollidedSlope.getP2().x && getBoundingBox().getRight() < _lastCollidedSlope.getP2().x) {
-				_grounded = false;
-			}
-			if (getBoundingBox().getLeft() > _lastCollidedSlope.getP1().x && getBoundingBox().getRight() > _lastCollidedSlope.getP1().x
-				&& getBoundingBox().getLeft() > _lastCollidedSlope.getP2().x && getBoundingBox().getRight() > _lastCollidedSlope.getP2().x) {
-				_grounded = false;
-			}
-		}
 		//Apply gravity
-		//if (this->_dy <= player_constants::GRAVITY_CAP && !_climbing) {
-		//	//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
-		//	this->_dy += player_constants::GRAVITY * elapsedTime;
-		//}
-		if (!_climbing && (!_grounded || _currentSurface == SLOPE)) {
+		if (this->_dy <= player_constants::GRAVITY_CAP && !_climbing && !this->isFlying) {
+		//dy is change in y over this frames dy. If dy is less than or equal to gravity cap then we need to increase 
+	    //the DY by gravity because we are not at the cap.
+			this->_dy += player_constants::GRAVITY * elapsedTime;
+		}
+		/*if (!isFlying && !_climbing && (!_grounded || _currentSurface == SLOPE)) {
 			if (this->_dy <= player_constants::GRAVITY_CAP) {
 				this->_dy += player_constants::GRAVITY * elapsedTime;
 			}
-		}
+		}*/
 
 		//Move by dx
 		this->_x += this->_dx * elapsedTime; //elapsedTime will move by a certain amount based on frame rate keeping thing moving smoothly
 		//Move by dy
 		this->_y += this->_dy * elapsedTime; //Gravity move them by Y
+
+		if (this->isFlying) {
+			this->_dy = 0;
+			this->drawExhaust = true;
+			this->isFlying = false;
+		}
+		else if (!this->isFlying && this->_fuel != 100.0f && this->_grounded) {
+			this->_fuel += 0.05;
+			if (this->_fuel >= 99.0f)
+				this->_fuel = 100.0f;
+		}
+		else if (!this->isFlying || this->_fuel != 100.0f)
+			this->drawExhaust = false;
 
 		if (_climbing)
 			this->_dy = 0;
@@ -964,6 +1002,7 @@ void Player::update(float elapsedTime) {
 
 void Player::draw(Graphics &graphics) {
 	AnimatedSprite::draw(graphics, this->_x, this->_y);
+	this->drawJetPack(graphics);
 	this->drawGun(graphics);
 	if (this->isPoisoned)
 		this->drawStatusEffect(graphics, "POISONED");
@@ -973,6 +1012,10 @@ void Player::draw(Graphics &graphics) {
 		this->drawStatusEffect(graphics, "AIR: " + std::to_string((int)this->_air));
 	if (!this->isDrowning && this->_air != 100.0f)
 		this->drawStatusEffect(graphics, "AIR: " + std::to_string((int)this->_air));
+	if (this->isFlying)
+		this->drawStatusEffect(graphics, "FUEL: " + std::to_string((int)this->_fuel));
+	if (!this->isFlying && this->_fuel != 100.0f)
+		this->drawStatusEffect(graphics, "FUEL: " + std::to_string((int)this->_fuel));
 }
 
 void Player::drawGun(Graphics & graphics)
@@ -1012,6 +1055,15 @@ void Player::drawGun(Graphics & graphics)
 		_Gun.setSourceRectH(10);
 		this->_Gun.draw(graphics, this->getX() + 20, this->getY() + 14);
 	}	
+}
+
+void Player::drawJetPack(Graphics & graphics)
+{
+	if (this->_currentHealth <= 0)
+		return;
+	if (this->drawExhaust) {
+		this->_JetPack.draw(graphics, this->getX() + 6, this->getY() + 35);
+	}
 }
 
 void Player::drawStatMenu(Graphics &graphics, Player &player, int selection) {

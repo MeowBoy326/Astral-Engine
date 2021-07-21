@@ -51,6 +51,7 @@ namespace {
 	bool stopScroll = false;
 	bool sceneTalkDone = false;
 	bool isClimbing = false;
+	bool jetPack = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -407,7 +408,13 @@ void Game::gameLoop() {
 					this->_player.stopLookingDown();
 			}
 
-			if (input.isKeyHeld(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0){
+			if (input.isKeyHeld(SDL_SCANCODE_SPACE) && jetPack && this->_player.getCurrentHealth() > 0) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					this->_player.useJetPack();
+				}
+			}
+
+			else if (!jetPack && input.isKeyHeld(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0){
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.jump();
 					if (!jumpSound)
@@ -610,6 +617,12 @@ void Game::gameLoop() {
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
 				//Add weapon swap here
+			}
+			if (input.wasKeyPressed(SDL_SCANCODE_3) == true) {
+				if (this->_player.checkEquipmentUnlocked("JetPack")) {
+					jetPack = !jetPack;
+					std::cout << "JetPack state = " << jetPack << std::endl;
+				}
 			}
 			if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
 				if (!deathSound) {

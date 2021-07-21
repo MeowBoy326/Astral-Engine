@@ -20,6 +20,7 @@ public:
 	Player(Graphics &graphics, Vector2 spawnPoint);
 	void draw(Graphics &graphics);
 	void drawGun(Graphics &graphics);
+	void drawJetPack(Graphics &graphics);
 	void drawStatMenu(Graphics &graphics, Player &player, int selection);
 	void drawSaveMenu(Graphics &graphics, Player &player, int selection);
 	void drawCurrentMapName(Graphics &graphics);
@@ -34,6 +35,7 @@ public:
 	void moveUp(); //For ladders
 	void moveDown();
 	void jump();
+	void useJetPack();
 	void stopMoving();
 	void lookUp();
 	void stopLookingUp();
@@ -89,6 +91,10 @@ public:
 	inline void setLockedDoorTable(std::vector<std::string> table) { this->lockedDoorTable = table; }
 	void addLockedDoorTable(std::string name);
 	bool checkLockedDoorCompleted(std::string name);
+	inline const std::vector<std::string> getEquipmentTable() const { return this->equipmentTable; }
+	inline void setEquipmentTable(std::vector<std::string> table) { this->equipmentTable = table; }
+	void addEquipment(std::string name);
+	bool checkEquipmentUnlocked(std::string name);
 	void storeLevel(Level &level);
 	void overwriteLevel(Level &level, std::string mapName);
 	const std::string getMapHash(std::string mapName);
@@ -149,6 +155,7 @@ private:
 	float _maxHealth;
 	float _currentHealth;
 	float _air = 100;
+	float _fuel = 100;
 	float _exp = 0;
 	float STAT_AGIL = 1;
 	float STAT_STR = 1;
@@ -162,6 +169,8 @@ private:
 	bool isPoisoned = false;
 	bool isBurning = false;
 	bool isDrowning = false;
+	bool isFlying = false;
+	bool drawExhaust = false;
 	bool gotHit = false;
 	bool _playerDeathSound = false;
 	bool deathPlayed = false;
@@ -186,6 +195,7 @@ private:
 	Sprite _saveMenu;
 	Sprite _saveSelection;
 	Sprite _Gun;
+	Sprite _JetPack;
 
 	std::vector<std::pair<std::string, int>> killTable;
 	//name, mapName, initial x & y
@@ -193,6 +203,7 @@ private:
 	std::map<std::string, Level> mapStorage;
 	std::vector<std::string> cutSceneTable;
 	std::vector<std::string> lockedDoorTable;
+	std::vector<std::string> equipmentTable;
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;
@@ -201,13 +212,13 @@ protected:
 	double _deathAnimationTimer = 0;
 
 
-	std::map<std::string, std::string> mapHash = { {"cave", "1B8EB38AF26DC9BF64E5CEE71017FCFACBAE3AD190677D8AC8B586949F971F731"},
+	std::map<std::string, std::string> mapHash = { {"cave", "793E29BF2215B1759F8938147E99B0D17856F08FD01FC0750147A981514A432A"},
 	{"caveFork", "9D146228905B72A787A2C64C11C5754EE195C7B8C1A466FE21ED30F220403CA5"},
 	{"caverns","6A519D289F0011B26C03FD5D8060FEB5C9E54AAC5D2172369AE5025A6FBDD227"},
-	{"Profaned Capital", "6DF278D8FF42656EA05728BB15E67ABF234DCB422863963D94012CA0BE6483C1"},
+	{"Profaned Capital", "AD43B50DBC7814B51753BCEE5E31232001E0F6CC03B5B6BFE6EA497DD49000B1"},
 	{"Collapsed Cave", "2AEFD80ABC968A10D1765EF0C3464FE87941B682FCA7EFD3375BB7DF33EE89FA"}, 
 	{"cave depths", "929C0019831BF3F08AB8D13930F4D1CA26348CC13E93D428E34344AB6541C1B1"},
-	{"Up To The Forest", "16F764EC5855FF841F5C282488D2A81888BD3EE94848E1C09DB38C6A57812301"} };
+	{"Up To The Forest", "5BABA5EB5834A6327B1C8F4EE020DA6F6C0E74D5EBB235CBB981E5A5C3CE8FF2"} };
 };
 
 #endif
