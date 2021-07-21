@@ -15,6 +15,7 @@
 class TextManager;
 class Graphics; //foward decalre
 class Enemy;
+class Effects;
 class Projectile;
 class Npc;
 class Player;
@@ -40,6 +41,7 @@ public:
 	void generateMapItems(Graphics &graphics, std::string mapName, Inventory &invent);
 	void generateEnemies(Graphics &graphics, std::string mapName, Player &player);
 	void generateProjectile(Graphics &graphics, Player &player);
+	void generateEffects(Graphics &graphics, Player &player);
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkBreakableTileCollisions(const Rectangle &other);
@@ -113,6 +115,7 @@ private:
 	std::vector<Door> _lockDoor;
 	std::vector<Enemy*> _enemies; //polymorphism to call the update and draw for the bat and not Enemy's functions, so needs to be a pointer for poly to work
 	std::vector<Projectile*> _projectiles;
+	std::vector<Effects*> _effects;
 	std::vector<Npc*> _npcs;
 	std::vector<Items*> _items;
 	std::vector<int> itemType;

@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "TextManager.h"
 #include "Enemy.h"
+#include "Effects.h"
 #include "Projectile.h"
 #include "Npc.h"
 #include "Items.h"
@@ -52,6 +53,13 @@ Level & Level::operator=(const Level & levelMap)
 			p = NULL;
 		}
 	}
+	for (auto & p : this->_effects) {
+		if (p != nullptr) {
+			delete p;
+			p = NULL;
+		}
+	}
+	this->_effects.clear();
 	this->_projectiles.clear();
 	this->_items.clear();
 	this->_enemies.clear();
@@ -707,6 +715,11 @@ void Level::update(int elapsedTime, Player &player) {
 		if (this->_items.at(i)->isDroppedItem())
 			this->checkItemFloorCollisions(this->_items.at(i));
 	}
+	if (this->arenaActive) {
+		for (int i = 0; i < this->_effects.size(); i++) {
+			this->_effects.at(i)->update(elapsedTime, player);
+		}
+	}
 	for (int i = 0; i < this->_projectiles.size(); i++) {
 		this->_projectiles.at(i)->update(elapsedTime, player);
 	}
@@ -739,6 +752,11 @@ void Level::draw(Graphics &graphics, Player &player) {
 	}
 	for (int i = 0; i < this->_items.size(); i++) {
 		this->_items.at(i)->draw(graphics);
+	}
+	if (this->arenaActive) {
+		for (int i = 0; i < this->_effects.size(); i++) {
+			this->_effects.at(i)->draw(graphics);
+		}
 	}
 	for (int i = 0; i < this->_projectiles.size(); i++) {
 		this->_projectiles.at(i)->draw(graphics);
@@ -1299,6 +1317,16 @@ void Level::generateProjectile(Graphics & graphics, Player & player)
 		}
 	}
 	this->_projectiles.push_back(new SilverBullet(graphics, Vector2(pX, pY), pDir));
+}
+
+void Level::generateEffects(Graphics & graphics, Player & player)
+{
+	if (arenaActive) {
+		this->_effects.push_back(new ArenaEffect(graphics, Vector2(std::floor(this->_arenaRects.at(0).getLeft()),
+			std::floor(this->_arenaRects.at(0).getTop()))));
+		this->_effects.push_back(new ArenaEffect(graphics, Vector2(std::floor(this->_arenaRects.at(0).getRight()),
+			std::floor(this->_arenaRects.at(0).getTop()))));
+	}
 }
 
 std::vector<Enemy*> Level::checkEnemyCollisions(const Rectangle &other) {
