@@ -57,20 +57,22 @@ public:
 	inline void setQuestDone(bool condition) { this->questDone = condition; }
 	inline bool const checkNoQuests() { return this->noQuest; }
 	inline void setNoQuest(bool condition) { this->noQuest = condition; }
-	inline const std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> getQuestLog() const { return this->questLog; }
-	inline void setQuestLog(std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> table) { this->questLog = table; }
+	inline const std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> getQuestLog() const { return this->questLog; }
+	inline void setQuestLog(std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> table) { this->questLog = table; }
 protected:
 	Direction _direction;
-	//questName, type, object, amount, description, npcName
-	std::vector<std::tuple<std::string, int, std::string, int, std::string, std::string>> questTable;
+	//questName, type, object, amount, description, npcName, rewardType, reward(can be converted to int for level), exp, cels
+	std::vector<std::tuple<std::string, int, std::string, int, std::string, std::string, int, std::string, int, int>> questTable;
 	//questName, type, object, amount, isCompleted, isRewarded
-	std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> questLog;
+	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> questLog;
 
 	int _maxHealth;
 	int _currentHealth;
 
 	std::string _npcName;
 	std::string storedQuestName;
+	std::string reward;
+	int levelReward, rewardType, exp, cels;
 
 	Sprite* _chatSelection;
 	Sprite* _questSelection;

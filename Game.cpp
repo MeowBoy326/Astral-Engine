@@ -817,7 +817,7 @@ int Game::saveGame(Graphics & graphics)
 	element = xml.NewElement("QuestLog");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
-	std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> qVec = this->_npc.getQuestLog();
+	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec = this->_npc.getQuestLog();
 	for (int counter = 0; counter < qVec.size(); ++counter) {
 		XMLElement* qElement = xml.NewElement("Quest");
 		qElement->SetAttribute("questName", std::get<0>(qVec[counter]).c_str());
@@ -826,6 +826,10 @@ int Game::saveGame(Graphics & graphics)
 		qElement->SetAttribute("amount", std::get<3>(qVec[counter]));
 		qElement->SetAttribute("completed", std::get<4>(qVec[counter]));
 		qElement->SetAttribute("rewarded", std::get<5>(qVec[counter]));
+		qElement->SetAttribute("rewardType", std::get<6>(qVec[counter]));
+		qElement->SetAttribute("reward", std::get<7>(qVec[counter]).c_str());
+		qElement->SetAttribute("exp", std::get<8>(qVec[counter]));
+		qElement->SetAttribute("cels", std::get<9>(qVec[counter]));
 		element->InsertEndChild(qElement);
 	}
 	root->InsertEndChild(element);
@@ -872,6 +876,15 @@ int Game::saveGame(Graphics & graphics)
 		XMLElement* ldElement = xml.NewElement("ldTable");
 		ldElement->SetAttribute("lockName", ldVec[counter].c_str());
 		element->InsertEndChild(ldElement);
+	}
+	root->InsertEndChild(element);
+	//Equipment
+	element = xml.NewElement("EquipmentTable");
+	std::vector<std::string> eqVec = this->_player.getEquipmentTable();
+	for (int counter = 0; counter < eqVec.size(); ++counter) {
+		XMLElement* eqElement = xml.NewElement("eqTable");
+		eqElement->SetAttribute("equipName", eqVec[counter].c_str());
+		element->InsertEndChild(eqElement);
 	}
 	root->InsertEndChild(element);
 	//Finalize save
@@ -927,11 +940,11 @@ int Game::loadGame(Graphics & graphics)
 	//Load QuestLog
 	element = root->FirstChildElement("QuestLog");
 	ptrVec = element->FirstChildElement("Quest");
-	std::vector<std::tuple<std::string, int, std::string, int, bool, bool>> qVec;
+	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec;
 	while (ptrVec != nullptr) {
-		int amount, type;
-		const char* textPtr = nullptr, *objPtr = nullptr;
-		std::string qName, objName;
+		int amount, type, rewardType, exp, cels;
+		const char* textPtr = nullptr, *objPtr = nullptr, *itemPtr = nullptr;
+		std::string qName, objName, itemName;
 		bool completed, rewarded;
 		result = ptrVec->QueryIntAttribute("type", &type);
 		result = ptrVec->QueryIntAttribute("amount", &amount);
@@ -941,7 +954,12 @@ int Game::loadGame(Graphics & graphics)
 		objName = objPtr;
 		result = ptrVec->QueryBoolAttribute("completed", &completed);
 		result = ptrVec->QueryBoolAttribute("rewarded", &rewarded);
-		qVec.push_back(std::make_tuple(qName, type, objName, amount, completed, rewarded));
+		result = ptrVec->QueryIntAttribute("rewardType", &rewardType);
+		itemPtr = ptrVec->Attribute("reward");
+		itemName = itemPtr;
+		result = ptrVec->QueryIntAttribute("exp", &exp);
+		result = ptrVec->QueryIntAttribute("cels", &cels);
+		qVec.push_back(std::make_tuple(qName, type, objName, amount, completed, rewarded, rewardType, itemName, exp, cels));
 		ptrVec = ptrVec->NextSiblingElement("Quests");
 	}
 	this->_npc.setQuestLog(qVec);
@@ -1021,6 +1039,19 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("ldTable");
 	}
 	this->_player.setLockedDoorTable(ldVec);
+	//Load equipment
+	element = root->FirstChildElement("EquipmentTable");
+	ptrVec = element->FirstChildElement("eqTable");
+	std::vector<std::string> eqVec;
+	while (ptrVec != nullptr) {
+		const char* namePtr = nullptr;
+		std::string eqName;
+		namePtr = ptrVec->Attribute("equipName");
+		eqName = namePtr;
+		eqVec.push_back(eqName);
+		ptrVec = ptrVec->NextSiblingElement("eqTable");
+	}
+	this->_player.setEquipmentTable(eqVec);
 	//Load stats
 	element = root->FirstChildElement("Stats");
 	if (element == nullptr)

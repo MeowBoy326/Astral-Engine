@@ -6,6 +6,7 @@
 #include "tinyxml2.h";
 #include <filesystem>
 #include "AESCipher.h"
+#include <sstream>
 
 using namespace tinyxml2;
 
@@ -170,9 +171,9 @@ int Npc::loadQuests(std::string name)
 	XMLElement* ptrElement = element->FirstChildElement("Quest");
 	if (ptrElement == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
-	int amount, type, numOfQuest;
+	int amount, type, numOfQuest, rewardType, rewardLevel, exp, cels;
 	ptrElement->QueryIntAttribute("numOfQuest", &numOfQuest);
-	const char* textPtr = nullptr, *descPtr = nullptr, *objPtr = nullptr, *npcPtr = nullptr;
+	const char* textPtr = nullptr, *descPtr = nullptr, *objPtr = nullptr, *npcPtr = nullptr, *rewardItem;
 	for (int counter = 0; counter < numOfQuest; ++counter) {
 		//obtain data from XML
 		ptrElement->QueryIntAttribute("amount", &amount);
@@ -180,17 +181,25 @@ int Npc::loadQuests(std::string name)
 		textPtr = ptrElement->Attribute("questName");
 		descPtr = ptrElement->Attribute("description");
 		objPtr = ptrElement->Attribute("object");
+		ptrElement->QueryIntAttribute("rewardType", &rewardType);
+		//if (rewardType == 0) {
+		//ptrElement->QueryIntAttribute("reward", &rewardLevel);
+		//}
+		//else
+		rewardItem = ptrElement->Attribute("reward");
+		ptrElement->QueryIntAttribute("exp", &exp);
+		ptrElement->QueryIntAttribute("cels", &cels);
 		std::string text = textPtr, descText = descPtr, objText = objPtr;
 		bool completed = true;
 		auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
 		//push to vector
 		if (this->questTable.empty() && logIt == questLog.end()) { //check if its not in the accepted quests already
-			this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name));
+			this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
 		}
 		else { //find_if algorithm with lambda function
 			auto it = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
 			if (it == questTable.end() && logIt == questLog.end()) {
-				this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name));
+				this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
 			}
 		}
 		if (ptrElement->NextSiblingElement("Quest") != nullptr)
@@ -266,13 +275,17 @@ void Npc::acceptQuest(Graphics & graphics, std::string npcName, int posX, int po
 		this->drawNpcText(graphics, 100, 100, std::get<4>(this->questTable[selection]), posX, posY);
 		if (this->questLog.empty()) {
 			this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
-				std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false));
+				std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false, 
+				std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]), 
+				std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
 		}
 		else { //find_if algorithm with lambda function
 			auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
 			if (it == questLog.end()) {
 				this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
-					std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false));
+					std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false,
+					std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]),
+					std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
 			}
 		}
 	}
@@ -281,13 +294,51 @@ void Npc::acceptQuest(Graphics & graphics, std::string npcName, int posX, int po
 void Npc::giveRewards(Graphics & graphics, std::string npcName, int posX, int posY, Player & player, int selection)
 {
 	std::string completeMsg;
+	std::stringstream ss;
 	auto it = std::find_if(questLog.begin(), questLog.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
 	auto distance = std::distance(this->questLog.begin(), it);
+	//auto itQT = std::find_if(questTable.begin(), questTable.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
+	//if (itQT == questTable.end()) {
+	//	std::cout << "COULD NOT FIND QUEST IN QUESTABLE!!!" << std::endl;
+	//}
+	//auto distanceQT = std::distance(questTable.begin(), itQT);
 	if (questDone) {
-		completeMsg = "Thank you! Here is your reward.$e"; //TODO: push rewards into vector to distibute any reward for any quest.
-		this->drawNpcText(graphics, 100, 100, completeMsg, posX, posY);
-		if (std::get<5>(this->questLog[distance]) != true)
-			player.addLevel(1);
+		if (this->exp >= 0) {
+			if (std::get<6>(this->questLog[distance]) == 0) {
+				ss << "Here is your reward!$n" << this->levelReward << " level," << this->exp << "exp," << this->cels << "cels.$e";
+				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+			}
+			else if (std::get<6>(this->questLog[distance]) == 1) {
+				ss << "Here is your reward!$n" << this->reward << " item," << this->exp << "exp," << this->cels << "cels.$e";
+				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+			}
+		}
+		if (std::get<5>(this->questLog[distance]) != true) {
+			if (std::get<6>(this->questLog[distance]) == 0) {
+				std::cout << "rewardType = " << std::get<6>(this->questLog[distance]) << std::endl;
+				this->levelReward = std::stoi(std::get<7>(this->questLog[distance]));
+				this->exp = std::get<8>(this->questLog[distance]);
+				this->cels = std::get<9>(this->questLog[distance]);
+				player.addLevel(levelReward);
+				player.gainExp(exp);
+				player.gainCurrency(cels);
+				ss << "Here is your reward!$n" << levelReward << " level," << exp << "exp," << cels << "cels.$e";
+				//completeMsg = "Thank you! Here is your reward.$n" + levelGain + "level, "; //TODO: push rewards into vector to distibute any reward for any quest.
+				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+			}
+			else if (std::get<6>(this->questLog[distance]) == 1) {
+				std::cout << "rewardType = " << std::get<6>(this->questLog[distance]) << std::endl;
+				this->exp = std::get<8>(this->questLog[distance]);
+				this->cels = std::get<9>(this->questLog[distance]);
+				this->reward = std::get<7>(this->questLog[distance]);
+				player.addEquipment(reward);
+				player.gainExp(exp);
+				player.gainCurrency(cels);
+				ss << "Here is your reward!$n" << reward << " item," << exp << "exp," << cels << "cels.$e";
+				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+			}
+		}
+			
 		std::get<5>(this->questLog[distance]) = true;
 	}
 }
