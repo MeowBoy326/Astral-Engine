@@ -290,6 +290,8 @@ void Player::moveLeft() {
 	{
 		return;
 	}
+	if (this->_climbing)
+		return;
 	this->_dx = -player_constants::WALK_SPEED;
 	if (this->_lookingUp == false) {
 		this->playAnimation("RunLeft");
@@ -300,6 +302,8 @@ void Player::moveLeft() {
 void Player::moveRight() {
 	if (this->_lookingDown == true && this->_grounded == true) 
 	{ return; }
+	if (this->_climbing)
+		return;
 	this->_dx = player_constants::WALK_SPEED;
 	if (this->_lookingUp == false) {
 		this->playAnimation("RunRight");
@@ -310,14 +314,14 @@ void Player::moveRight() {
 void Player::moveUp()
 {
 	this->_dy = -player_constants::WALK_SPEED;
+	this->_dx = 0;
 }
 
 void Player::moveDown()
 {
 	this->_dy = +player_constants::WALK_SPEED;
+	this->_dx = 0;
 }
-
-
 
 void Player::jump() {
 	if (this->_grounded) {
@@ -325,6 +329,12 @@ void Player::jump() {
 		this->_dy -= player_constants::JUMP_DISTANCE;
 		this->_grounded = false;
 		this->_currentSurface = NOTHING;
+	}
+	if (this->_climbing) {
+		this->_dy = 0;
+		this->_dy -= player_constants::JUMP_DISTANCE;
+		this->_grounded = false;
+		this->_climbing = false;
 	}
 }
 
@@ -480,23 +490,28 @@ bool Player::handleLadderCollisions(std::vector<Rectangle>& others)
 		if (collisionSide != sides::NONE) {
 			switch (collisionSide) {
 			case sides::TOP:
+				this->_y -= 1;
+				if (this->_facing == LEFT)
+					this->moveLeft();
+				if (this->_facing == RIGHT)
+					this->moveRight();
+				this->_grounded = false;
+				this->_climbing = false;
 				break; //going down the ladder
-				//this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
-				//this->_y = others.at(i).getBottom() + 1; //no longer go through things, stops us
-				//if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
-				//	this->_dx = 0; //stop movement on x-axis
-				//	this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
-				//}
-				//this->_climbing = false;
-				//return false;
-				//break;
 			case sides::BOTTOM: //going up the ladder
 				//hit the top (bottom) of tile push us back up ontop of tile
-				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
-				this->_dy = 0;
-				this->_grounded = true; //we are on ground since it pushed it back up
-				this->_climbing = false;
-				return false;
+				if (this->_climbing) {
+					this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+					this->_dy = 0;
+					this->_grounded = false; //we are on ground since it pushed it back up
+					this->_climbing = false;
+					if (this->_facing == LEFT)
+						this->moveLeft();
+					if (this->_facing == RIGHT)
+						this->moveRight();
+					this->_dy = player_constants::GRAVITY_CAP;
+					return false;
+				}
 				break;
 			}
 		}

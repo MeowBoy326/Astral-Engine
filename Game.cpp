@@ -362,7 +362,11 @@ void Game::gameLoop() {
 				this->_player.setClimbing(true);
 			}*/
 
-			if (input.isKeyHeld(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
+			if (input.isKeyHeld(SDL_SCANCODE_UP) == true &&
+				(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
+					&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
+					&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN)) 
+				&& this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.lookUp();
 					if (isClimbing) {
@@ -371,7 +375,20 @@ void Game::gameLoop() {
 					}
 				}
 			}
-			else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
+			if (input.isKeyHeld(SDL_SCANCODE_UP) == true /*&&
+				(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
+					&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
+					&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN))*/
+				&& this->_player.getCurrentHealth() > 0) {
+				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					this->_player.lookUp();
+				}
+			}
+			else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true && 
+				(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
+				&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
+				&& !input.isKeyHeld(SDL_SCANCODE_UP) && !input.wasKeyPressed(SDL_SCANCODE_UP))
+				&& this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.lookDown();
 					if (isClimbing) {
@@ -1121,11 +1138,19 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		else {
 			isClimbing = false;
 			this->_player.setClimbing(false);
+			if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+				//Player collided with atleast 1 tile
+				this->_player.handleTileCollisions(others);
+			}
 		}
 	}
 	else {
 		isClimbing = false;
 		this->_player.setClimbing(false);
+		if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+			//Player collided with atleast 1 tile
+			this->_player.handleTileCollisions(others);
+		}
 	}
 
 	if ((others = this->_level.checkSaveCollisions(this->_player.getBoundingBox())).size() > 0) {
