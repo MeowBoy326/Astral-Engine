@@ -90,6 +90,7 @@ Level & Level::operator=(const Level & levelMap)
 	this->_arenaRects = levelMap._arenaRects;
 	this->_arenaName = levelMap._arenaName;
 	this->arenaActive = levelMap.arenaActive;
+	this->_txt = levelMap._txt;
 
 	this->classMap.insert(levelMap.classMap.begin(), levelMap.classMap.end());
 	std::set<std::string> values;
