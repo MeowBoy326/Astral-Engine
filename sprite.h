@@ -26,7 +26,7 @@ public:
 	virtual void updateBullet(int bX, int bY, int bW, int bH);
 	virtual void updateBoss(float y);
 	virtual void updateFBall();
-	const Rectangle getProjectileBBox() const;
+	const Rectangle getProjectileBBox();
 	void draw(Graphics &graphics, int x, int y);
 	void drawFBall(Graphics &graphics, int x, int y);
 	void drawHPBar(Graphics &graphics, int x, int y);

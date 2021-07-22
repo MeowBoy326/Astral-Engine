@@ -80,6 +80,7 @@ Level & Level::operator=(const Level & levelMap)
 	this->_lockDoor = levelMap._lockDoor;
 	this->_mapName = levelMap._mapName;
 	this->_size = levelMap._size;
+	this->_mapSize = levelMap._mapSize;
 	this->_slopes = levelMap._slopes;
 	this->_spawnPoint = levelMap._spawnPoint;
 	this->_tileList = levelMap._tileList;
@@ -139,6 +140,8 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	mapNode->QueryIntAttribute("tilewidth", &tileWidth);
 	mapNode->QueryIntAttribute("tileheight", &tileHeight);
 	this->_tileSize = Vector2(tileWidth, tileHeight);
+
+	this->_mapSize = Vector2(this->_size.x * this->_tileSize.x, this->_size.y * this->_tileSize.y);
 
 	//Load BGM
 	XMLElement* propsNode = mapNode->FirstChildElement("properties");
@@ -827,7 +830,7 @@ void Level::checkProjectileTileCollisions()
 {
 	for (int i = 0; i < this->_collisionRects.size(); ++i) {
 		for (int j = 0; j < this->_projectiles.size(); ++j) {
-			if (this->_collisionRects.at(i).collidesWith(this->_projectiles.at(j)->getBoundingBox())) {
+			if (this->_collisionRects.at(i).collidesWith(this->_projectiles.at(j)->getProjectileBBox())) {
 				delete this->_projectiles.at(j);
 				this->_projectiles.erase(this->_projectiles.begin() + j);
 			}

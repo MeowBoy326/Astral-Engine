@@ -196,9 +196,9 @@ void Sprite::updateBullet(int bX, int bY, int bW, int bH) {
 	//cout << "bounding box: " << this->_projectileBBox.getLeft() << "," << this->_projectileBBox.getRight() << " | " << this->_projectileBBox.getBottom() << "," << this->_projectileBBox.getTop() << endl;
 }
 
-const Rectangle Sprite::getProjectileBBox() const {
+const Rectangle Sprite::getProjectileBBox() {
 	return
-		this->_projectileBBox;
+		this->_projectileBBox = Rectangle(this->_x, this->_y, 8, 8);
 }
 
 const Rectangle Sprite::getBoundingBox() const {
