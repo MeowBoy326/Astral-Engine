@@ -255,8 +255,10 @@ void Game::gameLoop() {
 
 			if (activeSaveMenu) {
 				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-					if (saveSelection == 1)
+					if (saveSelection == 1) {
 						this->saveGame(graphics);
+						this->_player.setEventMessage("SAVED SUCESSFULLY.");
+					}
 					activeSaveMenu = false;
 					activeSave = false;	
 				}

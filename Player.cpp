@@ -25,7 +25,7 @@ namespace player_constants {
 	* So, to get to level 1 you need 20 exp. Level 2 needs 40 exp. With every new level exp is set to 0 
 	*/
 	std::vector<float> expTable = {20, 150, 369, 715, 1000, 1420, 2840, 4160, 7180, 12420};
-	std::vector<float> dmgTable = { 40, 185, 420, 850, 1522, 2437, 4700, 6000 }; 
+	std::vector<float> dmgTable = { 70, 225, 420, 850, 1522, 2437, 4700, 6000 }; 
 	// same as above but with kills. this increased damage per kill needed
 }
 
@@ -135,15 +135,21 @@ void Player::addKillTable(std::string name)
 {
 	if (this->killTable.empty()) {
 		this->killTable.push_back(std::make_pair(name, 1));
+		std::string msg = "Slain " + name + " (1)";
+		this->battleMessages.push_back(std::make_tuple(msg, this->_x, this->_y, 0));
 	}
 	else {
 		auto it = std::find_if(killTable.begin(), killTable.end(), [&name](const auto& t) {return t.first == name; });
 		auto distance = std::distance(this->killTable.begin(), it);
 		if (it != killTable.end()) {
 			killTable[distance].second += 1;
+			std::string msg = "Slain " + name + " (" + std::to_string(killTable[distance].second) + ")";
+			this->battleMessages.push_back(std::make_tuple(msg, this->_x, this->_y, 0));
 		}
 		else {
 			this->killTable.push_back(std::make_pair(name, 1));
+			std::string msg = "Slain " + name + " (1)";
+			this->battleMessages.push_back(std::make_tuple(msg, this->_x, this->_y, 0));
 		}
 	}
 }
@@ -267,6 +273,11 @@ void Player::addEquipment(std::string name)
 	else {
 		this->equipmentTable.push_back(name);
 		std::cout << "Added " << name << " to equipment" << std::endl;
+		if (name == "JetPack") {
+			this->eventMessage = "Press 3 to toggle the Jetpack.";
+			this->showEventMsg = true;
+			this->_timeForEventMsg = 0;
+		}
 	}
 
 }
@@ -378,15 +389,6 @@ void Player::useJetPack()
 	}
 }
 
-/*bool Player::isGrounded() {
-	if (this->_dy == 0) {
-		return true;
-	}
-	if (this->_dy > 0) {
-		return false;
-	}
-} */
-
 void Player::stopMoving() {
 	this->_dx = 0.0f;
 	if (this->_currentHealth <= 0)
@@ -430,7 +432,13 @@ void Player::startDeath()
 	this->playAnimation("PlayerDead");
 }
 
-//void handleTileCollisions
+void Player::setEventMessage(std::string text)
+{
+	this->eventMessage = text;
+	this->showEventMsg = true;
+	this->_timeForEventMsg = 0;
+}
+
 //handles collisions with all tiles the player is colliding with
 void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 	//Figure out what side the collision happened on and move the player accordingly
@@ -516,7 +524,6 @@ void Player::handlePoisonCollisions(std::vector<Rectangle>& others)
 void Player::handleWaterCollisions(std::vector<Rectangle>& others)
 {
 	for (int i = 0; i < others.size(); i++) {
-		//this->gainHPFromStatus(-0.02);
 		if (this->_air >= 0.0f)
 			this->_air -= 0.0168;
 		this->isDrowning = true;
@@ -592,10 +599,17 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 		if (this->_grounded == true && this->_lookingDown == true) {
 			if (!cipher.verifyHash(others.at(i).getDestination(), player)) {
 				std::cout << "Unable to set level to new level : Hash check failed!" << std::endl;
+				this->eventMessage = "Anti-Cheat: File has been modified.";
+				this->showEventMsg = true;
+				this->_timeForEventMsg = 0;
 				return;
 			}
-			if (level.isArenaActive())
+			if (level.isArenaActive()) {
+				this->eventMessage = "Boss Battle still in-progress";
+				this->showEventMsg = true;
+				this->_timeForEventMsg = 0;
 				return;
+			}
 			this->overwriteLevel(level, level.getMapName());
 			std::map<std::string, Level>::iterator it;
 			it = this->mapStorage.find(others.at(i).getDestination());
@@ -631,13 +645,24 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 		if (this->_grounded == true && this->_lookingDown == true) {
 			if (!cipher.verifyHash(others.at(i).getDestination(), player)) {
 				std::cout << "Unable to set level to new level : Hash check failed!" << std::endl;
+				this->eventMessage = "Anti-Cheat: File has been modified.";
+				this->showEventMsg = true;
+				this->_timeForEventMsg = 0;
 				return;
 			}
 			if (!this->checkLockedDoorCompleted(others.at(i).getDestination()) && !invent.hasKeyStored()) {
+				this->eventMessage = "Key required";
+				this->showEventMsg = true;
+				this->_timeForEventMsg = 0;
 				return;
 			}
-			if (level.isArenaActive())
+			if (level.isArenaActive()) {
+				this->eventMessage = "Boss Battle still in-progress";
+				this->showEventMsg = true;
+				this->_timeForEventMsg = 0;
 				return;
+			}
+				
 			this->overwriteLevel(level, level.getMapName());
 			std::map<std::string, Level>::iterator it;
 			it = this->mapStorage.find(others.at(i).getDestination());
@@ -670,36 +695,12 @@ void Player::handleEnemyCollisions(std::vector<Enemy*> &others) {
 		if (others.at(i)->getCurrentHealth() > 0) {
 			others.at(i)->touchPlayer(this);
 		}
-
-		//others.at(i)->setTimer();
-	}
-}
-
-/*
-void Player::handleItemCollisions(std::vector<std::string*> &others) {
-	for (int i = 0; i < others.size(); i++) {
-		others.at(i)->
-	}
-}*/
-
-void Player::handleNpcCollisions(std::vector<Npc*> &others, Graphics &graphics, int lineCount) {
-	for (int i = 0; i < others.size(); i++) {
-		//others.at(i)->touchPlayer(this);
-		//others.at(i)->say(graphics, this);
-		//cout << "handleNpcColl: This npc is: " << others.at(i)->getName() << endl;
-		if (lineCount == 0) {
-			//others.at(i)->playScript(others.at(i)->getName(), graphics, this->_x, this->_y);
-		}
-	/*	else if (lineCount >= 1) {
-			others.at(i)->playNextScript(others.at(i)->getName(), graphics, this->_x, this->_y, lineCount);
-		} */
 	}
 }
 
 std::string Player::getNpcName(std::vector<Npc*> &others, Graphics &graphics) {
 	std::string name;
 	for (int i = 0; i < others.size(); i++) {
-		//others.at(i)->runScript(others.at(i)->getName(), graphics, this->_x, this->_y);
 		name = others.at(i)->getName();
 	}
 	return name;
@@ -736,9 +737,9 @@ void Player::gainHealth(float amount) {
 		this->gotHit = true;
 		//Knock back player
 		if (_facing == LEFT)
-			this->_x += 18;
+			this->_dx += 14;
 		else if (_facing == RIGHT)
-			this->_x -= 18;
+			this->_dx -= 14;
 	}
 	else if (amount > 0) {
 		this->_currentHealth += amount;
@@ -758,10 +759,15 @@ void Player::gainMaxHealth(float amount) {
 	this->_maxHealth += amount; 
 	this->_currentHealth += _maxHealth - _currentHealth;
 	std::cout << "Max health is now: " << this->_maxHealth << std::endl;
+	this->eventMessage = "Max health increased by " + std::to_string((int)amount);
+	this->showEventMsg = true;
+	this->_timeForEventMsg = 0;
 }
 
 void Player::gainExp(float exp) {
 	this->_exp += exp;
+	std::string msg = "Gained (+" + std::to_string((int)exp) + ") exp";
+	this->battleMessages.push_back(std::make_tuple(msg, this->_x, this->_y, 0));
 	std::cout << "current exp = " << this->_exp << std::endl;
 	std::cout << "required exp for level " << this->getLevel()+1 << " is:" << this->_requiredExp << std::endl;
 }
@@ -837,6 +843,9 @@ void Player::addLevel(int num) {
 	this->_defense += 0.15 + (this->_soulLevel * 0.11);
 	this->_statPoints += 2;
 	std::cout << "Level up to: " << this->getLevel() << std::endl;
+	this->eventMessage = "Leveled Up!";
+	this->showEventMsg = true;
+	this->_timeForEventMsg = 0;
 }
 
 int Player::getSoulLevel() {
@@ -978,6 +987,27 @@ void Player::update(float elapsedTime) {
 			this->showBlink(true);
 		}
 
+		for (int i = this->battleMessages.size(); i--;) {
+			std::get<3>(this->battleMessages[i]) += elapsedTime; //increase timer
+			//Set X to end of screen on the right then subtract by the width of the texture in TextManager
+			//This will get the correct x position so that the last letter of the string ends right before the end of the screen
+			std::get<1>(this->battleMessages[i]) = this->_x + 320; //Set to player x + screen width / 2 (320)
+			std::get<2>(this->battleMessages[i]) = this->_y + 220; //Set to player y + the offset
+			//Formula by Nataru(J.L)
+			if (i < this->battleMessages.size() - 1) {
+				if (i % 2 == 0) {
+					std::get<2>(this->battleMessages[i]) = std::get<2>(this->battleMessages[i + 1]) - 15;
+				}
+				else {
+					std::get<2>(this->battleMessages[i]) = std::get<2>(this->battleMessages[i + 1]) - 12;
+				}
+			}
+			//Delete from vector if the message exceeds its lifespan
+			if (std::get<3>(this->battleMessages[i]) >= 3100) {
+				this->battleMessages.erase(this->battleMessages.begin() + i);
+			}
+		}
+
 		if (this->getCurrentExp() >= this->getRequiredExp())
 			this->addLevel(1);
 
@@ -990,6 +1020,9 @@ void Player::update(float elapsedTime) {
 				std::endl;
 			std::cout << "damage mod is: " << this->_dmgMod << std::endl;
 			std::cout << "Soul Level increased to: " << this->getSoulLevel() << std::endl;
+			this->eventMessage = "Corruption spread. Damage increased to " + std::to_string((int)this->_dmgMod);
+			this->showEventMsg = true;
+			this->_timeForEventMsg = 0;
 		}
 
 		//Show map name timer
@@ -998,6 +1031,15 @@ void Player::update(float elapsedTime) {
 			if (this->_mapTimeElapsed > this->_timeForMapName) {
 				this->_mapTimeElapsed -= this->_timeForMapName;
 				player_constants::showMapName = false;
+			}
+		}
+
+		if (this->showEventMsg) {
+			this->_timeForEventMsg += elapsedTime;
+			if (this->_timeForEventMsg >= 5000) {
+				this->eventMessage.clear();
+				this->showEventMsg = false;
+				this->_timeForEventMsg = 0;
 			}
 		}
 	}
@@ -1021,6 +1063,14 @@ void Player::draw(Graphics &graphics) {
 		this->drawStatusEffect(graphics, "FUEL: " + std::to_string((int)this->_fuel));
 	if (!this->isFlying && this->_fuel != 100.0f)
 		this->drawStatusEffect(graphics, "FUEL: " + std::to_string((int)this->_fuel));
+	if (this->showEventMsg)
+		this->drawEventMessage(graphics, this->eventMessage);
+	if (!this->battleMessages.empty()) {
+		for (int i = 0; i < this->battleMessages.size(); ++i) {
+			this->_txt->drawBattleMessages(graphics, std::get<1>(this->battleMessages[i]), std::get<2>(this->battleMessages[i]),
+				std::get<0>(this->battleMessages[i]));
+		}
+	}
 }
 
 void Player::drawGun(Graphics & graphics)
@@ -1100,6 +1150,16 @@ void Player::drawCurrentMapName(Graphics &graphics) {
 void Player::drawStatusEffect(Graphics & graphics, const std::string text)
 {
 	this->_txt->drawPlayerStatus(graphics, this->_x, this->_y, text);
+}
+
+void Player::drawEventMessage(Graphics & graphics, std::string text)
+{
+	this->_txt->drawEventMessages(graphics, this->_x, this->_y, text);
+}
+
+void Player::drawBattleMessage(Graphics & graphics, std::string text)
+{
+	this->_txt->drawBattleMessages(graphics, this->_x, this->_y, text);
 }
 
 void Player::showSceneDialogue(Graphics & graphics, std::string text)

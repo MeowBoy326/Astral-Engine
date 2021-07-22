@@ -25,6 +25,8 @@ public:
 	void drawSaveMenu(Graphics &graphics, Player &player, int selection);
 	void drawCurrentMapName(Graphics &graphics);
 	void drawStatusEffect(Graphics &graphics, const std::string text);
+	void drawEventMessage(Graphics &graphics, std::string text);
+	void drawBattleMessage(Graphics &graphics, std::string text);
 	void showSceneDialogue(Graphics &graphics, std::string text);
 	void update(float elapsedTime);
 	bool checkDeathPlayed() const { return this->deathPlayed; }
@@ -58,6 +60,7 @@ public:
 	Slope _lastCollidedSlope;
 
 	//Event handling
+	void setEventMessage(std::string text);
 	void handleTileCollisions(std::vector<Rectangle> &others);
 	void handleArenaCollisions(std::vector<Rectangle> &others);
 	void handleLavaCollisions(std::vector<Rectangle> &others);
@@ -68,7 +71,6 @@ public:
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
-	void handleNpcCollisions(std::vector<Npc*>& others, Graphics &graphics, int lineCount);
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
 	const float getX() const;
 	const float getY() const; //getting variables not changes const make sure it doesnt
@@ -174,6 +176,7 @@ private:
 	bool gotHit = false;
 	bool _playerDeathSound = false;
 	bool deathPlayed = false;
+	bool showEventMsg = false;
 
 	int _requiredExp;
 	int _statPoints = 1;
@@ -188,6 +191,8 @@ private:
 	double _dmgMod = 1;
 	double _timeElapsed = 0; //for timer
 	double _mapTimeElapsed = 0;
+
+	std::string eventMessage;
 
 	TextManager* _txt;
 	Sprite _statMenu;
@@ -204,15 +209,18 @@ private:
 	std::vector<std::string> cutSceneTable;
 	std::vector<std::string> lockedDoorTable;
 	std::vector<std::string> equipmentTable;
+	std::vector<std::tuple<std::string, float, float, double>> battleMessages;
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;
+	double _timeForEventMsg = 0;
+	double _timeForBattleMsg = 0;
 	double _poisonDOTTimer = 0;
 	double _poisonDuration = 0;
 	double _deathAnimationTimer = 0;
 
 
-	std::map<std::string, std::string> mapHash = { {"cave", "793E29BF2215B1759F8938147E99B0D17856F08FD01FC0750147A981514A432A"},
+	std::map<std::string, std::string> mapHash = { {"cave", "5F406C0993521CA00BA1BB13BF86200272DE4D58F96A479D91B50A35A5A9EF31"},
 	{"caveFork", "9D146228905B72A787A2C64C11C5754EE195C7B8C1A466FE21ED30F220403CA5"},
 	{"caverns","6A519D289F0011B26C03FD5D8060FEB5C9E54AAC5D2172369AE5025A6FBDD227"},
 	{"Profaned Capital", "AD43B50DBC7814B51753BCEE5E31232001E0F6CC03B5B6BFE6EA497DD49000B1"},
