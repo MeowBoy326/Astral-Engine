@@ -136,7 +136,7 @@ void Player::addKillTable(std::string name)
 	if (this->killTable.empty()) {
 		this->killTable.push_back(std::make_pair(name, 1));
 		std::string msg = "Slain " + name + " (1)";
-		this->battleMessages.push_back(std::make_tuple(msg, this->_x, this->_y, 0));
+		this->battleMessages.push_back(std::make_tuple(msg, 0, 0, 0));
 	}
 	else {
 		auto it = std::find_if(killTable.begin(), killTable.end(), [&name](const auto& t) {return t.first == name; });
@@ -144,12 +144,12 @@ void Player::addKillTable(std::string name)
 		if (it != killTable.end()) {
 			killTable[distance].second += 1;
 			std::string msg = "Slain " + name + " (" + std::to_string(killTable[distance].second) + ")";
-			this->battleMessages.push_back(std::make_tuple(msg, this->_x, this->_y, 0));
+			this->battleMessages.push_back(std::make_tuple(msg, 0, 0, 0));
 		}
 		else {
 			this->killTable.push_back(std::make_pair(name, 1));
 			std::string msg = "Slain " + name + " (1)";
-			this->battleMessages.push_back(std::make_tuple(msg, this->_x, this->_y, 0));
+			this->battleMessages.push_back(std::make_tuple(msg, 0, 0, 0));
 		}
 	}
 }
@@ -767,7 +767,7 @@ void Player::gainMaxHealth(float amount) {
 void Player::gainExp(float exp) {
 	this->_exp += exp;
 	std::string msg = "Gained (+" + std::to_string((int)exp) + ") exp";
-	this->battleMessages.push_back(std::make_tuple(msg, this->_x, this->_y, 0));
+	this->battleMessages.push_back(std::make_tuple(msg, 0, 0, 0));
 	std::cout << "current exp = " << this->_exp << std::endl;
 	std::cout << "required exp for level " << this->getLevel()+1 << " is:" << this->_requiredExp << std::endl;
 }
