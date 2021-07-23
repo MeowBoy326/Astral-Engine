@@ -52,6 +52,7 @@ namespace {
 	bool sceneTalkDone = false;
 	bool isClimbing = false;
 	bool jetPack = false;
+	bool resetGame = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -131,6 +132,7 @@ void Game::gameLoop() {
 	//Start the game loop
 	while (true) {
 		input.beginNewFrame();
+//Title screen Loop
 		if (title == true) {
 			title = _title.Start(graphics, input, event);
 			if (_title.getMenuChoice() == 0) {
@@ -150,9 +152,17 @@ void Game::gameLoop() {
 				this->loadGame(graphics);
 			}
 		}
+//Death Loop
 		if (title == false && GAMEOVER == true) {
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
+
+			if (!resetGame) {
+				std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "profile";
+				nCwd.append("SF-LOC.xml");
+				std::filesystem::remove(nCwd);
+				resetGame = true;
+			}
 
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
@@ -181,6 +191,7 @@ void Game::gameLoop() {
 				BGM = "null";
 				deathSound = false;
 				GAMEOVER = false;
+				resetGame = false;
 			}
 
 			this->_graphics = graphics; //updated graphics
@@ -192,7 +203,7 @@ void Game::gameLoop() {
 			Mix_PauseMusic();
 			this->drawGameOver(graphics);
 		}
-
+//Cutscene Loop
 		if (title == false && GAMEOVER == false && activeCutscene == true) {
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
@@ -233,7 +244,7 @@ void Game::gameLoop() {
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			this->drawCutscene(graphics);
 		}
-
+//Main Game Loop
 		if (title == false && GAMEOVER == false && activeCutscene == false) {
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
