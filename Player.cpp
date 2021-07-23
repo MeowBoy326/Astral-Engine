@@ -366,7 +366,7 @@ void Player::jump() {
 	}
 	if (this->_climbing) {
 		this->_dy = 0;
-		this->_dy -= player_constants::JUMP_DISTANCE;
+		this->_dy -= 0.07; //Don't set to any higher or else player can traverse quickly using jump
 		this->_grounded = false;
 		this->_climbing = false;
 	}

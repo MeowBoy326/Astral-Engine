@@ -257,8 +257,8 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
-	_currentHealth(110),
-	_maxHealth(110)
+	_currentHealth(170),
+	_maxHealth(170)
 {
 	this->setupAnimations();
 	this->playAnimation("shadeRight");

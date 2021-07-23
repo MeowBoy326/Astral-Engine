@@ -249,7 +249,7 @@ void TextManager::drawVersion(Graphics & graphics, int x, int y)
 	SDL_Surface *backGround;
 	SDL_Surface *surface;
 	SDL_Color color = { 255, 255, 255, 255 };
-	std::string version = "Version 19.4 Alpha 07/16/2021";
+	std::string version = "Version 25.1 Alpha 07/22/2021";
 	int fontSize = 12;
 	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", fontSize);
 
