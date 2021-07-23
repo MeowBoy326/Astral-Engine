@@ -247,6 +247,7 @@ Shade::~Shade()
 {
 	this->destroySprite();
 	this->_shadeBall.destroySprite();
+	this->_oppositeShadeBall.destroySprite();
 	this->_HPBar.destroySprite();
 	this->_HPValue.destroySprite();
 }
@@ -262,10 +263,14 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 	this->setupAnimations();
 	this->playAnimation("shadeRight");
 
-	this->_shadeBall = Sprite(graphics, "data\\enemy\\shadeAttack.png", 0, 0, 22, 19, this->_startingX, (this->_startingY + 5));
+	this->_shadeBall = Sprite(graphics, "data\\enemy\\shadeAttack.png", 0, 0, 22, 19, this->_startingX, (this->_startingY - 10));
+	this->_oppositeShadeBall = Sprite(graphics, "data\\enemy\\shadeAttack.png", 0, 0, 22, 19, this->_startingX - 5, (this->_startingY + 130));
 	this->_HPBar = Sprite(graphics, "data\\enemy\\NpcCemet.png", 2, 157, 17, 7, this->_startingX + 56, this->_startingY - 15);
 	this->_HPValue = Sprite(graphics, "data\\enemy\\NpcCemet.png", 3, 174, 17, 5, this->_startingX + 57, this->_startingY - 12);
 	graphics.loadImage("data\\enemy\\shadeAttack.png");
+
+	this->sBallX = .33;
+	this->osBallX = -.33;
 }
 
 void Shade::update(int elapsedTime, Player &player) {
@@ -274,14 +279,13 @@ void Shade::update(int elapsedTime, Player &player) {
 		this->_dy += this->GRAVITY * elapsedTime;
 	}
 	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
-	//this->_HPBar._y += this->_dy * elapsedTime;
-	//this->_HPValue._y += this->_dy * elapsedTime;
 	this->_shadeBall.update();
+	this->_oppositeShadeBall.update();
 	this->_HPBar.update();
 	this->_HPValue.update();
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
 	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
-		if (this->isIdle == true && (this->_direction == RIGHT && player.getX() > this->_x + 350) || (this->_direction == LEFT &&
+		if (this->isIdle == true && (this->_direction == RIGHT && player.getX() > this->_x + 350 || this->_direction == LEFT &&
 			player.getX() <= this->_x - 350)) {
 			this->playAnimation("shadeIdle");
 			isIdle = true;
@@ -295,8 +299,10 @@ void Shade::update(int elapsedTime, Player &player) {
 			if (player.isGrounded() && player.getY() < this->_y + 15 && !this->_hasTeleported) {
 				this->_y = player.getY();
 				this->_x = player.getX();
-				this->_shadeBall._y = this->_y + 5;
+				this->_shadeBall._y = this->_y - 10;
 				this->_shadeBall._x = this->_x;
+				this->_oppositeShadeBall._y = this->_y + 30;
+				this->_oppositeShadeBall._x = this->_x;
 				this->_HPBar._x = this->_x + 56;
 				this->_HPBar._y = this->_y - 15;
 				this->_HPValue._x = this->_x + 57;
@@ -312,8 +318,8 @@ void Shade::update(int elapsedTime, Player &player) {
 				this->_x += 0.07f;
 				if (this->_boundingBox.collidesWith(player.getBoundingBox()))
 					this->_x -= 0.07f;
-				this->_HPBar._x += 0.07f;
-				this->_HPValue._x += 0.07f;
+				this->_HPBar._x = this->_x + 56;
+				this->_HPValue._x = this->_x + 56;
 				this->_HPBar._y = this->_y - 65;
 				this->_HPValue._y = this->_y - 62;
 			}
@@ -321,26 +327,46 @@ void Shade::update(int elapsedTime, Player &player) {
 				this->_x -= 0.07f;
 				if (this->_boundingBox.collidesWith(player.getBoundingBox()))
 					this->_x += 0.07f;
-				this->_HPBar._x -= 0.07f;
-				this->_HPValue._x -= 0.07f;
+				this->_HPBar._x = this->_x + 36;
+				this->_HPValue._x = this->_x + 36;
 				this->_HPBar._y = this->_y - 65;
 				this->_HPValue._y = this->_y - 62;
 			}
 			if (this->getBoundingBox().collidesWith(player.getBoundingBox())) {
-				player.gainHealth(-18.64f);
+				player.gainHealth(-9.64f);
 			}
 			if (_shadeBall.getBoundingBox().collidesWith(player.getBoundingBox())) {
-				this->_shadeBall.setX(this->_x);
-				this->_shadeBall.setY(this->_y + 5);
 				player.gainHealth(-38.69f);
 			}
-			else if (_shadeBall.getX() > this->_x + 290) {
-				this->_shadeBall.setX(this->_x);
-				this->_shadeBall.setY(this->_y + 5);
+			if (_shadeBall.getX() >= this->_startingX + 1180) {
+				this->sBallX = -.33 * sBallMultiplyer;
+				sBallMultiplyer += 0.4;
+				if (sBallMultiplyer >= 4.0)
+					sBallMultiplyer = 1.0;
 			}
-			else {
-				this->_shadeBall.addX(player.getX() > this->_x ? .55 : -.55);
+			if (this->_startingX - 430 >= _shadeBall._x) {
+				this->sBallX = .33 * sBallMultiplyer;
+				sBallMultiplyer += 0.4;
+				if (sBallMultiplyer >= 4.0)
+					sBallMultiplyer = 1.0;
 			}
+			if (_oppositeShadeBall.getBoundingBox().collidesWith(player.getBoundingBox())) {
+				player.gainHealth(-38.69f);
+			}
+			if (_oppositeShadeBall.getX() >= this->_startingX + 1180) {
+				this->osBallX = -.33 * osBallMultiplyer;
+				osBallMultiplyer += 0.4;
+				if (osBallMultiplyer >= 4.0)
+					osBallMultiplyer = 1.0;
+			}
+			if (this->_startingX - 430 >= _oppositeShadeBall._x) {
+				this->osBallX = .33 * osBallMultiplyer;
+				osBallMultiplyer += 0.4;
+				if (osBallMultiplyer >= 4.0)
+					osBallMultiplyer = 1.0;
+			}
+			this->_shadeBall._x += this->sBallX;
+			this->_oppositeShadeBall._x += this->osBallX;
 		}
 	}
 
@@ -374,8 +400,11 @@ void Shade::bulletHit(float dmg) {
 void Shade::draw(Graphics &graphics) {
 	if (isVisible == true) {
 	AnimatedSprite::drawBoss(graphics, this->_x, this->_y);
-	if (isIdle == false)
+	if (isIdle == false) {
 		this->_shadeBall.draw(graphics, this->_shadeBall.getX(), this->_shadeBall.getY());
+		this->_oppositeShadeBall.draw(graphics, this->_oppositeShadeBall.getX(), this->_oppositeShadeBall.getY());
+	}
+		
 	if (this->getCurrentHealth() < this->getMaxHealth()) {
 		this->_HPBar.draw(graphics, this->_HPBar._x, this->_HPBar._y);
 		this->_HPValue.draw(graphics, this->_HPValue._x, this->_HPValue._y);

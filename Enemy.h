@@ -185,12 +185,15 @@ private:
 	int iFrameCount = 0;
 	float shadeExp = 350;
 	Sprite _shadeBall;
+	Sprite _oppositeShadeBall;
 	Sprite _HPBar;
 	Sprite _HPValue;
-	//float _fireX, _fireY;
+	float sBallX, osBallX;
+	double sBallMultiplyer = 1.0, osBallMultiplyer = 1.0;
 	double _deathAnimationTime = 800;
 	double _deathTimeElapsed = 0;
 	float _teleportTimer = 0;
+	double _teleportBehindTimer = 0;
 protected:
 	Direction _direction;
 	int _maxHealth;
