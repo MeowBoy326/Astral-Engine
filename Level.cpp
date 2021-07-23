@@ -24,6 +24,11 @@ using namespace tinyxml2; //all tinyxml2 is in a namespace because we will use s
 
 template<typename T> Items * createInstance(Graphics& graphics, Vector2 spawnPoint) { return new T(graphics, spawnPoint); }
 
+//The bits at the end of the 32-bit tileset GID that determine the tile's flip position
+const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
+const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+
 Level::Level() {}
 
 Level::Level(std::string mapName, Graphics &graphics, Inventory &invent) :
@@ -328,6 +333,14 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								}
 							//get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
 							int gid = pTile->IntAttribute("gid");
+							//Read out the flags for flipped tiles
+							bool flipped_horizontally = (gid & FLIPPED_HORIZONTALLY_FLAG);
+							bool flipped_vertically = (gid & FLIPPED_VERTICALLY_FLAG);
+							bool flipped_diagonally = (gid & FLIPPED_DIAGONALLY_FLAG);
+							//Clear the flag bits only
+							gid &= ~(FLIPPED_HORIZONTALLY_FLAG |
+								FLIPPED_VERTICALLY_FLAG |
+								FLIPPED_DIAGONALLY_FLAG);
 							int closest = 0;
 							Tileset tls;
 							for (int i = 0; i < this->_tilesets.size(); i++) {
