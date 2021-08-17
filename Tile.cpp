@@ -6,11 +6,12 @@
 
 Tile::Tile() {}
 
-Tile::Tile(SDL_Texture* tileset, Vector2 size, Vector2 tilesetPosition, Vector2 position) :
+Tile::Tile(SDL_Texture* tileset, Vector2 size, Vector2 tilesetPosition, Vector2 position, SDL_RendererFlip tileFlip) :
 	_tileset(tileset),
 	_size(size),
 	_tilesetPosition(tilesetPosition),
-	_position(Vector2(position.x * globals::SPRITE_SCALE, position.y * globals::SPRITE_SCALE))
+	_position(Vector2(position.x * globals::SPRITE_SCALE, position.y * globals::SPRITE_SCALE)),
+	_tileFlip(tileFlip)
 {}
 
 void Tile::update(int elapsedTime) {}
@@ -21,5 +22,11 @@ void Tile::draw(Graphics &graphics) {
 	//SDL_Rect tmp = {destRect.x - Camera::GetRect().x, destRect.y - Camera::GetRect().y, destRect.w, destRect.h };
 	SDL_Rect sourceRect = { this->_tilesetPosition.x, this->_tilesetPosition.y, this->_size.x, this->_size.y };
 
-	graphics.blitSurface(this->_tileset, &sourceRect, &destRect);
+
+	if (this->_tileFlip == SDL_FLIP_NONE) {
+		graphics.blitSurface(this->_tileset, &sourceRect, &destRect);
+	}
+	else {
+		graphics.blitFlippedSurface(this->_tileset, &sourceRect, &destRect, this->_tileFlip);
+	}
 }

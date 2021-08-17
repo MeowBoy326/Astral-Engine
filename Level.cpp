@@ -296,7 +296,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 										this->_animatedTileList.push_back(tile);
 									}
 									else { //not animated tile, create static one
-										Tile tile(tls.Texture, Vector2(tileWidth, tileHeight), finalTilesetPosition, finalTilePosition);
+										Tile tile(tls.Texture, Vector2(tileWidth, tileHeight), finalTilesetPosition, finalTilePosition, SDL_FLIP_NONE);
 										this->_breakTileList.push_back(tile);
 									}
 									tileCounter++;
@@ -334,9 +334,19 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							//get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
 							int gid = pTile->IntAttribute("gid");
 							//Read out the flags for flipped tiles
+							SDL_RendererFlip tileFlip = SDL_FLIP_NONE;
 							bool flipped_horizontally = (gid & FLIPPED_HORIZONTALLY_FLAG);
 							bool flipped_vertically = (gid & FLIPPED_VERTICALLY_FLAG);
 							bool flipped_diagonally = (gid & FLIPPED_DIAGONALLY_FLAG);
+							if (flipped_horizontally) {
+								tileFlip = SDL_FLIP_HORIZONTAL;
+							}
+							else if (flipped_vertically) {
+								tileFlip = SDL_FLIP_VERTICAL;
+							}
+							else if (flipped_diagonally) {
+								//TODO: Diagonal flips/rotations
+							}
 							//Clear the flag bits only
 							gid &= ~(FLIPPED_HORIZONTALLY_FLAG |
 								FLIPPED_VERTICALLY_FLAG |
@@ -401,7 +411,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									this->_animatedTileList.push_back(tile);
 							}
 							else { //not animated tile, create static one
-							Tile tile(tls.Texture, Vector2(tileWidth, tileHeight), finalTilesetPosition, finalTilePosition);
+							Tile tile(tls.Texture, Vector2(tileWidth, tileHeight), finalTilesetPosition, finalTilePosition, tileFlip);
 							this->_tileList.push_back(tile);
 							}
 							tileCounter++;

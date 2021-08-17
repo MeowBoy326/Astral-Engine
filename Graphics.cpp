@@ -35,47 +35,31 @@ SDL_Surface* Graphics::loadImage(const std::string &filePath) {
 	
 }
 
-	void Graphics::blitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle) {
-		SDL_Rect tmp = { destinationRectangle->x - Camera::GetRect().x, destinationRectangle->y - Camera::GetRect().y, destinationRectangle->w, destinationRectangle->h };
-		SDL_RenderCopy(this->_renderer, texture, sourceRectangle, &tmp);
-		/*int valueX = tmp.x;
-		std::ofstream file;
-		file.open("graph.txt", std::ios_base::app);
-		file << "\n " << valueX;
-		file.close();*/
-		//SDL_RenderCopy(this->_renderer, texture, sourceRectangle, destinationRectangle);
-	}
+void Graphics::blitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle) {
+	SDL_Rect tmp = { destinationRectangle->x - Camera::GetRect().x, destinationRectangle->y - Camera::GetRect().y, destinationRectangle->w, destinationRectangle->h };
+	SDL_RenderCopy(this->_renderer, texture, sourceRectangle, &tmp);
+}
 
-	void Graphics::windowBlitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle) {
-		SDL_Rect tmp = { destinationRectangle->x, destinationRectangle->y, destinationRectangle->w, destinationRectangle->h };
-		SDL_RenderCopy(this->_renderer, texture, sourceRectangle, &tmp);
-	}
+void Graphics::blitFlippedSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle, SDL_RendererFlip flip)
+{
+	SDL_Rect tmp = { destinationRectangle->x - Camera::GetRect().x, destinationRectangle->y - Camera::GetRect().y, destinationRectangle->w, destinationRectangle->h };
+	//RenderCopyEx will flip the texture depending on the value of the flip parameter
+	SDL_RenderCopyEx(this->_renderer, texture, sourceRectangle, &tmp, 0, 0, flip);
+}
 
-	void Graphics::blitTwo(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle) {
-		SDL_Rect tmp = { destinationRectangle->x - Camera::GetRect().x, destinationRectangle->y - Camera::GetRect().y, destinationRectangle->w, destinationRectangle->h };
-		SDL_RenderCopy(this->_rendTwo, texture, sourceRectangle, &tmp);
-	}
+void Graphics::windowBlitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle) {
+	SDL_Rect tmp = { destinationRectangle->x, destinationRectangle->y, destinationRectangle->w, destinationRectangle->h };
+	SDL_RenderCopy(this->_renderer, texture, sourceRectangle, &tmp);
+}
 
-	void Graphics::flipTwo() {
-		SDL_RenderPresent(this->_rendTwo);
-	}
+void Graphics::flip() {
+	SDL_RenderPresent(this->_renderer);
+}
 
-	void Graphics::flip() {
-		SDL_RenderPresent(this->_renderer);
-	}
+void Graphics::clear() {
+	SDL_RenderClear(this->_renderer);
+}
 
-	void Graphics::clear() {
-		SDL_RenderClear(this->_renderer);
-	}
-
-	void Graphics::clearTwo() {
-		SDL_RenderClear(this->_rendTwo);
-	}
-
-	SDL_Renderer* Graphics::getRendTwo() const {
-		return this->_rendTwo;
-	}
-
-	SDL_Renderer* Graphics::getRenderer() const {
-		return this->_renderer;
-	}
+SDL_Renderer* Graphics::getRenderer() const {
+	return this->_renderer;
+}

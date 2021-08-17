@@ -18,40 +18,26 @@ class Graphics {
 public:
 	Graphics();
 	~Graphics();
-
 	/* SDL_Surface* loadimage
 	* Loads an image into the _spriteSheets map if it doesnt already exist
 	* As a result each image will only ever be loaded once
 	* Returns the image from the map regaurdless of wether or not it was just loaded
 	*/
-
 	SDL_Surface* loadImage(const std::string &filePath);
-
 	//void blitzSurface will draw a texture to a certain part of the screen
 	//source is what we are drawing to the screen, sourceRectangle is what part of the spritesheet we will draw
 	//destinationRectangle is where on the screen we will draw it
 	void blitSurface(SDL_Texture* source, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle);
-
-	void windowBlitSurface(SDL_Texture * texture, SDL_Rect * sourceRectangle, SDL_Rect * destinationRectangle);
-
-	void blitTwo(SDL_Texture * texture, SDL_Rect * sourceRectangle, SDL_Rect * destinationRectangle);
-
+	//Same as above (blitSurface) but will flip/rotate the image based on the flip parameter's value
+	void blitFlippedSurface(SDL_Texture* source, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectalge, SDL_RendererFlip flip);
+	//Drawings for the Title screen
+	void windowBlitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle);
 	//void flip: Renders everythign to the screen
 	void flip();
-
-	void flipTwo();
-
 	//void clear: clears the screen
 	void clear();
-
-	void clearTwo();
-
-	SDL_Renderer * getRendTwo() const;
-
 	//return our render so we can use it elsewhere (sprite class)
 	SDL_Renderer* getRenderer() const;
-
-
 private:
 	SDL_Window * _window;
 	SDL_Renderer* _renderer;
