@@ -817,7 +817,9 @@ void Player::statChoice(int selection)
 {
 	if (selection == 1 && this->_statPoints > 0) {
 		this->_maxHealth += 10 + (this->_soulLevel * 0.7 + 0.38);
-		this->_currentHealth = this->_maxHealth;
+		this->_currentHealth += this->_maxHealth / 9;
+		if (this->_currentHealth > this->_maxHealth)
+			this->_currentHealth = this->_maxHealth;
 		this->_statPoints--;
 	}
 	else if (selection == 2 && this->_statPoints > 0) {
