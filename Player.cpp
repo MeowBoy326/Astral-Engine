@@ -763,7 +763,9 @@ void Player::gainHPFromStatus(float amount)
 
 void Player::gainMaxHealth(float amount) { 
 	this->_maxHealth += amount; 
-	this->_currentHealth += _maxHealth - _currentHealth;
+	this->_currentHealth += _maxHealth / 8;
+	if (this->_currentHealth > this->_maxHealth)
+		this->_currentHealth = this->_maxHealth;
 	std::cout << "Max health is now: " << this->_maxHealth << std::endl;
 	this->eventMessage = "Max health increased by " + std::to_string((int)amount);
 	this->showEventMsg = true;
