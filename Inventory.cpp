@@ -65,7 +65,7 @@ void Inventory::useItem(int type, Player &player) {
 		for (int index = 0; index < this->inventoryTable.size(); ++index) {
 			if (this->inventoryTable[index].second == 0 && this->inventoryTable[index].first >=1 && 
 				player.getCurrentHealth() < player.getMaxHealth()) {
-				player.gainHealth(player.getMaxHealth() - player.getCurrentHealth());
+				player.gainHealth(player.getMaxHealth() / 3);
 				this->inventoryTable[index].first -= 1;
 				if (this->inventoryTable[index].first == 0)
 					this->inventoryTable.erase(this->inventoryTable.begin() + index);

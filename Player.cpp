@@ -749,7 +749,9 @@ void Player::gainHealth(float amount) {
 	}
 	else if (amount > 0) {
 		this->_currentHealth += amount;
-		std::cout << "gained " << _currentHealth << std::endl;
+		if (this->_currentHealth > this->_maxHealth)
+			this->_currentHealth = this->_maxHealth;
+		std::cout << "gained " << amount << std::endl;
 	}
 }
 
