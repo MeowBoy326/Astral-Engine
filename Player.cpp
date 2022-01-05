@@ -821,7 +821,7 @@ void Player::statChoice(int selection)
 		if (this->_dmgMod < 3)
 			this->_dmgMod += 0.55;
 		else
-			this->_dmgMod += 0.25;
+			this->_dmgMod += 0.25 + (this->_soulLevel * 0.2);
 		this->_statPoints--;
 	}
 	else if (selection == 3 && this->_statPoints > 0) {
