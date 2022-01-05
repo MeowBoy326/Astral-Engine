@@ -8,6 +8,8 @@
 #include "Items.h"
 #include <time.h>
 #include "AESCipher.h"
+#include <sstream>
+#include <iomanip>
 
 namespace player_constants {
 	float WALK_SPEED = 0.2f;
@@ -780,6 +782,35 @@ void Player::gainExp(float exp) {
 	this->battleMessages.push_back(std::make_tuple(msg, 0, 0, 0));
 	std::cout << "current exp = " << this->_exp << std::endl;
 	std::cout << "required exp for level " << this->getLevel()+1 << " is:" << this->_requiredExp << std::endl;
+}
+
+void Player::gainExpFromEnemy(int enemyLevel, float exp)
+{
+	if (this->_playerLevel == 0) {
+		this->_exp += exp;
+	}
+	else {
+		exp -= 0.25;
+		if (this->_playerLevel > enemyLevel) {
+			int lvlDiff = this->_playerLevel - enemyLevel;
+			if (exp <= 10)
+				exp -= lvlDiff + this->_playerLevel * 0.12;
+			else
+				exp -= lvlDiff + this->_playerLevel * 0.30 + (exp / 3);
+		}
+		if (exp <= 0) {
+			exp = 0.1;
+		}
+		this->_exp += exp;
+	}
+	std::cout << "exp gain: " << exp << std::endl;
+	std::stringstream streamExp;
+	streamExp << std::fixed << std::setprecision(2) << exp;
+	std::string fixedExp = streamExp.str();
+	std::string msg = "Gained (+" + fixedExp + ") exp";
+	this->battleMessages.push_back(std::make_tuple(msg, 0, 0, 0));
+	std::cout << "current exp = " << this->_exp << std::endl;
+	std::cout << "required exp for level " << this->getLevel() + 1 << " is:" << this->_requiredExp << std::endl;
 }
 
 float Player::getCurrentExp()

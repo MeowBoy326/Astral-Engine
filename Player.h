@@ -125,6 +125,7 @@ public:
 	//Exp, Level, & currency handling
 	void drawExpNumbers(Graphics &graphics);
 	void gainExp(float exp);
+	void gainExpFromEnemy(int enemyLevel, float exp);
 	float getCurrentExp();
 	void setCurrentExp(float exp);
 	float getRequiredExp();

@@ -1116,7 +1116,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 							this->itemType.push_back(4);
 						}
 					}
-					player.gainExp(this->_enemies.at(i)->enemyExpAmount());
+					player.gainExpFromEnemy(this->_enemies.at(i)->getEnemyLevel(), this->_enemies.at(i)->enemyExpAmount());
 					player.addKillCount(1);
 					player.addKillTable(this->_enemies.at(i)->getName());
 					this->enemyDead = true;
