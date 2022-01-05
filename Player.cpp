@@ -131,6 +131,11 @@ const float Player::getY() const {
 	return this->_y;
 }
 
+const float Player::getPreviousY() const
+{
+	return this->previousY;
+}
+
 void Player::addKillTable(std::string name)
 {
 	if (this->killTable.empty()) {
@@ -442,7 +447,7 @@ void Player::setEventMessage(std::string text)
 //handles collisions with all tiles the player is colliding with
 void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 	//Figure out what side the collision happened on and move the player accordingly
-	if (this->_climbing)
+	if (this->_climbing && this->isBreakableCollision == false)
 		return;
 	for (int i = 0; i < others.size(); i++) {
 		sides::Side collisionSide = Sprite::getCollisionSide(others.at(i));
@@ -914,10 +919,10 @@ void Player::update(float elapsedTime) {
 				this->_dy += player_constants::GRAVITY * elapsedTime;
 			}
 		}*/
-
 		//Move by dx
 		this->_x += this->_dx * elapsedTime; //elapsedTime will move by a certain amount based on frame rate keeping thing moving smoothly
 		//Move by dy
+		this->previousY = this->_y;
 		this->_y += this->_dy * elapsedTime; //Gravity move them by Y
 
 		if (this->isFlying) {

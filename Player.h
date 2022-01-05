@@ -74,6 +74,7 @@ public:
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
 	const float getX() const;
 	const float getY() const; //getting variables not changes const make sure it doesnt
+	const float getPreviousY() const;
 	std::string enemyName;
 	void addKillTable(std::string name);
 	void addBossTable(std::string name, std::string mapName, float x, float y);
@@ -101,7 +102,9 @@ public:
 	void overwriteLevel(Level &level, std::string mapName);
 	const std::string getMapHash(std::string mapName);
 	bool isGrounded() const { return this->_grounded; }
+	bool isWalking() { return (this->_dx != 0) ? true : false; }
 	void setClimbing(bool condition) { this->_climbing = condition; }
+	void setBreakableCollision(bool condition) { this->isBreakableCollision = condition; }
 	
 
 	//Health handling
@@ -154,6 +157,7 @@ public:
 	int selectY = 0;
 private:
 	float _dx, _dy; //(dx (delta x) is change in x postition during frame)
+	float previousY = 0;
 	float _maxHealth;
 	float _currentHealth;
 	float _air = 100;
@@ -172,6 +176,7 @@ private:
 	bool isBurning = false;
 	bool isDrowning = false;
 	bool isFlying = false;
+	bool isBreakableCollision = false;
 	bool drawExhaust = false;
 	bool gotHit = false;
 	bool _playerDeathSound = false;
@@ -220,10 +225,10 @@ protected:
 	double _deathAnimationTimer = 0;
 
 
-	std::map<std::string, std::string> mapHash = { {"cave", "F495AE9414AFA359F858799A0CCF81BD1C82F3D555487158C3938C808FDE5AF9"},
-	{"caveFork", "A97316B5A18D21BC80A36B35CDE2BB75D8901737A664693F3D4CDC4A446D9798"},
-	{"caverns","1A7D942D98242FA45B064BBCEEBD9791058700F2DD91E397144A8CC4FFA1AF4B"},
-	{"Profaned Capital", "A4D2395545CCBFA031A9EBBE241E277E8A9E2C9B89A1E0AB7B1D29FE5C442A7B"},
+	std::map<std::string, std::string> mapHash = { {"cave", "70328D0A2011D485E4CA6DD131C2B5C97D41FBADBD04A6423B51BE4A5ADC8327"},
+	{"caveFork", "9FCA227287F97578ACBA429476330E7891AD9C886B9B2ECB0F49652418FC9422"},
+	{"caverns","7E95CF58CF92D6023BCD9FCF94C898AE83573A06077155223F79B889924B686A"},
+	{"Profaned Capital", "A4FE52EA506A0116BABA3F139D7C25AA1936A558D028A20669F80A85F5A6BF94"},
 	{"Collapsed Cave", "2AEFD80ABC968A10D1765EF0C3464FE87941B682FCA7EFD3375BB7DF33EE89FA"}, 
 	{"cave depths", "929C0019831BF3F08AB8D13930F4D1CA26348CC13E93D428E34344AB6541C1B1"},
 	{"Up To The Forest", "C991610C4B5A585142456B012AFC435E090B745DF9A01936326651DC072D5436"} };

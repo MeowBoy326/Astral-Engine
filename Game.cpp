@@ -1165,7 +1165,11 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 
 	if ((others = this->_level.checkBreakableTileCollisions(this->_player.getBoundingBox())).size() > 0) {
 		//Player collided with atleast 1 tile
+		this->_player.setBreakableCollision(true);
 		this->_player.handleTileCollisions(others);
+	}
+	else {
+		this->_player.setBreakableCollision(false);
 	}
 
 	if ((others = this->_level.checkArenaCollisions(this->_player.getBoundingBox())).size() > 0) {
