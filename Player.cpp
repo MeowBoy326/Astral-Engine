@@ -742,9 +742,10 @@ void Player::gainHealth(float amount) {
 		this->gotHit = true;
 		//Knock back player
 		if (_facing == LEFT)
-			this->_dx += 14;
+			this->_x += 14;
 		else if (_facing == RIGHT)
-			this->_dx -= 14;
+			this->_x -= 14;
+		this->_dx = 0;
 	}
 	else if (amount > 0) {
 		this->_currentHealth += amount;
