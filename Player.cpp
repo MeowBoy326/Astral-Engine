@@ -818,10 +818,10 @@ void Player::statChoice(int selection)
 		this->_statPoints--;
 	}
 	else if (selection == 2 && this->_statPoints > 0) {
-		if (this->_dmgMod < 5)
-			this->_dmgMod += 1.12;
+		if (this->_dmgMod < 3)
+			this->_dmgMod += 0.55;
 		else
-			this->_dmgMod += 0.44;
+			this->_dmgMod += 0.25;
 		this->_statPoints--;
 	}
 	else if (selection == 3 && this->_statPoints > 0) {
