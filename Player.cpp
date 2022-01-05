@@ -846,7 +846,10 @@ void Player::addLevel(int num) {
 	this->_playerLevel += num;
 	this->setCurrentExp(0);
 	this->_defense += 0.25 + (this->_soulLevel * 0.11);
-	this->_maxHealth += 5 + ((this->_soulLevel * 0.3) + 0.2);
+	this->_maxHealth += 2 + ((this->_soulLevel * 0.3) + 0.2);
+	this->_currentHealth += this->_maxHealth / 4;
+	if (this->_currentHealth > this->_maxHealth)
+		this->_currentHealth = this->_maxHealth;
 	this->_statPoints += 2;
 	std::cout << "Level up to: " << this->getLevel() << std::endl;
 	this->eventMessage = "Leveled Up!";
