@@ -1018,9 +1018,16 @@ void Player::update(float elapsedTime) {
 
 		if (this->getKillCount() >= this->getRequiredKills()) {
 			this->addSoulLevel(1);
-			this->_soulStrength += 0.32;
+			this->_soulStrength += 0.12;
 			srand((unsigned)time(NULL));
-			this->_dmgMod += this->_soulStrength + ((double)(rand() % 90 + 10) / 100);
+			double corruptMod = this->_soulStrength + ((double)(rand() % 90 + 10) / 100 - 1.28);
+			if (corruptMod <= 0.29) {
+				corruptMod = 0.30;
+			}
+			else if (corruptMod >= 0.81) {
+				corruptMod = 0.80;
+			}
+			this->_dmgMod += corruptMod;
 			std::cout << "damaged gained: " << this->_dmgMod + this->_soulStrength + ((double)(rand() % 90 + 10) / 100) <<
 				std::endl;
 			std::cout << "damage mod is: " << this->_dmgMod << std::endl;
