@@ -26,8 +26,8 @@ namespace player_constants {
 	* Index 0 = the exp needed from lvl 0 (starting level) to level 1.
 	* So, to get to level 1 you need 20 exp. Level 2 needs 40 exp. With every new level exp is set to 0 
 	*/
-	std::vector<float> expTable = {20, 150, 369, 715, 1000, 1420, 2840, 4160, 7180, 12420};
-	std::vector<float> dmgTable = { 70, 225, 420, 850, 1522, 2437, 4700, 6000 }; 
+	std::vector<float> expTable = {20, 175, 369, 715, 1000, 1420, 2840, 4160, 7180, 12420};
+	std::vector<float> dmgTable = { 20, 100, 420, 850, 1522, 2437, 4700, 6000 }; 
 	// same as above but with kills. this increased damage per kill needed
 }
 
