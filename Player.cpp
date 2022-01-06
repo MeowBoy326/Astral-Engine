@@ -1074,9 +1074,10 @@ void Player::update(float elapsedTime) {
 				std::endl;
 			std::cout << "damage mod is: " << this->_dmgMod << std::endl;
 			std::cout << "Soul Level increased to: " << this->getSoulLevel() << std::endl;
-			std::string corruptDmg = std::to_string((double)this->_dmgMod);
-			corruptDmg.resize(4);
-			this->eventMessage = "Corruption spread. Damage increased to " + corruptDmg;
+			std::stringstream streamDmg;
+			streamDmg << std::fixed << std::setprecision(2) << (double)this->_dmgMod;
+			std::string fixedDmg = streamDmg.str();
+			this->eventMessage = "Corruption spread. Damage increased to " + fixedDmg;
 			this->showEventMsg = true;
 			this->_timeForEventMsg = 0;
 		}
