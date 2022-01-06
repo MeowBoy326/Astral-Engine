@@ -71,6 +71,9 @@ public:
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
+	void handleHex();
+	void applyHex(int hexID, int duration);
+	const int getHex() const { return this->_hexID; }
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
 	const float getX() const;
 	const float getY() const; //getting variables not changes const make sure it doesnt
@@ -115,6 +118,7 @@ public:
 	void gainMaxHealth(float amount);
 	void setBurning(bool condition) { this->isBurning = condition; }
 	void setDrowning(bool condition) { this->isDrowning = condition; }
+	void setHex(bool condition) { this->isHexed = condition; }
 	void setPlayerHit(bool condition) { this->gotHit = condition; }
 	const inline bool getPlayerHit() const { return this->gotHit; }
 	const inline float getMaxHealth() const { return this->_maxHealth; }
@@ -176,6 +180,7 @@ private:
 	bool isPoisoned = false;
 	bool isBurning = false;
 	bool isDrowning = false;
+	bool isHexed = false;
 	bool isFlying = false;
 	bool isBreakableCollision = false;
 	bool drawExhaust = false;
@@ -191,10 +196,13 @@ private:
 	int _requiredKill;
 	int mPosX, mPosY;
 	int currency = 0;
+	int _hexID = 0;
 
 	double _soulStrength = 1;
 	double _defense = 1.05;
 	double _dmgMod = 1;
+	double _dmgReduction = 0;
+	double _finalDamage = 0;
 	double _timeElapsed = 0; //for timer
 	double _mapTimeElapsed = 0;
 
@@ -223,6 +231,9 @@ protected:
 	double _timeForBattleMsg = 0;
 	double _poisonDOTTimer = 0;
 	double _poisonDuration = 0;
+	double _hexDOTTimer = 0;
+	double _hexDuration = 0;
+	double _hexTimer = 0;
 	double _deathAnimationTimer = 0;
 
 

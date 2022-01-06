@@ -705,6 +705,28 @@ void Player::handleEnemyCollisions(std::vector<Enemy*> &others) {
 	}
 }
 
+void Player::handleHex()
+{
+	if (this->_hexID == 1) {
+		this->_dmgReduction += this->_dmgMod / 3;
+	}
+}
+
+void Player::applyHex(int hexID, int duration)
+{
+	if (hexID == 0) {
+		// Nullify any hexes (I.E: Item)
+		this->setHex(false);
+		this->_hexID = hexID;
+	}
+	else {
+		this->setHex(true);
+		this->_hexID = hexID;
+		// Multiple hexes will extend the duration
+		this->_hexDuration += duration;
+	}
+}
+
 std::string Player::getNpcName(std::vector<Npc*> &others, Graphics &graphics) {
 	std::string name;
 	for (int i = 0; i < others.size(); i++) {
@@ -1015,6 +1037,18 @@ void Player::update(float elapsedTime) {
 				this->_poisonDuration = 0;
 				this->isPoisoned = false;
 			}
+		}
+
+		//Hex timer
+		if (this->isHexed) {
+			this->_hexTimer += elapsedTime;
+			if (this->_hexTimer >= this->_hexDuration) {
+				this->_hexDOTTimer = 0;
+				this->_hexDuration = 0;
+				this->_hexTimer = 0;
+				this->isHexed = false;
+			}
+			this->handleHex();
 		}
 
 		//iFrame timer
