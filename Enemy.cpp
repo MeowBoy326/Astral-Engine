@@ -368,12 +368,38 @@ void Shade::update(int elapsedTime, Player &player) {
 			this->_shadeBall._x += this->sBallX;
 			this->_oppositeShadeBall._x += this->osBallX;
 
-			if (this->getCurrentHealth() <= this->getMaxHealth() - (this->getMaxHealth() / 3)) {
+			// 75% HP threshold
+			if (this->getCurrentHealth() <= (this->getMaxHealth() * 75) / 100) {
 				if (this->_hex1Timer == 0) {
 					// Apply a hex to the player if the shades HP reaches the above threshold.
 					player.applyHex(1, 12000, false);
 				}
 				this->_hex1Timer += elapsedTime;
+			}
+
+			if (this->getCurrentHealth() <= (this->getMaxHealth() * 35) / 100 && this->canHeal == false) {
+				if (this->_healCDTimer == 0) {
+					this->_currentHealth += 50;
+					this->canHeal = true;
+				}
+			}
+
+			if (this->canHeal) {
+				this->_healTimer += elapsedTime;
+				if (this->_healTimer >= this->_healDelay) {
+					this->_currentHealth += 15;
+					this->healCount++;
+					this->_healTimer = 0;
+				}
+			}
+
+			if (this->healCount >= 5) {
+				this->canHeal = false;
+				this->_healCDTimer += elapsedTime;
+				if (this->_healCDTimer >= this->_healCooldown) {
+					this->_healCDTimer = 0;
+					this->healCount = 0;
+				}
 			}
 
 			if (this->_hex1Timer >= this->_hex1Cooldown) {

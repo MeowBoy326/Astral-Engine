@@ -196,6 +196,12 @@ private:
 	double _teleportBehindTimer = 0;
 	double _hex1Cooldown = 24000;
 	double _hex1Timer = 0;
+	double _healCooldown = 30000;
+	double _healCDTimer = 0;
+	double _healTimer = 0;
+	double _healDelay = 5000;
+	bool canHeal = false;
+	int healCount = 0;
 protected:
 	Direction _direction;
 	int _maxHealth;
