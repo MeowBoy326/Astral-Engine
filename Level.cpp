@@ -728,6 +728,14 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 }
 
 void Level::update(int elapsedTime, Player &player) {
+	// Allowing the timer to elapse without checking if canShoot == false 
+	// actually provides a more stable DPS. If using a check, it creates
+	// a wider variety towards DPS. So, keep it like this.
+	this->bulletTimer += elapsedTime;
+	if (this->bulletTimer >= this->bulletDelay) {
+		this->canShoot = true;
+		this->bulletTimer = 0;
+	}
 	for (int i = 0; i < this->_animatedTileList.size(); i++) {
 		this->_animatedTileList.at(i).update(elapsedTime);
 	}
@@ -1313,39 +1321,42 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 
 void Level::generateProjectile(Graphics & graphics, Player & player)
 {
-	int pX = player.getX(), pY = player.getY();
-	Direction pDir = player.facingDir();
-	if (pDir == RIGHT && player.lookingDown() == false && player.lookingUp() == false) {
-		pX += 35;
-		pY += 5;
-	}
-	else if (pDir == LEFT && player.lookingDown() == false && player.lookingUp() == false) {
-		pX -= 15;
-		pY += 5;
-	}
-	if (player.lookingDown() == true) {
-		pDir = DOWN;
-		if (player.facingDir() == RIGHT) {
-			pX += 12;
-			pY += 10;
+	if (this->canShoot) {
+		int pX = player.getX(), pY = player.getY();
+		Direction pDir = player.facingDir();
+		if (pDir == RIGHT && player.lookingDown() == false && player.lookingUp() == false) {
+			pX += 35;
+			pY += 5;
 		}
-		else {
+		else if (pDir == LEFT && player.lookingDown() == false && player.lookingUp() == false) {
 			pX -= 15;
-			pY += 10;
+			pY += 5;
 		}
+		if (player.lookingDown() == true) {
+			pDir = DOWN;
+			if (player.facingDir() == RIGHT) {
+				pX += 12;
+				pY += 10;
+			}
+			else {
+				pX -= 15;
+				pY += 10;
+			}
+		}
+		else if (player.lookingUp() == true) {
+			pDir = UP;
+			if (player.facingDir() == RIGHT) {
+				pX += 12;
+				pY -= 10;
+			}
+			else {
+				pX -= 15;
+				pY -= 10;
+			}
+		}
+		this->_projectiles.push_back(new SilverBullet(graphics, Vector2(pX, pY), pDir));
+		this->canShoot = false;
 	}
-	else if (player.lookingUp() == true) {
-		pDir = UP;
-		if (player.facingDir() == RIGHT) {
-			pX += 12;
-			pY -= 10;
-		}
-		else {
-			pX -= 15;
-			pY -= 10;
-		}
-	}
-	this->_projectiles.push_back(new SilverBullet(graphics, Vector2(pX, pY), pDir));
 }
 
 void Level::generateEffects(Graphics & graphics, Player & player)

@@ -84,6 +84,10 @@ private:
 	bool enemyDead = false;
 	bool arenaActive = false;
 
+	double bulletTimer = 0;
+	double bulletDelay = 200;
+	bool canShoot = true;
+
 	std::string _mapName; 
 	std::string _cutsceneName;
 	std::string _arenaName;
