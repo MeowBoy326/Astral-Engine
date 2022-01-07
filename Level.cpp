@@ -839,6 +839,8 @@ void Level::checkProjectileCollisions(Player & player) {
 					else
 						damage = damage * 0.88;
 				}
+				double damageReduction = player.getDmgReduction();
+				damage -= damageReduction;
 				this->_enemies.at(i)->bulletHit(damage);
 				this->dmgVector.push_back(std::make_tuple(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY(),
 					damage, 0));

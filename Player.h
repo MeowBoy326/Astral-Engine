@@ -71,8 +71,8 @@ public:
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
-	void handleHex();
-	void applyHex(int hexID, int duration);
+	void handleHex(float elapsedTime);
+	void applyHex(int hexID, double duration, bool isStackable);
 	const int getHex() const { return this->_hexID; }
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
 	const float getX() const;
@@ -155,6 +155,7 @@ public:
 	inline void setStatPoints(int points) { this->_statPoints = points; }
 	inline void setSoulStr(double str) { this->_soulStrength = str; }
 	double getDmgMod();
+	double getDmgReduction() { return this->_dmgReduction; }
 	double getDefense();
 	double getSoulStr();
 	int getStatPoints();
@@ -216,14 +217,19 @@ private:
 	Sprite _Gun;
 	Sprite _JetPack;
 
+	// enemy name, amount killed
 	std::vector<std::pair<std::string, int>> killTable;
-	//name, mapName, initial x & y
+	//name, mapName, initial x & y, spawn
 	std::vector<std::tuple<std::string, std::string, float, float, bool>> bossTable;
+	// map name, level object (stores the state of the level I.E: item was taken already)
 	std::map<std::string, Level> mapStorage;
 	std::vector<std::string> cutSceneTable;
 	std::vector<std::string> lockedDoorTable;
 	std::vector<std::string> equipmentTable;
+	// message, x-pos, y-pos, duration
 	std::vector<std::tuple<std::string, float, float, double>> battleMessages;
+	// hex id, duration, can be stacked, stack count
+	std::vector<std::tuple<int, double, bool, int, double>> hexTable;
 protected:
 	double _timeToUpdate = 2500;
 	double _timeForMapName = 3000;
