@@ -367,6 +367,18 @@ void Shade::update(int elapsedTime, Player &player) {
 			}
 			this->_shadeBall._x += this->sBallX;
 			this->_oppositeShadeBall._x += this->osBallX;
+
+			if (this->getCurrentHealth() <= this->getMaxHealth() - (this->getMaxHealth() / 3)) {
+				if (this->_hex1Timer == 0) {
+					// Apply a hex to the player if the shades HP reaches the above threshold.
+					player.applyHex(1, 12000, false);
+				}
+				this->_hex1Timer += elapsedTime;
+			}
+
+			if (this->_hex1Timer >= this->_hex1Cooldown) {
+				this->_hex1Timer = 0;
+			}
 		}
 	}
 

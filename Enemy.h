@@ -194,6 +194,8 @@ private:
 	double _deathTimeElapsed = 0;
 	float _teleportTimer = 0;
 	double _teleportBehindTimer = 0;
+	double _hex1Cooldown = 24000;
+	double _hex1Timer = 0;
 protected:
 	Direction _direction;
 	int _maxHealth;
