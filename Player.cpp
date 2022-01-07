@@ -776,12 +776,8 @@ void Player::nullifyHex(int hexID)
 		// by checking the hex table and seeing which ones are active and apply the
 		// appropiate removal method.
 		for (int i = 0; i < this->hexTable.size(); i++) {
-			if (std::get<0>(this->hexTable[i]) == 1) {
-				this->_dmgReduction -= this->_dmgMod / 3;
-			}
-			//if (std::get<0>(this->hexTable[i]) == 2) {
-			//	Remove hexID 2 here
-			//}
+			// Recursive call: pass in the hexID as the argument
+			this->nullifyHex(std::get<0>(this->hexTable[i]));
 		}
 		this->hexTable.clear();
 	}
