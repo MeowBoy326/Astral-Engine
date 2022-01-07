@@ -705,25 +705,92 @@ void Player::handleEnemyCollisions(std::vector<Enemy*> &others) {
 	}
 }
 
-void Player::handleHex()
+void Player::handleHex(float elapsedTime)
 {
-	if (this->_hexID == 1) {
-		this->_dmgReduction += this->_dmgMod / 3;
-	}
+	for (int i = 0; i < this->hexTable.size(); i++) {
+		// If the timer for the hex is the same or has exceeded the hex duration, remove it.
+		if (std::get<4>(this->hexTable[i]) >= std::get<1>(this->hexTable[i])) {
+			this->nullifyHex(std::get<0>(this->hexTable[i]));
+			this->hexTable.erase(this->hexTable.begin() + i);
+			--i;
+		}
+		else {
+			// hexID 1: Damage reduction
+			if (std::get<0>(this->hexTable[i]) == 1) {
+				// For non-stackable hexes, just check if the timer is 0
+				// That will let us know that this is the first iteration
+				// As nothing can reduce the timer. So it should always be above 0 after
+				// the initial cast.
+				if (std::get<4>(this->hexTable[i]) == 0) {
+					this->_dmgReduction += this->_dmgMod / 3;
+					std::get<4>(this->hexTable[i]) += elapsedTime;
+				}
+				else {
+					std::get<4>(this->hexTable[i]) += elapsedTime;
+				}
+			}
+			// hedID 2: TBD
+			// if (std::get<0>(this->hexTable[i]) == 2 {
+
+			// }
+		}
+	}	
 }
 
-void Player::applyHex(int hexID, int duration)
+void Player::applyHex(int hexID, double duration, bool isStackable)
 {
 	if (hexID == 0) {
-		// Nullify any hexes (I.E: Item)
+		// Nullify any hexes (I.E: Using an item that will remove it)
 		this->setHex(false);
-		this->_hexID = hexID;
+		this->nullifyHex(0);
 	}
 	else {
 		this->setHex(true);
-		this->_hexID = hexID;
-		// Multiple hexes will extend the duration
-		this->_hexDuration += duration;
+		if (this->hexTable.empty()) {
+			this->hexTable.push_back(std::make_tuple(hexID, duration, isStackable, 1, 0));
+		}
+		else {
+			auto hexIT = std::find_if(this->hexTable.begin(), this->hexTable.end(), [&hexID](const auto& t) {return std::get<0>(t) == hexID; });
+			auto hexDistance = std::distance(this->hexTable.begin(), hexIT);
+			if (hexIT != this->hexTable.end()) {
+				if (std::get<2>(this->hexTable[hexDistance]) == true) {
+					// Add a stack to the hex
+					std::get<3>(this->hexTable[hexDistance]) += 1;
+					// Increase the duration by half of the original duration
+					std::get<1>(this->hexTable[hexDistance]) += duration / 2;
+				}
+			}
+			else {
+				// If the hex table isn't empty and the hex does not exist in the table already simply add the hex
+				// Hexes are deleted once the duration has ended
+				this->hexTable.push_back(std::make_tuple(hexID, duration, isStackable, 1, 0));
+			}
+		}
+	}
+}
+
+void Player::nullifyHex(int hexID)
+{
+	if (hexID == 0) {
+		// If all hexes are being nullified then we need to individually remove them all
+		// by checking the hex table and seeing which ones are active and apply the
+		// appropiate removal method.
+		for (int i = 0; i < this->hexTable.size(); i++) {
+			if (std::get<0>(this->hexTable[i]) == 1) {
+				this->_dmgReduction -= this->_dmgMod / 3;
+			}
+			//if (std::get<0>(this->hexTable[i]) == 2) {
+			//	Remove hexID 2 here
+			//}
+		}
+		this->hexTable.clear();
+	}
+	else if (hexID == 1) {
+		this->_dmgReduction -= this->_dmgMod / 3;
+	}
+	// Check if the table is empty after everything has been handled and if it is set the hex state to false
+	if (this->hexTable.empty()) {
+		this->isHexed = false;
 	}
 }
 
@@ -1041,14 +1108,7 @@ void Player::update(float elapsedTime) {
 
 		//Hex timer
 		if (this->isHexed) {
-			this->_hexTimer += elapsedTime;
-			if (this->_hexTimer >= this->_hexDuration) {
-				this->_hexDOTTimer = 0;
-				this->_hexDuration = 0;
-				this->_hexTimer = 0;
-				this->isHexed = false;
-			}
-			this->handleHex();
+			this->handleHex(elapsedTime);
 		}
 
 		//iFrame timer

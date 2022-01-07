@@ -73,6 +73,7 @@ public:
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
 	void handleHex(float elapsedTime);
 	void applyHex(int hexID, double duration, bool isStackable);
+	void nullifyHex(int hexID);
 	const int getHex() const { return this->_hexID; }
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
 	const float getX() const;
@@ -228,7 +229,7 @@ private:
 	std::vector<std::string> equipmentTable;
 	// message, x-pos, y-pos, duration
 	std::vector<std::tuple<std::string, float, float, double>> battleMessages;
-	// hex id, duration, can be stacked, stack count
+	// hex id, duration, can be stacked, stack count, timer
 	std::vector<std::tuple<int, double, bool, int, double>> hexTable;
 protected:
 	double _timeToUpdate = 2500;
