@@ -66,6 +66,7 @@ public:
 	void handleLavaCollisions(std::vector<Rectangle> &others);
 	void handlePoisonCollisions(std::vector<Rectangle> &others);
 	void handleWaterCollisions(std::vector<Rectangle> &others);
+	void handleDeadzoneCollisions(std::vector<Rectangle> &others);
 	bool handleLadderCollisions(std::vector<Rectangle> &others);
 	void handleSlopeCollisions(std::vector<Slope> &others);
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
@@ -246,10 +247,10 @@ protected:
 
 	std::map<std::string, std::string> mapHash = { {"cave", "70328D0A2011D485E4CA6DD131C2B5C97D41FBADBD04A6423B51BE4A5ADC8327"},
 	{"caveFork", "9FCA227287F97578ACBA429476330E7891AD9C886B9B2ECB0F49652418FC9422"},
-	{"caverns","7E95CF58CF92D6023BCD9FCF94C898AE83573A06077155223F79B889924B686A"},
+	{"caverns","513539C50DAD199CEE1348A849B3966763CA1AD1ECA1C72E06E4D051CAF746F0"},
 	{"Profaned Capital", "A4FE52EA506A0116BABA3F139D7C25AA1936A558D028A20669F80A85F5A6BF94"},
-	{"Collapsed Cave", "2AEFD80ABC968A10D1765EF0C3464FE87941B682FCA7EFD3375BB7DF33EE89FA"}, 
-	{"cave depths", "929C0019831BF3F08AB8D13930F4D1CA26348CC13E93D428E34344AB6541C1B1"},
+	{"Collapsed Cave", "E47D0D2F016CAB5DB07F8A5BF437A32CAA41D8B095375FD32EAB9871797393E0"}, 
+	{"cave depths", "7CC5F0B79392731AD6DE04738F86135B39E97DE8C4401B0EFD3AB45C5DC23465"},
 	{"Up To The Forest", "C991610C4B5A585142456B012AFC435E090B745DF9A01936326651DC072D5436"} };
 };
 

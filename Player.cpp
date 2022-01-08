@@ -537,6 +537,14 @@ void Player::handleWaterCollisions(std::vector<Rectangle>& others)
 	}
 }
 
+void Player::handleDeadzoneCollisions(std::vector<Rectangle>& others)
+{
+	for (int i = 0; i < others.size(); i++) {
+		this->_currentHealth = 0;
+		return;
+	}
+}
+
 bool Player::handleLadderCollisions(std::vector<Rectangle>& others)
 {
 	for (int i = 0; i < others.size(); i++) {

@@ -51,6 +51,7 @@ public:
 	std::vector<Rectangle> checkLavaCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkPoisonCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkWaterCollisions(const Rectangle &other);
+	std::vector<Rectangle> checkDeadzoneCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkLadderCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkSaveCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkArenaCollisions(const Rectangle &other);
@@ -112,6 +113,7 @@ private:
 	std::vector<Rectangle> _lavaRects;
 	std::vector<Rectangle> _poisonRects;
 	std::vector<Rectangle> _waterRects;
+	std::vector<Rectangle> _deadzoneRects;
 	std::vector<Rectangle> _ladderRects;
 	std::vector<Rectangle> _saveRects;
 	std::vector<Rectangle> _arenaRects;

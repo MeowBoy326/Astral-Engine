@@ -1193,6 +1193,9 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	else {
 		this->_player.setDrowning(false);
 	}
+	if ((others = this->_level.checkDeadzoneCollisions(this->_player.getBoundingBox())).size() > 0) {
+		this->_player.handleDeadzoneCollisions(others);
+	}
 	if ((others = this->_level.checkLadderCollisions(this->_player.getBoundingBox())).size() > 0) {
 		if (this->_player.handleLadderCollisions(others)) {
 			isClimbing = true;

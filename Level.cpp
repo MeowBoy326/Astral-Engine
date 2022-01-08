@@ -79,6 +79,7 @@ Level & Level::operator=(const Level & levelMap)
 	this->_lavaRects = levelMap._lavaRects;
 	this->_poisonRects = levelMap._poisonRects;
 	this->_waterRects = levelMap._waterRects;
+	this->_deadzoneRects = levelMap._deadzoneRects;
 	this->_ladderRects = levelMap._ladderRects;
 	this->_saveRects = levelMap._saveRects;
 	this->_doorList = levelMap._doorList;
@@ -529,6 +530,25 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						width = pObject->FloatAttribute("width");
 						height = pObject->FloatAttribute("height");
 						this->_waterRects.push_back(Rectangle(
+							std::ceil(x) * globals::SPRITE_SCALE,
+							std::ceil(y) * globals::SPRITE_SCALE,
+							std::ceil(width) * globals::SPRITE_SCALE,
+							std::ceil(height) * globals::SPRITE_SCALE));
+
+						pObject = pObject->NextSiblingElement("object");
+					}
+				}
+			}
+			else if (ss.str() == "deadzone") {
+			XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+			if (pObject != NULL) {
+					while (pObject) {
+						float x, y, width, height;
+						x = pObject->FloatAttribute("x");
+						y = pObject->FloatAttribute("y");
+						width = pObject->FloatAttribute("width");
+						height = pObject->FloatAttribute("height");
+						this->_deadzoneRects.push_back(Rectangle(
 							std::ceil(x) * globals::SPRITE_SCALE,
 							std::ceil(y) * globals::SPRITE_SCALE,
 							std::ceil(width) * globals::SPRITE_SCALE,
@@ -1028,6 +1048,16 @@ std::vector<Rectangle> Level::checkWaterCollisions(const Rectangle & other)
 	for (int i = 0; i < this->_waterRects.size(); i++) {
 		if (this->_waterRects.at(i).collidesWith(other))
 			others.push_back(this->_waterRects.at(i));
+	}
+	return others;
+}
+
+std::vector<Rectangle> Level::checkDeadzoneCollisions(const Rectangle & other)
+{
+	std::vector<Rectangle> others;
+	for (int i = 0; i < this->_deadzoneRects.size(); i++) {
+		if (this->_deadzoneRects.at(i).collidesWith(other))
+			others.push_back(this->_deadzoneRects.at(i));
 	}
 	return others;
 }
