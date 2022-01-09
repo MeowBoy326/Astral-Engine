@@ -855,6 +855,19 @@ void Level::drawEnemyOutline(Graphics & graphics)
 	}
 }
 
+void Level::drawCollisionOutline(Graphics & graphics)
+{
+	SDL_Color color = { 52, 235, 58, 255 };
+	SDL_Rect collRect = { 0, 0, 0, 0 };
+	for (int i = 0; i < this->_collisionRects.size(); i++) {
+		collRect.x = this->_collisionRects.at(i).getX();
+		collRect.y = this->_collisionRects.at(i).getY();
+		collRect.w = this->_collisionRects.at(i).getWidth();
+		collRect.h = this->_collisionRects.at(i).getHeight();
+		graphics.blitBoundingbox(collRect, color);
+	}
+}
+
 void Level::checkItemFloorCollisions(Items* obj)
 {
 	for (int i = 0; i < this->_collisionRects.size(); i++) {

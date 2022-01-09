@@ -37,6 +37,7 @@ public:
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics, Player &player);
 	void drawEnemyOutline(Graphics &graphics);
+	void drawCollisionOutline(Graphics &graphics);
 	void checkEnemyHP(Player & player, Graphics &graphics);
 	void generateItems(Graphics &graphics);
 	void generateMapItems(Graphics &graphics, std::string mapName, Inventory &invent);
