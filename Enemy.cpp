@@ -499,7 +499,7 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				}
 				break;
 			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
-				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() / 2;
 				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
@@ -509,7 +509,7 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				this->_x = others.at(i).getRight() + 1;
 				break;
 			case sides::RIGHT:
-				this->_x = others.at(i).getLeft() - this->_boundingBox.getWidth() - 1;
+				this->_x = others.at(i).getLeft() - this->_boundingBox.getWidth() / 2;
 				break;
 			}
 		}
