@@ -53,6 +53,7 @@ namespace {
 	bool isClimbing = false;
 	bool jetPack = false;
 	bool resetGame = false;
+	bool showPlayerOutline = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -637,6 +638,9 @@ void Game::gameLoop() {
 					std::cout << "JetPack state = " << jetPack << std::endl;
 				}
 			}
+			if (input.wasKeyPressed(SDL_SCANCODE_F5) == true) {
+				showPlayerOutline = true;
+			}
 			if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
 				if (!deathSound) {
 					Mix_PlayChannel(-1, sePlDie, 0);
@@ -708,6 +712,8 @@ void Game::draw(Graphics &graphics) {
 	this->_player.drawHPNumbers(graphics);
 	this->_player.drawExpNumbers(graphics);
 	this->_player.drawCurrentMapName(graphics);
+	if (showPlayerOutline)
+		this->_player.drawPlayerOutline(graphics);
 	graphics.flip(); //Render everything above
 }
 
