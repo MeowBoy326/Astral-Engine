@@ -60,6 +60,7 @@ void Graphics::blitBoundingbox(SDL_Rect &bbRect, SDL_Color color)
 
 	SDL_SetRenderDrawColor(this->_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawRect(this->_renderer, &bbRect);
+	SDL_SetRenderDrawColor(this->_renderer, 0, 0, 0, 0);
 }
 
 void Graphics::blitSlopeOutline(SDL_Point & startPoint, SDL_Point & endPoint, SDL_Color color)
@@ -72,6 +73,7 @@ void Graphics::blitSlopeOutline(SDL_Point & startPoint, SDL_Point & endPoint, SD
 
 	SDL_SetRenderDrawColor(this->_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(this->_renderer, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+	SDL_SetRenderDrawColor(this->_renderer, 0, 0, 0, 0);
 }
 
 void Graphics::flip() {
