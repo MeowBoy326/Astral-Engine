@@ -641,19 +641,13 @@ void Game::gameLoop() {
 				}
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_F5) == true) {
-				showPlayerOutline = true;
+				showPlayerOutline = !showPlayerOutline;
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_F6) == true) {
-				if (showEnemyOutline == true)
-					showEnemyOutline = false;
-				else if (showEnemyOutline == false)
-					showEnemyOutline = true;
+				showEnemyOutline = !showEnemyOutline;
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_F7) == true) {
-				if (showCollisionOutline == true)
-					showCollisionOutline = false;
-				else if (showCollisionOutline == false)
-					showCollisionOutline = true;
+				showCollisionOutline = !showCollisionOutline;
 			}
 			if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
 				if (!deathSound) {
