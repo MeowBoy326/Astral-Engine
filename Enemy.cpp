@@ -285,7 +285,7 @@ void Shade::update(int elapsedTime, Player &player) {
 	this->_HPValue.update();
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
 	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
-		if (this->isIdle == true && (this->_direction == RIGHT && player.getX() > this->_x + 350 || this->_direction == LEFT &&
+		if (this->_currentHealth == this->_maxHealth && this->isIdle == true && (this->_direction == RIGHT && player.getX() > this->_x + 350 || this->_direction == LEFT &&
 			player.getX() <= this->_x - 350)) {
 			this->playAnimation("shadeIdle");
 			isIdle = true;
