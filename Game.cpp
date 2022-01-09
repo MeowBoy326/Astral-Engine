@@ -54,6 +54,7 @@ namespace {
 	bool jetPack = false;
 	bool resetGame = false;
 	bool showPlayerOutline = false;
+	bool showEnemyOutline = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -641,6 +642,12 @@ void Game::gameLoop() {
 			if (input.wasKeyPressed(SDL_SCANCODE_F5) == true) {
 				showPlayerOutline = true;
 			}
+			if (input.wasKeyPressed(SDL_SCANCODE_F6) == true) {
+				if (showEnemyOutline == true)
+					showEnemyOutline = false;
+				else if (showEnemyOutline == false)
+					showEnemyOutline = true;
+			}
 			if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
 				if (!deathSound) {
 					Mix_PlayChannel(-1, sePlDie, 0);
@@ -714,6 +721,8 @@ void Game::draw(Graphics &graphics) {
 	this->_player.drawCurrentMapName(graphics);
 	if (showPlayerOutline)
 		this->_player.drawPlayerOutline(graphics);
+	if (showEnemyOutline)
+		this->_level.drawEnemyOutline(graphics);
 	graphics.flip(); //Render everything above
 }
 
