@@ -859,6 +859,7 @@ void Level::drawCollisionOutline(Graphics & graphics)
 {
 	SDL_Color color = { 52, 235, 58, 255 };
 	SDL_Rect collRect = { 0, 0, 0, 0 };
+
 	// Rectanglular collision
 	for (int i = 0; i < this->_collisionRects.size(); i++) {
 		collRect.x = this->_collisionRects.at(i).getX();
@@ -867,6 +868,7 @@ void Level::drawCollisionOutline(Graphics & graphics)
 		collRect.h = this->_collisionRects.at(i).getHeight();
 		graphics.blitBoundingbox(collRect, color);
 	}
+
 	// Slope (polygon) collision
 	color = { 232, 232, 30, 255 };
 	SDL_Point startPoint = { 0, 0 };
@@ -877,6 +879,16 @@ void Level::drawCollisionOutline(Graphics & graphics)
 		endPoint.x = this->_slopes.at(i).getP2().x;
 		endPoint.y = this->_slopes.at(i).getP2().y;
 		graphics.blitSlopeOutline(startPoint, endPoint, color);
+	}
+
+	// Ladder collision
+	color = { 232, 134, 30, 255 };
+	for (int i = 0; i < this->_ladderRects.size(); i++) {
+		collRect.x = this->_ladderRects.at(i).getX();
+		collRect.y = this->_ladderRects.at(i).getY();
+		collRect.w = this->_ladderRects.at(i).getWidth();
+		collRect.h = this->_ladderRects.at(i).getHeight();
+		graphics.blitBoundingbox(collRect, color);
 	}
 }
 
