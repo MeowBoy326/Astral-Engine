@@ -180,6 +180,7 @@ public:
 	std::string getName();
 private:
 	float _startingX, _startingY;
+	float scaleFactor = 2.0f;
 	bool _shouldMoveUp; //keep track of if bat should move
 	bool hasHit = false;
 	int iFrameCount = 0;

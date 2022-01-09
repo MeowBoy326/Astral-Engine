@@ -427,7 +427,7 @@ void Shade::update(int elapsedTime, Player &player) {
 		}
 	}
 
-	AnimatedSprite::updateBoss(elapsedTime, this->_y);
+	AnimatedSprite::updateBoss(elapsedTime, this->scaleFactor);
 }
 
 void Shade::bulletHit(float dmg) {
@@ -437,7 +437,7 @@ void Shade::bulletHit(float dmg) {
 
 void Shade::draw(Graphics &graphics) {
 	if (isVisible == true) {
-	AnimatedSprite::drawBoss(graphics, this->_x, this->_y);
+	AnimatedSprite::drawBoss(graphics, this->_x, this->_y, this->scaleFactor);
 	if (isIdle == false) {
 		this->_shadeBall.draw(graphics, this->_shadeBall.getX(), this->_shadeBall.getY());
 		this->_oppositeShadeBall.draw(graphics, this->_oppositeShadeBall.getX(), this->_oppositeShadeBall.getY());
