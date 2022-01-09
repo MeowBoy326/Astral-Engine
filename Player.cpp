@@ -1096,6 +1096,9 @@ void Player::update(float elapsedTime) {
 
 		if (!this->isGrounded()) {
 			this->fallHeight += this->_dy * elapsedTime;
+			// Do not allow a short jump (stopping a jump) if the player has reached the maximum jump height
+			if (this->_dy >= 0)
+				this->_canShortJump = false;
 		}
 		else {
 			this->_canShortJump = true;
