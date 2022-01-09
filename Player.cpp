@@ -1085,8 +1085,21 @@ void Player::update(float elapsedTime) {
 		this->previousY = this->_y;
 		this->_y += this->_dy * elapsedTime; //Gravity move them by Y
 
-		if (this->isGrounded()) {
+		if (this->isGrounded() && this->fallHeight >= 200) {
+			float fallDmg = (this->fallHeight / 100) * 2 + (player_constants::GRAVITY_CAP * this->_dy);
+			if (fallHeight >= 600) {
+				fallDmg *= 2;
+			}
+			this->_currentHealth -= fallDmg;
+			this->fallHeight = 0;
+		}
+
+		if (!this->isGrounded()) {
+			this->fallHeight += this->_dy * elapsedTime;
+		}
+		else {
 			this->_canShortJump = true;
+			this->fallHeight = 0;
 		}
 
 		if (this->isFlying) {

@@ -168,6 +168,7 @@ public:
 	int selectY = 0;
 private:
 	float _dx, _dy; //(dx (delta x) is change in x postition during frame)
+	float fallHeight = 0;
 	float previousY = 0;
 	float _maxHealth;
 	float _currentHealth;
