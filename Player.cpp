@@ -1054,6 +1054,31 @@ void Player::update(float elapsedTime) {
 				this->_dy += player_constants::GRAVITY * elapsedTime;
 			}
 		}*/
+
+		if (_currentSurface == RECTANGLE) {
+			if (getBoundingBox().getRight() < _lastCollidedFloorRect.getLeft() || 
+				getBoundingBox().getLeft() > _lastCollidedFloorRect.getRight()) {
+				_grounded = false;
+				_currentSurface = NOTHING;
+			}
+		}
+		else if (_currentSurface == SLOPE) {
+			if (getBoundingBox().getLeft() < _lastCollidedSlope.getP1().x 
+				&& getBoundingBox().getRight() < _lastCollidedSlope.getP1().x
+				&& getBoundingBox().getLeft() < _lastCollidedSlope.getP2().x 
+				&& getBoundingBox().getRight() < _lastCollidedSlope.getP2().x) {
+				_grounded = false;
+				_currentSurface = NOTHING;
+			}
+			if (getBoundingBox().getLeft() > _lastCollidedSlope.getP1().x 
+				&& getBoundingBox().getRight() > _lastCollidedSlope.getP1().x
+				&& getBoundingBox().getLeft() > _lastCollidedSlope.getP2().x 
+				&& getBoundingBox().getRight() > _lastCollidedSlope.getP2().x) {
+				_grounded = false;
+				_currentSurface = NOTHING;
+			}
+		}
+
 		//Move by dx
 		this->_x += this->_dx * elapsedTime; //elapsedTime will move by a certain amount based on frame rate keeping thing moving smoothly
 		//Move by dy
