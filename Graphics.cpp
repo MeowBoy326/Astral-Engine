@@ -62,6 +62,18 @@ void Graphics::blitBoundingbox(SDL_Rect &bbRect, SDL_Color color)
 	SDL_RenderDrawRect(this->_renderer, &bbRect);
 }
 
+void Graphics::blitSlopeOutline(SDL_Point & startPoint, SDL_Point & endPoint, SDL_Color color)
+{
+	// Offset x/y by camera x/y
+	startPoint.x -= Camera::GetRect().x;
+	startPoint.y -= Camera::GetRect().y;
+	endPoint.x -= Camera::GetRect().x;
+	endPoint.y -= Camera::GetRect().y;
+
+	SDL_SetRenderDrawColor(this->_renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderDrawLine(this->_renderer, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+}
+
 void Graphics::flip() {
 	SDL_RenderPresent(this->_renderer);
 }

@@ -34,6 +34,8 @@ public:
 	void windowBlitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle);
 	// Draw bounding box outline
 	void blitBoundingbox(SDL_Rect &bbRect, SDL_Color color);
+	// Draw slope outline
+	void blitSlopeOutline(SDL_Point &startPoint, SDL_Point &endPoint, SDL_Color color);
 	//void flip: Renders everythign to the screen
 	void flip();
 	//void clear: clears the screen
