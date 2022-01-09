@@ -1317,6 +1317,12 @@ void Player::drawBattleMessage(Graphics & graphics, std::string text)
 	this->_txt->drawBattleMessages(graphics, this->_x, this->_y, text);
 }
 
+void Player::drawPlayerOutline(Graphics & graphics)
+{
+	SDL_Color color = { 255, 0, 0, 0 };
+	this->drawBoundingbox(graphics, this->_x, this->_y, color);
+}
+
 void Player::showSceneDialogue(Graphics & graphics, std::string text)
 {
 	this->_txt->drawSceneDialogue(graphics, this->getX(), this->getY(), text);

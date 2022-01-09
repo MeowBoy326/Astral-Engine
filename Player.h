@@ -27,6 +27,7 @@ public:
 	void drawStatusEffect(Graphics &graphics, const std::string text);
 	void drawEventMessage(Graphics &graphics, std::string text);
 	void drawBattleMessage(Graphics &graphics, std::string text);
+	void drawPlayerOutline(Graphics &graphics);
 	void showSceneDialogue(Graphics &graphics, std::string text);
 	void update(float elapsedTime);
 	bool checkDeathPlayed() const { return this->deathPlayed; }
@@ -246,7 +247,7 @@ protected:
 
 
 	std::map<std::string, std::string> mapHash = { {"cave", "70328D0A2011D485E4CA6DD131C2B5C97D41FBADBD04A6423B51BE4A5ADC8327"},
-	{"caveFork", "9FCA227287F97578ACBA429476330E7891AD9C886B9B2ECB0F49652418FC9422"},
+	{"caveFork", "C7A00879A3DB312818F38C000AA0D5854F896348DD2BD90BB9F8A5EAC80A28EF"},
 	{"caverns","513539C50DAD199CEE1348A849B3966763CA1AD1ECA1C72E06E4D051CAF746F0"},
 	{"Profaned Capital", "A4FE52EA506A0116BABA3F139D7C25AA1936A558D028A20669F80A85F5A6BF94"},
 	{"Collapsed Cave", "E47D0D2F016CAB5DB07F8A5BF437A32CAA41D8B095375FD32EAB9871797393E0"}, 
