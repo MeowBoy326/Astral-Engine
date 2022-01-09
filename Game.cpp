@@ -442,8 +442,9 @@ void Game::gameLoop() {
 				}
 			}
 			if (input.wasKeyReleased(SDL_SCANCODE_SPACE) && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+				if (this->_player.canShortJump() && activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.setPlayerDY(0);
+					this->_player.setShortJump(false);
 					jumpSound = false;
 				}
 			}

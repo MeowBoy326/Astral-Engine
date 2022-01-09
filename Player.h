@@ -53,6 +53,7 @@ public:
 	bool lookingDown();
 	bool lookingRight();
 	bool lookingLeft();
+	bool canShortJump() const { return this->_canShortJump; }
 	virtual void setupAnimations();
 	Direction facingDir();
 	Direction _facing;
@@ -110,6 +111,7 @@ public:
 	bool isGrounded() const { return this->_grounded; }
 	bool isWalking() { return (this->_dx != 0) ? true : false; }
 	void setClimbing(bool condition) { this->_climbing = condition; }
+	void setShortJump(bool condition) { this->_canShortJump = condition; }
 	void setBreakableCollision(bool condition) { this->isBreakableCollision = condition; }
 	
 
@@ -177,6 +179,7 @@ private:
 	float STAT_AVOID = 1;
 
 	bool _grounded; //true if we are, false if we are in the air
+	bool _canShortJump = true;
 	bool _climbing;
 	bool _lookingUp;
 	bool _lookingDown;

@@ -1085,6 +1085,10 @@ void Player::update(float elapsedTime) {
 		this->previousY = this->_y;
 		this->_y += this->_dy * elapsedTime; //Gravity move them by Y
 
+		if (this->isGrounded()) {
+			this->_canShortJump = true;
+		}
+
 		if (this->isFlying) {
 			this->_dy = 0;
 			this->drawExhaust = true;
