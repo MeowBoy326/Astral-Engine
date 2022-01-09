@@ -846,6 +846,15 @@ void Level::draw(Graphics &graphics, Player &player) {
 	*/
 }
 
+void Level::drawEnemyOutline(Graphics & graphics)
+{
+	SDL_Color color = { 245, 66, 224, 255 };
+	for (int i = 0; i < this->_enemies.size(); i++) {
+		this->_enemies.at(i)->drawBoundingbox(graphics, this->_enemies.at(i)->getX(),
+			this->_enemies.at(i)->getY(), color);
+	}
+}
+
 void Level::checkItemFloorCollisions(Items* obj)
 {
 	for (int i = 0; i < this->_collisionRects.size(); i++) {
