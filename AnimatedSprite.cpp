@@ -211,14 +211,14 @@ void AnimatedSprite::draw(Graphics &graphics, int x, int y) {
 	}
 }
 
-void AnimatedSprite::drawBoss(Graphics &graphics, int x, int y) {
+void AnimatedSprite::drawBoss(Graphics &graphics, int x, int y, float scaleFactor) {
 	if (this->_visible) { //only draw when visible
 		SDL_Rect destinationRectangle; //temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
 		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
 		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
-		destinationRectangle.w = this->_sourceRect.w * globals::SPRITE_SCALE * 2;
-		destinationRectangle.h = this->_sourceRect.h * globals::SPRITE_SCALE * 2;
+		destinationRectangle.w = this->_sourceRect.w * globals::SPRITE_SCALE * scaleFactor;
+		destinationRectangle.h = this->_sourceRect.h * globals::SPRITE_SCALE * scaleFactor;
 
 		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
