@@ -55,6 +55,7 @@ namespace {
 	bool resetGame = false;
 	bool showPlayerOutline = false;
 	bool showEnemyOutline = false;
+	bool showCollisionOutline = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -648,6 +649,12 @@ void Game::gameLoop() {
 				else if (showEnemyOutline == false)
 					showEnemyOutline = true;
 			}
+			if (input.wasKeyPressed(SDL_SCANCODE_F7) == true) {
+				if (showCollisionOutline == true)
+					showCollisionOutline = false;
+				else if (showCollisionOutline == false)
+					showCollisionOutline = true;
+			}
 			if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
 				if (!deathSound) {
 					Mix_PlayChannel(-1, sePlDie, 0);
@@ -723,6 +730,8 @@ void Game::draw(Graphics &graphics) {
 		this->_player.drawPlayerOutline(graphics);
 	if (showEnemyOutline)
 		this->_level.drawEnemyOutline(graphics);
+	if (showCollisionOutline)
+		this->_level.drawCollisionOutline(graphics);
 	graphics.flip(); //Render everything above
 }
 
