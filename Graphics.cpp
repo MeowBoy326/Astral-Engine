@@ -52,6 +52,16 @@ void Graphics::windowBlitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle
 	SDL_RenderCopy(this->_renderer, texture, sourceRectangle, &tmp);
 }
 
+void Graphics::blitBoundingbox(SDL_Rect &bbRect, SDL_Color color)
+{
+	// Offset x/y by camera x/y
+	bbRect.x -= Camera::GetRect().x;
+	bbRect.y -= Camera::GetRect().y;
+
+	SDL_SetRenderDrawColor(this->_renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderDrawRect(this->_renderer, &bbRect);
+}
+
 void Graphics::flip() {
 	SDL_RenderPresent(this->_renderer);
 }

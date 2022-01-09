@@ -32,6 +32,8 @@ public:
 	void blitFlippedSurface(SDL_Texture* source, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectalge, SDL_RendererFlip flip);
 	//Drawings for the Title screen
 	void windowBlitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle);
+	// Draw bounding box outline
+	void blitBoundingbox(SDL_Rect &bbRect, SDL_Color color);
 	//void flip: Renders everythign to the screen
 	void flip();
 	//void clear: clears the screen
