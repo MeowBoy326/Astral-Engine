@@ -28,6 +28,9 @@ public:
 	const int getWidth() const { return this->_width; }
 	const int getHeight() const { return this->_height; }
 
+	const int getX() const { return this->_x; }
+	const int getY() const { return this->_y; }
+
 	const int getSide(const sides::Side side) const {
 		return
 			side == sides::LEFT ? this->getLeft() :
