@@ -890,6 +890,16 @@ void Level::drawCollisionOutline(Graphics & graphics)
 		collRect.h = this->_ladderRects.at(i).getHeight();
 		graphics.blitBoundingbox(collRect, color);
 	}
+
+	// Player projectile collision
+	color = { 28, 119, 237, 255 };
+	for (int i = 0; i < this->_projectiles.size(); i++) {
+		collRect.x = this->_projectiles.at(i)->getX();
+		collRect.y = this->_projectiles.at(i)->getY();
+		collRect.w = this->_projectiles.at(i)->getBoundingBox().getWidth();
+		collRect.h = this->_projectiles.at(i)->getBoundingBox().getHeight();
+		graphics.blitBoundingbox(collRect, color);
+	}
 }
 
 void Level::checkItemFloorCollisions(Items* obj)
