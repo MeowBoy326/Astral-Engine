@@ -189,7 +189,7 @@ void Sprite::update() {
 }
 
 void Sprite::updateBoss(float y) {
-	this->_boundingBox = Rectangle(this->_x, y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE);
+	this->_boundingBox = Rectangle(this->_x, this->_y - (this->_sourceRect.h * globals::SPRITE_SCALE), this->_sourceRect.w * globals::SPRITE_SCALE * 2, this->_sourceRect.h * globals::SPRITE_SCALE * 2);
 }
 
 void Sprite::updateFBall()
