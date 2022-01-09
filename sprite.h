@@ -28,6 +28,7 @@ public:
 	virtual void updateFBall();
 	const Rectangle getProjectileBBox();
 	void draw(Graphics &graphics, int x, int y);
+	void drawBoundingbox(Graphics &graphics, int x, int y, SDL_Color color);
 	void drawFBall(Graphics &graphics, int x, int y);
 	void drawHPBar(Graphics &graphics, int x, int y);
 	void drawLevelBar(Graphics &graphics, int x, int y);

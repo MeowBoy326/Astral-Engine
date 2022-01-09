@@ -35,6 +35,12 @@ void Sprite::draw(Graphics &graphics, int x, int y) { //this will do all the dra
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle); 
 	}
 
+void Sprite::drawBoundingbox(Graphics & graphics, int x, int y, SDL_Color color)
+{
+	SDL_Rect bbRect = { x, y, this->_boundingBox.getWidth(), this->_boundingBox.getHeight() };
+	graphics.blitBoundingbox(bbRect, color);
+}
+
 void Sprite::drawFBall(Graphics & graphics, int x, int y)
 {
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 1.55, this->_sourceRect.h * 1.55 }; //where on screen we will be drawing
