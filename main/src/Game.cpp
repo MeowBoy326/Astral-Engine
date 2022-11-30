@@ -8,10 +8,18 @@
 #include <algorithm>﻿
 #include <SDL.h>
 #include <SDL_mixer.h>
-#include "tinyxml2.h"
-#include "game.h"
-#include "Graphics.h"
-#include "Input.h"
+
+#include "../headers/tinyxml2.h"
+#include "../headers/game.h"
+#include "../headers/Graphics.h"
+#include "../headers/Input.h"
+
+//#include "tinyxml2.h"
+//#include "game.h"
+//#include "Graphics.h"
+//#include "Input.h"
+
+
 #include <vector>
 #include <iostream>
 #include <fstream>

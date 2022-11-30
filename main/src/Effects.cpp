@@ -1,5 +1,6 @@
-#include "Effects.h"
-#include "Effects.h"
+#include "../headers/Effects.h"
+//#include "Effects.h"
+//#include "Effects.h"
 
 Effects::Effects()
 {

@@ -1,6 +1,10 @@
-#include "AnimatedSprite.h"
-#include "Graphics.h"
-#include "sprite.h"
+#include "../headers/AnimatedSprite.h"
+#include "../headers/Graphics.h"
+#include "../headers/sprite.h"
+
+//#include "AnimatedSprite.h"
+//#include "Graphics.h"
+//#include "sprite.h"
 
 
 /* Animated Sprite class

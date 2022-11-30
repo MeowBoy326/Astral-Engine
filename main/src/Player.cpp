@@ -1,13 +1,23 @@
 #pragma once
-#include "TextManager.h"
-#include "Player.h"
-#include "Graphics.h"
-#include "Slope.h"
-#include "Door.h"
-#include "Npc.h"
-#include "Items.h"
+
+#include "../headers/TextManager.h"
+#include "../headers/Player.h"
+#include "../headers/Graphics.h"
+#include "../headers/Slope.h"
+#include "../headers/Door.h"
+#include "../headers/Npc.h"
+#include "../headers/Items.h"
+#include "../headers/AESCipher.h"
+
+//#include "TextManager.h"
+//#include "Player.h"
+//#include "Graphics.h"
+//#include "Slope.h"
+//#include "Door.h"
+//#include "Npc.h"
+//#include "Items.h"
 #include <time.h>
-#include "AESCipher.h"
+//#include "AESCipher.h"
 #include <sstream>
 #include <iomanip>
 

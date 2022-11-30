@@ -24,7 +24,8 @@
 * Main.cpp: Entry point of the game
 *************************************************************/
 #include <iostream>
-#include "game.h"
+#include "../headers/game.h"
+//#include "game.h"
 
 int main(int argc, char * argv[]) {
 	Game game;

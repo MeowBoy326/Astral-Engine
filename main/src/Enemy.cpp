@@ -1,8 +1,12 @@
-#include "Enemy.h"
+#include "../headers/Enemy.h"
+#include "../headers/TextManager.h"
+#include "../headers/Player.h"
+
+//#include "Enemy.h"
 #include <iostream>
 #include "SDL_timer.h"
-#include "TextManager.h"
-#include "Player.h"
+//#include "TextManager.h"
+//#include "Player.h"
 
 TextManager txt;
 //Base enemy class

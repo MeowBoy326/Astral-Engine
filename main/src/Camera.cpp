@@ -1,5 +1,8 @@
-#include "Camera.h"
-#include "Player.h"
+#include "../headers/Camera.h"
+#include "../headers/Player.h"
+
+//#include "Camera.h"
+//#include "Player.h"
 #include <iostream>
 #include <fstream>
 

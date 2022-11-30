@@ -1,6 +1,10 @@
-#include "Tile.h"
-#include "Graphics.h"
-#include "Camera.h"
+#include "../headers/Tile.h"
+#include "../headers/Graphics.h"
+#include "../headers/Camera.h"
+
+//#include "Tile.h"
+//#include "Graphics.h"
+//#include "Camera.h"
 
 #include <SDL.h>
 

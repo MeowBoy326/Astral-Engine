@@ -65,6 +65,7 @@ public:
 		std::string digest;
 		std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
 		cwd.append(fileName + ".tmx");
+		std::cout << "hash loc: " << cwd << std::endl;
 		FileSource fh(cwd.string().c_str(), true, new HashFilter(hash, new HexEncoder(new StringSink(digest))));
 		if (digest != player.getMapHash(fileName)) {
 			std::cout << "Invalid  hash : " << fileName << ".tmx has been modified" << std::endl;

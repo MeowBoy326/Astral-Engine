@@ -1,7 +1,8 @@
 /* Input class
 * Keeps track of Keyboard state
 */
-#include "Input.h"
+#include "../headers/Input.h"
+//#include "Input.h"
 
 SDL_Keysym stateQuit;
 

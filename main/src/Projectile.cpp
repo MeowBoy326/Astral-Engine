@@ -1,6 +1,9 @@
-#include "Projectile.h"
+#include "../headers/Projectile.h"
+#include "../headers/TextManager.h"
+
+//#include "Projectile.h"
 #include <iostream>
-#include "TextManager.h" 
+//#include "TextManager.h" 
 
 namespace projectileConstants {
 	const float BULLET_VELOCITY = 0.6f;

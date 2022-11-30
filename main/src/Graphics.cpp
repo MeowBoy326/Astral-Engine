@@ -5,9 +5,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "graphics.h"
-#include "Global.h"
-#include "Camera.h"
+#include "../headers/Graphics.h"
+#include "../headers/Global.h"
+#include "../headers/Camera.h"
+
+//#include "graphics.h"
+//#include "Global.h"
+//#include "Camera.h"
 #include <iostream>
 #include <fstream>
 

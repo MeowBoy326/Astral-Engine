@@ -1,9 +1,15 @@
-#include "TextManager.h"
-#include "Title.h"
+#include "../headers/TextManager.h"
+#include "../headers/Title.h"
+#include "../headers/Input.h"
 #include <iostream>
 #include <algorithm>
-#include "Input.h"
 #include <stdlib.h>
+
+
+//#include " TextManager.h"
+//#include "Title.h"
+//#include "Input.h"
+
 
 
 namespace {

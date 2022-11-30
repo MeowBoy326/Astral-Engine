@@ -1,7 +1,10 @@
-#include "GameOver.h"
+#include "../headers/GameOver.h"
+#include "../headers/Input.h"
+
+//#include "GameOver.h"
 #include <iostream>
 #include <algorithm>
-#include "Input.h"
+//#include "Input.h"
 
 namespace {
 	const int FPS = 50;
