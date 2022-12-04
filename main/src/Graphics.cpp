@@ -1,20 +1,16 @@
-/* Graphics Class
+/*
+* Graphics Class
 * Holds all information dealing with graphics for the game
-*
 */
-#include <SDL.h>
-#include <SDL_image.h>
 
 #include "../headers/Graphics.h"
 #include "../headers/Global.h"
 #include "../headers/Camera.h"
 
-//#include "graphics.h"
-//#include "Global.h"
-//#include "Camera.h"
+#include <SDL.h>
+#include <SDL_image.h>
 #include <iostream>
 #include <fstream>
-
 
 Graphics::Graphics() {
 	SDL_CreateWindowAndRenderer(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, 0, &this->_window, &this->_renderer);

@@ -1,16 +1,10 @@
 #include "../headers/TextManager.h"
 #include "../headers/Title.h"
 #include "../headers/Input.h"
+
 #include <iostream>
 #include <algorithm>
 #include <stdlib.h>
-
-
-//#include " TextManager.h"
-//#include "Title.h"
-//#include "Input.h"
-
-
 
 namespace {
 	const int FPS = 50;
@@ -18,10 +12,7 @@ namespace {
 	const int MAX_FRAME_TIME = 5 * 1000 / FPS; //Max amount of time a frame is allowed to last
 }
 
-Title::Title()
-{
-
-}
+Title::Title() {}
 
 Title::Title(Graphics &graphics, Input &input, SDL_Event &event) :
 //graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100

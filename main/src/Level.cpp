@@ -11,21 +11,8 @@
 #include "../headers/Npc.h"
 #include "../headers/Items.h"
 
-//#include "Level.h"
-//#include "Graphics.h"
-//#include "Global.h"
-//#include "tinyxml2.h"
-//#include "utils.h"
-//#include "Enemy.h"
-//#include "Player.h"
-//#include "TextManager.h"
-//#include "Enemy.h"
-//#include "Effects.h"
-//#include "Projectile.h"
-//#include "Npc.h"
-//#include "Items.h"
 #include <SDL.h>
-#include <sstream> //string stream
+#include <sstream>
 #include <algorithm>
 #include <cmath>
 #include <iostream>

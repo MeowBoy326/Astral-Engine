@@ -3,11 +3,7 @@
 #include "../headers/sprite.h"
 #include "../headers/Global.h"
 
-//#include "TextManager.h"
-//#include "Graphics.h"
-//#include "sprite.h"
 #include <iostream>
-//#include "Global.h"
 #include <string>
 
 namespace textConstants {

@@ -2,15 +2,6 @@
 #include "../headers/Graphics.h"
 #include "../headers/sprite.h"
 
-//#include "AnimatedSprite.h"
-//#include "Graphics.h"
-//#include "sprite.h"
-
-
-/* Animated Sprite class
-* Animates our sprites
-*/
-
 AnimatedSprite::AnimatedSprite() {} //default constructor
 
 AnimatedSprite::AnimatedSprite(Graphics &graphics, const std::string &filePath, int sourceX, int sourceY,

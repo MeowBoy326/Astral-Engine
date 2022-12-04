@@ -1,8 +1,6 @@
 #include "../headers/HUD.h"
 #include "../headers/Graphics.h"
 
-//#include "HUD.h"
-//#include "Graphics.h"
 #include <iostream>
 
 HUD::HUD() {}

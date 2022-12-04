@@ -1,8 +1,6 @@
 #include "../headers/AnimatedTile.h"
 #include "../headers/Graphics.h"
 
-//#include "AnimatedTile.h"
-//#include "Graphics.h"
 #include <iostream>
 #include <fstream>
 

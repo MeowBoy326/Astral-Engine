@@ -2,9 +2,6 @@
 #include "../headers/Graphics.h"
 #include "../headers/Global.h"
 
-//#include "sprite.h"
-//#include "Graphics.h"
-//#include "Global.h"
 #include <iostream>
 
 Sprite::Sprite() {

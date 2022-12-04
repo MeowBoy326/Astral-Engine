@@ -2,10 +2,6 @@
 #include "../headers/Graphics.h"
 #include "../headers/Camera.h"
 
-//#include "Tile.h"
-//#include "Graphics.h"
-//#include "Camera.h"
-
 #include <SDL.h>
 
 Tile::Tile() {}

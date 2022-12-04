@@ -1,25 +1,20 @@
-﻿/* Game Class
+﻿/*
+* Game Class
 * This class holds all information for our main game loop
 */
+
 #ifndef XMLCheckResult
 	#define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return a_eResult;}
 #endif
-
-#include <algorithm>﻿
-#include <SDL.h>
-#include <SDL_mixer.h>
 
 #include "../headers/tinyxml2.h"
 #include "../headers/game.h"
 #include "../headers/Graphics.h"
 #include "../headers/Input.h"
 
-//#include "tinyxml2.h"
-//#include "game.h"
-//#include "Graphics.h"
-//#include "Input.h"
-
-
+#include <algorithm>﻿
+#include <SDL.h>
+#include <SDL_mixer.h>
 #include <vector>
 #include <iostream>
 #include <fstream>

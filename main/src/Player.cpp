@@ -9,15 +9,7 @@
 #include "../headers/Items.h"
 #include "../headers/AESCipher.h"
 
-//#include "TextManager.h"
-//#include "Player.h"
-//#include "Graphics.h"
-//#include "Slope.h"
-//#include "Door.h"
-//#include "Npc.h"
-//#include "Items.h"
 #include <time.h>
-//#include "AESCipher.h"
 #include <sstream>
 #include <iomanip>
 

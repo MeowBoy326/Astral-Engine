@@ -7,11 +7,7 @@
 #include "../headers/tinyxml2.h"
 #include "../headers/AESCipher.h"
 
-//#include "Npc.h"
-//#include "Input.h"
-//#include "tinyxml2.h";
 #include <filesystem>
-//#include "AESCipher.h"
 #include <sstream>
 
 using namespace tinyxml2;
