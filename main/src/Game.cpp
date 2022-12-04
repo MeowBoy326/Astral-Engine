@@ -163,48 +163,31 @@ void Game::gameLoop() {
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
 
-			if (!resetGame) {
-				std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "profile";
-				nCwd.append("SF-LOC.xml");
-				std::filesystem::remove(nCwd);
-				resetGame = true;
-			}
-
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
 					if (event.key.repeat == 0) {
-						input.keyDownEvent(event); //if we are holding key start keydown event
+						input.keyDownEvent(event); // if we are holding key start keydown event
 					}
 				}
 				else if (event.type == SDL_KEYUP) { // if key was released
 					input.keyUpEvent(event);
 				}
 				else if (event.type == SDL_QUIT) {
-					return; //when the game ends or user exits
+					return; // when the game ends or user exits
 				}
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true) {
-				this->_inventory = Inventory(graphics, this->_player);
-				this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
-				this->_level.generateItems(graphics);
-				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
-				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
-				this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
-				if (!cipher.verifyHash("cave", this->_player)) {
-					std::exit(0);
-				}
-				this->saveGame(graphics);
-				BGM = "null";
+				this->loadGame(graphics);
 				deathSound = false;
 				GAMEOVER = false;
 				resetGame = false;
 			}
 
-			this->_graphics = graphics; //updated graphics
-			//take standard min : elapsed time ms and max frame time
+			this->_graphics = graphics; // updated graphics
+			// take standard min : elapsed time ms and max frame time
 			this->updateGameOver(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
 
-			//loop will go again and current time - new last update will tell us how long next frame will take
+			// loop will go again and current time - new last update will tell us how long next frame will take
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			Mix_PauseMusic();
 			this->drawGameOver(graphics);
