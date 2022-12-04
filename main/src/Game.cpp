@@ -163,6 +163,9 @@ void Game::gameLoop() {
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
 
+			if (!Mix_PausedMusic())
+				Mix_PauseMusic();
+
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
 					if (event.key.repeat == 0) {
@@ -177,6 +180,8 @@ void Game::gameLoop() {
 				}
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true) {
+				Mix_ResumeMusic();
+				Mix_RewindMusic();
 				this->loadGame(graphics);
 				deathSound = false;
 				GAMEOVER = false;
@@ -189,7 +194,7 @@ void Game::gameLoop() {
 
 			// loop will go again and current time - new last update will tell us how long next frame will take
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
-			Mix_PauseMusic();
+			
 			this->drawGameOver(graphics);
 		}
 //Cutscene Loop
