@@ -89,13 +89,9 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 			}
 			else {
 				if (settingsChoice == 0) {
-					this->selectY = 155;
-					this->selectX = 220;
-					settingsChoice++;
-				}
-				else if (settingsChoice == 1) {
 					this->selectY = 185;
 					this->selectX = 220;
+					settingsChoice++;
 				}
 			}
 
