@@ -138,13 +138,18 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 			if (isSubmenu) {
 				if (changeVolume) {
 					// Increase volume
+					this->volumePercent += 5;
+					float volNum = (float)volumePercent / 100;
+					this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
 				}
 			}
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
 			if (isSubmenu) {
 				if (changeVolume) {
-					// Decrease volume 
+					this->volumePercent -= 5;
+					float volNum = (float)volumePercent / 100;
+					this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
 				}
 			}
 		}
