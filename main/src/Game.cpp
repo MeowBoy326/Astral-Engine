@@ -70,7 +70,7 @@ namespace {
 	std::string npcName;
 	std::string sceneDir;
 	std::string sceneName;
-	std::string BGM = "Astral.wav";
+	std::string BGM = "Astral.ogg";
 
 	Mix_Music *gMusic = NULL;
 	Mix_Chunk *sePlHit = NULL;
@@ -107,14 +107,14 @@ void Game::gameLoop() {
 	Mix_Chunk *seWalk = NULL;
 	Mix_Chunk *seJump = NULL;
 
-	gMusic = Mix_LoadMUS("data\\sound\\Astral.wav");
-	sBullet = Mix_LoadWAV("data\\sound\\sbullet.wav");
-	seWalk = Mix_LoadWAV("data\\sound\\seWalk.wav");
-	seJump = Mix_LoadWAV("data\\sound\\seJump.wav");
-	sePlHit = Mix_LoadWAV("data\\sound\\sePlHit.wav");
-	sePlDie = Mix_LoadWAV("data\\sound\\sePlDie.wav");
-	enHurt = Mix_LoadWAV("data\\sound\\enemyHurt.wav");
-	gameOver = Mix_LoadWAV("data\\sound\\gameOver.wav");
+	gMusic = Mix_LoadMUS("data\\sound\\Astral.ogg");
+	sBullet = Mix_LoadWAV("data\\sound\\sbullet.ogg");
+	seWalk = Mix_LoadWAV("data\\sound\\seWalk.ogg");
+	seJump = Mix_LoadWAV("data\\sound\\seJump.ogg");
+	sePlHit = Mix_LoadWAV("data\\sound\\sePlHit.ogg");
+	sePlDie = Mix_LoadWAV("data\\sound\\sePlDie.ogg");
+	enHurt = Mix_LoadWAV("data\\sound\\enemyHurt.ogg");
+	gameOver = Mix_LoadWAV("data\\sound\\gameOver.ogg");
 	Mix_PlayChannel(321, seWalk, -1);
 	Mix_Pause(321);
 	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 32);
