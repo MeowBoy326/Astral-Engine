@@ -2,14 +2,14 @@
 
 #include "Graphics.h"
 #include "AnimatedSprite.h"
+#include "TextManager.h"
 #include "SDL.h"
 #include "sprite.h"
 #include "Input.h"
 
 class Graphics;
-class TextManager;
 
-class Title : public AnimatedSprite
+class Title : public AnimatedSprite, public TextManager
 {
 public:
 	Title();
@@ -27,11 +27,14 @@ private:
 	Sprite _title;
 	Sprite _startGame;
 	Sprite _loadGame;
+	Sprite _settings;
+	Sprite _settingsMenu;
 	Sprite _selectionBox;
-	TextManager* _txt;
 
-	int selectX = 104;
-	int selectY = 250;
+	int selectX = 185;
+	int selectY = 275;
 	int menuChoice = 0;
+
+	bool showSettings = false;
 };
 

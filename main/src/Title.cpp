@@ -1,10 +1,8 @@
-#include "../headers/TextManager.h"
 #include "../headers/Title.h"
 #include "../headers/Input.h"
 
 #include <iostream>
 #include <algorithm>
-#include <stdlib.h>
 
 namespace {
 	const int FPS = 50;
@@ -28,14 +26,15 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 	std::cout << "sprite added" << std::endl;
 	graphics.loadImage("data\\graphics\\title.png"); //loads sprite sheet in
 
-	this->_startGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 84, 213, 40, 110, 270);
+	this->_startGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 84, 124, 23, 110, 270);
 	graphics.loadImage("data\\graphics\\startGame.png");
 
-	this->_loadGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 148, 213, 40, 340, 270);
+	this->_loadGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 119, 130, 22, 340, 315);
 
+	this->_settings = Sprite(graphics, "data\\graphics\\startGame.png", 0, 153, 95, 22, 340, 355);
+	this->_settingsMenu = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 195, 40, 42, 35, 70);
 
-	graphics.loadImage("data\\npc\\npcTextBox.png");
-	this->_selectionBox = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 140, 250);
+	this->_selectionBox = Sprite(graphics, "data\\graphics\\startGame.png", 0, 63, 19, 12, 140, 250);
 }
 
 Title::~Title()
@@ -69,15 +68,35 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 			}
 		}
 		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-			menuLoop = false;
+			if (menuChoice != 2)
+				menuLoop = false;
+			else {
+				showSettings = !showSettings;
+			}
+			std::cout << "Show Settings = " << showSettings << std::endl;
 		}
-		else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
-			this->selectX = this->_loadGame.getX() - 6;
-			menuChoice = 1;
+		else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
+			if (menuChoice == 0) {
+				this->selectY = this->_loadGame.getY() + 5;
+				menuChoice++;
+			}
+				
+			else if (menuChoice == 1) {
+				this->selectY = this->_settings.getY() + 5;
+				menuChoice++;
+			}
 		}
-		else if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
-			this->selectX = this->_startGame.getX() - 6;
-			menuChoice = 0;
+		else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
+			if (menuChoice == 2) {
+				this->selectY = this->_loadGame.getY() + 5;
+				menuChoice--;
+			}
+
+			else if (menuChoice == 1) {
+				this->selectY = this->_startGame.getY() + 5;
+				menuChoice--;
+			}
+			
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {
 			exit(0);
@@ -134,10 +153,18 @@ void Title::draw(Graphics &graphics) {
 
 	AnimatedSprite::drawTitle(graphics, this->_x, this->_y);
 	this->_title.drawTitle(graphics, 210, 50);
-	this->_startGame.drawTitle(graphics, 110, 270);
-	this->_loadGame.drawTitle(graphics, 340, 270);
-	this->_selectionBox.drawSelectionBox(graphics, selectX, selectY);
-	this->_txt->drawVersion(graphics, 395, 460);
-	this->_txt->drawDeveloper(graphics, 0, 460);
+	this->_startGame.drawTitle(graphics, 215, 270);
+	this->_loadGame.drawTitle(graphics, 215, 315);
+	this->_settings.drawTitle(graphics, 215, 355);
+	this->_selectionBox.drawTitle(graphics, selectX, selectY);
+	this->drawVersion(graphics, 395, 460);
+	this->drawDeveloper(graphics, 0, 460);
+	if (showSettings) {
+		this->_settingsMenu.drawiMenu(graphics, 210, 125);
+		std::string s = "Volume: ";
+		this->drawSettings(graphics, 235, 155, s);
+		s = "Exit";
+		this->drawSettings(graphics, 235, 185, s);
+	}
 	graphics.flip();
 }
