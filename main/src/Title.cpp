@@ -26,15 +26,15 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 	std::cout << "sprite added" << std::endl;
 	graphics.loadImage("data\\graphics\\title.png"); //loads sprite sheet in
 
-	this->_startGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 84, 124, 23, 110, 270);
+	this->_startGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 84, 124, 23, 215, 270);
 	graphics.loadImage("data\\graphics\\startGame.png");
 
-	this->_loadGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 119, 130, 22, 340, 315);
+	this->_loadGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 119, 130, 22, 215, 315);
 
-	this->_settings = Sprite(graphics, "data\\graphics\\startGame.png", 0, 153, 95, 22, 340, 355);
+	this->_settings = Sprite(graphics, "data\\graphics\\startGame.png", 0, 153, 95, 22, 215, 355);
 	this->_settingsMenu = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 195, 40, 42, 35, 70);
 
-	this->_selectionBox = Sprite(graphics, "data\\graphics\\startGame.png", 0, 63, 19, 12, 140, 250);
+	this->_selectionBox = Sprite(graphics, "data\\graphics\\startGame.png", 0, 63, 19, 12, 185, 275);
 }
 
 Title::~Title()
