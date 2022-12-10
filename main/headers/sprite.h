@@ -31,6 +31,7 @@ public:
 	void drawBoundingbox(Graphics &graphics, int x, int y, SDL_Color color);
 	void drawFBall(Graphics &graphics, int x, int y);
 	void drawHPBar(Graphics &graphics, int x, int y);
+	void drawVolumeBar(Graphics &graphics, int x, int y);
 	void drawLevelBar(Graphics &graphics, int x, int y);
 	void drawStatMenu(Graphics &graphics, int x, int y);
 	void drawStatSelection(Graphics &graphics, int x, int y);

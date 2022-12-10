@@ -33,6 +33,8 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 
 	this->_settings = Sprite(graphics, "data\\graphics\\startGame.png", 0, 153, 95, 22, 215, 355);
 	this->_settingsMenu = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 195, 40, 42, 35, 70);
+	this->_settingsVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 320, 150);
+	this->_settingsVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 335, 155);
 
 	this->_selectionBox = Sprite(graphics, "data\\graphics\\startGame.png", 0, 63, 19, 12, 185, 275);
 }
@@ -208,6 +210,8 @@ void Title::draw(Graphics &graphics) {
 	this->drawDeveloper(graphics, 0, 460);
 	if (showSettings) {
 		this->_settingsMenu.drawiMenu(graphics, 210, 125);
+		this->_settingsVolume.drawVolumeBar(graphics, this->_settingsVolume.getX(), this->_settingsVolume.getY());
+		this->_settingsVolumePercent.drawVolumeBar(graphics, this->_settingsVolumePercent.getX(), this->_settingsVolumePercent.getY());
 		std::string s = "Volume: ";
 		this->drawSettings(graphics, 240, 155, s);
 		s = "Exit";

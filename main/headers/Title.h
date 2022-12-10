@@ -29,6 +29,8 @@ private:
 	Sprite _loadGame;
 	Sprite _settings;
 	Sprite _settingsMenu;
+	Sprite _settingsVolume;
+	Sprite _settingsVolumePercent;
 	Sprite _selectionBox;
 
 	int selectX = 185;
