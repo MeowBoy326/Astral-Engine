@@ -85,6 +85,8 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					settingsChoice = 0;
 				}
 				else {
+					this->selectY = this->_settings.getY() + 5;
+					this->selectX = 185;
 					showSettings = !showSettings;
 				}
 			}
