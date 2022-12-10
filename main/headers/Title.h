@@ -35,7 +35,10 @@ private:
 	int selectY = 275;
 	int menuChoice = 0;
 	int settingsChoice = 0;
+	int volumePercent = 100;
 
 	bool showSettings = false;
+	bool changeVolume = false;
+	bool isSubmenu = false;
 };
 

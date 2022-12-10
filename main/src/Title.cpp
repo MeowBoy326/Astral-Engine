@@ -70,13 +70,27 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
 			if (menuChoice != 2 && !showSettings)
 				menuLoop = false;
-			else {
+			else if (!showSettings) {
 				showSettings = !showSettings;
+				this->selectY = 155;
+				this->selectX = 220;
+				settingsChoice = 0;
 			}
-			std::cout << "Show Settings = " << showSettings << std::endl;
+			else {
+				if (settingsChoice == 0) {
+					changeVolume = !changeVolume;
+					isSubmenu = !isSubmenu;
+					this->selectY = 155;
+					this->selectX = 220;
+					settingsChoice = 0;
+				}
+				else {
+					showSettings = !showSettings;
+				}
+			}
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
-			if (!showSettings) {
+			if (!showSettings && !isSubmenu) {
 				if (menuChoice == 0) {
 					this->selectY = this->_loadGame.getY() + 5;
 					menuChoice++;
@@ -87,7 +101,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					menuChoice++;
 				}
 			}
-			else {
+			else if (showSettings && !isSubmenu) {
 				if (settingsChoice == 0) {
 					this->selectY = 185;
 					this->selectX = 220;
@@ -108,11 +122,25 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					menuChoice--;
 				}
 			}
-			else {
+			else if (showSettings && !isSubmenu) {
 				if (settingsChoice == 1) {
 					this->selectY = 155;
 					this->selectX = 220;
 					settingsChoice--;
+				}
+			}
+		}
+		else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
+			if (isSubmenu) {
+				if (changeVolume) {
+					// Increase volume
+				}
+			}
+		}
+		else if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
+			if (isSubmenu) {
+				if (changeVolume) {
+					// Decrease volume 
 				}
 			}
 		}
