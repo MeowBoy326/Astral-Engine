@@ -68,7 +68,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 			}
 		}
 		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-			if (menuChoice != 2)
+			if (menuChoice != 2 && !showSettings)
 				menuLoop = false;
 			else {
 				showSettings = !showSettings;
@@ -76,27 +76,49 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 			std::cout << "Show Settings = " << showSettings << std::endl;
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
-			if (menuChoice == 0) {
-				this->selectY = this->_loadGame.getY() + 5;
-				menuChoice++;
+			if (!showSettings) {
+				if (menuChoice == 0) {
+					this->selectY = this->_loadGame.getY() + 5;
+					menuChoice++;
+				}
+
+				else if (menuChoice == 1) {
+					this->selectY = this->_settings.getY() + 5;
+					menuChoice++;
+				}
 			}
-				
-			else if (menuChoice == 1) {
-				this->selectY = this->_settings.getY() + 5;
-				menuChoice++;
-			}
-		}
-		else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
-			if (menuChoice == 2) {
-				this->selectY = this->_loadGame.getY() + 5;
-				menuChoice--;
+			else {
+				if (settingsChoice == 0) {
+					this->selectY = 155;
+					this->selectX = 220;
+					settingsChoice++;
+				}
+				else if (settingsChoice == 1) {
+					this->selectY = 185;
+					this->selectX = 220;
+				}
 			}
 
-			else if (menuChoice == 1) {
-				this->selectY = this->_startGame.getY() + 5;
-				menuChoice--;
+		}
+		else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
+			if (!showSettings) {
+				if (menuChoice == 2) {
+					this->selectY = this->_loadGame.getY() + 5;
+					menuChoice--;
+				}
+
+				else if (menuChoice == 1) {
+					this->selectY = this->_startGame.getY() + 5;
+					menuChoice--;
+				}
 			}
-			
+			else {
+				if (settingsChoice == 1) {
+					this->selectY = 155;
+					this->selectX = 220;
+					settingsChoice--;
+				}
+			}
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {
 			exit(0);
@@ -156,15 +178,15 @@ void Title::draw(Graphics &graphics) {
 	this->_startGame.drawTitle(graphics, 215, 270);
 	this->_loadGame.drawTitle(graphics, 215, 315);
 	this->_settings.drawTitle(graphics, 215, 355);
-	this->_selectionBox.drawTitle(graphics, selectX, selectY);
 	this->drawVersion(graphics, 395, 460);
 	this->drawDeveloper(graphics, 0, 460);
 	if (showSettings) {
 		this->_settingsMenu.drawiMenu(graphics, 210, 125);
 		std::string s = "Volume: ";
-		this->drawSettings(graphics, 235, 155, s);
+		this->drawSettings(graphics, 240, 155, s);
 		s = "Exit";
-		this->drawSettings(graphics, 235, 185, s);
+		this->drawSettings(graphics, 240, 185, s);
 	}
+	this->_selectionBox.drawTitle(graphics, selectX, selectY);
 	graphics.flip();
 }

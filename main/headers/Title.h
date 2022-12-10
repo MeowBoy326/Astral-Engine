@@ -34,6 +34,7 @@ private:
 	int selectX = 185;
 	int selectY = 275;
 	int menuChoice = 0;
+	int settingsChoice = 0;
 
 	bool showSettings = false;
 };
