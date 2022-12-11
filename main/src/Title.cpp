@@ -211,8 +211,8 @@ void Title::draw(Graphics &graphics) {
 	this->_startGame.drawTitle(graphics, 215, 270);
 	this->_loadGame.drawTitle(graphics, 215, 315);
 	this->_settings.drawTitle(graphics, 215, 355);
-	this->drawVersion(graphics, 395, 460);
-	this->drawDeveloper(graphics, 0, 460);
+	this->drawVersion(graphics, 0, 455);
+	this->drawDeveloper(graphics, 0, 445);
 	if (showSettings) {
 		this->_settingsMenu.drawiMenu(graphics, 210, 125);
 		this->_settingsVolume.drawVolumeBar(graphics, this->_settingsVolume.getX(), this->_settingsVolume.getY());
