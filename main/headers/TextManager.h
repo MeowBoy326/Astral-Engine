@@ -10,6 +10,7 @@
 #include <SDL_ttf.h>
 #include "sprite.h"
 #include "Graphics.h"
+#include "version.h"
 
 class Graphics; //foward declare graphics so we can use it in .cpp
 class Player;
@@ -48,6 +49,8 @@ protected:
 	SDL_Texture* _textSheet;
 	Rectangle _TboundingBox; //rectangle around player is bounding box. Every sprite will get it.
 	float _textX, _textY; //x,y pos of sprite
+	std::string version = "Version " + std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR)
+		+ "." + std::to_string(VERSION_PATCH) + "." + std::to_string(VERSION_BUILD) + " (" + DATE_TIME + ")";
 private:
 	Sprite _chatBox;
 	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 20);

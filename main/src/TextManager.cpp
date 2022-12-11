@@ -250,9 +250,19 @@ void TextManager::drawVersion(Graphics & graphics, int x, int y)
 	SDL_Surface *backGround;
 	SDL_Surface *surface;
 	SDL_Color color = { 255, 255, 255, 255 };
-	std::string version = "Version 25.1 Alpha 07/22/2021";
-	int fontSize = 12;
-	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", fontSize);
+
+	// Get current time & version
+	//std::time_t currentTime = std::time(0);
+	//std::tm* localTime = std::localtime(&currentTime);
+	////std::asctime(localTime)
+	//char time[40];
+	//std::strftime(time, sizeof(time), "%B %d, %Y (%T)", localTime);
+	//std::string timeToStr = time;
+	//std::string version;
+	//version += "Version " + std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR)
+	//	+ "." + std::to_string(VERSION_PATCH) + "." + std::to_string(VERSION_BUILD) + " " + timeToStr;
+
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\ClearSans-Light.ttf", 14);
 
 	//Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
 	surface = TTF_RenderText_Solid(iFont, version.c_str(), color);
