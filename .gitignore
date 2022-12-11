@@ -420,3 +420,4 @@ resource.h
 SDLProject.rc
 *.pbm
 data/
+update_version.ps1
