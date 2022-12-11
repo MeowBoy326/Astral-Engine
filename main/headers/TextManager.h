@@ -41,7 +41,7 @@ public:
 	void drawPlayerStatus(Graphics & graphics, int x, int y, const std::string &text, SDL_Color color = { 255, 255, 255, 255 });
 	void drawEventMessages(Graphics &graphics, int x, int y, std::string &text, SDL_Color color = { 255, 255, 255, 255 });
 	void drawBattleMessages(Graphics &graphics, int x, int y, std::string &text, SDL_Color color = { 255, 255, 255, 255 });
-	void drawSettings(Graphics &graphics, int x, int y, std::string &text, SDL_Color color = { 255, 255, 255, 255 });
+	void drawSettings(Graphics &graphics, int x, int y, std::string &text, int fontSize, SDL_Color color = { 255, 255, 255, 255 });
 protected:
 	SDL_Rect _textSourceRect; //where on the spritesheet to get the sprite from
 	SDL_Rect _chatRect;

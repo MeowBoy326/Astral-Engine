@@ -471,7 +471,7 @@ void TextManager::drawBattleMessages(Graphics & graphics, int x, int y, std::str
 	SDL_DestroyTexture(tex);
 }
 
-void TextManager::drawSettings(Graphics & graphics, int x, int y, std::string & text, SDL_Color color)
+void TextManager::drawSettings(Graphics & graphics, int x, int y, std::string & text, int fontSize, SDL_Color color)
 {
 	//TTF_Init();
 	if (TTF_Init() == -1) {
@@ -480,7 +480,7 @@ void TextManager::drawSettings(Graphics & graphics, int x, int y, std::string & 
 	}
 
 	SDL_Surface *surface;
-	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 14);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", fontSize);
 	surface = TTF_RenderText_Solid(iFont, text.c_str(), color);
 	SDL_Rect destinationRectangle = { x, y, surface->w, surface->h }; //where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
