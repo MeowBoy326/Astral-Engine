@@ -217,10 +217,12 @@ void Title::draw(Graphics &graphics) {
 		this->_settingsMenu.drawiMenu(graphics, 210, 125);
 		this->_settingsVolume.drawVolumeBar(graphics, this->_settingsVolume.getX(), this->_settingsVolume.getY());
 		this->_settingsVolumePercent.drawVolumeBar(graphics, this->_settingsVolumePercent.getX(), this->_settingsVolumePercent.getY());
-		std::string s = "Volume: ";
-		this->drawSettings(graphics, 240, 155, s);
-		s = "Exit";
-		this->drawSettings(graphics, 240, 185, s);
+		std::string label = "Volume: ";
+		this->drawSettings(graphics, 240, 155, label, 14);
+		label = std::to_string(volumePercent) + "%";
+		this->drawSettings(graphics, 375, 145, label, 10);
+		label = "Exit";
+		this->drawSettings(graphics, 240, 185, label, 14);
 	}
 	this->_selectionBox.drawTitle(graphics, selectX, selectY);
 	graphics.flip();
