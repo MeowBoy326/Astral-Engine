@@ -218,7 +218,10 @@ void Title::draw(Graphics &graphics) {
 		this->_settingsVolume.drawVolumeBar(graphics, this->_settingsVolume.getX(), this->_settingsVolume.getY());
 		this->_settingsVolumePercent.drawVolumeBar(graphics, this->_settingsVolumePercent.getX(), this->_settingsVolumePercent.getY());
 		std::string label = "Volume: ";
-		this->drawSettings(graphics, 240, 155, label, 14);
+		if (changeVolume)
+			this->drawSettings(graphics, 240, 155, label, 14, {255,255,0,255});
+		else
+			this->drawSettings(graphics, 240, 155, label, 14);
 		label = std::to_string(volumePercent) + "%";
 		this->drawSettings(graphics, 375, 145, label, 10);
 		label = "Exit";
