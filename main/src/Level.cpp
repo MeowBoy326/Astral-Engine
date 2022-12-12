@@ -621,7 +621,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 				}
 			}
 			}
-			//Other object groups go here with an else if (ss.str() == "whatever")
+			// Other object groups go here with an else if (ss.str() == "whatever")
 			else if (ss.str() == "slopes") {
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
 				if (pObject != NULL) {
@@ -827,7 +827,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 	SDL_Rect sourceRect = {0, 0, 64, 64}; //source rect will be entire bkBlue.png (map) Image is 64x64 we want entire thing
 	SDL_Rect destRect; // where we are drawing to on the screen
 
-	//Our screen size is obviously bigger than  64 so we need to loop this to draw multiple tiles in different spots
+	// Our screen size is obviously bigger than  64 so we need to loop this to draw multiple tiles in different spots
 	// Nested for loop is a good thing to use here
 	for (int x = 0; x < this->_size.x / 64; x++) { // How many pixels across / 64 size of background.
 		// width of level divided by 64 is how many times we gotta draw this background (tile) going from left to right
@@ -1480,7 +1480,7 @@ std::vector<Enemy*> Level::checkBulletCollisions(const Rectangle &other) {
 	std::vector<Enemy*> others;
 	for (int i = 0; i < this->_enemies.size(); i++) {
 		if (this->_enemies.at(i)->getBoundingBox().collidesWith(other)) {
-			//others.push_back(this->_enemies.at(i));
+			// Others.push_back(this->_enemies.at(i));
 		}
 	}
 	return others;

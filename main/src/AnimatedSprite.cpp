@@ -193,7 +193,7 @@ void AnimatedSprite::updateScript(int elapsedTime) { //timer checks when to go t
 
 
 void AnimatedSprite::draw(Graphics &graphics, int x, int y) {
-	if (this->_visible) { //only draw when visible
+	if (this->_visible) { // Only draw when visible
 		SDL_Rect destinationRectangle; //temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x; 
 		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
@@ -207,7 +207,7 @@ void AnimatedSprite::draw(Graphics &graphics, int x, int y) {
 }
 
 void AnimatedSprite::drawBoss(Graphics &graphics, int x, int y, float scaleFactor) {
-	if (this->_visible) { //only draw when visible
+	if (this->_visible) { // Only draw when visible
 		SDL_Rect destinationRectangle; //temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
 		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
@@ -234,7 +234,7 @@ void AnimatedSprite::drawTextBox(Graphics &graphics, std::string speech, TTF_Fon
 }*/
 
 void AnimatedSprite::drawNpc(Graphics &graphics, int x, int y) {
-	if (this->_visible) { //only draw when visible
+	if (this->_visible) { // Only draw when visible
 		SDL_Rect destinationRectangle; //temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
 		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
@@ -250,7 +250,7 @@ void AnimatedSprite::drawNpc(Graphics &graphics, int x, int y) {
 
 
 void AnimatedSprite::drawTitle(Graphics &graphics, int x, int y) {
-	if (this->_visible) { //only draw when visible
+	if (this->_visible) { // Only draw when visible
 		SDL_Rect destinationRectangle; //temp where we draw on screen
 		destinationRectangle.x = x;
 		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
@@ -265,7 +265,7 @@ void AnimatedSprite::drawTitle(Graphics &graphics, int x, int y) {
 }
 
 void AnimatedSprite::drawBullet(Graphics &graphics, int x, int y) {
-	if (this->_visible) { //only draw when visible
+	if (this->_visible) { // Only draw when visible
 		SDL_Rect destinationRectangle; //temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
 		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
@@ -279,7 +279,7 @@ void AnimatedSprite::drawBullet(Graphics &graphics, int x, int y) {
 }
 void AnimatedSprite::drawLoot(Graphics & graphics, int x, int y)
 {
-	if (this->_visible) { //only draw when visible
+	if (this->_visible) { // Only draw when visible
 		SDL_Rect destinationRectangle; //temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
 		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset

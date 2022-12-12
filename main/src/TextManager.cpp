@@ -397,7 +397,7 @@ void TextManager::drawPlayerStatus(Graphics & graphics, int x, int y, const std:
 		effectColor = { 128, 0, 128, 255 }; //Purple
 	}
 	else if (text == "BURNING") {
-		effectColor = { 255, 165, 0, 255 }; //Orange
+		effectColor = { 255, 165, 0, 255 }; // Orange
 	}
 	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 12);
 	SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), effectColor);

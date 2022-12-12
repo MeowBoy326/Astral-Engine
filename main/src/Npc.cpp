@@ -177,7 +177,7 @@ int Npc::loadQuests(std::string name)
 	ptrElement->QueryIntAttribute("numOfQuest", &numOfQuest);
 	const char* textPtr = nullptr, *descPtr = nullptr, *objPtr = nullptr, *npcPtr = nullptr, *rewardItem;
 	for (int counter = 0; counter < numOfQuest; ++counter) {
-		//obtain data from XML
+		// Obtain data from XML
 		ptrElement->QueryIntAttribute("amount", &amount);
 		ptrElement->QueryIntAttribute("type", &type);
 		textPtr = ptrElement->Attribute("questName");
@@ -210,7 +210,7 @@ int Npc::loadQuests(std::string name)
 	for (auto &t : this->questLog) {
 		if (std::get<5>(t) == true && std::get<4>(t) == false) {
 			std::get<4>(t) = true;
-			//once rewarded and player opens menu again, mark as completed.
+			// Once rewarded and player opens menu again, mark as completed.
 		}
 	}
 	cipher.AESEncrypt(nCwd.string(), cwd.string());

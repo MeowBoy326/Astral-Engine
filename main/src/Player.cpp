@@ -460,7 +460,7 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 			case sides::TOP:
 				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
 				this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
-				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
+				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					this->_dx = 0; //stop movement on x-axis
 					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
@@ -493,7 +493,7 @@ void Player::handleArenaCollisions(std::vector<Rectangle>& others)
 			case sides::TOP:
 				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
 				this->_y += 2; // No longer go through things, stops us
-				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
+				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					this->_dx = 0; //stop movement on x-axis
 					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
