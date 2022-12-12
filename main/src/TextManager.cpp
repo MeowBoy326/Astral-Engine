@@ -27,7 +27,7 @@ TextManager::TextManager(Graphics &graphics, const std::string &filePath, int so
 	_textX(posX),
 	_textY(posY)
 
-{	//set our sourceRectangle and spriteSheet
+{	// Set our sourceRectangle and spriteSheet
 	this->_textSourceRect.x = sourceX;
 	this->_textSourceRect.y = sourceY;
 	this->_textSourceRect.w = width;
@@ -217,7 +217,7 @@ void TextManager::drawMapName(Graphics & graphics, std::string &mapName, int x, 
 	std::transform(mapName.begin(), mapName.end(), mapName.begin(), ::toupper);
 	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\OptimusPrinceps.ttf", fontSize);
 
-	//Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
+	// Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
 	surface = TTF_RenderText_Solid(iFont, mapName.c_str(), color);
 	backGround = SDL_CreateRGBSurface(0, surface->w + 20, surface->h + 20, 32, 0, 0, 0, 0);
 	
@@ -252,19 +252,19 @@ void TextManager::drawVersion(Graphics & graphics, int x, int y)
 	SDL_Color color = { 255, 255, 255, 255 };
 
 	// Get current time & version
-	//std::time_t currentTime = std::time(0);
-	//std::tm* localTime = std::localtime(&currentTime);
-	////std::asctime(localTime)
+	// Std::time_t currentTime = std::time(0);
+	// Std::tm* localTime = std::localtime(&currentTime);
+	//// Std::asctime(localTime)
 	// Char time[40];
-	//std::strftime(time, sizeof(time), "%B %d, %Y (%T)", localTime);
-	//std::string timeToStr = time;
-	//std::string version;
+	// Std::strftime(time, sizeof(time), "%B %d, %Y (%T)", localTime);
+	// Std::string timeToStr = time;
+	// Std::string version;
 	//version += "Version " + std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR)
 	//	+ "." + std::to_string(VERSION_PATCH) + "." + std::to_string(VERSION_BUILD) + " " + timeToStr;
 
 	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\ClearSans-Light.ttf", 14);
 
-	//Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
+	// Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
 	surface = TTF_RenderText_Solid(iFont, version.c_str(), color);
 	backGround = SDL_CreateRGBSurface(0, surface->w + 20, surface->h + 20, 32, 0, 0, 0, 0);
 
@@ -298,7 +298,7 @@ void TextManager::drawDeveloper(Graphics & graphics, int x, int y)
 	int fontSize = 12;
 	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", fontSize);
 
-	//Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
+	// Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
 	surface = TTF_RenderText_Solid(iFont, version.c_str(), color);
 	backGround = SDL_CreateRGBSurface(0, surface->w + 20, surface->h + 20, 32, 0, 0, 0, 0);
 
@@ -348,7 +348,7 @@ void TextManager::drawPercentNumber(Graphics & graphics, int x, int y, double ex
 	SDL_Surface *surface;
 	int precisionVal = 2;
 	std::string percentNum = std::to_string(exp).substr(0, std::to_string(exp).find(".") + precisionVal + 1) +"%";
-	//std::string expNum = std::to_string(exp) + "%";
+	// Std::string expNum = std::to_string(exp) + "%";
 	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 14);
 	surface = TTF_RenderText_Solid(iFont, percentNum.c_str(), color);
 
@@ -438,7 +438,7 @@ void TextManager::drawEventMessages(Graphics & graphics, int x, int y, std::stri
 	std::transform(text.begin(), text.end(), text.begin(), ::toupper);
 	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", fontSize);
 
-	//Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
+	// Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
 	surface = TTF_RenderText_Solid(iFont, text.c_str(), color);
 	backGround = SDL_CreateRGBSurface(0, surface->w + 20, surface->h + 20, 32, 0, 0, 0, 0);
 

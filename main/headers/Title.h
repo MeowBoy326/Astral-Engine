@@ -26,7 +26,7 @@ public:
 	int loadSettings();
 	int getMenuChoice();
 private:
-	Graphics _graphics; //store graphics object
+	Graphics _graphics; // Store graphics object
 	Sprite _title;
 	Sprite _startGame;
 	Sprite _loadGame;

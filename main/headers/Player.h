@@ -153,7 +153,7 @@ public:
 	int getCurrency() { return this->currency; }
 	void setCurrency(int num) { this->currency = num; }
 
-	//Stat menu
+	// Stat menu
 	void statChoice(int selection);
 	inline void setDmgMod(double mod) { this->_dmgMod = mod; }
 	inline void setDefense(double def) { this->_defense = def; }

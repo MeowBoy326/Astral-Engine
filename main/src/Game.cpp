@@ -93,7 +93,7 @@ Game::Game() { // Constructor
 	}
 	//TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
 	this->cipher = AESCipher();
-	this->gameLoop(); //start game
+	this->gameLoop(); // Start game
 }
 
 Game::~Game() {}
@@ -143,7 +143,7 @@ void Game::gameLoop() {
 	int LAST_UPDATE_TIME = SDL_GetTicks(); 
 	// Above ^ gets the amount of miliseconds since the SDL library was intialized
 	// Must start before loop
-	//Start the game loop
+	// Start the game loop
 	while (true) {
 		input.beginNewFrame();
 //Title screen Loop
@@ -338,7 +338,7 @@ void Game::gameLoop() {
 			//	&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
 
 			//	//this->saveGame(graphics);
-			//	//std::cout << "Quitting Game..." << std::endl;
+			//	// Std::cout << "Quitting Game..." << std::endl;
 			//	// Return; // Quit game if ESC was pressed
 			//}
 			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
@@ -815,13 +815,13 @@ int Game::saveGame(Graphics & graphics)
 	xml.InsertFirstChild(root);
 	std::cout << "Creating the XML Document..." << std::endl;
 
-	//Save player location
+	// Save player location
 	XMLElement* element = xml.NewElement("Spawn");
 	element->SetAttribute("mapName", this->_level.getMapName().c_str());
 	element->SetAttribute("xCoordinate", this->_player.getX());
 	element->SetAttribute("yCoordinate", this->_player.getY());
 	root->InsertEndChild(element);
-	//Save player stats
+	// Save player stats
 	element = xml.NewElement("Stats");
 	element->SetAttribute("MaxVitality", this->_player.getMaxHealth());
 	element->SetAttribute("Vitality", this->_player.getCurrentHealth());
@@ -835,7 +835,7 @@ int Game::saveGame(Graphics & graphics)
 	element->SetAttribute("KillCount", this->_player.getKillCount());
 	element->SetAttribute("Celestial", this->_player.getCurrency());
 	root->InsertEndChild(element);
-	//Save loot table
+	// Save loot table
 	element = xml.NewElement("Loot");
 	std::vector<std::pair<std::string, int>> tempVec = this->_inventory.getLootTable();
 	for (auto iter = tempVec.begin(); iter != tempVec.end(); iter++) {
@@ -847,7 +847,7 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
-	//Save inventory
+	// Save inventory
 	element = xml.NewElement("Inventory");
 	std::vector<std::pair<int, int>> iVec = this->_inventory.getInventoryTable();
 	for (auto iter = iVec.begin(); iter != iVec.end(); iter++) {
@@ -1022,7 +1022,7 @@ int Game::loadGame(Graphics & graphics)
 	result = element->QueryIntAttribute("yCoordinate", &y);
 	spawn = Vector2((int)std::ceil(x), (int)std::ceil(y));
 	this->_level.generateItems(graphics);
-	//spawn = this->_level.getPlayerSpawnPoint();
+	// Spawn = this->_level.getPlayerSpawnPoint();
 	this->_player = Player(graphics, spawn);
 	// Load KillTable
 	element = root->FirstChildElement("KillTable");
@@ -1181,7 +1181,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	
 	// Check collisions
 	std::vector<Rectangle> others;
-	//set vector = the result of the checkTileCollisions function
+	// Set vector = the result of the checkTileCollisions function
 	// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
 	// Against whatever we give it (player bounding box)
 	// If it returns at least 1, handle Tile collision!
@@ -1367,7 +1367,7 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 	}
 	// Check collisions
 	std::vector<Rectangle> others;
-	//set vector = the result of the checkTileCollisions function
+	// Set vector = the result of the checkTileCollisions function
 	// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
 	// Against whatever we give it (player bounding box)
 	// If it returns at least 1, handle Tile collision!

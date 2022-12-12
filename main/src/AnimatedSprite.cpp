@@ -118,7 +118,7 @@ void AnimatedSprite::stopScript() {
 }
 
 void AnimatedSprite::update(int elapsedTime) { //timer checks when to go to next frame in animation
-	Sprite::update(); //since we extend we can call like this
+	Sprite::update(); // Since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
 	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame
@@ -136,7 +136,7 @@ void AnimatedSprite::update(int elapsedTime) { //timer checks when to go to next
 }
 
 void AnimatedSprite::updateBoss(int elapsedTime, int y) {
-	Sprite::updateBoss(y); //since we extend we can call like this
+	Sprite::updateBoss(y); // Since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
 	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame
@@ -155,7 +155,7 @@ void AnimatedSprite::updateBoss(int elapsedTime, int y) {
 
 void AnimatedSprite::updateFBall(int elapsedTime, int y)
 {
-	Sprite::updateFBall(); //since we extend we can call like this
+	Sprite::updateFBall(); // Since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
 	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame
@@ -173,7 +173,7 @@ void AnimatedSprite::updateFBall(int elapsedTime, int y)
 }
 
 void AnimatedSprite::updateScript(int elapsedTime) { //timer checks when to go to next frame in animation
-	Sprite::update(); //since we extend we can call like this
+	Sprite::update(); // Since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
 	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame
@@ -293,7 +293,7 @@ void AnimatedSprite::drawLoot(Graphics & graphics, int x, int y)
 }
 /*
 void AnimatedSprite::updateBullet(int elapsedTime) { //timer checks when to go to next frame in animation
-	Sprite::updateBullet(); //since we extend we can call like this
+	Sprite::updateBullet(); // Since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
 	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame

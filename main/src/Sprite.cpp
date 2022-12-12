@@ -13,7 +13,7 @@ Sprite::Sprite(Graphics &graphics, const std::string &filePath, int sourceX, int
 _x(posX), 
 _y(posY)
 
-{	//set our sourceRectangle and spriteSheet
+{	// Set our sourceRectangle and spriteSheet
 	this->_sourceRect.x = sourceX;
 	this->_sourceRect.y = sourceY;
 	this->_sourceRect.w = width;
@@ -150,7 +150,7 @@ void Sprite::drawProjectile(Graphics &graphics, SDL_Rect rect) {
 void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) { 
 	// BulletID--;
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::PROJECTILE_SCALE, this->_sourceRect.h * globals::PROJECTILE_SCALE };
-	//SDL_Rect sourceRect = this->_projectiles.at[bulletID];
+	// SDL_Rect sourceRect = this->_projectiles.at[bulletID];
 	// DestinationRectangle.x = this->pRect.at(bulletID).x;
 	// Cout << this->pRect.at(bulletID).x << endl;
 	// Cout << "debug: draw BulletID# " << bulletID << endl;
@@ -174,8 +174,8 @@ void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) {
 	}
 	
 	// Cout << this->pRect[bulletID].x << endl;
-	//SDL_Rect sourceRect = { this->pRect.at(bulletID).x, this->pRect[bulletID].y, this->pRect[bulletID].w, this->pRect[bulletID].h, };
-	//SDL_Rect sourceRect = this->_projectiles[bulletID][this->_bulletNum]; // Pull out correct rectangle
+	// SDL_Rect sourceRect = { this->pRect.at(bulletID).x, this->pRect[bulletID].y, this->pRect[bulletID].w, this->pRect[bulletID].h, };
+	// SDL_Rect sourceRect = this->_projectiles[bulletID][this->_bulletNum]; // Pull out correct rectangle
 	
 
 
@@ -225,7 +225,7 @@ void Sprite::setBoundingBox(int x, int y, int width, int height)
 	this->_boundingBox = Rectangle(x, y, width, height);
 }
 
-//Side getCollisionSide
+// Side getCollisionSide
 // Determine which side the collision happened on
 const sides::Side Sprite::getCollisionSide(Rectangle &other) const {
 	int amtRight, amtLeft, amtTop, amtBottom; // Lowest amount that its in (overlapping) is the side we are colliding on 

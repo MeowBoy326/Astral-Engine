@@ -168,7 +168,7 @@ void Key::animationDone(std::string currentAnimation) {
 
 void Key::setupAnimations() {
 	this->addSpecialAnimation(2, 194, 1, "Blink", 15, 14, Vector2(0, 0));
-	//special animation for large X-value frames
+	// Special animation for large X-value frames
 }
 
 /*

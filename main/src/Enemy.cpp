@@ -241,7 +241,7 @@ std::string Bat::getName()
 }
 
 
-//Shade class
+// Shade class
 Shade::Shade() {}
 
 Shade::~Shade()
@@ -495,7 +495,7 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//this->_HPBar._y = others.at(i).getTop() + 1;
 				//this->_HPValue._y = others.at(i).getTop() + 1;
 				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
-					//this->_dx = 0; //stop movement on x-axis
+					//this->_dx = 0; // Stop movement on x-axis
 					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
@@ -704,7 +704,7 @@ void JellyFish::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//this->_HPBar._y = others.at(i).getTop() + 1;
 				//this->_HPValue._y = others.at(i).getTop() + 1;
 				// If (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
-				//	//this->_dx = 0; //stop movement on x-axis
+				//	//this->_dx = 0; // Stop movement on x-axis
 				//	this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				//}
 				break;
@@ -777,7 +777,7 @@ void Ghost::update(int elapsedTime, Player &player) {
 		if (!this->_GhostAttack && !this->_delayAttack)
 			this->playAnimation(this->_direction == RIGHT ? "GhostRight" : "GhostLeft");
 		if (this->_direction == LEFT && checkInRange(this->_y - 45, this->_y + 45, player.getY())) {
-			//Stay idle frame until player is in range
+			// Stay idle frame until player is in range
 			if (!this->_delayAttack && player.getX() < this->_x - 225) {
 				this->playAnimation("GhostLeft");
 			}
@@ -804,7 +804,7 @@ void Ghost::update(int elapsedTime, Player &player) {
 			}
 		}
 		else if (this->_direction == RIGHT && checkInRange(this->_y - 45, this->_y + 45, player.getY())) {
-			//Stay idle frame until player is in range
+			// Stay idle frame until player is in range
 			if (!this->_delayAttack && this->_x + 225 > player.getX()) {
 				this->playAnimation("GhostRight");
 			}
@@ -932,7 +932,7 @@ void Ghost::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//this->_HPBar._y = others.at(i).getTop() + 1;
 				//this->_HPValue._y = others.at(i).getTop() + 1;
 				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
-					//this->_dx = 0; //stop movement on x-axis
+					//this->_dx = 0; // Stop movement on x-axis
 					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;

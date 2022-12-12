@@ -121,10 +121,10 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	// Parse the .tmx file
 	XMLDocument doc; // Represents entire xml document
 	std::stringstream ss;
-	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
+	ss << mapName << ".tmx"; // Ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
 	cwd.append(mapName + ".tmx");
-	doc.LoadFile(cwd.string().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
+	doc.LoadFile(cwd.string().c_str());  // Ss,.str convers stringstream into stream then string function called c_str converts string to c-string
 	XMLElement* mapNode = doc.FirstChildElement("map"); // Doc is the root of the xml doc, the first child element from the root called map we are selecting
 
 	/* Save File function
@@ -168,7 +168,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 			int firstgid;
 			const char* source = pTileset->FirstChildElement("image")->Attribute("source"); // Returns a char* so thats why we set char* earlier
 			std::stringstream ss;
-			//ss << source; //ss << "content/tilesets/" << source;
+			// Ss << source; // Ss << "content/tilesets/" << source;
 			ss << "data/maps/" << source;
 			pTileset->QueryIntAttribute("firstgid", &firstgid);
 			SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(ss.str()));
@@ -241,7 +241,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									Tileset tls;
 									for (int i = 0; i < this->_tilesets.size(); i++) {
 										if (this->_tilesets[i].FirstGid <= gid) { //the very first gid on a tileset, is the very lowest gid we can possibly have
-											//so if its lower then the gid we are at, then its the one we want
+											// So if its lower then the gid we are at, then its the one we want
 											if (this->_tilesets[i].FirstGid > closest) {
 												closest = this->_tilesets[i].FirstGid;
 												//This is the tileset we want
@@ -266,13 +266,13 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									int xx = 0; // we need an x and y. We have a lot of variables so xx!
 									int yy = 0;
 									xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
-									//So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
+									// So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
 									// Next tilecounter is 1 and 1 mod 20 is 1. 1 * 16 = 16 So our 2nd tile will be at an x of 16 (across) and that just works....
 									xx *= tileWidth;
 									yy += tileHeight * (tileCounter / width);
 									//tileHeight is 16. So we start at 0. Tilecounter is 0 / 20 = 0 * tileHeight (16) = 0 so our yy would be 0
-									//Say our tile counter is at 20 (so 2nd row 1st tile for our map cave) 16 * (20/20[1]) = 16. 0 + 16 = 16
-									//So it will draw the tile at a Y of 16. This algotrithm gets us to the right spot on the map
+									// Say our tile counter is at 20 (so 2nd row 1st tile for our map cave) 16 * (20/20[1]) = 16. 0 + 16 = 16
+									// So it will draw the tile at a Y of 16. This algotrithm gets us to the right spot on the map
 									Vector2 finalTilePosition = Vector2(xx, yy);
 
 									// Calculate the position of the tile in the tileset 
@@ -356,7 +356,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							Tileset tls;
 							for (int i = 0; i < this->_tilesets.size(); i++) {
 								if (this->_tilesets[i].FirstGid <= gid) { //the very first gid on a tileset, is the very lowest gid we can possibly have
-									//so if its lower then the gid we are at, then its the one we want
+									// So if its lower then the gid we are at, then its the one we want
 									if (this->_tilesets[i].FirstGid > closest) {
 										closest = this->_tilesets[i].FirstGid;
 										//This is the tileset we want
@@ -381,13 +381,13 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							int xx = 0; // we need an x and y. We have a lot of variables so xx!
 							int yy = 0;
 							xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
-							//So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
+							// So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
 							// Next tilecounter is 1 and 1 mod 20 is 1. 1 * 16 = 16 So our 2nd tile will be at an x of 16 (across) and that just works....
 							xx *= tileWidth;
 							yy += tileHeight * (tileCounter / width);
 							//tileHeight is 16. So we start at 0. Tilecounter is 0 / 20 = 0 * tileHeight (16) = 0 so our yy would be 0
-							//Say our tile counter is at 20 (so 2nd row 1st tile for our map cave) 16 * (20/20[1]) = 16. 0 + 16 = 16
-							//So it will draw the tile at a Y of 16. This algotrithm gets us to the right spot on the map
+							// Say our tile counter is at 20 (so 2nd row 1st tile for our map cave) 16 * (20/20[1]) = 16. 0 + 16 = 16
+							// So it will draw the tile at a Y of 16. This algotrithm gets us to the right spot on the map
 							Vector2 finalTilePosition = Vector2(xx, yy);
 
 							// Calculate the position of the tile in the tileset 
@@ -637,12 +637,12 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 
 							std::stringstream ss;
 							ss << pointString;
-							Utils::split(ss.str(), pairs, ' '); //static function: passing in string, vector, splitting up with space( )
+							Utils::split(ss.str(), pairs, ' '); // Static function: passing in string, vector, splitting up with space( )
 							// Now we have each of the pairs. Loop through the list of pairs and split them into Vector2s and then store them in our points vector
 							for (int i = 0; i < pairs.size(); i++) {
 								std::vector<std::string> ps;
 								Utils::split(pairs.at(i), ps, ',');
-								points.push_back(Vector2(std::stoi(ps.at(0)), std::stoi(ps.at(1)))); //stoi = string to int
+								points.push_back(Vector2(std::stoi(ps.at(0)), std::stoi(ps.at(1)))); // Stoi = string to int
 							}
 						}
 						for (int i = 0; i < points.size(); i += 2) { // we are not using i++ because we want to skip every other point (not really)
@@ -661,7 +661,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					}
 				}
 			}
-			//SpawnPoint
+			// SpawnPoint
 			else if (ss.str() == "spawn points") {
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
 				if (pObject != NULL) {
@@ -824,7 +824,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 	/* OLD code when maps/tile werent implemented
 	// Draw the background
 	//x = 0 , y = 0 because we start at top left corner of the bkBlue.png (64x64) width 64 / height 64
-	SDL_Rect sourceRect = {0, 0, 64, 64}; //source rect will be entire bkBlue.png (map) Image is 64x64 we want entire thing
+	SDL_Rect sourceRect = {0, 0, 64, 64}; // Source rect will be entire bkBlue.png (map) Image is 64x64 we want entire thing
 	SDL_Rect destRect; // where we are drawing to on the screen
 
 	// Our screen size is obviously bigger than  64 so we need to loop this to draw multiple tiles in different spots
@@ -833,7 +833,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 		// width of level divided by 64 is how many times we gotta draw this background (tile) going from left to right
 		// Now we need to do it for top to bottom
 		for (int y = 0; y < this->_size.y / 64; y++) {
-			destRect.x = x * 64 * globals::SPRITE_SCALE; //So it will draw it first at 0,0 64 pixels long then next time is x will be 1 starting at 64th pixels and going
+			destRect.x = x * 64 * globals::SPRITE_SCALE; // So it will draw it first at 0,0 64 pixels long then next time is x will be 1 starting at 64th pixels and going
 			// All the way to the 128th pixel (another 64) and so on....
 			// Do same for y
 			destRect.y = y * 64 * globals::SPRITE_SCALE; // Multiply by sprite scale so 2x size looks better!
@@ -1202,7 +1202,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					auto cMapIt = std::find_if(this->levelDropTable.begin(), this->levelDropTable.end(), [&mob](const auto& t) { return std::get<0>(t) == mob; });
 					auto cDistance = std::distance(this->levelDropTable.begin(), cMapIt);
 					if (cMapIt != this->levelDropTable.end()) {
-						std::random_device rd; //Seed for the random number (for drop rate check)
+						std::random_device rd; // Seed for the random number (for drop rate check)
 						std::mt19937 gen(rd()); // Mersenne twister engine with rd seed ^
 						std::uniform_int_distribution<> luckyNumber(1, 100);
 						if (luckyNumber(gen) <= std::get<2>(this->levelDropTable[cDistance])) {
@@ -1245,7 +1245,7 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 {
 	XMLDocument doc; // Represents entire xml document
 	std::stringstream ss;
-	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
+	ss << mapName << ".tmx"; // Ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
 	cwd.append(mapName + ".tmx");
 	doc.LoadFile(cwd.string().c_str());
@@ -1299,7 +1299,7 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 {
 	XMLDocument doc; // Represents entire xml document
 	std::stringstream ss;
-	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
+	ss << mapName << ".tmx"; // Ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
 	cwd.append(mapName + ".tmx");
 	doc.LoadFile(cwd.string().c_str());
@@ -1536,7 +1536,7 @@ Vector2 Level::getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileH
 	//then modulo (TS width / T width)
 	int tsxx = (gid - tls.FirstGid) % (tilesetWidth / tileWidth);
 	tsxx *= tileWidth;
-	//Same as above but for the tileset Y position
+	// Same as above but for the tileset Y position
 	int tsyy = 0;
 	int amt = ((gid - tls.FirstGid) / (tilesetWidth / tileWidth));
 	tsyy = tileHeight * amt;

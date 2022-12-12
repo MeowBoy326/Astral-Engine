@@ -172,7 +172,7 @@ void Player::addBossTable(std::string name, std::string mapName, float x, float 
 		auto bDistance = std::distance(this->bossTable.begin(), bossIt);
 		if (bossIt != this->bossTable.end()) {
 			if (std::get<1>(this->bossTable[bDistance]) == mapName && (std::get<2>(this->bossTable[bDistance]) != x
-				|| std::get<3>(this->bossTable[bDistance]) != y)) //same boss/mini-boss (2 on same level) so we check the x or y as well 
+				|| std::get<3>(this->bossTable[bDistance]) != y)) // Same boss/mini-boss (2 on same level) so we check the x or y as well 
 			{
 				this->bossTable.push_back(std::make_tuple(name, mapName, x, y, false));
 			}
@@ -191,7 +191,7 @@ void Player::completeBossTable(std::string name, std::string mapName, float x, f
 	auto bDistance = std::distance(this->bossTable.begin(), bossIt);
 	if (bossIt != this->bossTable.end()) {
 		if (std::get<1>(this->bossTable[bDistance]) == mapName && std::get<2>(this->bossTable[bDistance]) == x
-			&& std::get<3>(this->bossTable[bDistance]) == y) //same boss/mini-boss (2 on same level) so we check the x or y as well 
+			&& std::get<3>(this->bossTable[bDistance]) == y) // Same boss/mini-boss (2 on same level) so we check the x or y as well 
 		{
 			std::get<4>(this->bossTable[bDistance]) = true;
 		}
@@ -461,7 +461,7 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
 				this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
 				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
-					this->_dx = 0; //stop movement on x-axis
+					this->_dx = 0; // Stop movement on x-axis
 					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
@@ -494,7 +494,7 @@ void Player::handleArenaCollisions(std::vector<Rectangle>& others)
 				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
 				this->_y += 2; // No longer go through things, stops us
 				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
-					this->_dx = 0; //stop movement on x-axis
+					this->_dx = 0; // Stop movement on x-axis
 					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
@@ -1181,10 +1181,10 @@ void Player::update(float elapsedTime) {
 
 		for (int i = this->battleMessages.size(); i--;) {
 			std::get<3>(this->battleMessages[i]) += elapsedTime; // Increase timer
-			//Set X to end of screen on the right then subtract by the width of the texture in TextManager
+			// Set X to end of screen on the right then subtract by the width of the texture in TextManager
 			//This will get the correct x position so that the last letter of the string ends right before the end of the screen
-			std::get<1>(this->battleMessages[i]) = this->_x + 320; //Set to player x + screen width / 2 (320)
-			std::get<2>(this->battleMessages[i]) = this->_y + 220; //Set to player y + the offset
+			std::get<1>(this->battleMessages[i]) = this->_x + 320; // Set to player x + screen width / 2 (320)
+			std::get<2>(this->battleMessages[i]) = this->_y + 220; // Set to player y + the offset
 			// Formula by Nataru(J.L)
 			if (i < this->battleMessages.size() - 1) {
 				if (i % 2 == 0) {
@@ -1227,7 +1227,7 @@ void Player::update(float elapsedTime) {
 			this->_timeForEventMsg = 0;
 		}
 
-		//Show map name timer
+		// Show map name timer
 		if (player_constants::showMapName == true) {
 			this->_mapTimeElapsed += elapsedTime;
 			if (this->_mapTimeElapsed > this->_timeForMapName) {

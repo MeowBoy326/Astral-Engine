@@ -20,7 +20,7 @@ public:
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
 private:
-	Graphics _graphics; //store graphics object
+	Graphics _graphics; // Store graphics object
 	Sprite _defeat;
 	Sprite _endGame;
 };
