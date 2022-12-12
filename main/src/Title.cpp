@@ -279,6 +279,15 @@ int Title::saveSettings() {
 
 int Title::loadSettings() {
 	XMLDocument xml;
+	if (!std::filesystem::exists(std::filesystem::current_path() / "data" / "profile" "settings.xml"))
+	{
+		std::cout << "File not found!" << std::endl;
+		// Create new file here?
+		return 0;
+	}
+	std::cout << "File was found!" << std::endl;
+	
+
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
 	cwd.append("settings.xml");
 	xml.LoadFile(cwd.string().c_str());
