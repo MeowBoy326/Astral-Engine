@@ -141,7 +141,7 @@ void Game::gameLoop() {
 		
 
 	int LAST_UPDATE_TIME = SDL_GetTicks(); 
-	// Above ^ gets the amount of miliseconds since the SDL library was intialized
+	// Above ^ gets the amount of milliseconds since the SDL library was initialized
 	// Must start before loop
 	// Start the game loop
 	while (true) {
@@ -151,7 +151,7 @@ void Game::gameLoop() {
 			title = _title.Start(graphics, input, event);
 			if (_title.getMenuChoice() == 0) {
 				std::cout << "No save data found...Starting new game!" << std::endl;
-				this->_level = Level("cave", graphics, this->_inventory); // Intialize level: Map name , spawn point, graphics
+				this->_level = Level("cave", graphics, this->_inventory); // Initialize level: Map name , spawn point, graphics
 				this->_level.generateItems(graphics);
 				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
@@ -177,14 +177,14 @@ void Game::gameLoop() {
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
 					if (event.key.repeat == 0) {
-						input.keyDownEvent(event); // if we are holding key start keydown event
+						input.keyDownEvent(event); // If we are holding key start keydown event
 					}
 				}
-				else if (event.type == SDL_KEYUP) { // if key was released
+				else if (event.type == SDL_KEYUP) { // If key was released
 					input.keyUpEvent(event);
 				}
 				else if (event.type == SDL_QUIT) {
-					return; // when the game ends or user exits
+					return; // When the game ends or user exits
 				}
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true) {
@@ -196,11 +196,11 @@ void Game::gameLoop() {
 				resetGame = false;
 			}
 
-			this->_graphics = graphics; // updated graphics
-			// take standard min : elapsed time ms and max frame time
+			this->_graphics = graphics; // Updated graphics
+			// Take standard min : elapsed time ms and max frame time
 			this->updateGameOver(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
 
-			// loop will go again and current time - new last update will tell us how long next frame will take
+			// Loop will go again and current time - new last update will tell us how long next frame will take
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			
 			this->drawGameOver(graphics);
@@ -213,11 +213,11 @@ void Game::gameLoop() {
 						input.keyDownEvent(event); // If we are holding key start keydown event
 					}
 				}
-				else if (event.type == SDL_KEYUP) { // if key was released
+				else if (event.type == SDL_KEYUP) { // If key was released
 					input.keyUpEvent(event);
 				}
 				else if (event.type == SDL_QUIT) {
-					return; // when the game ends or user exits
+					return; // When the game ends or user exits
 				}
 			}
 
@@ -254,11 +254,11 @@ void Game::gameLoop() {
 						input.keyDownEvent(event); // If we are holding key start keydown event
 					}
 				}
-				else if (event.type == SDL_KEYUP) { // if key was released
+				else if (event.type == SDL_KEYUP) { // If key was released
 					input.keyUpEvent(event);
 				}
 				else if (event.type == SDL_QUIT) {
-					return; // when the game ends or user exits
+					return; // When the game ends or user exits
 				}
 			}
 
