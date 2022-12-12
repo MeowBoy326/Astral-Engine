@@ -421,3 +421,4 @@ SDLProject.rc
 *.pbm
 data/
 update_version.ps1
+*.bat
