@@ -260,9 +260,37 @@ void Title::draw(Graphics &graphics) {
 }
 
 int Title::saveSettings() {
+	XMLDocument xml;
+	XMLNode* root = xml.NewElement("Root");
+	xml.InsertFirstChild(root);
+	std::cout << "Creating the XML Document..." << std::endl;
 
+	// Save each setting value
+	XMLElement* element = xml.NewElement("Settings");
+	element->SetAttribute("volumePercent", this->volumePercent);
+	root->InsertEndChild(element);
+	// Finalize save
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
+	cwd.append("settings.xml");
+	XMLError result = xml.SaveFile(cwd.string().c_str());
+	XMLCheckResult(result)
+	return result;
 }
 
 int Title::loadSettings() {
+	XMLDocument xml;
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
+	cwd.append("settings.xml");
+	xml.LoadFile(cwd.string().c_str());
 
+	XMLError result;
+	XMLNode* root = xml.FirstChild();
+	if (root == nullptr)
+		return XML_ERROR_FILE_READ_ERROR;
+	XMLElement* element = root->FirstChildElement("Settings");
+	int x, y;
+	result = element->QueryIntAttribute("volumePercent", &x);
+	this->volumePercent = x;
+	XMLCheckResult(result)
+	return result;
 }
