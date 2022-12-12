@@ -307,6 +307,8 @@ int Title::loadSettings() {
 	if (!std::filesystem::exists(std::filesystem::current_path() / "data" / "profile" "settings.xml"))
 	{
 		std::cout << "File not found!" << std::endl;
+		// Create a new save file using default settings
+		this->saveSettings();
 		return 0;
 	}
 	std::cout << "File was found!" << std::endl;
