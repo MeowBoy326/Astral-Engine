@@ -319,8 +319,6 @@ int Title::loadSettings() {
 		this->saveSettings();
 		return 0;
 	}
-	std::cout << "File was found!" << std::endl;
-	
 
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
 	cwd.append("settings.xml");
