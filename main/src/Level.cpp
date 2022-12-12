@@ -139,7 +139,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	int width, height;
 	mapNode->QueryIntAttribute("width", &width); //20 will be in our temp variable
 	mapNode->QueryIntAttribute("height", &height);
-	this->_size = Vector2(width, height); //Now we have the size of our map
+	this->_size = Vector2(width, height); // Now we have the size of our map
 
 	// Get the width and the height of the Tiles and store it in _tileSize
 	int tileWidth, tileHeight;
@@ -252,7 +252,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 
 									// If it cant find any tileset
 									if (tls.FirstGid == -1) {
-										//no tileset was found for this gid
+										// No tileset was found for this gid
 										tileCounter++;
 										if (pTile->NextSiblingElement("tile")) {
 											pTile = pTile->NextSiblingElement("tile");
@@ -267,7 +267,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									int yy = 0;
 									xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
 									//So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
-									//Next tilecounter is 1 and 1 mod 20 is 1. 1 * 16 = 16 So our 2nd tile will be at an x of 16 (across) and that just works....
+									// Next tilecounter is 1 and 1 mod 20 is 1. 1 * 16 = 16 So our 2nd tile will be at an x of 16 (across) and that just works....
 									xx *= tileWidth;
 									yy += tileHeight * (tileCounter / width);
 									//tileHeight is 16. So we start at 0. Tilecounter is 0 / 20 = 0 * tileHeight (16) = 0 so our yy would be 0
@@ -296,7 +296,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 										AnimatedTile tile(tilesetPositions, ati.Duration, tls.Texture, Vector2(tileWidth, tileHeight), finalTilePosition);
 										this->_animatedTileList.push_back(tile);
 									}
-									else { //not animated tile, create static one
+									else { // Not animated tile, create static one
 										Tile tile(tls.Texture, Vector2(tileWidth, tileHeight), finalTilesetPosition, finalTilePosition, SDL_FLIP_NONE);
 										this->_breakTileList.push_back(tile);
 									}
@@ -367,7 +367,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 
 							// If it cant find any tileset
 							if (tls.FirstGid == -1) {
-								//no tileset was found for this gid
+								// No tileset was found for this gid
 								tileCounter++;
 								if (pTile->NextSiblingElement("tile")) {
 									pTile = pTile->NextSiblingElement("tile");
@@ -382,7 +382,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							int yy = 0;
 							xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
 							//So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
-							//Next tilecounter is 1 and 1 mod 20 is 1. 1 * 16 = 16 So our 2nd tile will be at an x of 16 (across) and that just works....
+							// Next tilecounter is 1 and 1 mod 20 is 1. 1 * 16 = 16 So our 2nd tile will be at an x of 16 (across) and that just works....
 							xx *= tileWidth;
 							yy += tileHeight * (tileCounter / width);
 							//tileHeight is 16. So we start at 0. Tilecounter is 0 / 20 = 0 * tileHeight (16) = 0 so our yy would be 0
@@ -411,7 +411,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									AnimatedTile tile(tilesetPositions, ati.Duration, tls.Texture, Vector2(tileWidth, tileHeight), finalTilePosition);
 									this->_animatedTileList.push_back(tile);
 							}
-							else { //not animated tile, create static one
+							else { // Not animated tile, create static one
 							Tile tile(tls.Texture, Vector2(tileWidth, tileHeight), finalTilesetPosition, finalTilePosition, tileFlip);
 							this->_tileList.push_back(tile);
 							}
@@ -638,7 +638,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							std::stringstream ss;
 							ss << pointString;
 							Utils::split(ss.str(), pairs, ' '); //static function: passing in string, vector, splitting up with space( )
-							//Now we have each of the pairs. Loop through the list of pairs and split them into Vector2s and then store them in our points vector
+							// Now we have each of the pairs. Loop through the list of pairs and split them into Vector2s and then store them in our points vector
 							for (int i = 0; i < pairs.size(); i++) {
 								std::vector<std::string> ps;
 								Utils::split(pairs.at(i), ps, ',');
@@ -647,7 +647,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						}
 						for (int i = 0; i < points.size(); i += 2) { // we are not using i++ because we want to skip every other point (not really)
 							// Because we will be using i - 1 to look at the last one and i + 1 to look at next one
-							//need to figure out which point we are at, if we are at first point we dont wanna go anywhere, so add nothing to it.
+							// Need to figure out which point we are at, if we are at first point we dont wanna go anywhere, so add nothing to it.
 							this->_slopes.push_back(Slope(Vector2((p1.x + points.at(i < 2 ? i : i - 1).x) * globals::SPRITE_SCALE, 
 																  (p1.y + points.at(i < 2 ? i : i - 1).y ) * globals::SPRITE_SCALE),
 														  Vector2((p1.x + points.at(i < 2 ? i + 1 : i).x) * globals::SPRITE_SCALE,
@@ -828,10 +828,10 @@ void Level::draw(Graphics &graphics, Player &player) {
 	SDL_Rect destRect; // where we are drawing to on the screen
 
 	//Our screen size is obviously bigger than  64 so we need to loop this to draw multiple tiles in different spots
-	//Nested for loop is a good thing to use here
+	// Nested for loop is a good thing to use here
 	for (int x = 0; x < this->_size.x / 64; x++) { // How many pixels across / 64 size of background.
 		// width of level divided by 64 is how many times we gotta draw this background (tile) going from left to right
-		//Now we need to do it for top to bottom
+		// Now we need to do it for top to bottom
 		for (int y = 0; y < this->_size.y / 64; y++) {
 			destRect.x = x * 64 * globals::SPRITE_SCALE; //So it will draw it first at 0,0 64 pixels long then next time is x will be 1 starting at 64th pixels and going
 			// All the way to the 128th pixel (another 64) and so on....
@@ -1235,7 +1235,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 void Level::generateItems(Graphics &graphics)
 {
 	// Create all items that are droppable once.
-	//Note that they do not initialze / expend memory until passed through the &createInstance() function
+	// Note that they do not initialze / expend memory until passed through the &createInstance() function
 	std::cout << "Generating Items" << std::endl;
 	classMap["SilverGem"] = &createInstance<SilverGem>;
 	// More items below

@@ -691,7 +691,7 @@ void Game::drawGameOver(Graphics &graphics) {
 void Game::draw(Graphics &graphics) {
 	graphics.clear(); // Clear any drawings MUST do
 	this->_level.draw(graphics, this->_player);
-	//need to draw level before player (below) so player is on top of level and not behind it!
+	// Need to draw level before player (below) so player is on top of level and not behind it!
 	this->_player.draw(graphics);
 	this->_chatBox.drawChatBox(graphics, this->_player);
 	if (activeTalk == true) {
@@ -737,7 +737,7 @@ void Game::drawCutscene(Graphics &graphics) {
 
 	else if (sceneType == 2) {
 		this->_level.draw(graphics, this->_player);
-		//need to draw level before player (below) so player is on top of level and not behind it!
+		// Need to draw level before player (below) so player is on top of level and not behind it!
 		this->_player.draw(graphics);
 	}
 	graphics.flip(); //Render everything above

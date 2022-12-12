@@ -226,7 +226,7 @@ private:
 
 	// enemy name, amount killed
 	std::vector<std::pair<std::string, int>> killTable;
-	//name, mapName, initial x & y, spawn
+	// Name, mapName, initial x & y, spawn
 	std::vector<std::tuple<std::string, std::string, float, float, bool>> bossTable;
 	// map name, level object (stores the state of the level I.E: item was taken already)
 	std::map<std::string, Level> mapStorage;

@@ -459,7 +459,7 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 			switch (collisionSide) {
 			case sides::TOP:
 				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
-				this->_y = others.at(i).getBottom() + 1; //no longer go through things, stops us
+				this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
 				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					this->_dx = 0; //stop movement on x-axis
 					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
@@ -492,7 +492,7 @@ void Player::handleArenaCollisions(std::vector<Rectangle>& others)
 			switch (collisionSide) {
 			case sides::TOP:
 				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
-				this->_y += 2; //no longer go through things, stops us
+				this->_y += 2; // No longer go through things, stops us
 				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					this->_dx = 0; //stop movement on x-axis
 					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
@@ -591,10 +591,10 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 		// First calculate "b" (slope) intercept) using one of the points (b = y - mx)
 		int b = (others.at(i).getP1().y - (others.at(i).getSlope() * fabs(others.at(i).getP1().x)));
 
-		//Now get the players center x
+		// Now get the players center x
 		int centerX = this->_boundingBox.getCenterX();
 
-		//Now pass that X into the equation y = mx + b (using our newly found b and x) to get the new y position
+		// Now pass that X into the equation y = mx + b (using our newly found b and x) to get the new y position
 		int newY = (others.at(i).getSlope() * centerX) + b - 8; //8 is temporary to fix a problem
 
 		//Reposition the player to the correct "y"

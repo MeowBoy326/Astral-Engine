@@ -108,12 +108,12 @@ void AnimatedSprite::setVisible(bool visible) {
 }
 
 void AnimatedSprite::stopAnimation() {
-	this->_frameIndex = 0; //no matter what
+	this->_frameIndex = 0; // No matter what
 	this->animationDone(this->_currentAnimation);
 }
 
 void AnimatedSprite::stopScript() {
-	this->_scriptIndex = 0; //no matter what
+	this->_scriptIndex = 0; // No matter what
 	this->animationDone(this->_currentScript);
 }
 
