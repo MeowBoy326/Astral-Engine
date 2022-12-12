@@ -61,9 +61,9 @@ public:
 	inline void setQuestLog(std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> table) { this->questLog = table; }
 protected:
 	Direction _direction;
-	//questName, type, object, amount, description, npcName, rewardType, reward(can be converted to int for level), exp, cels
+	// QuestName, type, object, amount, description, npcName, rewardType, reward(can be converted to int for level), exp, cels
 	std::vector<std::tuple<std::string, int, std::string, int, std::string, std::string, int, std::string, int, int>> questTable;
-	//questName, type, object, amount, isCompleted, isRewarded
+	// QuestName, type, object, amount, isCompleted, isRewarded
 	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> questLog;
 
 	int _maxHealth;

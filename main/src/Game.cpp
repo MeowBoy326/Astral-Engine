@@ -339,7 +339,7 @@ void Game::gameLoop() {
 
 			//	//this->saveGame(graphics);
 			//	//std::cout << "Quitting Game..." << std::endl;
-			//	//return; //quit game if ESC was pressed
+			//	//return; // Quit game if ESC was pressed
 			//}
 			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
@@ -498,7 +498,7 @@ void Game::gameLoop() {
 							this->_npc.resetScripts();
 						}
 					}
-					//quests
+					// Quests
 					else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
 						this->_npc.setNpcTalk(true);
 						this->_npc.setQuestMenuState(true);
