@@ -187,7 +187,7 @@ int Npc::loadQuests(std::string name)
 		//if (rewardType == 0) {
 		//ptrElement->QueryIntAttribute("reward", &rewardLevel);
 		//}
-		//else
+		// Else
 		rewardItem = ptrElement->Attribute("reward");
 		ptrElement->QueryIntAttribute("exp", &exp);
 		ptrElement->QueryIntAttribute("cels", &cels);

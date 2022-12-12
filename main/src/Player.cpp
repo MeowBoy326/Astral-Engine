@@ -1082,7 +1082,7 @@ void Player::update(float elapsedTime) {
 		}
 
 		//Move by dx
-		this->_x += this->_dx * elapsedTime; //elapsedTime will move by a certain amount based on frame rate keeping thing moving smoothly
+		this->_x += this->_dx * elapsedTime; // ElapsedTime will move by a certain amount based on frame rate keeping thing moving smoothly
 		//Move by dy
 		this->previousY = this->_y;
 		this->_y += this->_dy * elapsedTime; //Gravity move them by Y

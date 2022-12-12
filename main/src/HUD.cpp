@@ -30,7 +30,7 @@ void HUD::update(int ElapsedTime, Player &player) {
 	float hpNum = (float)player.getCurrentHealth() / player.getMaxHealth();
 	this->_currentHealthBar.setSourceRectW(std::floor(hpNum * 56));
 
-	//Exp & Level bars
+	// Exp & Level bars
 	int expNum = (player.getCurrentExp() / player.getRequiredExp()) * 84;
 	this->_expBarValue.setSourceRectW(expNum);
 	this->_lvNumber.setSourceRectX(8 * player.getLevel());

@@ -21,7 +21,7 @@ private:
 	Sprite _healthNumber1;
 	Sprite _currentHealthBar;
 
-	//Exp Sprites
+	// Exp Sprites
 	Sprite _lvWord;
 	Sprite _lvNumber;
 	Sprite _expBarValue;

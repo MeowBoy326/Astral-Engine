@@ -61,7 +61,7 @@ public:
 	Rectangle _lastCollidedFloorRect;
 	Slope _lastCollidedSlope;
 
-	//Event handling
+	// Event handling
 	void setEventMessage(std::string text);
 	void handleTileCollisions(std::vector<Rectangle> &others);
 	void handleArenaCollisions(std::vector<Rectangle> &others);
@@ -131,7 +131,7 @@ public:
 	inline void setMaxHealth(float hp) { this->_maxHealth = hp; }
 	inline void setCurrentHealth(float hp) { this->_currentHealth = hp; }
 
-	//Exp, Level, & currency handling
+	// Exp, Level, & currency handling
 	void drawExpNumbers(Graphics &graphics);
 	void gainExp(float exp);
 	void gainExpFromEnemy(int enemyLevel, float exp);

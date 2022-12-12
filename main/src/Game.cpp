@@ -922,7 +922,7 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ldElement);
 	}
 	root->InsertEndChild(element);
-	//Equipment
+	// Equipment
 	element = xml.NewElement("EquipmentTable");
 	std::vector<std::string> eqVec = this->_player.getEquipmentTable();
 	for (int counter = 0; counter < eqVec.size(); ++counter) {
