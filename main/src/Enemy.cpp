@@ -276,7 +276,7 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 
 void Shade::update(int elapsedTime, Player &player) {
 	if (this->_dy <= this->GRAVITY_CAP) {
-		//dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
+		// Dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
 		this->_dy += this->GRAVITY * elapsedTime;
 	}
 	this->_y += this->_dy * elapsedTime; //Gravity move them by Y

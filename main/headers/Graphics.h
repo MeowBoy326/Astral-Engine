@@ -26,11 +26,11 @@ public:
 	SDL_Surface* loadImage(const std::string &filePath);
 	//void blitzSurface will draw a texture to a certain part of the screen
 	//source is what we are drawing to the screen, sourceRectangle is what part of the spritesheet we will draw
-	//destinationRectangle is where on the screen we will draw it
+	// DestinationRectangle is where on the screen we will draw it
 	void blitSurface(SDL_Texture* source, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle);
 	//Same as above (blitSurface) but will flip/rotate the image based on the flip parameter's value
 	void blitFlippedSurface(SDL_Texture* source, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectalge, SDL_RendererFlip flip);
-	//Drawings for the Title screen
+	// Drawings for the Title screen
 	void windowBlitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle);
 	// Draw bounding box outline
 	void blitBoundingbox(SDL_Rect &bbRect, SDL_Color color);

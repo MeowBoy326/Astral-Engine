@@ -125,7 +125,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
 	cwd.append(mapName + ".tmx");
 	doc.LoadFile(cwd.string().c_str());  //ss,.str convers stringstream into stream then string function called c_str converts string to c-string
-	XMLElement* mapNode = doc.FirstChildElement("map"); //doc is the root of the xml doc, the first child element from the root called map we are selecting
+	XMLElement* mapNode = doc.FirstChildElement("map"); // Doc is the root of the xml doc, the first child element from the root called map we are selecting
 
 	/* Save File function
 	* getMap();
@@ -673,7 +673,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						ss << name;
 						if (ss.str() == "player") {
 							this->_spawnPoint = Vector2(std::ceil(x) * globals::SPRITE_SCALE, std::ceil(y) * globals::SPRITE_SCALE);
-						//debug	
+						// Debug	
 							this->_bulletPoint = Vector2(std::ceil(x) * globals::SPRITE_SCALE, std::ceil(y) * globals::SPRITE_SCALE);
 						}
 						pObject = pObject->NextSiblingElement("object");
@@ -822,7 +822,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 	}
 
 	/* OLD code when maps/tile werent implemented
-	//Draw the background
+	// Draw the background
 	//x = 0 , y = 0 because we start at top left corner of the bkBlue.png (64x64) width 64 / height 64
 	SDL_Rect sourceRect = {0, 0, 64, 64}; //source rect will be entire bkBlue.png (map) Image is 64x64 we want entire thing
 	SDL_Rect destRect; // where we are drawing to on the screen
@@ -835,7 +835,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 		for (int y = 0; y < this->_size.y / 64; y++) {
 			destRect.x = x * 64 * globals::SPRITE_SCALE; //So it will draw it first at 0,0 64 pixels long then next time is x will be 1 starting at 64th pixels and going
 			// All the way to the 128th pixel (another 64) and so on....
-			//Do same for y
+			// Do same for y
 			destRect.y = y * 64 * globals::SPRITE_SCALE; //multiply by sprite scale so 2x size looks better!
 			destRect.w = 64 * globals::SPRITE_SCALE;
 			destRect.h = 64 * globals::SPRITE_SCALE;

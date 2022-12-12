@@ -166,7 +166,7 @@ void Game::gameLoop() {
 				this->loadGame(graphics);
 			}
 		}
-//Death Loop
+// Death Loop
 		if (title == false && GAMEOVER == true) {
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;

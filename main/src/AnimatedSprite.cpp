@@ -2,7 +2,7 @@
 #include "../headers/Graphics.h"
 #include "../headers/sprite.h"
 
-AnimatedSprite::AnimatedSprite() {} //default constructor
+AnimatedSprite::AnimatedSprite() {} // Default constructor
 
 AnimatedSprite::AnimatedSprite(Graphics &graphics, const std::string &filePath, int sourceX, int sourceY,
 	int width, int height, float posX, float posY, float timeToUpdate) :

@@ -44,7 +44,7 @@ enum Direction {
 
 struct Vector2 {
 	int x, y; //no public or private, structures are by default public and we want public
-	Vector2() : //default constructor
+	Vector2() : // Default constructor
 		x(0), y(0){}
 	Vector2(int x, int y) : // Constructor we will be using most of the time
 		x(x), y(y) {}

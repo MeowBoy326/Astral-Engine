@@ -375,7 +375,7 @@ void Player::jump() {
 	}
 	if (this->_climbing) {
 		this->_dy = 0;
-		this->_dy -= 0.07; //Don't set to any higher or else player can traverse quickly using jump
+		this->_dy -= 0.07; // Don't set to any higher or else player can traverse quickly using jump
 		this->_grounded = false;
 		this->_climbing = false;
 	}
@@ -1047,7 +1047,7 @@ void Player::update(float elapsedTime) {
 	else {
 		// Apply gravity
 		if (this->_dy <= player_constants::GRAVITY_CAP && !_climbing && !this->isFlying) {
-		//dy is change in y over this frames dy. If dy is less than or equal to gravity cap then we need to increase 
+		// Dy is change in y over this frames dy. If dy is less than or equal to gravity cap then we need to increase 
 	    //the DY by gravity because we are not at the cap.
 			this->_dy += player_constants::GRAVITY * elapsedTime;
 		}
@@ -1194,7 +1194,7 @@ void Player::update(float elapsedTime) {
 					std::get<2>(this->battleMessages[i]) = std::get<2>(this->battleMessages[i + 1]) - 12;
 				}
 			}
-			//Delete from vector if the message exceeds its lifespan
+			// Delete from vector if the message exceeds its lifespan
 			if (std::get<3>(this->battleMessages[i]) >= 3100) {
 				this->battleMessages.erase(this->battleMessages.begin() + i);
 			}

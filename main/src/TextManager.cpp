@@ -392,7 +392,7 @@ void TextManager::drawPlayerStatus(Graphics & graphics, int x, int y, const std:
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
 	}
-	SDL_Color effectColor = {255, 255, 255, 255}; //default white
+	SDL_Color effectColor = {255, 255, 255, 255}; // Default white
 	if (text == "POISONED") {
 		effectColor = { 128, 0, 128, 255 }; //Purple
 	}
