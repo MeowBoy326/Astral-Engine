@@ -99,6 +99,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectY = this->_settings.getY() + 5;
 					this->selectX = 185;
 					showSettings = !showSettings;
+					isSubmenu = !isSubmenu;
 				}
 				else {
 					// Undo any changes by loading the unsaved file
@@ -107,6 +108,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectY = this->_settings.getY() + 5;
 					this->selectX = 185;
 					showSettings = !showSettings;
+					isSubmenu = !isSubmenu;
 				}
 			}
 			else {
@@ -119,7 +121,11 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 				}
 				// Exit button -> Open confirmation (Save and Exit?)
 				else {
+					isSubmenu = !isSubmenu;
 					exitMenu = !exitMenu;
+					this->selectY = 325;
+					this->selectX = 320;
+					this->exitChoice = 0;
 				}
 			}
 		}
@@ -172,6 +178,13 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					float volNum = (float)volumePercent / 100;
 					this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
 				}
+				else if (exitMenu) {
+					if (exitChoice == 0) {
+						this->selectY = 325;
+						this->selectX = 395;
+						exitChoice++;
+					}
+				}
 			}
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
@@ -180,6 +193,13 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->volumePercent -= 5;
 					float volNum = (float)volumePercent / 100;
 					this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
+				}
+				else if (exitMenu) {
+					if (exitChoice == 1) {
+						this->selectY = 325;
+						this->selectX = 320;
+						exitChoice--;
+					}
 				}
 			}
 		}
@@ -287,7 +307,6 @@ int Title::loadSettings() {
 	if (!std::filesystem::exists(std::filesystem::current_path() / "data" / "profile" "settings.xml"))
 	{
 		std::cout << "File not found!" << std::endl;
-		// Create new file here?
 		return 0;
 	}
 	std::cout << "File was found!" << std::endl;
