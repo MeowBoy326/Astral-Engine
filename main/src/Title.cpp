@@ -357,6 +357,8 @@ int Title::loadSettings() {
 	int x, y;
 	result = element->QueryIntAttribute("volumePercent", &x);
 	this->volumePercent = x;
+	float volNum = (float)volumePercent / 100;
+	this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
 	XMLCheckResult(result)
 	return result;
 }
