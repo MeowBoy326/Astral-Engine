@@ -587,7 +587,7 @@ bool Player::handleLadderCollisions(std::vector<Rectangle>& others)
 void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 	for (int i = 0; i < others.size(); i++) {
 		//Calculate where on the slope the player's bottom center is touching
-		//and use y=mx+b to figure out the y position to place him at
+		// And use y=mx+b to figure out the y position to place him at
 		//First calculate "b" (slope) intercept) using one of the points (b = y - mx)
 		int b = (others.at(i).getP1().y - (others.at(i).getSlope() * fabs(others.at(i).getP1().x)));
 
@@ -656,7 +656,7 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level, Graphics & graphics, Inventory & invent, Player &player)
 {
 	//Check if the player is grounded and holding the down arrow
-	//Also check to see if the player has a "Key"
+	// Also check to see if the player has a "Key"
 	AESCipher cipher;
 	for (int i = 0; i < others.size(); i++) {
 		if (this->_grounded == true && this->_lookingDown == true) {
@@ -784,7 +784,7 @@ void Player::nullifyHex(int hexID)
 	if (hexID == 0) {
 		// If all hexes are being nullified then we need to individually remove them all
 		// by checking the hex table and seeing which ones are active and apply the
-		// appropiate removal method.
+		// Appropiate removal method.
 		for (int i = 0; i < this->hexTable.size(); i++) {
 			// Recursive call: pass in the hexID as the argument
 			this->nullifyHex(std::get<0>(this->hexTable[i]));
@@ -1045,7 +1045,7 @@ void Player::update(float elapsedTime) {
 		this->_deathAnimationTimer += elapsedTime;
 	}
 	else {
-		//Apply gravity
+		// Apply gravity
 		if (this->_dy <= player_constants::GRAVITY_CAP && !_climbing && !this->isFlying) {
 		//dy is change in y over this frames dy. If dy is less than or equal to gravity cap then we need to increase 
 	    //the DY by gravity because we are not at the cap.

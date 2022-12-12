@@ -299,11 +299,11 @@ void Npc::giveRewards(Graphics & graphics, std::string npcName, int posX, int po
 	std::stringstream ss;
 	auto it = std::find_if(questLog.begin(), questLog.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
 	auto distance = std::distance(this->questLog.begin(), it);
-	//auto itQT = std::find_if(questTable.begin(), questTable.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
+	// Auto itQT = std::find_if(questTable.begin(), questTable.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
 	//if (itQT == questTable.end()) {
 	//	std::cout << "COULD NOT FIND QUEST IN QUESTABLE!!!" << std::endl;
 	//}
-	//auto distanceQT = std::distance(questTable.begin(), itQT);
+	// Auto distanceQT = std::distance(questTable.begin(), itQT);
 	if (questDone) {
 		if (this->exp >= 0) {
 			if (std::get<6>(this->questLog[distance]) == 0) {

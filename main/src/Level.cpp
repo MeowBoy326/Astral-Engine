@@ -20,7 +20,7 @@
 #include <set>
 #include <filesystem>
 
-using namespace tinyxml2; //all tinyxml2 is in a namespace because we will use so many features dont wanna write tinyxml:: all the time :D
+using namespace tinyxml2; // All tinyxml2 is in a namespace because we will use so many features dont wanna write tinyxml:: all the time :D
 
 template<typename T> Items * createInstance(Graphics& graphics, Vector2 spawnPoint) { return new T(graphics, spawnPoint); }
 
@@ -221,7 +221,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							//Loading the tile element
 							XMLElement* pTile = pData->FirstChildElement("tile");
 							if (pTile != NULL) { //loop through tiles
-								int tileCounter = 0; //add this because we need to know what tile we are on thru the loop
+								int tileCounter = 0; // Add this because we need to know what tile we are on thru the loop
 								while (pTile) {
 									//build each individual tile here
 									//if gid is 0, no tile should be drawn, continue loop.
@@ -318,7 +318,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					//Loading the tile element
 					XMLElement* pTile = pData->FirstChildElement("tile");
 					if (pTile != NULL) { //loop through tiles
-						int tileCounter = 0; //add this because we need to know what tile we are on thru the loop
+						int tileCounter = 0; // Add this because we need to know what tile we are on thru the loop
 						while (pTile) {
 							//build each individual tile here
 							//if gid is 0, no tile should be drawn, continue loop.
@@ -749,8 +749,8 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 
 void Level::update(int elapsedTime, Player &player) {
 	// Allowing the timer to elapse without checking if canShoot == false 
-	// actually provides a more stable DPS. If using a check, it creates
-	// a wider variety towards DPS. So, keep it like this.
+	// Actually provides a more stable DPS. If using a check, it creates
+	// A wider variety towards DPS. So, keep it like this.
 	this->bulletTimer += elapsedTime;
 	if (this->bulletTimer >= this->bulletDelay) {
 		this->canShoot = true;
@@ -834,7 +834,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 		//Now we need to do it for top to bottom
 		for (int y = 0; y < this->_size.y / 64; y++) {
 			destRect.x = x * 64 * globals::SPRITE_SCALE; //So it will draw it first at 0,0 64 pixels long then next time is x will be 1 starting at 64th pixels and going
-			//all the way to the 128th pixel (another 64) and so on....
+			// All the way to the 128th pixel (another 64) and so on....
 			//Do same for y
 			destRect.y = y * 64 * globals::SPRITE_SCALE; //multiply by sprite scale so 2x size looks better!
 			destRect.w = 64 * globals::SPRITE_SCALE;
@@ -1346,7 +1346,7 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 										pProperty = pProperty->NextSiblingElement("property");
 										const char* rateName = pProperty->Attribute("name");
 										std::stringstream rate;
-										int rateValue = 10; //arbitrary number
+										int rateValue = 10; // Arbitrary number
 										rate << rateName;
 										if (rate.str() == "rate") {
 											pProperty->QueryIntAttribute("value", &rateValue);

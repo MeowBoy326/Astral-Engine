@@ -66,7 +66,7 @@ protected:
 	/* void addAnimation
 	* Adds an animation to the map of animations for the sprite
 	*/
-	void addAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset); //add animation to our list for sprites
+	void addAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset); // Add animation to our list for sprites
 	void addSpecialAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset);
 	void addScript(int frames, int x, int y, std::string name, int width, int height, Vector2 offset);
 	void addBulletAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset, int id);

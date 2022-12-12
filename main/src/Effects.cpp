@@ -32,7 +32,7 @@ void Effects::setupAnimations()
 }
 
 
-//Arena Effect
+// Arena Effect
 
 ArenaEffect::ArenaEffect()
 {

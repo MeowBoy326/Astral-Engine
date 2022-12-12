@@ -79,7 +79,7 @@ void AnimatedSprite::resetScripts() {
 }
 
 void AnimatedSprite::playAnimation(std::string animation, bool once) {
-	this->_currentAnimationOnce = once; //all this is to play animation
+	this->_currentAnimationOnce = once; // All this is to play animation
 	if (this->_currentAnimation != animation) {
 		this->_currentAnimation = animation;
 		this->_frameIndex = 0;
@@ -87,7 +87,7 @@ void AnimatedSprite::playAnimation(std::string animation, bool once) {
 }
 
 void AnimatedSprite::playScript(std::string animation, bool once) {
-	this->_currentScriptOnce = once; //all this is to play animation
+	this->_currentScriptOnce = once; // All this is to play animation
 	if (this->_currentScript != animation) {
 		this->_currentScript = animation;
 		this->_scriptIndex = 0;
@@ -95,7 +95,7 @@ void AnimatedSprite::playScript(std::string animation, bool once) {
 }
 
 void AnimatedSprite::playBulletAnimation(std::string animation, int id) {
-	//this->_currentAnimationOnce = once; //all this is to play animation
+	//this->_currentAnimationOnce = once; // All this is to play animation
 	//if (this->_currentAnimation != animation) {
 		this->_currentAnimation = animation;
 		this->_frameIndex = 0;

@@ -21,7 +21,7 @@ Graphics::Graphics() {
 
 Graphics::~Graphics() {
 	SDL_DestroyWindow(this->_window);
-	SDL_DestroyRenderer(this->_renderer); //avoid memory leaks from having a pointer to an SDL rendering memory dont let it hang, destroy when done.
+	SDL_DestroyRenderer(this->_renderer); // Avoid memory leaks from having a pointer to an SDL rendering memory dont let it hang, destroy when done.
 }
 
 SDL_Surface* Graphics::loadImage(const std::string &filePath) {

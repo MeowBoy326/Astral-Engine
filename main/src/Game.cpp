@@ -141,7 +141,7 @@ void Game::gameLoop() {
 		
 
 	int LAST_UPDATE_TIME = SDL_GetTicks(); 
-	//Above ^ gets the amount of miliseconds since the SDL library was intialized
+	// Above ^ gets the amount of miliseconds since the SDL library was intialized
 	//must start before loop
 	//Start the game loop
 	while (true) {
@@ -629,10 +629,10 @@ void Game::gameLoop() {
 				_inventory.useItem(0, this->_player);
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
-				//Add weapon swap here
+				// Add weapon swap here
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
-				//Add weapon swap here
+				// Add weapon swap here
 			}
 			if (input.wasKeyPressed(SDL_SCANCODE_3) == true) {
 				if (this->_player.checkEquipmentUnlocked("JetPack")) {
@@ -1183,7 +1183,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	std::vector<Rectangle> others;
 	//set vector = the result of the checkTileCollisions function
 	//checkTile wants another rectangle to check against. So its going to check all the collisions rect
-	//against whatever we give it (player bounding box)
+	// Against whatever we give it (player bounding box)
 	//if it returns at least 1, handle Tile collision!
 	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
 		//Player collided with atleast 1 tile
@@ -1369,7 +1369,7 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 	std::vector<Rectangle> others;
 	//set vector = the result of the checkTileCollisions function
 	//checkTile wants another rectangle to check against. So its going to check all the collisions rect
-	//against whatever we give it (player bounding box)
+	// Against whatever we give it (player bounding box)
 	//if it returns at least 1, handle Tile collision!
 	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
 		//Player collided with atleast 1 title
