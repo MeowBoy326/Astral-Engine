@@ -69,7 +69,7 @@ public:
 
 	void destroySprite();
 
-	float _x, _y; //x,y pos of sprite
+	float _x, _y; // x,y pos of sprite
 protected:
 	SDL_Rect _sourceRect; // where on the spritesheet to get the sprite from
 	SDL_Texture* _spriteSheet; // The sprite sheet that holds the specific sprite

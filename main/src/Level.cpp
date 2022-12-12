@@ -628,7 +628,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					while (pObject) {
 						std::vector<Vector2> points; // will hold all points
 						Vector2 p1;
-						p1 = Vector2(std::ceil(pObject->FloatAttribute("x")), std::ceil(pObject->FloatAttribute("y"))); //x,y already given to us in XML
+						p1 = Vector2(std::ceil(pObject->FloatAttribute("x")), std::ceil(pObject->FloatAttribute("y"))); // x,y already given to us in XML
 						
 						XMLElement* pPolyline = pObject->FirstChildElement("polyline");
 						if (pPolyline != NULL) {
@@ -823,7 +823,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 
 	/* OLD code when maps/tile werent implemented
 	// Draw the background
-	//x = 0 , y = 0 because we start at top left corner of the bkBlue.png (64x64) width 64 / height 64
+	// x = 0 , y = 0 because we start at top left corner of the bkBlue.png (64x64) width 64 / height 64
 	SDL_Rect sourceRect = {0, 0, 64, 64}; // Source rect will be entire bkBlue.png (map) Image is 64x64 we want entire thing
 	SDL_Rect destRect; // where we are drawing to on the screen
 

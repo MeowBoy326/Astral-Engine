@@ -7,7 +7,7 @@ HUD::HUD() {}
 
 HUD::HUD(Graphics &graphics, Player &player) {
 	this->_player = player;
-	// This->_healthBarSprite = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 40, 76, 8, 35, 70); //x, y, width, height, screen pos x, screen pos y
+	// This->_healthBarSprite = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 40, 76, 8, 35, 70); // x, y, width, height, screen pos x, screen pos y
 	this->_healthBarSprite = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 162, 76, 19, 35, 70);
 	this->_currentHealthBar = Sprite(graphics, "data\\graphics\\TextBox.png", 19, 183, 56, 5, 83, 72);
 	// This->_currentHealthBar = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 25, 40, 5, 83, 72);

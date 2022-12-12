@@ -30,7 +30,7 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 	this->playAnimation("zero");
 
 	this->_title = Sprite(graphics, "data\\graphics\\title.png", 2, 0, 241, 68, 300, 100);
-	//x, y, width, height, screen pos x, screen pos y
+	// x, y, width, height, screen pos x, screen pos y
 	std::cout << "sprite added" << std::endl;
 	graphics.loadImage("data\\graphics\\title.png"); // Loads sprite sheet in
 
