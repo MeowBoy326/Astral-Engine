@@ -62,7 +62,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 	int LAST_UPDATE_TIME = SDL_GetTicks();
 
 	while (menuLoop == true) {
-		input.beginNewFrame(); //resets our released key pressed keys first time around doesnt matter already set to false but good to reset anyway
+		input.beginNewFrame(); // Resets our released key pressed keys first time around doesnt matter already set to false but good to reset anyway
 
 		const int CURRENT_TIME_MS = SDL_GetTicks();
 		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;

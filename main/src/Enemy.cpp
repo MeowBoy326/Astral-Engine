@@ -490,7 +490,7 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 		if (collisionSide != sides::NONE) {
 			switch (collisionSide) {
 			case sides::TOP:
-				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
+				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
 				this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
 				//this->_HPBar._y = others.at(i).getTop() + 1;
 				//this->_HPValue._y = others.at(i).getTop() + 1;
@@ -697,7 +697,7 @@ void JellyFish::handleEnemyTileCollision(std::vector<Rectangle>& others)
 		if (collisionSide != sides::NONE) {
 			switch (collisionSide) {
 			case sides::TOP:
-				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
+				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
 				//this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
 				//this->_JellyAttack = false;
 				//this->_resettingPos = true;
@@ -927,7 +927,7 @@ void Ghost::handleEnemyTileCollision(std::vector<Rectangle>& others)
 		if (collisionSide != sides::NONE) {
 			switch (collisionSide) {
 			case sides::TOP:
-				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
+				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
 				this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
 				//this->_HPBar._y = others.at(i).getTop() + 1;
 				//this->_HPValue._y = others.at(i).getTop() + 1;

@@ -458,7 +458,7 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 		if (collisionSide != sides::NONE) {
 			switch (collisionSide) {
 			case sides::TOP:
-				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
+				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
 				this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
 				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					this->_dx = 0; //stop movement on x-axis
@@ -491,7 +491,7 @@ void Player::handleArenaCollisions(std::vector<Rectangle>& others)
 		if (collisionSide != sides::NONE) {
 			switch (collisionSide) {
 			case sides::TOP:
-				this->_dy = 0; //reset all gravity, if we arent grounded we fall to the ground
+				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
 				this->_y += 2; // No longer go through things, stops us
 				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					this->_dx = 0; //stop movement on x-axis
@@ -597,7 +597,7 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 		// Now pass that X into the equation y = mx + b (using our newly found b and x) to get the new y position
 		int newY = (others.at(i).getSlope() * centerX) + b - 8; //8 is temporary to fix a problem
 
-		//Reposition the player to the correct "y"
+		// Reposition the player to the correct "y"
 		if (this->_grounded) {
 			this->_y = newY - this->_boundingBox.getHeight();
 			this->_grounded = true;

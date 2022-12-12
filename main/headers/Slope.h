@@ -22,7 +22,7 @@ public:
 		}
 
 		const bool collidesWith(const Rectangle &other) {
-			//rectangle we are passing in is the player or monster that is running on a slope
+			// Rectangle we are passing in is the player or monster that is running on a slope
 			if ((other.getRight() >= this->_p2.x &&
 				other.getLeft() <= this->_p1.x &&
 				other.getTop() <= this->_p2.y &&

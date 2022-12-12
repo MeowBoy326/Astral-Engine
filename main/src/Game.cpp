@@ -339,7 +339,7 @@ void Game::gameLoop() {
 
 			//	//this->saveGame(graphics);
 			//	//std::cout << "Quitting Game..." << std::endl;
-			//	//return; // Quit game if ESC was pressed
+			//	// Return; // Quit game if ESC was pressed
 			//}
 			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
@@ -726,7 +726,7 @@ void Game::draw(Graphics &graphics) {
 		this->_level.drawEnemyOutline(graphics);
 	if (showCollisionOutline)
 		this->_level.drawCollisionOutline(graphics);
-	graphics.flip(); //Render everything above
+	graphics.flip(); // Render everything above
 }
 
 void Game::drawCutscene(Graphics &graphics) {
@@ -740,7 +740,7 @@ void Game::drawCutscene(Graphics &graphics) {
 		// Need to draw level before player (below) so player is on top of level and not behind it!
 		this->_player.draw(graphics);
 	}
-	graphics.flip(); //Render everything above
+	graphics.flip(); // Render everything above
 }
 
 int Game::loadCutscene(std::string name)

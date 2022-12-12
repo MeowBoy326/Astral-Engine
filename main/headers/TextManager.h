@@ -47,7 +47,7 @@ protected:
 	SDL_Rect _textSourceRect; // where on the spritesheet to get the sprite from
 	SDL_Rect _chatRect;
 	SDL_Texture* _textSheet;
-	Rectangle _TboundingBox; //rectangle around player is bounding box. Every sprite will get it.
+	Rectangle _TboundingBox; // Rectangle around player is bounding box. Every sprite will get it.
 	float _textX, _textY; //x,y pos of sprite
 	std::string version = "Version " + std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR)
 		+ "." + std::to_string(VERSION_PATCH) + "." + std::to_string(VERSION_BUILD) + " (" + DATE_TIME + ")";

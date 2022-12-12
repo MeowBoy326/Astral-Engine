@@ -31,7 +31,7 @@ SDL_Surface* Graphics::loadImage(const std::string &filePath) {
 		this->_spriteSheets[filePath] = IMG_Load(filePath.c_str()); // will use SDL to load image, it uses a c-string
 	}
 	// Cout << "graphics.cpp ::loadImage - loaded..." << endl;
-	return this->_spriteSheets[filePath]; //regaurdless we will return sprite if its loaded already or needs to be
+	return this->_spriteSheets[filePath]; // Regaurdless we will return sprite if its loaded already or needs to be
 	
 }
 
@@ -43,7 +43,7 @@ void Graphics::blitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_
 void Graphics::blitFlippedSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle, SDL_RendererFlip flip)
 {
 	SDL_Rect tmp = { destinationRectangle->x - Camera::GetRect().x, destinationRectangle->y - Camera::GetRect().y, destinationRectangle->w, destinationRectangle->h };
-	//RenderCopyEx will flip the texture depending on the value of the flip parameter
+	// RenderCopyEx will flip the texture depending on the value of the flip parameter
 	SDL_RenderCopyEx(this->_renderer, texture, sourceRectangle, &tmp, 0, 0, flip);
 }
 

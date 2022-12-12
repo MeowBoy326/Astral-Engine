@@ -40,7 +40,7 @@ public:
 	void flip();
 	//void clear: clears the screen
 	void clear();
-	//return our render so we can use it elsewhere (sprite class)
+	// Return our render so we can use it elsewhere (sprite class)
 	SDL_Renderer* getRenderer() const;
 private:
 	SDL_Window * _window;

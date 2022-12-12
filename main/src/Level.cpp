@@ -119,7 +119,7 @@ Level::~Level() {
 
 void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) {
 	// Parse the .tmx file
-	XMLDocument doc; //represents entire xml document
+	XMLDocument doc; // Represents entire xml document
 	std::stringstream ss;
 	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
@@ -166,7 +166,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	if (pTileset != NULL) { // Just in case we dont have any tiles(?) so program wont crash
 		while (pTileset) {
 			int firstgid;
-			const char* source = pTileset->FirstChildElement("image")->Attribute("source"); //returns a char* so thats why we set char* earlier
+			const char* source = pTileset->FirstChildElement("image")->Attribute("source"); // Returns a char* so thats why we set char* earlier
 			std::stringstream ss;
 			//ss << source; //ss << "content/tilesets/" << source;
 			ss << "data/maps/" << source;
@@ -334,7 +334,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								}
 							// Get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
 							int gid = pTile->IntAttribute("gid");
-							//Read out the flags for flipped tiles
+							// Read out the flags for flipped tiles
 							SDL_RendererFlip tileFlip = SDL_FLIP_NONE;
 							bool flipped_horizontally = (gid & FLIPPED_HORIZONTALLY_FLAG);
 							bool flipped_vertically = (gid & FLIPPED_VERTICALLY_FLAG);
@@ -445,7 +445,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						y = pObject->FloatAttribute("y");
 						width = pObject->FloatAttribute("width");
 						height = pObject->FloatAttribute("height"); //these are taken as int, but tiles come out as floats (decimals) so we are going to round UP
-						//round down would make collision too small perhaps and we fall through, bigger is always better in this case
+						// Round down would make collision too small perhaps and we fall through, bigger is always better in this case
 						this->_collisionRects.push_back(Rectangle(
 							std::ceil(x) * globals::SPRITE_SCALE, 
 							std::ceil(y) * globals::SPRITE_SCALE, 
@@ -1020,7 +1020,7 @@ std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { // G
 			others.push_back(this->_collisionRects.at(i)); // If it does add it to the others list
 		}
 	}
-	return others; //return whatever collision rects we are colliding with
+	return others; // Return whatever collision rects we are colliding with
 }
 
 std::vector<Rectangle> Level::checkBreakableTileCollisions(const Rectangle & other)
@@ -1075,7 +1075,7 @@ std::vector<Rectangle> Level::checkCutsceneCollisions(const Rectangle & other)
 			others.push_back(this->_cutsceneRects.at(i)); // If it does add it to the others list
 		}
 	}
-	return others; //return whatever collision rects we are colliding with
+	return others; // Return whatever collision rects we are colliding with
 }
 
 std::vector<Rectangle> Level::checkLavaCollisions(const Rectangle & other)
@@ -1148,7 +1148,7 @@ std::vector<Rectangle> Level::checkArenaCollisions(const Rectangle & other)
 			others.push_back(this->_arenaRects.at(i)); // If it does add it to the others list
 		}
 	}
-	return others; //return whatever collision rects we are colliding with
+	return others; // Return whatever collision rects we are colliding with
 }
 
 std::vector<Slope> Level::checkSlopeCollisions(const Rectangle &other) {
@@ -1243,7 +1243,7 @@ void Level::generateItems(Graphics &graphics)
 
 void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory &invent)
 {
-	XMLDocument doc; //represents entire xml document
+	XMLDocument doc; // Represents entire xml document
 	std::stringstream ss;
 	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
@@ -1297,7 +1297,7 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 
 void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &player)
 {
-	XMLDocument doc; //represents entire xml document
+	XMLDocument doc; // Represents entire xml document
 	std::stringstream ss;
 	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
