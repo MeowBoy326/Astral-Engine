@@ -21,6 +21,7 @@ public:
 	void setupAnimations();
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
+	void getSettings(int &volume);
 	int saveSettings();
 	int loadSettings();
 	int getMenuChoice();

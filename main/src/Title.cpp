@@ -284,6 +284,11 @@ void Title::draw(Graphics &graphics) {
 	graphics.flip();
 }
 
+void Title::getSettings(int &volume) {
+	// More settings will be added. Each value will be passed by reference
+	volume = this->volumePercent;
+}
+
 int Title::saveSettings() {
 	XMLDocument xml;
 	XMLNode* root = xml.NewElement("Root");
