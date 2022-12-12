@@ -163,7 +163,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 
 	//Load the tilesets.
 	XMLElement* pTileset = mapNode->FirstChildElement("tileset"); // If we have more then 1 tile set its a problem, so a work-around is linked list
-	if (pTileset != NULL) { //just in case we dont have any tiles(?) so program wont crash
+	if (pTileset != NULL) { // Just in case we dont have any tiles(?) so program wont crash
 		while (pTileset) {
 			int firstgid;
 			const char* source = pTileset->FirstChildElement("image")->Attribute("source"); //returns a char* so thats why we set char* earlier
@@ -227,7 +227,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									// If gid is 0, no tile should be drawn, continue loop.
 									if (pTile->IntAttribute("gid") == 0) {
 										tileCounter++;
-										if (pTile->NextSiblingElement("tile")) { //just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
+										if (pTile->NextSiblingElement("tile")) { // Just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
 											pTile = pTile->NextSiblingElement("tile"); // we are doing this because if its a 0 it will never make it down below to move on
 											continue; // Because we are writing continue will go back to the while loop and go onto the next tile
 										}
@@ -324,7 +324,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							// If gid is 0, no tile should be drawn, continue loop.
 							if (pTile->IntAttribute("gid") == 0) {
 								tileCounter++; 
-								if (pTile->NextSiblingElement("tile")) { //just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
+								if (pTile->NextSiblingElement("tile")) { // Just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
 									pTile = pTile->NextSiblingElement("tile"); // we are doing this because if its a 0 it will never make it down below to move on
 									continue; // Because we are writing continue will go back to the while loop and go onto the next tile
 								}

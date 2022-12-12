@@ -537,7 +537,7 @@ std::string Shade::getName()
 }
 
 
-//JellyFish class
+// JellyFish class
 JellyFish::JellyFish() {}
 
 JellyFish::JellyFish(Graphics &graphics, Vector2 spawnPoint) :
