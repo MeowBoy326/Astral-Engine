@@ -198,7 +198,7 @@ int Npc::loadQuests(std::string name)
 		if (this->questTable.empty() && logIt == questLog.end()) { // Check if its not in the accepted quests already
 			this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
 		}
-		else { //find_if algorithm with lambda function
+		else { // Find_if algorithm with lambda function
 			auto it = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
 			if (it == questTable.end() && logIt == questLog.end()) {
 				this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
@@ -281,7 +281,7 @@ void Npc::acceptQuest(Graphics & graphics, std::string npcName, int posX, int po
 				std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]), 
 				std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
 		}
-		else { //find_if algorithm with lambda function
+		else { // Find_if algorithm with lambda function
 			auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
 			if (it == questLog.end()) {
 				this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),

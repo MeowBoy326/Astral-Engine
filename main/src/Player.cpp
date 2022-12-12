@@ -450,7 +450,7 @@ void Player::setEventMessage(std::string text)
 
 //handles collisions with all tiles the player is colliding with
 void Player::handleTileCollisions(std::vector<Rectangle> &others) {
-	//Figure out what side the collision happened on and move the player accordingly
+	// Figure out what side the collision happened on and move the player accordingly
 	if (this->_climbing && this->isBreakableCollision == false)
 		return;
 	for (int i = 0; i < others.size(); i++) {
@@ -485,7 +485,7 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 
 void Player::handleArenaCollisions(std::vector<Rectangle>& others)
 {
-	//Figure out what side the collision happened on and move the player accordingly
+	// Figure out what side the collision happened on and move the player accordingly
 	for (int i = 0; i < others.size(); i++) {
 		sides::Side collisionSide = Sprite::getArenaCollisionSide(others.at(i));
 		if (collisionSide != sides::NONE) {
@@ -588,7 +588,7 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 	for (int i = 0; i < others.size(); i++) {
 		// Calculate where on the slope the player's bottom center is touching
 		// And use y=mx+b to figure out the y position to place him at
-		//First calculate "b" (slope) intercept) using one of the points (b = y - mx)
+		// First calculate "b" (slope) intercept) using one of the points (b = y - mx)
 		int b = (others.at(i).getP1().y - (others.at(i).getSlope() * fabs(others.at(i).getP1().x)));
 
 		//Now get the players center x
@@ -1185,7 +1185,7 @@ void Player::update(float elapsedTime) {
 			//This will get the correct x position so that the last letter of the string ends right before the end of the screen
 			std::get<1>(this->battleMessages[i]) = this->_x + 320; //Set to player x + screen width / 2 (320)
 			std::get<2>(this->battleMessages[i]) = this->_y + 220; //Set to player y + the offset
-			//Formula by Nataru(J.L)
+			// Formula by Nataru(J.L)
 			if (i < this->battleMessages.size() - 1) {
 				if (i % 2 == 0) {
 					std::get<2>(this->battleMessages[i]) = std::get<2>(this->battleMessages[i + 1]) - 15;

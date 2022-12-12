@@ -13,7 +13,7 @@
 #include "Door.h"
 
 class TextManager;
-class Graphics; //foward decalre
+class Graphics; // Foward decalre
 class Enemy;
 class Effects;
 class Projectile;
@@ -22,7 +22,7 @@ class Player;
 class Inventory;
 class Items;
 
-struct SDL_Texture; //foward declare
+struct SDL_Texture; // Foward declare
 struct SDL_Rect;
 struct Tileset;
 

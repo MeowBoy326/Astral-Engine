@@ -13,7 +13,7 @@
 * Holds all information for individual sprites
 */
 
-class Graphics; //foward declare graphics so we can use it in .cpp
+class Graphics; // Foward declare graphics so we can use it in .cpp
 
 class Sprite {
 public:

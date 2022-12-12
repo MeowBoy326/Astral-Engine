@@ -12,7 +12,7 @@
 #include "Graphics.h"
 #include "version.h"
 
-class Graphics; //foward declare graphics so we can use it in .cpp
+class Graphics; // Foward declare graphics so we can use it in .cpp
 class Player;
 
 class TextManager {

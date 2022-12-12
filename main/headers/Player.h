@@ -35,7 +35,7 @@ public:
 	//Player handling
 	void moveLeft(); 	//Move player left by -dx
 	void moveRight(); 	//Move player right by +dx
-	void moveUp(); //For ladders
+	void moveUp(); // For ladders
 	void moveDown();
 	void jump();
 	void useJetPack();
@@ -211,7 +211,7 @@ private:
 	double _dmgMod = 1;
 	double _dmgReduction = 0;
 	double _finalDamage = 0;
-	double _timeElapsed = 0; //for timer
+	double _timeElapsed = 0; // For timer
 	double _mapTimeElapsed = 0;
 
 	std::string eventMessage;

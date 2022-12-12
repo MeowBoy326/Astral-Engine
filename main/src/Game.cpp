@@ -931,7 +931,7 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(eqElement);
 	}
 	root->InsertEndChild(element);
-	//Finalize save
+	// Finalize save
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
 	cwd.append("temp.xml");
 	XMLError result = xml.SaveFile(cwd.string().c_str());

@@ -78,7 +78,7 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 				SDL_Rect destinationRectangle = { posX - 260 , posY + 105, surface->w, surface->h }; // where on screen we will be drawing
 				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 				graphics.blitSurface(tex, NULL, &destinationRectangle);
-				SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+				SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 				TTF_CloseFont(font);
 				SDL_DestroyTexture(tex);
 			}
@@ -88,7 +88,7 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 				SDL_Rect destinationRectangle = { posX - 260 , posY + 135, surface->w, surface->h }; // where on screen we will be drawing
 				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 				graphics.blitSurface(tex, NULL, &destinationRectangle);
-				SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+				SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 				TTF_CloseFont(font);
 				SDL_DestroyTexture(tex);
 			}
@@ -101,13 +101,13 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 			SDL_Rect destinationRectangle = { posX - 260 , posY + 165, surface->w, surface->h }; // where on screen we will be drawing
 			SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 			graphics.blitSurface(tex, NULL, &destinationRectangle);
-			SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+			SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 			TTF_CloseFont(font);
 			SDL_DestroyTexture(tex);
 		}
 		temp += str[index];
 	}
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 }
@@ -135,7 +135,7 @@ void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, con
 				SDL_Rect destinationRectangle = { posX - 315 , posY - 85, surface->w, surface->h }; // where on screen we will be drawing
 				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 				graphics.blitSurface(tex, NULL, &destinationRectangle);
-				SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+				SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 				TTF_CloseFont(font);
 				SDL_DestroyTexture(tex);
 			}
@@ -145,7 +145,7 @@ void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, con
 				SDL_Rect destinationRectangle = { posX - 315 , posY - 65, surface->w, surface->h }; // where on screen we will be drawing
 				SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 				graphics.blitSurface(tex, NULL, &destinationRectangle);
-				SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+				SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 				TTF_CloseFont(font);
 				SDL_DestroyTexture(tex);
 			}
@@ -158,7 +158,7 @@ void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, con
 			SDL_Rect destinationRectangle = { posX - 225 , posY - 45, surface->w, surface->h }; // where on screen we will be drawing
 			SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 			graphics.blitSurface(tex, NULL, &destinationRectangle);
-			SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+			SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 			TTF_CloseFont(font);
 			SDL_DestroyTexture(tex);
 		}
@@ -168,13 +168,13 @@ void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, con
 			SDL_Rect destinationRectangle = { posX - 265 , posY - 45, surface->w, surface->h }; // where on screen we will be drawing
 			SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 			graphics.blitSurface(tex, NULL, &destinationRectangle);
-			SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+			SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 			TTF_CloseFont(font);
 			SDL_DestroyTexture(tex);
 		}
 		temp += str[index];
 	}
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 }
@@ -195,7 +195,7 @@ void TextManager::drawDmg(Graphics & graphics, int x, int y, double dmg)
 	SDL_Rect destinationRectangle = { x, y - 30, surface->w, surface->h }; // where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	//TTF_CloseFont(font);
 	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
@@ -234,7 +234,7 @@ void TextManager::drawMapName(Graphics & graphics, std::string &mapName, int x, 
 
 	graphics.blitSurface(bgTex, NULL, &destinationRectangle);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
 	TTF_CloseFont(iFont); //previously TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
@@ -278,7 +278,7 @@ void TextManager::drawVersion(Graphics & graphics, int x, int y)
 
 	graphics.blitSurface(bgTex, NULL, &destinationRectangle);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
 	TTF_CloseFont(iFont); //previously TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
@@ -312,7 +312,7 @@ void TextManager::drawDeveloper(Graphics & graphics, int x, int y)
 
 	graphics.blitSurface(bgTex, NULL, &destinationRectangle);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
 	TTF_CloseFont(iFont); //previously TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
@@ -334,7 +334,7 @@ void TextManager::drawHPNumber(Graphics & graphics, int x, int y, float hp, SDL_
 	SDL_Rect destinationRectangle = { x - 15, y, surface->w, surface->h }; // where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }
@@ -355,7 +355,7 @@ void TextManager::drawPercentNumber(Graphics & graphics, int x, int y, double ex
 	SDL_Rect destinationRectangle = { x - 15, y, surface->w, surface->h }; // where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }
@@ -369,7 +369,7 @@ void TextManager::drawNpcName(Graphics & graphics, int x, int y, const std::stri
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);;
 
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 }
@@ -381,7 +381,7 @@ void TextManager::drawQuestText(Graphics & graphics, int x, int y, const std::st
 	SDL_Rect destinationRectangle = { x - 260 , y + 105, surface->w, surface->h }; // where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 }
@@ -411,7 +411,7 @@ void TextManager::drawPlayerStatus(Graphics & graphics, int x, int y, const std:
 
 	graphics.blitSurface(bgTex, NULL, &destinationRectangle);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
 	TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
@@ -455,7 +455,7 @@ void TextManager::drawEventMessages(Graphics & graphics, int x, int y, std::stri
 
 	graphics.blitSurface(bgTex, NULL, &destinationRectangle);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
 	TTF_CloseFont(iFont); //previously TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
@@ -476,7 +476,7 @@ void TextManager::drawBattleMessages(Graphics & graphics, int x, int y, std::str
 	SDL_Rect destinationRectangle = { x, y, surface->w, surface->h }; // where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }
@@ -496,7 +496,7 @@ void TextManager::drawSettings(Graphics & graphics, int x, int y, std::string & 
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }
@@ -531,7 +531,7 @@ void TextManager::drawStats(Graphics & graphics, int posX, int posY, float hPoin
 	graphics.blitSurface(aTex, NULL, &destinationRectangle);
 
 	SDL_FreeSurface(dmgSurface);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(defSurface);
 	SDL_FreeSurface(availableSurface);
 	TTF_CloseFont(iFont);
@@ -556,7 +556,7 @@ void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::
 	//graphics.blitSurface(tex, NULL, &dest);
 
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }
@@ -576,7 +576,7 @@ void TextManager::drawCurrency(Graphics & graphics, int x, int y, const std::str
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
-	SDL_FreeSurface(surface); //fixes crashing for access violation in loop
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }

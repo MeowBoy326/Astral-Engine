@@ -111,7 +111,7 @@ private:
 	int _frameIndex; // which frame in the animation we are at
 	int _scriptIndex;
 	int _bulletID;
-	double _timeElapsed; //for timer
+	double _timeElapsed; // For timer
 	bool _visible; //is animation visible?
 	std::queue<std::string> speech;
 

@@ -4,8 +4,8 @@
 #include "Global.h"
 #include <SDL.h>
 
-struct SDL_Texture; //foward declare
-class Graphics; //foward declare
+struct SDL_Texture; // Foward declare
+class Graphics; // Foward declare
 
 class Tile {
 public:
