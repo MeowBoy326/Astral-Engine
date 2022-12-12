@@ -39,17 +39,17 @@ void Input::keyUpEvent(const SDL_Event& event) {
 	this->_heldKeys[event.key.keysym.scancode] = false; // Because it was already set true when it was pressed and now we set false since we stopped holding
 }
 
-//checks if a certain key was pressed during the current frame
+// Checks if a certain key was pressed during the current frame
 bool Input::wasKeyPressed(SDL_Scancode key) {
 	return this->_pressedKeys[key]; // will return a bool if it was pressed
 }
 
-//checks if a certain key was released during the current frame
+// Checks if a certain key was released during the current frame
 bool Input::wasKeyReleased(SDL_Scancode key) {
 	return this->_releasedKeys[key];
 }
 
-//checks if a certain key is currently being held
+// Checks if a certain key is currently being held
 bool Input::isKeyHeld(SDL_Scancode key) {
 	return this->_heldKeys[key];
 }

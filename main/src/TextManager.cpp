@@ -255,7 +255,7 @@ void TextManager::drawVersion(Graphics & graphics, int x, int y)
 	//std::time_t currentTime = std::time(0);
 	//std::tm* localTime = std::localtime(&currentTime);
 	////std::asctime(localTime)
-	//char time[40];
+	// Char time[40];
 	//std::strftime(time, sizeof(time), "%B %d, %Y (%T)", localTime);
 	//std::string timeToStr = time;
 	//std::string version;

@@ -16,8 +16,8 @@
 //#include <iostream>
 //#include <SDL_ttf.h>
 
-//class Graphics;
-//class TextManager;
+// Class Graphics;
+// Class TextManager;
 
 class Npc : public TextManager, public AnimatedSprite  {
 public:

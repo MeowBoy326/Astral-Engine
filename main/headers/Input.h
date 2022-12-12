@@ -24,7 +24,7 @@ public:
 	//!< Returns true if the two keys are the same.
 	void loadKeys();
 
-	void beginNewFrame(); //called every new frame
+	void beginNewFrame(); // Called every new frame
 	void keyUpEvent(const SDL_Event& event);
 	void keyDownEvent(const SDL_Event& event);
 

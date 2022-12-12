@@ -83,7 +83,7 @@ namespace {
 	bool jumpSound = false;
 }
 
-Game::Game() { //constructor
+Game::Game() { // Constructor
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 	//Initialize SDL_mixer
@@ -205,7 +205,7 @@ void Game::gameLoop() {
 			
 			this->drawGameOver(graphics);
 		}
-//Cutscene Loop
+// Cutscene Loop
 		if (title == false && GAMEOVER == false && activeCutscene == true) {
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
@@ -472,7 +472,7 @@ void Game::gameLoop() {
 
 			if (activeTalk) {
 				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && this->_player.getCurrentHealth() > 0) {
-					//chat
+					// Chat
 					if (this->_npc.getQuestState() == true) {
 						activeTalk = false;
 						this->_chatBox.setTextStatus(false);
@@ -669,7 +669,7 @@ void Game::gameLoop() {
 }
 
 void Game::drawTitle(Graphics &graphics) {
-	graphics.clear(); //clear any drawings MUST do
+	graphics.clear(); // Clear any drawings MUST do
 	this->_title.draw(graphics);
 	graphics.flip(); 
 }
@@ -689,7 +689,7 @@ void Game::drawGameOver(Graphics &graphics) {
 }
 
 void Game::draw(Graphics &graphics) {
-	graphics.clear(); //clear any drawings MUST do
+	graphics.clear(); // Clear any drawings MUST do
 	this->_level.draw(graphics, this->_player);
 	//need to draw level before player (below) so player is on top of level and not behind it!
 	this->_player.draw(graphics);
@@ -904,7 +904,7 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(bElement);
 	}
 	root->InsertEndChild(element);
-	//Cutscenes
+	// Cutscenes
 	element = xml.NewElement("SceneTable");
 	std::vector<std::string> csVec = this->_player.getSceneTable();
 	for (int counter = 0; counter < csVec.size(); ++counter) {
@@ -1179,10 +1179,10 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		npcName = "";
 	}
 	
-	//Check collisions
+	// Check collisions
 	std::vector<Rectangle> others;
 	//set vector = the result of the checkTileCollisions function
-	//checkTile wants another rectangle to check against. So its going to check all the collisions rect
+	// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
 	// Against whatever we give it (player bounding box)
 	//if it returns at least 1, handle Tile collision!
 	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
@@ -1251,7 +1251,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	else
 		activeSave = false;
 
-	//Check slope
+	// Check slope
 	std::vector<Slope> otherSlopes;
 	if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
 		this->_player.handleSlopeCollisions(otherSlopes);
@@ -1274,7 +1274,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		pickUp = false; 
 	}
 
-	//Check doors
+	// Check doors
 	std::vector<Door> otherDoors;
 	if ((otherDoors = this->_level.checkDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
 		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory, this->_player);
@@ -1365,10 +1365,10 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 			return;
 		}
 	}
-	//Check collisions
+	// Check collisions
 	std::vector<Rectangle> others;
 	//set vector = the result of the checkTileCollisions function
-	//checkTile wants another rectangle to check against. So its going to check all the collisions rect
+	// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
 	// Against whatever we give it (player bounding box)
 	//if it returns at least 1, handle Tile collision!
 	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
@@ -1378,7 +1378,7 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 
 	this->_level.checkEnemyTileCollision().size() > 0;
 
-	//Check slope
+	// Check slope
 	std::vector<Slope> otherSlopes;
 	if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
 		this->_player.handleSlopeCollisions(otherSlopes);

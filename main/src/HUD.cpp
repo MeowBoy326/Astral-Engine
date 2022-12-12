@@ -24,9 +24,9 @@ HUD::HUD(Graphics &graphics, Player &player) {
 void HUD::update(int ElapsedTime, Player &player) {
 	//this->_healthNumber1.setSourceRectX(8 * player.getCurrentHealth());
 
-	//Calculate the width of the health bar
+	// Calculate the width of the health bar
 	//100% = 39px
-	//Cast to float because int 0 division will happen and we will get 0 everytime.
+	// Cast to float because int 0 division will happen and we will get 0 everytime.
 	float hpNum = (float)player.getCurrentHealth() / player.getMaxHealth();
 	this->_currentHealthBar.setSourceRectW(std::floor(hpNum * 56));
 

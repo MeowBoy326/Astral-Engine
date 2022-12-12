@@ -257,7 +257,7 @@ void Title::update(float elapsedTime) {
 }
 
 void Title::draw(Graphics &graphics) {
-	graphics.clear(); //clear any drawings MUST do
+	graphics.clear(); // Clear any drawings MUST do
 
 	AnimatedSprite::drawTitle(graphics, this->_x, this->_y);
 	this->_title.drawTitle(graphics, 210, 50);

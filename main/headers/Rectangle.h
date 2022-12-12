@@ -40,7 +40,7 @@ public:
 			sides::NONE;
 	}
 
-	//collision function
+	// Collision function
 	//Takes in another rectangle and checks if the two are colliding
 	const bool collidesWith(const Rectangle &other) const {
 		return
@@ -59,7 +59,7 @@ public:
 	}
 
 	const bool isValidRectangle() const {
-		//checks if rectangle is valid
+		// Checks if rectangle is valid
 		return (this->_x >= 0 && this->_y >= 0 && this->_width >= 0 && this->_height >= 0);
 	}
 

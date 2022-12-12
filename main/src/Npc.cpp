@@ -195,7 +195,7 @@ int Npc::loadQuests(std::string name)
 		bool completed = true;
 		auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
 		//push to vector
-		if (this->questTable.empty() && logIt == questLog.end()) { //check if its not in the accepted quests already
+		if (this->questTable.empty() && logIt == questLog.end()) { // Check if its not in the accepted quests already
 			this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
 		}
 		else { //find_if algorithm with lambda function
@@ -325,7 +325,7 @@ void Npc::giveRewards(Graphics & graphics, std::string npcName, int posX, int po
 				player.gainExp(exp);
 				player.gainCurrency(cels);
 				ss << "Here is your reward!$n" << levelReward << " level," << exp << "exp," << cels << "cels.$e";
-				//completeMsg = "Thank you! Here is your reward.$n" + levelGain + "level, "; //TODO: push rewards into vector to distibute any reward for any quest.
+				// CompleteMsg = "Thank you! Here is your reward.$n" + levelGain + "level, "; //TODO: push rewards into vector to distibute any reward for any quest.
 				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
 			}
 			else if (std::get<6>(this->questLog[distance]) == 1) {
@@ -370,7 +370,7 @@ bool Npc::checkQuest(Graphics & graphics, std::string name, int posX, int posY, 
 	return false;
 }
 
-//Clock class
+// Clock class
 Clock::Clock() {}
 
 Clock::Clock(Graphics &graphics, Vector2 spawnPoint, std::string name) :

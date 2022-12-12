@@ -152,8 +152,8 @@ void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) {
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::PROJECTILE_SCALE, this->_sourceRect.h * globals::PROJECTILE_SCALE };
 	//SDL_Rect sourceRect = this->_projectiles.at[bulletID];
 	//destinationRectangle.x = this->pRect.at(bulletID).x;
-	//cout << this->pRect.at(bulletID).x << endl;
-	//cout << "debug: draw BulletID# " << bulletID << endl;
+	// Cout << this->pRect.at(bulletID).x << endl;
+	// Cout << "debug: draw BulletID# " << bulletID << endl;
 	for (int i = 0; i > _bulletMap.size(); ++i) {
 		std::cout << "debug: for int i: " << _bulletMap[i].x << std::endl;
 	}
@@ -165,15 +165,15 @@ void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) {
 		
 
 		SDL_Rect sourceRect = { it->second.x, it->second.y, it->second.w, it->second.h };
-		//cout << sourceRect.x << ", " << sourceRect.y << ", " << sourceRect.w << ", " << sourceRect.h << endl;
+		// Cout << sourceRect.x << ", " << sourceRect.y << ", " << sourceRect.w << ", " << sourceRect.h << endl;
 		std::cout << " blitting" << std::endl;
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 	else {
-		//cout << "debug: error! cannot find bullet in Sprite::drawBullet in Sprite.cpp" << endl;
+		// Cout << "debug: error! cannot find bullet in Sprite::drawBullet in Sprite.cpp" << endl;
 	}
 	
-	//cout << this->pRect[bulletID].x << endl;
+	// Cout << this->pRect[bulletID].x << endl;
 	//SDL_Rect sourceRect = { this->pRect.at(bulletID).x, this->pRect[bulletID].y, this->pRect[bulletID].w, this->pRect[bulletID].h, };
 	//SDL_Rect sourceRect = this->_projectiles[bulletID][this->_bulletNum]; //pull out correct rectangle
 	
@@ -181,13 +181,13 @@ void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) {
 
 	/*
 	//this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
-	//cout << "\ns::drawBullet x,y,h,w = " << x << ", " << y << ", " << this->_sourceRect.h << ", " << this->_sourceRect.w << endl;
+	// Cout << "\ns::drawBullet x,y,h,w = " << x << ", " << y << ", " << this->_sourceRect.h << ", " << this->_sourceRect.w << endl;
 	//this->_sourceRect.h = 16;
 	//this->_sourceRect.w = 16;
 	SDL_Rect* bulletRect = new SDL_Rect;
 	*bulletRect = { x, y, this->_sourceRect.w, this->_sourceRect.h };
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::PROJECTILE_SCALE, this->_sourceRect.h * globals::PROJECTILE_SCALE }; // where on screen we will be drawing
-	//cout << "\ns::drawBullet x,y,h,w = " << destinationRectangle.x << ", " << destinationRectangle.y << ", " << destinationRectangle.h << ", " << destinationRectangle.w << endl;																															//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
+	// Cout << "\ns::drawBullet x,y,h,w = " << destinationRectangle.x << ", " << destinationRectangle.y << ", " << destinationRectangle.h << ", " << destinationRectangle.w << endl;																															//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	//graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, bulletRect);*/
 }
@@ -207,7 +207,7 @@ void Sprite::updateFBall()
 
 void Sprite::updateBullet(int bX, int bY, int bW, int bH) {
 	this->_projectileBBox = Rectangle(bX, bY, bW, bH);
-	//cout << "bounding box: " << this->_projectileBBox.getLeft() << "," << this->_projectileBBox.getRight() << " | " << this->_projectileBBox.getBottom() << "," << this->_projectileBBox.getTop() << endl;
+	// Cout << "bounding box: " << this->_projectileBBox.getLeft() << "," << this->_projectileBBox.getRight() << " | " << this->_projectileBBox.getBottom() << "," << this->_projectileBBox.getTop() << endl;
 }
 
 const Rectangle Sprite::getProjectileBBox() {
@@ -233,7 +233,7 @@ const sides::Side Sprite::getCollisionSide(Rectangle &other) const {
 	amtLeft = other.getRight() - this->getBoundingBox().getLeft();
 	amtTop = other.getBottom() - this->getBoundingBox().getTop();
 	amtBottom = this->getBoundingBox().getBottom() - other.getTop();
-	//create array of absoulte value of these and loop through array to figure out which one is lowest by overrriding the lowest variable
+	// Create array of absoulte value of these and loop through array to figure out which one is lowest by overrriding the lowest variable
 	//If next one in array is lower than the one thats current lowest replace that one with the lowest.
 	int vals[4] = { abs(amtRight), abs(amtLeft), abs(amtTop), abs(amtBottom) };
 	int lowest = vals[0];

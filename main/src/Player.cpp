@@ -586,7 +586,7 @@ bool Player::handleLadderCollisions(std::vector<Rectangle>& others)
 //handles collisions with all slopes the player is colliding with
 void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 	for (int i = 0; i < others.size(); i++) {
-		//Calculate where on the slope the player's bottom center is touching
+		// Calculate where on the slope the player's bottom center is touching
 		// And use y=mx+b to figure out the y position to place him at
 		//First calculate "b" (slope) intercept) using one of the points (b = y - mx)
 		int b = (others.at(i).getP1().y - (others.at(i).getSlope() * fabs(others.at(i).getP1().x)));
@@ -608,7 +608,7 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 }
 
 void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player) {
-	//Check if the player is grounded and holding the down arrow
+	// Check if the player is grounded and holding the down arrow
 	//If so, go through the door
 	//If not, do nothing
 	AESCipher cipher;
@@ -655,7 +655,7 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 
 void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level, Graphics & graphics, Inventory & invent, Player &player)
 {
-	//Check if the player is grounded and holding the down arrow
+	// Check if the player is grounded and holding the down arrow
 	// Also check to see if the player has a "Key"
 	AESCipher cipher;
 	for (int i = 0; i < others.size(); i++) {

@@ -172,7 +172,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 			ss << "data/maps/" << source;
 			pTileset->QueryIntAttribute("firstgid", &firstgid);
 			SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(ss.str()));
-			//create a tilset variable and add it to our list of tilesets
+			// Create a tilset variable and add it to our list of tilesets
 			this->_tilesets.push_back(Tileset(tex, firstgid));
 			// we now loaded our tileset! But now we need to load each tile :( Check below at loading the layers
 
@@ -275,7 +275,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									//So it will draw the tile at a Y of 16. This algotrithm gets us to the right spot on the map
 									Vector2 finalTilePosition = Vector2(xx, yy);
 
-									//calculate the position of the tile in the tileset 
+									// Calculate the position of the tile in the tileset 
 									Vector2 finalTilesetPosition = this->getTilesetPosition(tls, gid, tileWidth, tileHeight);
 
 									// Build the actual tile and add it to the level's tile list
@@ -348,7 +348,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							else if (flipped_diagonally) {
 								//TODO: Diagonal flips/rotations
 							}
-							//Clear the flag bits only
+							// Clear the flag bits only
 							gid &= ~(FLIPPED_HORIZONTALLY_FLAG |
 								FLIPPED_VERTICALLY_FLAG |
 								FLIPPED_DIAGONALLY_FLAG);
@@ -390,7 +390,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							//So it will draw the tile at a Y of 16. This algotrithm gets us to the right spot on the map
 							Vector2 finalTilePosition = Vector2(xx, yy);
 
-							//calculate the position of the tile in the tileset 
+							// Calculate the position of the tile in the tileset 
 							Vector2 finalTilesetPosition = this->getTilesetPosition(tls, gid, tileWidth, tileHeight);
 							
 							// Build the actual tile and add it to the level's tile list
@@ -1016,7 +1016,7 @@ std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { //Go
 	//more than 1
 	std::vector<Rectangle> others;
 	for (int i = 0; i < this->_collisionRects.size(); i++) { //loop through our collision rects come from tiles
-		if (this->_collisionRects.at(i).collidesWith(other)) { //Check if any of our collision rects collides with other
+		if (this->_collisionRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
 			others.push_back(this->_collisionRects.at(i)); //if it does add it to the others list
 		}
 	}
@@ -1071,7 +1071,7 @@ std::vector<Rectangle> Level::checkCutsceneCollisions(const Rectangle & other)
 {
 	std::vector<Rectangle> others;
 	for (int i = 0; i < this->_cutsceneRects.size(); i++) { //loop through our collision rects come from tiles
-		if (this->_cutsceneRects.at(i).collidesWith(other)) { //Check if any of our collision rects collides with other
+		if (this->_cutsceneRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
 			others.push_back(this->_cutsceneRects.at(i)); //if it does add it to the others list
 		}
 	}
@@ -1144,7 +1144,7 @@ std::vector<Rectangle> Level::checkArenaCollisions(const Rectangle & other)
 	if (!arenaActive)
 		return others;
 	for (int i = 0; i < this->_arenaRects.size(); i++) { //loop through our collision rects come from tiles
-		if (this->_arenaRects.at(i).collidesWith(other)) { //Check if any of our collision rects collides with other
+		if (this->_arenaRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
 			others.push_back(this->_arenaRects.at(i)); //if it does add it to the others list
 		}
 	}
@@ -1234,7 +1234,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 
 void Level::generateItems(Graphics &graphics)
 {
-	//Create all items that are droppable once.
+	// Create all items that are droppable once.
 	//Note that they do not initialze / expend memory until passed through the &createInstance() function
 	std::cout << "Generating Items" << std::endl;
 	classMap["SilverGem"] = &createInstance<SilverGem>;
@@ -1528,7 +1528,7 @@ const Vector2 Level::getPlayerSpawnPoint() const {
 }
 
 Vector2 Level::getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileHeight) {
-	//calcualte the position of the tile in the tileset 
+	// Calcualte the position of the tile in the tileset 
 	int tilesetWidth, tilesetHeight;
 	//pass in texture, format, access, width, height. We dont care about format or access so NULL and then reference to width/height
 	SDL_QueryTexture(tls.Texture, NULL, NULL, &tilesetWidth, &tilesetHeight);

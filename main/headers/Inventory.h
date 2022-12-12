@@ -6,7 +6,7 @@
 #include "TextManager.h"
 
 class Graphics;
-//class Player; Can't foward declare player here because Player_player is not a pointer
+// Class Player; Can't foward declare player here because Player_player is not a pointer
 
 class Inventory : public TextManager
 {
