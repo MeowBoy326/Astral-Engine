@@ -661,7 +661,7 @@ void Game::gameLoop() {
 		this->_graphics = graphics; //updated graphics
 		//take standard min : elapsed time ms and max frame time
 		this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
-		//loop will go again and current time - new last update will tell us how long next frame will take
+		// Loop will go again and current time - new last update will tell us how long next frame will take
 		LAST_UPDATE_TIME = CURRENT_TIME_MS;
 		this->draw(graphics);
 		}
@@ -913,7 +913,7 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(csElement);
 	}
 	root->InsertEndChild(element);
-	//Locked Doors (unlocked)
+	// Locked Doors (unlocked)
 	element = xml.NewElement("LockedDoorTable");
 	std::vector<std::string> ldVec = this->_player.getLockedDoorTable();
 	for (int counter = 0; counter < ldVec.size(); ++counter) {
@@ -956,7 +956,7 @@ int Game::loadGame(Graphics & graphics)
 	XMLNode* root = xml.FirstChild();
 	if (root == nullptr)
 		return XML_ERROR_FILE_READ_ERROR;
-	//Load loot table
+	// Load loot table
 	XMLElement* element = root->FirstChildElement("Loot");
 	XMLElement* ptrVec = element->FirstChildElement("Table");
 	std::vector<std::pair<std::string, int>> tempVec;
@@ -969,7 +969,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("Table");
 	}
 	this->_inventory.setLootTable(tempVec);
-	//Load Inventory
+	// Load Inventory
 	element = root->FirstChildElement("Inventory");
 	ptrVec = element->FirstChildElement("iTable");
 	std::vector<std::pair<int, int>> iVec;
@@ -981,7 +981,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("iTable");
 	}
 	this->_inventory.setInventoryTable(iVec);
-	//Load QuestLog
+	// Load QuestLog
 	element = root->FirstChildElement("QuestLog");
 	ptrVec = element->FirstChildElement("Quest");
 	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec;
@@ -1007,7 +1007,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("Quests");
 	}
 	this->_npc.setQuestLog(qVec);
-	//Load Map
+	// Load Map
 	element = root->FirstChildElement("Spawn");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
@@ -1015,7 +1015,7 @@ int Game::loadGame(Graphics & graphics)
 	textPtr = element->Attribute("mapName");
 	std::string mapName = textPtr;
 	this->_level = Level(mapName, graphics, this->_inventory); // Intialize level: Map name , spawn point, graphics
-	//Load coordinates
+	// Load coordinates
 	Vector2 spawn;
 	int x, y;
 	result = element->QueryIntAttribute("xCoordinate", &x);
@@ -1024,7 +1024,7 @@ int Game::loadGame(Graphics & graphics)
 	this->_level.generateItems(graphics);
 	//spawn = this->_level.getPlayerSpawnPoint();
 	this->_player = Player(graphics, spawn);
-	//Load KillTable
+	// Load KillTable
 	element = root->FirstChildElement("KillTable");
 	ptrVec = element->FirstChildElement("kTable");
 	std::vector<std::pair<std::string, int>> kVec;
@@ -1037,7 +1037,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("kTable");
 	}
 	this->_player.setKillTable(kVec);
-	//Load BossTable
+	// Load BossTable
 	element = root->FirstChildElement("BossTable");
 	ptrVec = element->FirstChildElement("bTable");
 	std::vector<std::tuple<std::string, std::string, float, float, bool>> btVec;
@@ -1057,7 +1057,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("bTable");
 	}
 	this->_player.setBossTable(btVec);
-	//Load completed cutscenes
+	// Load completed cutscenes
 	element = root->FirstChildElement("SceneTable");
 	ptrVec = element->FirstChildElement("csTable");
 	std::vector<std::string> csVec;
@@ -1070,7 +1070,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("csTable");
 	}
 	this->_player.setCutsceneTable(csVec);
-	//Load unlocked doors
+	// Load unlocked doors
 	element = root->FirstChildElement("LockedDoorTable");
 	ptrVec = element->FirstChildElement("ldTable");
 	std::vector<std::string> ldVec;
@@ -1083,7 +1083,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("ldTable");
 	}
 	this->_player.setLockedDoorTable(ldVec);
-	//Load equipment
+	// Load equipment
 	element = root->FirstChildElement("EquipmentTable");
 	ptrVec = element->FirstChildElement("eqTable");
 	std::vector<std::string> eqVec;
@@ -1096,7 +1096,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("eqTable");
 	}
 	this->_player.setEquipmentTable(eqVec);
-	//Load stats
+	// Load stats
 	element = root->FirstChildElement("Stats");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;

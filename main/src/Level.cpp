@@ -149,7 +149,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 
 	this->_mapSize = Vector2(this->_size.x * this->_tileSize.x, this->_size.y * this->_tileSize.y);
 
-	//Load BGM
+	// Load BGM
 	XMLElement* propsNode = mapNode->FirstChildElement("properties");
 	if (propsNode != NULL) {
 		const char* propsName = propsNode->FirstChildElement("property")->Attribute("name");
@@ -161,7 +161,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 		}	
 	}
 
-	//Load the tilesets.
+	// Load the tilesets.
 	XMLElement* pTileset = mapNode->FirstChildElement("tileset"); // If we have more then 1 tile set its a problem, so a work-around is linked list
 	if (pTileset != NULL) { // Just in case we dont have any tiles(?) so program wont crash
 		while (pTileset) {
@@ -206,11 +206,11 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 			// Isnt one it will move on to the next code
 		}
 	}
-	//Loading the layers
+	// Loading the layers
 	XMLElement* pLayer = mapNode->FirstChildElement("layer");
 	if (pLayer != NULL) {
-		while (pLayer) { //loop through all layers
-			//Loading the data element
+		while (pLayer) { // Loop through all layers
+			// Loading the data element
 				const char* lyrName = pLayer->Attribute("name");
 				std::stringstream ssProp;
 				ssProp << lyrName;
@@ -218,9 +218,9 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					XMLElement* pData = pLayer->FirstChildElement("data");
 					if (pData != NULL) {
 						while (pData) {
-							//Loading the tile element
+							// Loading the tile element
 							XMLElement* pTile = pData->FirstChildElement("tile");
-							if (pTile != NULL) { //loop through tiles
+							if (pTile != NULL) { // Loop through tiles
 								int tileCounter = 0; // Add this because we need to know what tile we are on thru the loop
 								while (pTile) {
 									// Build each individual tile here
@@ -232,7 +232,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 											continue; // Because we are writing continue will go back to the while loop and go onto the next tile
 										}
 										else {
-											break; //last tile, no more, break.
+											break; // Last tile, no more, break.
 										}
 									}
 									// Get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
@@ -315,9 +315,9 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 			XMLElement* pData = pLayer->FirstChildElement("data");
 			if (pData != NULL) {
 				while (pData) {
-					//Loading the tile element
+					// Loading the tile element
 					XMLElement* pTile = pData->FirstChildElement("tile");
-					if (pTile != NULL) { //loop through tiles
+					if (pTile != NULL) { // Loop through tiles
 						int tileCounter = 0; // Add this because we need to know what tile we are on thru the loop
 						while (pTile) {
 							// Build each individual tile here
@@ -329,7 +329,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									continue; // Because we are writing continue will go back to the while loop and go onto the next tile
 								}
 								else {
-									break; //last tile, no more, break.
+									break; // Last tile, no more, break.
 								}
 								}
 							// Get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
@@ -791,7 +791,7 @@ void Level::update(int elapsedTime, Player &player) {
 
 void Level::draw(Graphics &graphics, Player &player) {
 	for (int i = 0; i < this->_tileList.size(); i++) {
-		this->_tileList.at(i).draw(graphics); //loop thru all tiles and draw them
+		this->_tileList.at(i).draw(graphics); // Loop thru all tiles and draw them
 	}
 	for (int i = 0; i < this->_breakTileList.size(); i++) {
 		this->_breakTileList.at(i).draw(graphics);
@@ -1006,7 +1006,7 @@ float Level::getSceneY(std::string name)
 
 void Level::removeCutscene(std::string name)
 {
-	for (int i = 0; i < this->_cutsceneRects.size(); i++) { //loop through our collision rects come from tiles
+	for (int i = 0; i < this->_cutsceneRects.size(); i++) { // Loop through our collision rects come from tiles
 		this->_cutsceneRects.erase(this->_cutsceneRects.begin() + i);
 	}
 }
@@ -1015,7 +1015,7 @@ std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { // G
 	//(player enemy or anything) and it will add it to a list and return that list of rectangles and return every rectangle we are colliding with might be 
 	//more than 1
 	std::vector<Rectangle> others;
-	for (int i = 0; i < this->_collisionRects.size(); i++) { //loop through our collision rects come from tiles
+	for (int i = 0; i < this->_collisionRects.size(); i++) { // Loop through our collision rects come from tiles
 		if (this->_collisionRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
 			others.push_back(this->_collisionRects.at(i)); // If it does add it to the others list
 		}
@@ -1070,7 +1070,7 @@ std::vector<Rectangle> Level::checkEnemyProjectileTileCollision()
 std::vector<Rectangle> Level::checkCutsceneCollisions(const Rectangle & other)
 {
 	std::vector<Rectangle> others;
-	for (int i = 0; i < this->_cutsceneRects.size(); i++) { //loop through our collision rects come from tiles
+	for (int i = 0; i < this->_cutsceneRects.size(); i++) { // Loop through our collision rects come from tiles
 		if (this->_cutsceneRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
 			others.push_back(this->_cutsceneRects.at(i)); // If it does add it to the others list
 		}
@@ -1143,7 +1143,7 @@ std::vector<Rectangle> Level::checkArenaCollisions(const Rectangle & other)
 	std::vector<Rectangle> others;
 	if (!arenaActive)
 		return others;
-	for (int i = 0; i < this->_arenaRects.size(); i++) { //loop through our collision rects come from tiles
+	for (int i = 0; i < this->_arenaRects.size(); i++) { // Loop through our collision rects come from tiles
 		if (this->_arenaRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
 			others.push_back(this->_arenaRects.at(i)); // If it does add it to the others list
 		}
@@ -1362,7 +1362,7 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 								pProperties = pProperties->NextSiblingElement("properties");
 							}
 						}
-						//Load enemies now that drops are done
+						// Load enemies now that drops are done
 						x = pObject->FloatAttribute("x");
 						y = pObject->FloatAttribute("y");
 						const char* name = pObject->Attribute("name");

@@ -24,7 +24,7 @@ Title::Title(Graphics &graphics, Input &input, SDL_Event &event) :
 // Graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
 AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0, 140)
 {
-	graphics.loadImage("data\\graphics\\dark_clouds.png"); //loads sprite sheet in
+	graphics.loadImage("data\\graphics\\dark_clouds.png"); // Loads sprite sheet in
 
 	this->setupAnimations();
 	this->playAnimation("zero");
@@ -32,7 +32,7 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 	this->_title = Sprite(graphics, "data\\graphics\\title.png", 2, 0, 241, 68, 300, 100);
 	//x, y, width, height, screen pos x, screen pos y
 	std::cout << "sprite added" << std::endl;
-	graphics.loadImage("data\\graphics\\title.png"); //loads sprite sheet in
+	graphics.loadImage("data\\graphics\\title.png"); // Loads sprite sheet in
 
 	this->_startGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 84, 124, 23, 215, 270);
 	graphics.loadImage("data\\graphics\\startGame.png");
@@ -211,7 +211,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 		}
 
 		this->Title::update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
-		LAST_UPDATE_TIME = CURRENT_TIME_MS; //loop will go again and current time - new last update will tell us how long next frame will take
+		LAST_UPDATE_TIME = CURRENT_TIME_MS; // Loop will go again and current time - new last update will tell us how long next frame will take
 		this->Title::draw(graphics);
 	}
 	return false;

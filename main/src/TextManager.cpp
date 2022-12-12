@@ -17,7 +17,7 @@ TextManager::TextManager(Graphics & graphics, Player & player)  {
 	int posx = player.getX();
 	int posy = player.getY();
 	this->_chatBox = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 0, 243, 23, posx, posy);
-	graphics.loadImage("data\\npc\\npcTextBox.png"); //loads sprite sheet in
+	graphics.loadImage("data\\npc\\npcTextBox.png"); // Loads sprite sheet in
 	this->drawChatBox(graphics, player);
 }
 

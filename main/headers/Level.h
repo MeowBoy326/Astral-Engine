@@ -119,7 +119,7 @@ private:
 	std::vector<Rectangle> _ladderRects;
 	std::vector<Rectangle> _saveRects;
 	std::vector<Rectangle> _arenaRects;
-	std::vector<Slope> _slopes; //list of slopes
+	std::vector<Slope> _slopes; // List of slopes
 	std::vector<Door> _doorList;
 	std::vector<Door> _lockDoor;
 	std::vector<Enemy*> _enemies; //polymorphism to call the update and draw for the bat and not Enemy's functions, so needs to be a pointer for poly to work

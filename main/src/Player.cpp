@@ -47,7 +47,7 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	_maxHealth(100.0f),
 	_currentHealth(100.0f)
 {
-	graphics.loadImage("data\\graphics\\MyChar.png"); //loads sprite sheet in
+	graphics.loadImage("data\\graphics\\MyChar.png"); // Loads sprite sheet in
 
 	this->setupAnimations();
 	this->playAnimation("RunRight");

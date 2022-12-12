@@ -228,7 +228,7 @@ void Sprite::setBoundingBox(int x, int y, int width, int height)
 //Side getCollisionSide
 // Determine which side the collision happened on
 const sides::Side Sprite::getCollisionSide(Rectangle &other) const {
-	int amtRight, amtLeft, amtTop, amtBottom; //lowest amount that its in (overlapping) is the side we are colliding on 
+	int amtRight, amtLeft, amtTop, amtBottom; // Lowest amount that its in (overlapping) is the side we are colliding on 
 	amtRight = this->getBoundingBox().getRight() - other.getLeft();
 	amtLeft = other.getRight() - this->getBoundingBox().getLeft();
 	amtTop = other.getBottom() - this->getBoundingBox().getTop();

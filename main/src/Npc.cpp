@@ -23,7 +23,7 @@ Npc::Npc(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int
 	this->_txtBox = new Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 0, 76, 24, 505, 499);
 	//this->_npcBox = Sprite(graphics, "data\\npc\\npcTextBox.png", 63, 149, 32, 32, 505, 499);
 	//this->_chatSelection = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
-	graphics.loadImage("data\\npc\\npcTextBox.png"); //loads sprite sheet in
+	graphics.loadImage("data\\npc\\npcTextBox.png"); // Loads sprite sheet in
 }
 
 void Npc::update(int elapsedTime, Player &player) {
