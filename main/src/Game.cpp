@@ -127,7 +127,7 @@ void Game::gameLoop() {
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
 
-	this->_title.getSettings(soundVolume);
+	this->setSettings();
 
 	if (gMusic == NULL)
 	{
@@ -161,9 +161,11 @@ void Game::gameLoop() {
 					std::exit(0);
 				}
 				this->saveGame(graphics);
+				this->setSettings();
 			}
 			else {
 				this->loadGame(graphics);
+				this->setSettings();
 			}
 		}
 //Death Loop
@@ -1131,6 +1133,15 @@ int Game::loadGame(Graphics & graphics)
 	this->saveGame(graphics);
 	XMLCheckResult(result);
 	return 0;
+}
+
+void Game::setSettings() {
+	// Volume
+	this->_title.getSettings(soundVolume);
+	Mix_VolumeMusic(soundVolume);
+
+	// Display
+	// ...
 }
 
 void Game::update(float elapsedTime, Graphics &graphics) {

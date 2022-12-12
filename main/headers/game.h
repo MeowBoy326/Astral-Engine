@@ -31,6 +31,7 @@ private:
 	void updateGameOver(float elapsedTime);
 	void update(float elapsedTime, Graphics &graphics);
 	void updateCutscene(float elapsedTime, Graphics &graphics);
+	void setSettings();
 	int loadCutscene(std::string name);
 	int startCutscene(std::string name);
 	int saveGame(Graphics &graphics);
