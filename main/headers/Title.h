@@ -21,6 +21,8 @@ public:
 	void setupAnimations();
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
+	int saveSettings();
+	int loadSettings();
 	int getMenuChoice();
 private:
 	Graphics _graphics; //store graphics object
@@ -37,10 +39,12 @@ private:
 	int selectY = 275;
 	int menuChoice = 0;
 	int settingsChoice = 0;
+	int exitChoice = 0;
 	int volumePercent = 100;
 
 	bool showSettings = false;
 	bool changeVolume = false;
 	bool isSubmenu = false;
+	bool exitMenu = false;
 };
 

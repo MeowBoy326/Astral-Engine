@@ -1,8 +1,16 @@
+#ifndef XMLCheckResult
+#define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return a_eResult;}
+#endif
+
 #include "../headers/Title.h"
 #include "../headers/Input.h"
+#include "../headers/tinyxml2.h"
 
 #include <iostream>
 #include <algorithm>
+#include <filesystem>
+
+using namespace tinyxml2;
 
 namespace {
 	const int FPS = 50;
@@ -37,6 +45,7 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 	this->_settingsVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 335, 155);
 
 	this->_selectionBox = Sprite(graphics, "data\\graphics\\startGame.png", 0, 63, 19, 12, 185, 275);
+	this->loadSettings();
 }
 
 Title::~Title()
@@ -73,10 +82,30 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 			if (menuChoice != 2 && !showSettings)
 				menuLoop = false;
 			else if (!showSettings) {
+				this->loadSettings();
 				showSettings = !showSettings;
 				this->selectY = 155;
 				this->selectX = 220;
 				settingsChoice = 0;
+			}
+			else if (exitMenu && showSettings)
+			{
+				if (exitChoice == 0)
+				{
+					this->saveSettings();
+					exitMenu = !exitMenu;
+					this->selectY = this->_settings.getY() + 5;
+					this->selectX = 185;
+					showSettings = !showSettings;
+				}
+				else {
+					// Undo any changes by loading the unsaved file
+					this->loadSettings();
+					exitMenu = !exitMenu;
+					this->selectY = this->_settings.getY() + 5;
+					this->selectX = 185;
+					showSettings = !showSettings;
+				}
 			}
 			else {
 				if (settingsChoice == 0) {
@@ -86,10 +115,9 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectX = 220;
 					settingsChoice = 0;
 				}
+				// Exit button -> Open confirmation (Save and Exit?)
 				else {
-					this->selectY = this->_settings.getY() + 5;
-					this->selectX = 185;
-					showSettings = !showSettings;
+					exitMenu = !exitMenu;
 				}
 			}
 		}
@@ -229,4 +257,12 @@ void Title::draw(Graphics &graphics) {
 	}
 	this->_selectionBox.drawTitle(graphics, selectX, selectY);
 	graphics.flip();
+}
+
+int Title::saveSettings() {
+
+}
+
+int Title::loadSettings() {
+
 }
