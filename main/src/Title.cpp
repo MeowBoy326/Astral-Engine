@@ -100,6 +100,9 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectX = 185;
 					showSettings = !showSettings;
 					isSubmenu = !isSubmenu;
+					// Restart application to load new settings
+					std::system("astral-services.bat");
+					std::exit(0);
 				}
 				else {
 					// Undo any changes by loading the unsaved file
