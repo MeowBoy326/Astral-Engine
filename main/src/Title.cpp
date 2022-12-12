@@ -15,7 +15,7 @@ using namespace tinyxml2;
 namespace {
 	const int FPS = 50;
 	// remove *5
-	const int MAX_FRAME_TIME = 5 * 1000 / FPS; //Max amount of time a frame is allowed to last
+	const int MAX_FRAME_TIME = 5 * 1000 / FPS; // Max amount of time a frame is allowed to last
 }
 
 Title::Title() {}

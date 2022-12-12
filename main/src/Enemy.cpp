@@ -108,7 +108,7 @@ void Bat::update(int elapsedTime, Player &player) {
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
 	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
 		this->playAnimation(this->_direction == RIGHT ? "FlyRight" : "FlyLeft");
-		//Move up or down
+		// Move up or down
 		this->_y += this->_shouldMoveUp ? -.06 : .06;
 		this->_x += this->_shouldMoveLeft ? -.016 : .016;
 		this->_HPBar._y += this->_shouldMoveUp ? -.06 : .06;
@@ -572,7 +572,7 @@ void JellyFish::update(int elapsedTime, Player &player) {
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
 	if (this->getCurrentHealth() > 0 && this->isVisible == true) {
 		this->playAnimation(this->_direction == RIGHT ? "JellyRight" : "JellyLeft");
-		//Move up or down
+		// Move up or down
 		if (this->_JellyAttack == false && this->_resettingPos == false && this->_delayAttack == false) {
 			this->_y += this->_shouldMoveUp ? -.06 : .06;
 			this->_HPBar._y += this->_shouldMoveUp ? -.06 : .06;

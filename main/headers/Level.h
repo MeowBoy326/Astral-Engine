@@ -100,7 +100,7 @@ private:
 	TextManager* _txt;
 
 	Vector2 _size; // width height of entire map, not what we see but the entire map
-	Vector2 _tileSize; //maps will all have same tile size so only 1 vector2
+	Vector2 _tileSize; // Maps will all have same tile size so only 1 vector2
 	Vector2 _mapSize;
 
 	SDL_Texture* _backgroundTexture; // BkBlue.png
@@ -128,7 +128,7 @@ private:
 	std::vector<Npc*> _npcs;
 	std::vector<Items*> _items;
 	std::vector<int> itemType;
-	std::vector<std::tuple<std::string, std::string, int>> levelDropTable; //mob name, item name, drop rate %
+	std::vector<std::tuple<std::string, std::string, int>> levelDropTable; // Mob name, item name, drop rate %
 	std::vector<std::tuple<float, float, float, int>> dmgVector;
 
 	//Private loads a map only call level within level class

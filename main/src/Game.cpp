@@ -26,7 +26,7 @@ using namespace CryptoPP;
 namespace {
 	const int FPS = 50;
 	// remove 5 *
-	const int MAX_FRAME_TIME = 5* 1000 / FPS; //Max amount of time a frame is allowed to last
+	const int MAX_FRAME_TIME = 5* 1000 / FPS; // Max amount of time a frame is allowed to last
 	int soundVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
 	int selection = 1;
 	int npcSelection = 1;
@@ -102,7 +102,7 @@ void Game::gameLoop() {
 	Graphics graphics;
 	Input input;
 	SDL_Event event;
-	//music
+	// Music
 	Mix_AllocateChannels(350);
 	Mix_Chunk *sBullet = NULL;
 	Mix_Chunk *seWalk = NULL;
@@ -142,7 +142,7 @@ void Game::gameLoop() {
 
 	int LAST_UPDATE_TIME = SDL_GetTicks(); 
 	// Above ^ gets the amount of miliseconds since the SDL library was intialized
-	//must start before loop
+	// Must start before loop
 	//Start the game loop
 	while (true) {
 		input.beginNewFrame();
@@ -246,7 +246,7 @@ void Game::gameLoop() {
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			this->drawCutscene(graphics);
 		}
-//Main Game Loop
+// Main Game Loop
 		if (title == false && GAMEOVER == false && activeCutscene == false) {
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
@@ -345,7 +345,7 @@ void Game::gameLoop() {
 				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 					this->_player.moveLeft();
 					if (this->_player.isGrounded() && walkSound == false) {
-						//Mix_PlayChannel(321, seWalk, -1);
+						// Mix_PlayChannel(321, seWalk, -1);
 						Mix_Resume(321);
 						walkSound = true;
 					}

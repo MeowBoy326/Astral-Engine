@@ -742,7 +742,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					}
 				}
 			}
-			pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
+			pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); // More then 1 obj group keep going
 		}
 	}
 }
@@ -836,7 +836,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 			destRect.x = x * 64 * globals::SPRITE_SCALE; //So it will draw it first at 0,0 64 pixels long then next time is x will be 1 starting at 64th pixels and going
 			// All the way to the 128th pixel (another 64) and so on....
 			// Do same for y
-			destRect.y = y * 64 * globals::SPRITE_SCALE; //multiply by sprite scale so 2x size looks better!
+			destRect.y = y * 64 * globals::SPRITE_SCALE; // Multiply by sprite scale so 2x size looks better!
 			destRect.w = 64 * globals::SPRITE_SCALE;
 			destRect.h = 64 * globals::SPRITE_SCALE;
 			graphics.blitSurface(this->_backgroundTexture, &sourceRect, &destRect);
@@ -1013,7 +1013,7 @@ void Level::removeCutscene(std::string name)
 
 std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { // Goes through all tiles and checks if they are colliding with other rectangle 
 	//(player enemy or anything) and it will add it to a list and return that list of rectangles and return every rectangle we are colliding with might be 
-	//more than 1
+	// More than 1
 	std::vector<Rectangle> others;
 	for (int i = 0; i < this->_collisionRects.size(); i++) { // Loop through our collision rects come from tiles
 		if (this->_collisionRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
@@ -1203,7 +1203,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					auto cDistance = std::distance(this->levelDropTable.begin(), cMapIt);
 					if (cMapIt != this->levelDropTable.end()) {
 						std::random_device rd; //Seed for the random number (for drop rate check)
-						std::mt19937 gen(rd()); //Mersenne twister engine with rd seed ^
+						std::mt19937 gen(rd()); // Mersenne twister engine with rd seed ^
 						std::uniform_int_distribution<> luckyNumber(1, 100);
 						if (luckyNumber(gen) <= std::get<2>(this->levelDropTable[cDistance])) {
 							Items *b = classMap[std::get<1>(this->levelDropTable[cDistance])](graphics, Vector2(this->_enemies.at(i)->getX(),
@@ -1238,7 +1238,7 @@ void Level::generateItems(Graphics &graphics)
 	//Note that they do not initialze / expend memory until passed through the &createInstance() function
 	std::cout << "Generating Items" << std::endl;
 	classMap["SilverGem"] = &createInstance<SilverGem>;
-	//more items below
+	// More items below
 }
 
 void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory &invent)
@@ -1290,7 +1290,7 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 					}
 				}
 			}
-			pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
+			pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); // More then 1 obj group keep going
 		}
 	}
 }
@@ -1400,7 +1400,7 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 					}
 				}
 			}
-		pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); //more then 1 obj group keep going
+		pObjectGroup = pObjectGroup->NextSiblingElement("objectgroup"); // More then 1 obj group keep going
 		}
 	}
 }

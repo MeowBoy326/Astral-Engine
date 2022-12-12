@@ -33,8 +33,8 @@ public:
 	bool checkDeathPlayed() const { return this->deathPlayed; }
 
 	//Player handling
-	void moveLeft(); 	//Move player left by -dx
-	void moveRight(); 	//Move player right by +dx
+	void moveLeft(); 	// Move player left by -dx
+	void moveRight(); 	// Move player right by +dx
 	void moveUp(); // For ladders
 	void moveDown();
 	void jump();

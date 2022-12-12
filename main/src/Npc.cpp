@@ -391,7 +391,7 @@ void Clock::update(int elapsedTime, Player &player) {
 	this->playAnimation(this->_direction == RIGHT ? "clock" : "clockD");
 
 
-	//Move up or down
+	// Move up or down
 	this->_y += this->_shouldMoveUp ? -.06 : .06;
 	if (this->_y > (this->_startingY + 30) || this->_y < this->_startingY - 30) {
 		this->_shouldMoveUp = !this->_shouldMoveUp;
