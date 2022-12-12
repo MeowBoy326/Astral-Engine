@@ -259,7 +259,7 @@ void TextManager::drawVersion(Graphics & graphics, int x, int y)
 	// Std::strftime(time, sizeof(time), "%B %d, %Y (%T)", localTime);
 	// Std::string timeToStr = time;
 	// Std::string version;
-	//version += "Version " + std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR)
+	// version += "Version " + std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR)
 	//	+ "." + std::to_string(VERSION_PATCH) + "." + std::to_string(VERSION_BUILD) + " " + timeToStr;
 
 	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\ClearSans-Light.ttf", 14);

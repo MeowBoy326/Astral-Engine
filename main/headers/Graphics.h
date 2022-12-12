@@ -24,7 +24,7 @@ public:
 	* Returns the image from the map regaurdless of wether or not it was just loaded
 	*/
 	SDL_Surface* loadImage(const std::string &filePath);
-	//void blitzSurface will draw a texture to a certain part of the screen
+	// void blitzSurface will draw a texture to a certain part of the screen
 	// Source is what we are drawing to the screen, sourceRectangle is what part of the spritesheet we will draw
 	// DestinationRectangle is where on the screen we will draw it
 	void blitSurface(SDL_Texture* source, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle);
@@ -36,9 +36,9 @@ public:
 	void blitBoundingbox(SDL_Rect &bbRect, SDL_Color color);
 	// Draw slope outline
 	void blitSlopeOutline(SDL_Point &startPoint, SDL_Point &endPoint, SDL_Color color);
-	//void flip: Renders everythign to the screen
+	// void flip: Renders everythign to the screen
 	void flip();
-	//void clear: clears the screen
+	// void clear: clears the screen
 	void clear();
 	// Return our render so we can use it elsewhere (sprite class)
 	SDL_Renderer* getRenderer() const;

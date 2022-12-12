@@ -40,14 +40,14 @@ public:
 	void updateBoss(int elapstedTime, int y);
 	void updateFBall(int elapsedTime, int y);
 	void updateScript(int elapsedTime);
-	//void updateBullet(int elapsedTime);
+	// void updateBullet(int elapsedTime);
 
 	/*void draw
 	Draws the sprite to the screen
 	*/
 	void draw(Graphics &graphics, int x, int y);
 	void drawBoss(Graphics &graphics, int x, int y, float scaleFactor);
-	//void drawTextBox(Graphics & graphics, std::string speech, TTF_Font *font);
+	// void drawTextBox(Graphics & graphics, std::string speech, TTF_Font *font);
 	void drawNpc(Graphics & graphics, int x, int y);
 	void drawTitle(Graphics & graphics, int x, int y);
 	void drawBullet(Graphics &graphics, int x, int y);
@@ -99,7 +99,7 @@ protected:
 	* Any class that is animated sprite you must implement this, if you dont, there wont be any animations to go through
 	*/
 
-	virtual void setupAnimations() = 0; //virtual because we are not actually implementing here in animated sprite, eventually pure virtual until we make player class
+	virtual void setupAnimations() = 0; // virtual because we are not actually implementing here in animated sprite, eventually pure virtual until we make player class
 
 private:
 	std::map<std::string, std::vector<SDL_Rect>> _animation;
