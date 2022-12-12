@@ -293,7 +293,7 @@ void Game::gameLoop() {
 				}
 			}
 
-			//bullet
+			// Bullet
 			if (input.wasKeyPressed(SDL_SCANCODE_X) && input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)
 				&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
 				std::cout << "Bullet right up diag test..." << std::endl;

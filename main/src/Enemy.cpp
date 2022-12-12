@@ -6,7 +6,7 @@
 #include "SDL_timer.h"
 
 TextManager txt;
-//Base enemy class
+// Base enemy class
 Enemy::Enemy() {}
 
 Enemy::~Enemy()
@@ -14,7 +14,7 @@ Enemy::~Enemy()
 }
 
 namespace enemyConstants {
-	//bool removeEnemy = false;
+	// Bool removeEnemy = false;
 }
 
 Enemy::Enemy(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int width, int height, Vector2 spawnPoint, int timeToUpdate) :
@@ -71,7 +71,7 @@ float Enemy::enemyExpAmount() {
 	return 0;
 }
 
-//Bat class
+// Bat class
 Bat::Bat() {}
 
 Bat::Bat(Graphics &graphics, Vector2 spawnPoint) :

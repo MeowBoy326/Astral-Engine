@@ -223,13 +223,13 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							if (pTile != NULL) { //loop through tiles
 								int tileCounter = 0; // Add this because we need to know what tile we are on thru the loop
 								while (pTile) {
-									//build each individual tile here
+									// Build each individual tile here
 									//if gid is 0, no tile should be drawn, continue loop.
 									if (pTile->IntAttribute("gid") == 0) {
 										tileCounter++;
 										if (pTile->NextSiblingElement("tile")) { //just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
 											pTile = pTile->NextSiblingElement("tile"); // we are doing this because if its a 0 it will never make it down below to move on
-											continue; //because we are writing continue will go back to the while loop and go onto the next tile
+											continue; // Because we are writing continue will go back to the while loop and go onto the next tile
 										}
 										else {
 											break; //last tile, no more, break.
@@ -278,7 +278,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									//calculate the position of the tile in the tileset 
 									Vector2 finalTilesetPosition = this->getTilesetPosition(tls, gid, tileWidth, tileHeight);
 
-									//Build the actual tile and add it to the level's tile list
+									// Build the actual tile and add it to the level's tile list
 									bool isAnimatedTile = false;
 									AnimatedTileInfo ati;
 									for (int i = 0; i < _animatedTileInfos.size(); i++) {
@@ -320,13 +320,13 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					if (pTile != NULL) { //loop through tiles
 						int tileCounter = 0; // Add this because we need to know what tile we are on thru the loop
 						while (pTile) {
-							//build each individual tile here
+							// Build each individual tile here
 							//if gid is 0, no tile should be drawn, continue loop.
 							if (pTile->IntAttribute("gid") == 0) {
 								tileCounter++; 
 								if (pTile->NextSiblingElement("tile")) { //just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
 									pTile = pTile->NextSiblingElement("tile"); // we are doing this because if its a 0 it will never make it down below to move on
-									continue; //because we are writing continue will go back to the while loop and go onto the next tile
+									continue; // Because we are writing continue will go back to the while loop and go onto the next tile
 								}
 								else {
 									break; //last tile, no more, break.
@@ -393,7 +393,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							//calculate the position of the tile in the tileset 
 							Vector2 finalTilesetPosition = this->getTilesetPosition(tls, gid, tileWidth, tileHeight);
 							
-							//Build the actual tile and add it to the level's tile list
+							// Build the actual tile and add it to the level's tile list
 							bool isAnimatedTile = false;
 							AnimatedTileInfo ati;
 							for (int i = 0; i < _animatedTileInfos.size(); i++) {
@@ -646,7 +646,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							}
 						}
 						for (int i = 0; i < points.size(); i += 2) { // we are not using i++ because we want to skip every other point (not really)
-							//because we will be using i - 1 to look at the last one and i + 1 to look at next one
+							// Because we will be using i - 1 to look at the last one and i + 1 to look at next one
 							//need to figure out which point we are at, if we are at first point we dont wanna go anywhere, so add nothing to it.
 							this->_slopes.push_back(Slope(Vector2((p1.x + points.at(i < 2 ? i : i - 1).x) * globals::SPRITE_SCALE, 
 																  (p1.y + points.at(i < 2 ? i : i - 1).y ) * globals::SPRITE_SCALE),

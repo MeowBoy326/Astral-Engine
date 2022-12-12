@@ -148,7 +148,7 @@ void Sprite::drawProjectile(Graphics &graphics, SDL_Rect rect) {
 }
 
 void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) { 
-	//bulletID--;
+	// BulletID--;
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::PROJECTILE_SCALE, this->_sourceRect.h * globals::PROJECTILE_SCALE };
 	//SDL_Rect sourceRect = this->_projectiles.at[bulletID];
 	//destinationRectangle.x = this->pRect.at(bulletID).x;

@@ -103,7 +103,7 @@ private:
 	Vector2 _tileSize; //maps will all have same tile size so only 1 vector2
 	Vector2 _mapSize;
 
-	SDL_Texture* _backgroundTexture; //bkBlue.png
+	SDL_Texture* _backgroundTexture; // BkBlue.png
 
 	std::vector<Tile> _tileList;
 	std::vector<Tile> _breakTileList;

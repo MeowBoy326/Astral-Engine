@@ -36,7 +36,7 @@ void Input::keyDownEvent(const SDL_Event& event) {
 //This gets called when a key gets released
 void Input::keyUpEvent(const SDL_Event& event) {
 	this->_releasedKeys[event.key.keysym.scancode] = true;
-	this->_heldKeys[event.key.keysym.scancode] = false; //because it was already set true when it was pressed and now we set false since we stopped holding
+	this->_heldKeys[event.key.keysym.scancode] = false; // Because it was already set true when it was pressed and now we set false since we stopped holding
 }
 
 //checks if a certain key was pressed during the current frame
