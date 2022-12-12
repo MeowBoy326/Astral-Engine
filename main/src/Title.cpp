@@ -44,6 +44,8 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 	this->_settingsVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 320, 150);
 	this->_settingsVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 335, 155);
 
+	this->_exitMenu = Sprite(graphics, "data\\npc\\npcTextBox.png", 155, 51, 76, 26, 320, 300);
+
 	this->_selectionBox = Sprite(graphics, "data\\graphics\\startGame.png", 0, 63, 19, 12, 185, 275);
 	this->loadSettings();
 }
@@ -254,6 +256,9 @@ void Title::draw(Graphics &graphics) {
 		this->drawSettings(graphics, 375, 145, label, 10);
 		label = "Exit";
 		this->drawSettings(graphics, 240, 185, label, 14);
+	}
+	if (exitMenu) {
+		this->_exitMenu.drawSaveMenu(graphics, this->_exitMenu.getX(), this->_exitMenu.getY());
 	}
 	this->_selectionBox.drawTitle(graphics, selectX, selectY);
 	graphics.flip();

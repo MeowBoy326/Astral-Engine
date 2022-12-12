@@ -33,6 +33,7 @@ private:
 	Sprite _settingsMenu;
 	Sprite _settingsVolume;
 	Sprite _settingsVolumePercent;
+	Sprite _exitMenu;
 	Sprite _selectionBox;
 
 	int selectX = 185;
