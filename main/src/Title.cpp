@@ -82,7 +82,21 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 		}
 		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
 			if (menuChoice != 2 && !showSettings)
-				menuLoop = false;
+			{
+				if (menuChoice == 1)
+				{
+					if (!std::filesystem::exists(std::filesystem::current_path() / "data" / "profile" / "SF-LOC.xml"))
+					{
+						std::cout << "File not found!" << std::endl;
+						if (!showMsg)
+							showMsg = !showMsg;
+					}
+					else
+						menuLoop = false;
+				}
+				else
+					menuLoop = false;
+			}
 			else if (!showSettings) {
 				this->loadSettings();
 				showSettings = !showSettings;
@@ -254,6 +268,13 @@ void Title::setupAnimations() {
 
 void Title::update(float elapsedTime) {
 	AnimatedSprite::update(elapsedTime);
+	if (showMsg) {
+		this->msgTimer += elapsedTime;
+		if (msgTimer >= 6500) {
+			showMsg = !showMsg;
+			msgTimer = 0;
+		}
+	}
 }
 
 void Title::draw(Graphics &graphics) {
@@ -284,6 +305,10 @@ void Title::draw(Graphics &graphics) {
 		this->_exitMenu.drawSaveMenu(graphics, this->_exitMenu.getX(), this->_exitMenu.getY());
 	}
 	this->_selectionBox.drawTitle(graphics, selectX, selectY);
+	if (showMsg) {
+		std::string msg = "Save data not found. Start a New Game.";
+		this->drawSystemMessages(graphics, 270, 250, msg, { 255, 255, 255, 255 });
+	}
 	graphics.flip();
 }
 

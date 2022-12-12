@@ -43,10 +43,12 @@ private:
 	int settingsChoice = 0;
 	int exitChoice = 0;
 	int volumePercent = 100;
+	int msgTimer = 0;
 
 	bool showSettings = false;
 	bool changeVolume = false;
 	bool isSubmenu = false;
 	bool exitMenu = false;
+	bool showMsg = false;
 };
 
