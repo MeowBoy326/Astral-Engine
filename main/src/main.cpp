@@ -1,6 +1,6 @@
 /*
 * Astral - A 2D Platform Game.
-* Copyright(C) 2019  Arhum Zeena Nayyar
+* Copyright(C) 2019 Arhum Zeena Nayyar
 *
 * This program is free software : you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program.If not, see < https:// www.gnu.org/licenses/>.
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
 *
 * Email: arhumnayyar@gmail.com
 */
@@ -25,7 +25,6 @@
 *************************************************************/
 #include <iostream>
 #include "../headers/game.h"
-//#include "game.h"
 
 int main(int argc, char * argv[]) {
 	Game game;
