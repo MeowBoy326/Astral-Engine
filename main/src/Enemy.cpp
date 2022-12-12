@@ -504,7 +504,7 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
-				this->_grounded = true; //we are on ground since it pushed it back up
+				this->_grounded = true; // we are on ground since it pushed it back up
 				break;
 			case sides::LEFT:
 				this->_x = others.at(i).getRight() + 1;
@@ -714,7 +714,7 @@ void JellyFish::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
-				//this->_grounded = true; //we are on ground since it pushed it back up
+				//this->_grounded = true; // we are on ground since it pushed it back up
 				this->_JellyAttack = false;
 				this->_resettingPos = true;
 				break;
@@ -941,7 +941,7 @@ void Ghost::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
-				this->_grounded = true; //we are on ground since it pushed it back up
+				this->_grounded = true; // we are on ground since it pushed it back up
 				break;
 			case sides::LEFT:
 				this->_x = others.at(i).getRight() + 1;

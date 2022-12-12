@@ -174,7 +174,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 			SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(ss.str()));
 			//create a tilset variable and add it to our list of tilesets
 			this->_tilesets.push_back(Tileset(tex, firstgid));
-			//We now loaded our tileset! But now we need to load each tile :( Check below at loading the layers
+			// we now loaded our tileset! But now we need to load each tile :( Check below at loading the layers
 
 			//Get all of the animations for that tileset
 			XMLElement* pTileA = pTileset->FirstChildElement("tile");
@@ -202,7 +202,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 					pTileA = pTileA->NextSiblingElement("tile");
 				}
 			}
-			pTileset = pTileset->NextSiblingElement("tileset"); //will try to set our tileset to the next tileset (sibling) after first one process if there
+			pTileset = pTileset->NextSiblingElement("tileset"); // will try to set our tileset to the next tileset (sibling) after first one process if there
 			//isnt one it will move on to the next code
 		}
 	}
@@ -228,7 +228,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									if (pTile->IntAttribute("gid") == 0) {
 										tileCounter++;
 										if (pTile->NextSiblingElement("tile")) { //just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
-											pTile = pTile->NextSiblingElement("tile"); //we are doing this because if its a 0 it will never make it down below to move on
+											pTile = pTile->NextSiblingElement("tile"); // we are doing this because if its a 0 it will never make it down below to move on
 											continue; //because we are writing continue will go back to the while loop and go onto the next tile
 										}
 										else {
@@ -263,7 +263,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 										}
 									}
 									//Get the position of the tile in the level (confusing part)
-									int xx = 0; //we need an x and y. We have a lot of variables so xx!
+									int xx = 0; // we need an x and y. We have a lot of variables so xx!
 									int yy = 0;
 									xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
 									//So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
@@ -325,7 +325,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							if (pTile->IntAttribute("gid") == 0) {
 								tileCounter++; 
 								if (pTile->NextSiblingElement("tile")) { //just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
-									pTile = pTile->NextSiblingElement("tile"); //we are doing this because if its a 0 it will never make it down below to move on
+									pTile = pTile->NextSiblingElement("tile"); // we are doing this because if its a 0 it will never make it down below to move on
 									continue; //because we are writing continue will go back to the while loop and go onto the next tile
 								}
 								else {
@@ -378,7 +378,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								}
 							}
 							//Get the position of the tile in the level (confusing part)
-							int xx = 0; //we need an x and y. We have a lot of variables so xx!
+							int xx = 0; // we need an x and y. We have a lot of variables so xx!
 							int yy = 0;
 							xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
 							//So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
@@ -626,7 +626,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
 				if (pObject != NULL) {
 					while (pObject) {
-						std::vector<Vector2> points; //will hold all points
+						std::vector<Vector2> points; // will hold all points
 						Vector2 p1;
 						p1 = Vector2(std::ceil(pObject->FloatAttribute("x")), std::ceil(pObject->FloatAttribute("y"))); //x,y already given to us in XML
 						
@@ -645,7 +645,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								points.push_back(Vector2(std::stoi(ps.at(0)), std::stoi(ps.at(1)))); //stoi = string to int
 							}
 						}
-						for (int i = 0; i < points.size(); i += 2) { //we are not using i++ because we want to skip every other point (not really)
+						for (int i = 0; i < points.size(); i += 2) { // we are not using i++ because we want to skip every other point (not really)
 							//because we will be using i - 1 to look at the last one and i + 1 to look at next one
 							//need to figure out which point we are at, if we are at first point we dont wanna go anywhere, so add nothing to it.
 							this->_slopes.push_back(Slope(Vector2((p1.x + points.at(i < 2 ? i : i - 1).x) * globals::SPRITE_SCALE, 
@@ -825,12 +825,12 @@ void Level::draw(Graphics &graphics, Player &player) {
 	//Draw the background
 	//x = 0 , y = 0 because we start at top left corner of the bkBlue.png (64x64) width 64 / height 64
 	SDL_Rect sourceRect = {0, 0, 64, 64}; //source rect will be entire bkBlue.png (map) Image is 64x64 we want entire thing
-	SDL_Rect destRect; //where we are drawing to on the screen
+	SDL_Rect destRect; // where we are drawing to on the screen
 
 	//Our screen size is obviously bigger than  64 so we need to loop this to draw multiple tiles in different spots
 	//Nested for loop is a good thing to use here
 	for (int x = 0; x < this->_size.x / 64; x++) { //how many pixels across / 64 size of background.
-		//width of level divided by 64 is how many times we gotta draw this background (tile) going from left to right
+		// width of level divided by 64 is how many times we gotta draw this background (tile) going from left to right
 		//Now we need to do it for top to bottom
 		for (int y = 0; y < this->_size.y / 64; y++) {
 			destRect.x = x * 64 * globals::SPRITE_SCALE; //So it will draw it first at 0,0 64 pixels long then next time is x will be 1 starting at 64th pixels and going

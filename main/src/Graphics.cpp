@@ -28,7 +28,7 @@ SDL_Surface* Graphics::loadImage(const std::string &filePath) {
 	//sprite hasnt been loaded yet
 	//map count takes in a key for the map (string/filepath) and tells if any exist with that key and if its 0
 	if (this->_spriteSheets.count(filePath) == 0) {
-		this->_spriteSheets[filePath] = IMG_Load(filePath.c_str()); //will use SDL to load image, it uses a c-string
+		this->_spriteSheets[filePath] = IMG_Load(filePath.c_str()); // will use SDL to load image, it uses a c-string
 	}
 	//cout << "graphics.cpp ::loadImage - loaded..." << endl;
 	return this->_spriteSheets[filePath]; //regaurdless we will return sprite if its loaded already or needs to be

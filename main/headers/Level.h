@@ -99,7 +99,7 @@ private:
 	Vector2 _bulletPoint;
 	TextManager* _txt;
 
-	Vector2 _size; //width height of entire map, not what we see but the entire map
+	Vector2 _size; // width height of entire map, not what we see but the entire map
 	Vector2 _tileSize; //maps will all have same tile size so only 1 vector2
 	Vector2 _mapSize;
 
@@ -132,7 +132,7 @@ private:
 	std::vector<std::tuple<float, float, float, int>> dmgVector;
 
 	//Private loads a map only call level within level class
-	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); //wont need size or spawn because it will be parsed out of the xml within this function later
+	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); // wont need size or spawn because it will be parsed out of the xml within this function later
 	//typedef std::map<std::string, Level* (*)(Graphics&, Vector2)> levelStorage;
 	typedef std::map<std::string, Level (*)(std::string mapName, Graphics &graphics, Inventory &invent)> levelStorage;
 	levelStorage areaMap;

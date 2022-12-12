@@ -31,7 +31,7 @@ Sprite::~Sprite() {
 }
 
 void Sprite::draw(Graphics &graphics, int x, int y) { //this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE }; // where on screen we will be drawing
 	//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle); 
 	}
@@ -44,68 +44,68 @@ void Sprite::drawBoundingbox(Graphics & graphics, int x, int y, SDL_Color color)
 
 void Sprite::drawFBall(Graphics & graphics, int x, int y)
 {
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 1.55, this->_sourceRect.h * 1.55 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 1.55, this->_sourceRect.h * 1.55 }; // where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawHPBar(Graphics & graphics, int x, int y)
 {
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 3.0, this->_sourceRect.h * 3.0 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 3.0, this->_sourceRect.h * 3.0 }; // where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawVolumeBar(Graphics & graphics, int x, int y)
 {
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 1.65, this->_sourceRect.h * 2.0 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 1.65, this->_sourceRect.h * 2.0 }; // where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawLevelBar(Graphics & graphics, int x, int y)
 {
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 1.5, this->_sourceRect.h * 1.5 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 1.5, this->_sourceRect.h * 1.5 }; // where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawStatMenu(Graphics &graphics, int x, int y) {
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 4, this->_sourceRect.h * 4 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 4, this->_sourceRect.h * 4 }; // where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawStatSelection(Graphics & graphics, int x, int y)
 {
-	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 5.8, this->_sourceRect.h * 2 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 5.8, this->_sourceRect.h * 2 }; // where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawSaveMenu(Graphics & graphics, int x, int y)
 {
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 2, this->_sourceRect.h * 2 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 2, this->_sourceRect.h * 2 }; // where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawSaveSelection(Graphics & graphics, int x, int y)
 {
-	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 2, this->_sourceRect.h * 2 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 2, this->_sourceRect.h * 2 }; // where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawQuestSelection(Graphics & graphics, int x, int y)
 {
-	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 11.8, this->_sourceRect.h * 2 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x - 5, y, this->_sourceRect.w * 11.8, this->_sourceRect.h * 2 }; // where on screen we will be drawing
 //does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawiMenu(Graphics &graphics, int x, int y) { //this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 7, this->_sourceRect.h * 7 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 7, this->_sourceRect.h * 7 }; // where on screen we will be drawing
 	//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
@@ -117,14 +117,14 @@ void Sprite::drawChat(Graphics &graphics, int x, int y) { //this will do all the
 }
 
 void Sprite::drawSelectionBox(Graphics &graphics, int x, int y) {
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 5, this->_sourceRect.h * 4 }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * 5, this->_sourceRect.h * 4 }; // where on screen we will be drawing
 	//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made
 
 	graphics.windowBlitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
 
 void Sprite::drawTitle(Graphics &graphics, int x, int y) { //this will do all the drawing which means we need to call blitSurface and to do that we need a destinationRectangle
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w, this->_sourceRect.h }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w, this->_sourceRect.h }; // where on screen we will be drawing
 	//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made
 	graphics.windowBlitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 }
@@ -186,7 +186,7 @@ void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) {
 	//this->_sourceRect.w = 16;
 	SDL_Rect* bulletRect = new SDL_Rect;
 	*bulletRect = { x, y, this->_sourceRect.w, this->_sourceRect.h };
-	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::PROJECTILE_SCALE, this->_sourceRect.h * globals::PROJECTILE_SCALE }; //where on screen we will be drawing
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::PROJECTILE_SCALE, this->_sourceRect.h * globals::PROJECTILE_SCALE }; // where on screen we will be drawing
 	//cout << "\ns::drawBullet x,y,h,w = " << destinationRectangle.x << ", " << destinationRectangle.y << ", " << destinationRectangle.h << ", " << destinationRectangle.w << endl;																															//does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
 	//graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, bulletRect);*/

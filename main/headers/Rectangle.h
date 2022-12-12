@@ -64,7 +64,7 @@ public:
 	}
 
 	const inline Rectangle getRect() const { return *this; } //this = pointer to this instance of the class. In order to make it a regular rectangle and not a pointer
-	//we use a * to derefrence it We wanna get this whole rectangle
+	// we use a * to derefrence it We wanna get this whole rectangle
 
 private:
 	int _x, _y, _width, _height;

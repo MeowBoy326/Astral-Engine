@@ -328,7 +328,7 @@ const std::string Player::getMapHash(std::string mapName)
 }
 
 void Player::moveLeft() {
-	if (this->_lookingDown == true && this->_grounded == true) //while facing backwards if we are on the ground and looking down that means char
+	if (this->_lookingDown == true && this->_grounded == true) // while facing backwards if we are on the ground and looking down that means char
 	//is turned around and interacting with something so don't allow movement!
 	{
 		return;
@@ -424,7 +424,7 @@ void Player::stopLookingUp() {
 void Player::lookDown() {
 	this->_lookingDown = true;
 	if (this->_grounded == true) {
-		//We need to interact (turn backwards)
+		// we need to interact (turn backwards)
 		this->playAnimation(this->_facing == RIGHT ? "LookBackwardsRight" : "LookBackwardsLeft");
 	}
 	else {
@@ -468,7 +468,7 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
 				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
-				this->_grounded = true; //we are on ground since it pushed it back up
+				this->_grounded = true; // we are on ground since it pushed it back up
 				this->_lastCollidedFloorRect = others.at(i);
 				this->_currentSurface = RECTANGLE;
 				break;
@@ -501,7 +501,7 @@ void Player::handleArenaCollisions(std::vector<Rectangle>& others)
 			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
 				this->_y -= 2;
 				this->_dy = 0;
-				this->_grounded = true; //we are on ground since it pushed it back up
+				this->_grounded = true; // we are on ground since it pushed it back up
 				this->_lastCollidedFloorRect = others.at(i);
 				this->_currentSurface = RECTANGLE;
 				break;
@@ -567,7 +567,7 @@ bool Player::handleLadderCollisions(std::vector<Rectangle>& others)
 				if (this->_climbing) {
 					this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 					this->_dy = 0;
-					this->_grounded = false; //we are on ground since it pushed it back up
+					this->_grounded = false; // we are on ground since it pushed it back up
 					this->_climbing = false;
 					if (this->_facing == LEFT)
 						this->moveLeft();

@@ -217,7 +217,7 @@ void Game::gameLoop() {
 					input.keyUpEvent(event);
 				}
 				else if (event.type == SDL_QUIT) {
-					return; //when the game ends or user exits
+					return; // when the game ends or user exits
 				}
 			}
 
@@ -258,7 +258,7 @@ void Game::gameLoop() {
 					input.keyUpEvent(event);
 				}
 				else if (event.type == SDL_QUIT) {
-					return; //when the game ends or user exits
+					return; // when the game ends or user exits
 				}
 			}
 
