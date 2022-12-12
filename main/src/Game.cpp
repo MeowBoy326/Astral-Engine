@@ -161,11 +161,9 @@ void Game::gameLoop() {
 					std::exit(0);
 				}
 				this->saveGame(graphics);
-				this->setSettings();
 			}
 			else {
 				this->loadGame(graphics);
-				this->setSettings();
 			}
 		}
 //Death Loop
