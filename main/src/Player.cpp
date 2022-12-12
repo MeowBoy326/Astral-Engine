@@ -308,7 +308,7 @@ void Player::storeLevel(Level & level)
 
 void Player::overwriteLevel(Level & level, std::string mapName)
 {
-	//update the level that is stored already
+	// Update the level that is stored already
 	std::map<std::string, Level>::iterator it;
 	it = this->mapStorage.find(mapName);
 	if (it != this->mapStorage.end()) {

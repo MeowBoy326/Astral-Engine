@@ -106,7 +106,7 @@ private:
 	std::map<std::string, std::vector<SDL_Rect>> _scripts;
 	std::map<std::string, Vector2> _scriptOffsets;
 	std::map<int, std::string, std::vector<SDL_Rect>> _bulletAnimation;
-	std::map<std::string, Vector2> _offsets; //use this for example maybe not exactly 16px per frame or move where the sprite will be drawn, give an offset by x amount pixels
+	std::map<std::string, Vector2> _offsets; // Use this for example maybe not exactly 16px per frame or move where the sprite will be drawn, give an offset by x amount pixels
 
 	int _frameIndex; // which frame in the animation we are at
 	int _scriptIndex;

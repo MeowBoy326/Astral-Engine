@@ -240,7 +240,7 @@ void Game::gameLoop() {
 			}
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
-			this->_graphics = graphics; //updated graphics
+			this->_graphics = graphics; // Updated graphics
 			// Take standard min : elapsed time ms and max frame time
 			this->updateCutscene(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
@@ -658,7 +658,7 @@ void Game::gameLoop() {
 			}
 		const int CURRENT_TIME_MS = SDL_GetTicks();
 		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
-		this->_graphics = graphics; //updated graphics
+		this->_graphics = graphics; // Updated graphics
 		// Take standard min : elapsed time ms and max frame time
 		this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
 		// Loop will go again and current time - new last update will tell us how long next frame will take
