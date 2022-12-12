@@ -18,7 +18,7 @@ AnimatedSprite::AnimatedSprite(Graphics &graphics, const std::string &filePath, 
 {}
 
 void AnimatedSprite::addAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset) {
-	std::vector<SDL_Rect> rectangles; //temp hold onto each of our new rectangle that will be put in our map
+	std::vector<SDL_Rect> rectangles; // Temp hold onto each of our new rectangle that will be put in our map
 	for (int i = 0; i < frames; i++) {
 		SDL_Rect newRect = { (i + x) * width, y, width, height };
 		rectangles.push_back(newRect);
@@ -33,7 +33,7 @@ void AnimatedSprite::addAnimation(int frames, int x, int y, std::string name, in
 
 void AnimatedSprite::addSpecialAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset)
 {
-	std::vector<SDL_Rect> rectangles; //temp hold onto each of our new rectangle that will be put in our map
+	std::vector<SDL_Rect> rectangles; // Temp hold onto each of our new rectangle that will be put in our map
 	int nWidth = width;
 	for (int i = 0; i < frames; i++) {
 		SDL_Rect newRect = { (nWidth + x), y, width, height };
@@ -47,7 +47,7 @@ void AnimatedSprite::addSpecialAnimation(int frames, int x, int y, std::string n
 
 
 void AnimatedSprite::addScript(int frames, int x, int y, std::string name, int width, int height, Vector2 offset) {
-	std::vector<SDL_Rect> rectangles; //temp hold onto each of our new rectangle that will be put in our map
+	std::vector<SDL_Rect> rectangles; // Temp hold onto each of our new rectangle that will be put in our map
 	for (int i = 0; i < frames; i++) {
 		SDL_Rect newRect = { (i + x) * width, y, width, height };
 		rectangles.push_back(newRect);
@@ -57,7 +57,7 @@ void AnimatedSprite::addScript(int frames, int x, int y, std::string name, int w
 }
 
 /*void AnimatedSprite::addBulletAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset, int id) {
-	std::vector<SDL_Rect> rectangles; //temp hold onto each of our new rectangle that will be put in our map
+	std::vector<SDL_Rect> rectangles; // Temp hold onto each of our new rectangle that will be put in our map
 	for (int i = 0; i < frames; i++) {
 		SDL_Rect newRect = { (i + x) * width, y, width, height };
 		rectangles.push_back(newRect);
@@ -95,7 +95,7 @@ void AnimatedSprite::playScript(std::string animation, bool once) {
 }
 
 void AnimatedSprite::playBulletAnimation(std::string animation, int id) {
-	//this->_currentAnimationOnce = once; // All this is to play animation
+	// This->_currentAnimationOnce = once; // All this is to play animation
 	// If (this->_currentAnimation != animation) {
 		this->_currentAnimation = animation;
 		this->_frameIndex = 0;
@@ -117,7 +117,7 @@ void AnimatedSprite::stopScript() {
 	this->animationDone(this->_currentScript);
 }
 
-void AnimatedSprite::update(int elapsedTime) { //timer checks when to go to next frame in animation
+void AnimatedSprite::update(int elapsedTime) { // Timer checks when to go to next frame in animation
 	Sprite::update(); // Since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
@@ -172,7 +172,7 @@ void AnimatedSprite::updateFBall(int elapsedTime, int y)
 	}
 }
 
-void AnimatedSprite::updateScript(int elapsedTime) { //timer checks when to go to next frame in animation
+void AnimatedSprite::updateScript(int elapsedTime) { // Timer checks when to go to next frame in animation
 	Sprite::update(); // Since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
@@ -194,9 +194,9 @@ void AnimatedSprite::updateScript(int elapsedTime) { //timer checks when to go t
 
 void AnimatedSprite::draw(Graphics &graphics, int x, int y) {
 	if (this->_visible) { // Only draw when visible
-		SDL_Rect destinationRectangle; //temp where we draw on screen
+		SDL_Rect destinationRectangle; // Temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x; 
-		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
+		// This will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
 		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
 		destinationRectangle.w = this->_sourceRect.w * globals::SPRITE_SCALE;
 		destinationRectangle.h = this->_sourceRect.h * globals::SPRITE_SCALE;
@@ -208,9 +208,9 @@ void AnimatedSprite::draw(Graphics &graphics, int x, int y) {
 
 void AnimatedSprite::drawBoss(Graphics &graphics, int x, int y, float scaleFactor) {
 	if (this->_visible) { // Only draw when visible
-		SDL_Rect destinationRectangle; //temp where we draw on screen
+		SDL_Rect destinationRectangle; // Temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
-		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
+		// This will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
 		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
 		destinationRectangle.w = this->_sourceRect.w * globals::SPRITE_SCALE * scaleFactor;
 		destinationRectangle.h = this->_sourceRect.h * globals::SPRITE_SCALE * scaleFactor;
@@ -235,9 +235,9 @@ void AnimatedSprite::drawTextBox(Graphics &graphics, std::string speech, TTF_Fon
 
 void AnimatedSprite::drawNpc(Graphics &graphics, int x, int y) {
 	if (this->_visible) { // Only draw when visible
-		SDL_Rect destinationRectangle; //temp where we draw on screen
+		SDL_Rect destinationRectangle; // Temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
-		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
+		// This will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
 		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
 		destinationRectangle.w = this->_sourceRect.w * 1.22;
 		destinationRectangle.h = this->_sourceRect.h * 1.22;
@@ -251,9 +251,9 @@ void AnimatedSprite::drawNpc(Graphics &graphics, int x, int y) {
 
 void AnimatedSprite::drawTitle(Graphics &graphics, int x, int y) {
 	if (this->_visible) { // Only draw when visible
-		SDL_Rect destinationRectangle; //temp where we draw on screen
+		SDL_Rect destinationRectangle; // Temp where we draw on screen
 		destinationRectangle.x = x;
-		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
+		// This will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
 		destinationRectangle.y = y;
 		destinationRectangle.w = this->_sourceRect.w;
 		destinationRectangle.h = this->_sourceRect.h;
@@ -266,9 +266,9 @@ void AnimatedSprite::drawTitle(Graphics &graphics, int x, int y) {
 
 void AnimatedSprite::drawBullet(Graphics &graphics, int x, int y) {
 	if (this->_visible) { // Only draw when visible
-		SDL_Rect destinationRectangle; //temp where we draw on screen
+		SDL_Rect destinationRectangle; // Temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
-		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
+		// This will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
 		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
 		destinationRectangle.w = this->_sourceRect.w * globals::PROJECTILE_SCALE;
 		destinationRectangle.h = this->_sourceRect.h * globals::PROJECTILE_SCALE;
@@ -280,9 +280,9 @@ void AnimatedSprite::drawBullet(Graphics &graphics, int x, int y) {
 void AnimatedSprite::drawLoot(Graphics & graphics, int x, int y)
 {
 	if (this->_visible) { // Only draw when visible
-		SDL_Rect destinationRectangle; //temp where we draw on screen
+		SDL_Rect destinationRectangle; // Temp where we draw on screen
 		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
-		//this will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
+		// This will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
 		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
 		destinationRectangle.w = this->_sourceRect.w * 1.2;
 		destinationRectangle.h = this->_sourceRect.h * 1.2;
@@ -292,7 +292,7 @@ void AnimatedSprite::drawLoot(Graphics & graphics, int x, int y)
 	}
 }
 /*
-void AnimatedSprite::updateBullet(int elapsedTime) { //timer checks when to go to next frame in animation
+void AnimatedSprite::updateBullet(int elapsedTime) { // Timer checks when to go to next frame in animation
 	Sprite::updateBullet(); // Since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
@@ -305,7 +305,7 @@ void AnimatedSprite::updateBullet(int elapsedTime) { //timer checks when to go t
 			// If (this->_currentAnimationOnce == true) {
 			//	this->setVisible(false);
 			//}
-			//this->stopAnimation();
+			// This->stopAnimation();
 		}
 	}
 }*/

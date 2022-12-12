@@ -17,7 +17,7 @@ public:
 
 	// Helper function to get certain parts of rectangle
 	const int getCenterX() const {
-		return this->_x + this->_width / 2; //take rectangle return x position and half the width, put us in the middle of rect
+		return this->_x + this->_width / 2; // Take rectangle return x position and half the width, put us in the middle of rect
 }
 	const int getCenterY() const {return this->_y + this->_height / 2; }
 	const int getLeft() const {return this->_x; }
@@ -41,7 +41,7 @@ public:
 	}
 
 	// Collision function
-	//Takes in another rectangle and checks if the two are colliding
+	// Takes in another rectangle and checks if the two are colliding
 	const bool collidesWith(const Rectangle &other) const {
 		return
 			this->getRight() >= other.getLeft() &&
@@ -63,7 +63,7 @@ public:
 		return (this->_x >= 0 && this->_y >= 0 && this->_width >= 0 && this->_height >= 0);
 	}
 
-	const inline Rectangle getRect() const { return *this; } //this = pointer to this instance of the class. In order to make it a regular rectangle and not a pointer
+	const inline Rectangle getRect() const { return *this; } // This = pointer to this instance of the class. In order to make it a regular rectangle and not a pointer
 	// we use a * to derefrence it We wanna get this whole rectangle
 
 private:

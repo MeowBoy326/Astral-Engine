@@ -179,7 +179,7 @@ private:
 	float STAT_STR = 1;
 	float STAT_AVOID = 1;
 
-	bool _grounded; //true if we are, false if we are in the air
+	bool _grounded; // True if we are, false if we are in the air
 	bool _canShortJump = true;
 	bool _climbing;
 	bool _lookingUp;

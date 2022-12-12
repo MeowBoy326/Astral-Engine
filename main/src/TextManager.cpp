@@ -32,7 +32,7 @@ TextManager::TextManager(Graphics &graphics, const std::string &filePath, int so
 	this->_textSourceRect.y = sourceY;
 	this->_textSourceRect.w = width;
 	this->_textSourceRect.h = height;
-	this->_textSheet = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(filePath)); //take a render and surface will give us surface if not load then give us
+	this->_textSheet = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(filePath)); // Take a render and surface will give us surface if not load then give us
 	if (this->_textSheet == NULL) { // If spritesheet is null that means there was an error while loading image
 		printf("\nError: Unable to load image \n");
 	}
@@ -57,7 +57,7 @@ void TextManager::drawChatBox(Graphics & graphics, Player & player) {
 }
 
 void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::string &str, int posX, int posY, SDL_Color color) { 
-	//TTF_Init();
+	// TTF_Init();
 	if (TTF_Init() == -1) {
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
@@ -114,7 +114,7 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 
 void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, const std::string & str, SDL_Color color)
 {
-	//TTF_Init();
+	// TTF_Init();
 	if (TTF_Init() == -1) {
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
@@ -196,7 +196,7 @@ void TextManager::drawDmg(Graphics & graphics, int x, int y, double dmg)
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
-	//TTF_CloseFont(font);
+	// TTF_CloseFont(font);
 	TTF_CloseFont(iFont);
 	SDL_DestroyTexture(tex);
 }
@@ -483,7 +483,7 @@ void TextManager::drawBattleMessages(Graphics & graphics, int x, int y, std::str
 
 void TextManager::drawSettings(Graphics & graphics, int x, int y, std::string & text, int fontSize, SDL_Color color)
 {
-	//TTF_Init();
+	// TTF_Init();
 	if (TTF_Init() == -1) {
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
@@ -502,7 +502,7 @@ void TextManager::drawSettings(Graphics & graphics, int x, int y, std::string & 
 }
 
 void TextManager::drawStats(Graphics & graphics, int posX, int posY, float hPoints, double dmgPoints, double defPoints, int available, SDL_Color color) {
-	//TTF_Init();
+	// TTF_Init();
 	if (TTF_Init() == -1) {
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
@@ -542,7 +542,7 @@ void TextManager::drawStats(Graphics & graphics, int posX, int posY, float hPoin
 }
 
 void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::string &str, int posX, int posY, SDL_Color color) {
-	//TTF_Init();
+	// TTF_Init();
 	if (TTF_Init() == -1) {
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
@@ -563,7 +563,7 @@ void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::
 
 void TextManager::drawCurrency(Graphics & graphics, int x, int y, const std::string & str, SDL_Color color)
 {
-	//TTF_Init();
+	// TTF_Init();
 	if (TTF_Init() == -1) {
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);

@@ -91,7 +91,7 @@ Game::Game() { // Constructor
 	{
 		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 	}
-	//TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
+	// TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
 	this->cipher = AESCipher();
 	this->gameLoop(); // Start game
 }
@@ -146,7 +146,7 @@ void Game::gameLoop() {
 	// Start the game loop
 	while (true) {
 		input.beginNewFrame();
-//Title screen Loop
+// Title screen Loop
 		if (title == true) {
 			title = _title.Start(graphics, input, event);
 			if (_title.getMenuChoice() == 0) {
@@ -241,7 +241,7 @@ void Game::gameLoop() {
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
 			this->_graphics = graphics; //updated graphics
-			//take standard min : elapsed time ms and max frame time
+			// Take standard min : elapsed time ms and max frame time
 			this->updateCutscene(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			this->drawCutscene(graphics);
@@ -337,7 +337,7 @@ void Game::gameLoop() {
 			// If (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0
 			//	&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
 
-			//	//this->saveGame(graphics);
+			//	// This->saveGame(graphics);
 			//	// Std::cout << "Quitting Game..." << std::endl;
 			//	// Return; // Quit game if ESC was pressed
 			//}
@@ -659,7 +659,7 @@ void Game::gameLoop() {
 		const int CURRENT_TIME_MS = SDL_GetTicks();
 		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
 		this->_graphics = graphics; //updated graphics
-		//take standard min : elapsed time ms and max frame time
+		// Take standard min : elapsed time ms and max frame time
 		this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
 		// Loop will go again and current time - new last update will tell us how long next frame will take
 		LAST_UPDATE_TIME = CURRENT_TIME_MS;
@@ -1174,7 +1174,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
 		npcName = this->_player.getNpcName(otherNpc, graphics);
 	}
-	//this will ensure when we are no long colliding with npc, set name to blank so we cant talk to an npc far away
+	// This will ensure when we are no long colliding with npc, set name to blank so we cant talk to an npc far away
 	if (otherNpc.size() == 0) {
 		npcName = "";
 	}

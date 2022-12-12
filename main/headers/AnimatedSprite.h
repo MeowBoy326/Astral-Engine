@@ -23,13 +23,13 @@ public:
 	AnimatedSprite();
 	AnimatedSprite(Graphics &graphics, const std::string &filePath, int sourceX, int sourceY, int width, int height,
 		float posX, float posY, float timeToUpdate);
-	//timetoupdate time until go to next frame in animation
+	// Timetoupdate time until go to next frame in animation
 
 	/* void playAnimation
 	* Plays the animation provided if its not already playing
 	*/
 
-	void playAnimation(std::string animation, bool once = false); //this is how we will start playing different animations by storing animations by name 
+	void playAnimation(std::string animation, bool once = false); // This is how we will start playing different animations by storing animations by name 
 	void playScript(std::string animation, bool once);
 	void playBulletAnimation(std::string animation, int id);
 	/* void update

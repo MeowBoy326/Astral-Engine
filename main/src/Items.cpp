@@ -52,7 +52,7 @@ HealthPotion::HealthPotion(Graphics & graphics, Vector2 spawnPoint) :
 	hpGain(3)
 {
 	graphics.loadImage("data\\maps\\NpcSym.png"); // Loads sprite sheet in
-	//this->addToInventory();
+	// This->addToInventory();
 	this->setupAnimations();
 	this->playAnimation("Blink");
 }
@@ -98,7 +98,7 @@ PermHP::PermHP(Graphics &graphics, Vector2 spawnPoint) :
 	maxHPgain(5)
 {
 	graphics.loadImage("data\\maps\\NpcSym.png"); // Loads sprite sheet in
-	//this->addToInventory();
+	// This->addToInventory();
 	this->setupAnimations();
 	this->playAnimation("Blink");
 }

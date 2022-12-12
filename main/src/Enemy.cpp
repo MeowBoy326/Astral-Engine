@@ -492,17 +492,17 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 			case sides::TOP:
 				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
 				this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
-				//this->_HPBar._y = others.at(i).getTop() + 1;
-				//this->_HPValue._y = others.at(i).getTop() + 1;
+				// This->_HPBar._y = others.at(i).getTop() + 1;
+				// This->_HPValue._y = others.at(i).getTop() + 1;
 				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
-					//this->_dx = 0; // Stop movement on x-axis
+					// This->_dx = 0; // Stop movement on x-axis
 					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
 			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
 				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() / 2;
-				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
-				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				// This->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				// This->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
 				this->_grounded = true; // we are on ground since it pushed it back up
 				break;
@@ -698,23 +698,23 @@ void JellyFish::handleEnemyTileCollision(std::vector<Rectangle>& others)
 			switch (collisionSide) {
 			case sides::TOP:
 				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
-				//this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
-				//this->_JellyAttack = false;
-				//this->_resettingPos = true;
-				//this->_HPBar._y = others.at(i).getTop() + 1;
-				//this->_HPValue._y = others.at(i).getTop() + 1;
+				// This->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
+				// This->_JellyAttack = false;
+				// This->_resettingPos = true;
+				// This->_HPBar._y = others.at(i).getTop() + 1;
+				// This->_HPValue._y = others.at(i).getTop() + 1;
 				// If (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
-				//	//this->_dx = 0; // Stop movement on x-axis
+				//	// This->_dx = 0; // Stop movement on x-axis
 				//	this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				//}
 				break;
 			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
-				//this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				// This->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_y -= 10;
-				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
-				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				// This->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				// This->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
-				//this->_grounded = true; // we are on ground since it pushed it back up
+				// This->_grounded = true; // we are on ground since it pushed it back up
 				this->_JellyAttack = false;
 				this->_resettingPos = true;
 				break;
@@ -929,17 +929,17 @@ void Ghost::handleEnemyTileCollision(std::vector<Rectangle>& others)
 			case sides::TOP:
 				this->_dy = 0; // Reset all gravity, if we arent grounded we fall to the ground
 				this->_y = others.at(i).getBottom() + 1; // No longer go through things, stops us
-				//this->_HPBar._y = others.at(i).getTop() + 1;
-				//this->_HPValue._y = others.at(i).getTop() + 1;
+				// This->_HPBar._y = others.at(i).getTop() + 1;
+				// This->_HPValue._y = others.at(i).getTop() + 1;
 				if (this->_grounded) { // Only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
-					//this->_dx = 0; // Stop movement on x-axis
+					// This->_dx = 0; // Stop movement on x-axis
 					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
 			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
 				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
-				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
-				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				// This->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
+				// This->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
 				this->_grounded = true; // we are on ground since it pushed it back up
 				break;

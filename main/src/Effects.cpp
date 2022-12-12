@@ -76,7 +76,7 @@ void ArenaEffect::animationDone(std::string currentAnimation)
 void ArenaEffect::setupAnimations()
 {
 	this->addAnimation(50, 0, 0, "ArenaRight", 100, 100, Vector2(0, 0));
-	//this->addAnimation(3, 2, 32, "ArenaLeft", 16, 16, Vector2(0, 0));
-	//this->addAnimation(3, 2, 32, "ArenaUp", 16, 16, Vector2(0, 0));
-	//this->addAnimation(3, 2, 32, "ArenaDown", 16, 16, Vector2(0, 0));
+	// This->addAnimation(3, 2, 32, "ArenaLeft", 16, 16, Vector2(0, 0));
+	// This->addAnimation(3, 2, 32, "ArenaUp", 16, 16, Vector2(0, 0));
+	// This->addAnimation(3, 2, 32, "ArenaDown", 16, 16, Vector2(0, 0));
 }

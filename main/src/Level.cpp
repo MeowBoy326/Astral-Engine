@@ -24,7 +24,7 @@ using namespace tinyxml2; // All tinyxml2 is in a namespace because we will use 
 
 template<typename T> Items * createInstance(Graphics& graphics, Vector2 spawnPoint) { return new T(graphics, spawnPoint); }
 
-//The bits at the end of the 32-bit tileset GID that determine the tile's flip position
+// The bits at the end of the 32-bit tileset GID that determine the tile's flip position
 const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
 const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
 const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
@@ -240,11 +240,11 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									int closest = 0;
 									Tileset tls;
 									for (int i = 0; i < this->_tilesets.size(); i++) {
-										if (this->_tilesets[i].FirstGid <= gid) { //the very first gid on a tileset, is the very lowest gid we can possibly have
+										if (this->_tilesets[i].FirstGid <= gid) { // The very first gid on a tileset, is the very lowest gid we can possibly have
 											// So if its lower then the gid we are at, then its the one we want
 											if (this->_tilesets[i].FirstGid > closest) {
 												closest = this->_tilesets[i].FirstGid;
-												//This is the tileset we want
+												// This is the tileset we want
 												tls = this->_tilesets.at(i);
 											}
 										}
@@ -265,12 +265,12 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									// Get the position of the tile in the level (confusing part)
 									int xx = 0; // we need an x and y. We have a lot of variables so xx!
 									int yy = 0;
-									xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
+									xx = tileCounter % width; // Tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
 									// So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
 									// Next tilecounter is 1 and 1 mod 20 is 1. 1 * 16 = 16 So our 2nd tile will be at an x of 16 (across) and that just works....
 									xx *= tileWidth;
 									yy += tileHeight * (tileCounter / width);
-									//tileHeight is 16. So we start at 0. Tilecounter is 0 / 20 = 0 * tileHeight (16) = 0 so our yy would be 0
+									// TileHeight is 16. So we start at 0. Tilecounter is 0 / 20 = 0 * tileHeight (16) = 0 so our yy would be 0
 									// Say our tile counter is at 20 (so 2nd row 1st tile for our map cave) 16 * (20/20[1]) = 16. 0 + 16 = 16
 									// So it will draw the tile at a Y of 16. This algotrithm gets us to the right spot on the map
 									Vector2 finalTilePosition = Vector2(xx, yy);
@@ -346,7 +346,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								tileFlip = SDL_FLIP_VERTICAL;
 							}
 							else if (flipped_diagonally) {
-								//TODO: Diagonal flips/rotations
+								// TODO: Diagonal flips/rotations
 							}
 							// Clear the flag bits only
 							gid &= ~(FLIPPED_HORIZONTALLY_FLAG |
@@ -355,11 +355,11 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							int closest = 0;
 							Tileset tls;
 							for (int i = 0; i < this->_tilesets.size(); i++) {
-								if (this->_tilesets[i].FirstGid <= gid) { //the very first gid on a tileset, is the very lowest gid we can possibly have
+								if (this->_tilesets[i].FirstGid <= gid) { // The very first gid on a tileset, is the very lowest gid we can possibly have
 									// So if its lower then the gid we are at, then its the one we want
 									if (this->_tilesets[i].FirstGid > closest) {
 										closest = this->_tilesets[i].FirstGid;
-										//This is the tileset we want
+										// This is the tileset we want
 										tls = this->_tilesets.at(i);
 									}
 								}
@@ -380,12 +380,12 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							// Get the position of the tile in the level (confusing part)
 							int xx = 0; // we need an x and y. We have a lot of variables so xx!
 							int yy = 0;
-							xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
+							xx = tileCounter % width; // Tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
 							// So to explain: first very first tile in the map is gid 34 So tile counter would be 0. Width of map is 20. So 0 mod(%) 20 = 0
 							// Next tilecounter is 1 and 1 mod 20 is 1. 1 * 16 = 16 So our 2nd tile will be at an x of 16 (across) and that just works....
 							xx *= tileWidth;
 							yy += tileHeight * (tileCounter / width);
-							//tileHeight is 16. So we start at 0. Tilecounter is 0 / 20 = 0 * tileHeight (16) = 0 so our yy would be 0
+							// TileHeight is 16. So we start at 0. Tilecounter is 0 / 20 = 0 * tileHeight (16) = 0 so our yy would be 0
 							// Say our tile counter is at 20 (so 2nd row 1st tile for our map cave) 16 * (20/20[1]) = 16. 0 + 16 = 16
 							// So it will draw the tile at a Y of 16. This algotrithm gets us to the right spot on the map
 							Vector2 finalTilePosition = Vector2(xx, yy);
@@ -444,7 +444,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						x = pObject->FloatAttribute("x");
 						y = pObject->FloatAttribute("y");
 						width = pObject->FloatAttribute("width");
-						height = pObject->FloatAttribute("height"); //these are taken as int, but tiles come out as floats (decimals) so we are going to round UP
+						height = pObject->FloatAttribute("height"); // These are taken as int, but tiles come out as floats (decimals) so we are going to round UP
 						// Round down would make collision too small perhaps and we fall through, bigger is always better in this case
 						this->_collisionRects.push_back(Rectangle(
 							std::ceil(x) * globals::SPRITE_SCALE, 
@@ -1533,7 +1533,7 @@ Vector2 Level::getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileH
 	// Pass in texture, format, access, width, height. We dont care about format or access so NULL and then reference to width/height
 	SDL_QueryTexture(tls.Texture, NULL, NULL, &tilesetWidth, &tilesetHeight);
 	// Get the tileset X position Subtract the gid - first gid of the tileset
-	//then modulo (TS width / T width)
+	// Then modulo (TS width / T width)
 	int tsxx = (gid - tls.FirstGid) % (tilesetWidth / tileWidth);
 	tsxx *= tileWidth;
 	// Same as above but for the tileset Y position

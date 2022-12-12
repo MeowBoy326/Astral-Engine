@@ -72,7 +72,7 @@ public:
 	float _x, _y; //x,y pos of sprite
 protected:
 	SDL_Rect _sourceRect; // where on the spritesheet to get the sprite from
-	SDL_Texture* _spriteSheet; //the sprite sheet that holds the specific sprite
+	SDL_Texture* _spriteSheet; // The sprite sheet that holds the specific sprite
 
 	Rectangle _boundingBox; // Rectangle around player is bounding box. Every sprite will get it.
 	Rectangle _projectileBBox;

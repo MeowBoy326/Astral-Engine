@@ -47,7 +47,7 @@ private:
 	SDL_Renderer* _renderer;
 	SDL_Renderer* _rendTwo;
 
-	std::map<std::string, SDL_Surface*> _spriteSheets; //this map is going to hold in memory in our graphics object every spritesheet we loaded
+	std::map<std::string, SDL_Surface*> _spriteSheets; // This map is going to hold in memory in our graphics object every spritesheet we loaded
 };
 
 #endif

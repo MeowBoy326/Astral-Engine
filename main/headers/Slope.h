@@ -49,7 +49,7 @@ public:
 				}
 			}
 			// Checks every possible case to see if we are colliding with a rectangle and if any of these are true
-			//that means we are colliding with a slope somewhere
+			// That means we are colliding with a slope somewhere
 			return false;
 		}
 

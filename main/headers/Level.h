@@ -133,7 +133,7 @@ private:
 
 	// Private loads a map only call level within level class
 	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); // wont need size or spawn because it will be parsed out of the xml within this function later
-	//typedef std::map<std::string, Level* (*)(Graphics&, Vector2)> levelStorage;
+	// Typedef std::map<std::string, Level* (*)(Graphics&, Vector2)> levelStorage;
 	typedef std::map<std::string, Level (*)(std::string mapName, Graphics &graphics, Inventory &invent)> levelStorage;
 	levelStorage areaMap;
 
@@ -143,7 +143,7 @@ private:
 	Vector2 getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileHeight);
 };
 
-//Tileset structure. Struct by default is public
+// Tileset structure. Struct by default is public
 struct Tileset {
 	SDL_Texture* Texture;
 	int FirstGid;

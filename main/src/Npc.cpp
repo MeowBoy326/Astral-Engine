@@ -21,8 +21,8 @@ Npc::Npc(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int
 	_currentHealth(10)
 {
 	this->_txtBox = new Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 0, 76, 24, 505, 499);
-	//this->_npcBox = Sprite(graphics, "data\\npc\\npcTextBox.png", 63, 149, 32, 32, 505, 499);
-	//this->_chatSelection = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
+	// This->_npcBox = Sprite(graphics, "data\\npc\\npcTextBox.png", 63, 149, 32, 32, 505, 499);
+	// This->_chatSelection = Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
 	graphics.loadImage("data\\npc\\npcTextBox.png"); // Loads sprite sheet in
 }
 
@@ -325,7 +325,7 @@ void Npc::giveRewards(Graphics & graphics, std::string npcName, int posX, int po
 				player.gainExp(exp);
 				player.gainCurrency(cels);
 				ss << "Here is your reward!$n" << levelReward << " level," << exp << "exp," << cels << "cels.$e";
-				// CompleteMsg = "Thank you! Here is your reward.$n" + levelGain + "level, "; //TODO: push rewards into vector to distibute any reward for any quest.
+				// CompleteMsg = "Thank you! Here is your reward.$n" + levelGain + "level, "; // TODO: push rewards into vector to distibute any reward for any quest.
 				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
 			}
 			else if (std::get<6>(this->questLog[distance]) == 1) {
@@ -382,7 +382,7 @@ Clock::Clock(Graphics &graphics, Vector2 spawnPoint, std::string name) :
 	_npcName = name;
 	this->setupAnimations();
 	this->playAnimation("clock");
-	//this->loadQuests(name);
+	// This->loadQuests(name);
 }
 
 void Clock::update(int elapsedTime, Player &player) {

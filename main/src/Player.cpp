@@ -853,7 +853,7 @@ void Player::gainHealth(float amount) {
 }
 
 void Player::gainHPFromStatus(float amount)
-{   //This function is a constant tick.
+{   // This function is a constant tick.
 	// It does not give the player iFrames
 	if (amount < 0) {
 		this->_currentHealth += amount;
@@ -1048,7 +1048,7 @@ void Player::update(float elapsedTime) {
 		// Apply gravity
 		if (this->_dy <= player_constants::GRAVITY_CAP && !_climbing && !this->isFlying) {
 		// Dy is change in y over this frames dy. If dy is less than or equal to gravity cap then we need to increase 
-	    //the DY by gravity because we are not at the cap.
+	    // The DY by gravity because we are not at the cap.
 			this->_dy += player_constants::GRAVITY * elapsedTime;
 		}
 		/*if (!isFlying && !_climbing && (!_grounded || _currentSurface == SLOPE)) {
@@ -1182,7 +1182,7 @@ void Player::update(float elapsedTime) {
 		for (int i = this->battleMessages.size(); i--;) {
 			std::get<3>(this->battleMessages[i]) += elapsedTime; // Increase timer
 			// Set X to end of screen on the right then subtract by the width of the texture in TextManager
-			//This will get the correct x position so that the last letter of the string ends right before the end of the screen
+			// This will get the correct x position so that the last letter of the string ends right before the end of the screen
 			std::get<1>(this->battleMessages[i]) = this->_x + 320; // Set to player x + screen width / 2 (320)
 			std::get<2>(this->battleMessages[i]) = this->_y + 220; // Set to player y + the offset
 			// Formula by Nataru(J.L)
