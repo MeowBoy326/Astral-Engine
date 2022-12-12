@@ -356,7 +356,7 @@ bool Npc::checkQuest(Graphics & graphics, std::string name, int posX, int posY, 
 		auto distanceTable = std::distance(this->questTable.begin(), tableIt);
 		auto distance = std::distance(this->questLog.begin(), it);
 		if (it != questLog.end() && std::get<4>(this->questLog[distance]) == false) {
-			if (std::get<1>(this->questLog[distance]) == 1) { //kill quests
+			if (std::get<1>(this->questLog[distance]) == 1) { // Kill quests
 				if (player.checkKillQuestComplete(std::get<2>(this->questLog[distance]), std::get<3>(this->questLog[distance]))) {
 					std::cout << "Quest is completed! Remove from available quests!" << std::endl;
 					if (tableIt != questTable.end()) {

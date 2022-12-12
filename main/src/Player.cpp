@@ -837,7 +837,7 @@ void Player::gainHealth(float amount) {
 		std::cout << "lost " << amount << std::endl;
 		player_constants::iFrame = true;
 		this->gotHit = true;
-		//Knock back player
+		// Knock back player
 		if (_facing == LEFT)
 			this->_x += 14;
 		else if (_facing == RIGHT)

@@ -112,7 +112,7 @@ public:
 	std::string getName();
 private:
 	float _startingX, _startingY;
-	bool _shouldMoveUp; //keep track of if bat should move
+	bool _shouldMoveUp; // Keep track of if bat should move
 	bool _shouldMoveLeft;
 	bool hasHit = false;
 	int iFrameCount = 0;
@@ -181,7 +181,7 @@ public:
 private:
 	float _startingX, _startingY;
 	float scaleFactor = 2.0f;
-	bool _shouldMoveUp; //keep track of if bat should move
+	bool _shouldMoveUp; // Keep track of if bat should move
 	bool hasHit = false;
 	int iFrameCount = 0;
 	float shadeExp = 350;
@@ -269,7 +269,7 @@ public:
 	std::string getName();
 private:
 	float _startingX, _startingY;
-	bool _shouldMoveUp; //keep track of if bat should move
+	bool _shouldMoveUp; // Keep track of if bat should move
 	bool hasHit = false;
 	int iFrameCount = 0;
 	float JellyFishExp = 3.575f;
@@ -347,7 +347,7 @@ public:
 	std::string getName();
 private:
 	float _startingX, _startingY;
-	bool _shouldMoveUp; //keep track of if bat should move
+	bool _shouldMoveUp; // Keep track of if bat should move
 	bool hasHit = false;
 	int iFrameCount = 0;
 	float GhostExp = 3.575f;
