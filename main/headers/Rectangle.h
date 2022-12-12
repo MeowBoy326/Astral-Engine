@@ -47,7 +47,7 @@ public:
 			this->getRight() >= other.getLeft() &&
 			this->getLeft() <= other.getRight() &&
 			this->getTop() <= other.getBottom() &&
-			this->getBottom() >= other.getTop(); //if all of these return true, return true! otherwise return false its not colliding
+			this->getBottom() >= other.getTop(); // If all of these return true, return true! otherwise return false its not colliding
 	}
 
 	const bool projectileCollides(const Rectangle &other) const {

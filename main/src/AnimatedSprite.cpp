@@ -96,7 +96,7 @@ void AnimatedSprite::playScript(std::string animation, bool once) {
 
 void AnimatedSprite::playBulletAnimation(std::string animation, int id) {
 	//this->_currentAnimationOnce = once; // All this is to play animation
-	//if (this->_currentAnimation != animation) {
+	// If (this->_currentAnimation != animation) {
 		this->_currentAnimation = animation;
 		this->_frameIndex = 0;
 		this->_bulletID = id;
@@ -121,10 +121,10 @@ void AnimatedSprite::update(int elapsedTime) { //timer checks when to go to next
 	Sprite::update(); //since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
-	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ change frame
+	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame
 		this->_timeElapsed -= this->_timeToUpdate;
 		if (this->_frameIndex < this->_animation[this->_currentAnimation].size() - 1) {
-			this->_frameIndex++; //increment by 1
+			this->_frameIndex++; // Increment by 1
 		}
 		else {
 			if (this->_currentAnimationOnce == true) {
@@ -139,10 +139,10 @@ void AnimatedSprite::updateBoss(int elapsedTime, int y) {
 	Sprite::updateBoss(y); //since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
-	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ change frame
+	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame
 		this->_timeElapsed -= this->_timeToUpdate;
 		if (this->_frameIndex < this->_animation[this->_currentAnimation].size() - 1) {
-			this->_frameIndex++; //increment by 1
+			this->_frameIndex++; // Increment by 1
 		}
 		else {
 			if (this->_currentAnimationOnce == true) {
@@ -158,10 +158,10 @@ void AnimatedSprite::updateFBall(int elapsedTime, int y)
 	Sprite::updateFBall(); //since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
-	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ change frame
+	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame
 		this->_timeElapsed -= this->_timeToUpdate;
 		if (this->_frameIndex < this->_animation[this->_currentAnimation].size() - 1) {
-			this->_frameIndex++; //increment by 1
+			this->_frameIndex++; // Increment by 1
 		}
 		else {
 			if (this->_currentAnimationOnce == true) {
@@ -176,10 +176,10 @@ void AnimatedSprite::updateScript(int elapsedTime) { //timer checks when to go t
 	Sprite::update(); //since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
-	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ change frame
+	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame
 		this->_timeElapsed -= this->_timeToUpdate;
 		if (this->_scriptIndex < this->_scripts[this->_currentScript].size() - 1) {
-			this->_scriptIndex++; //increment by 1
+			this->_scriptIndex++; // Increment by 1
 		}
 		else {
 			if (this->_currentScriptOnce == true) {
@@ -296,13 +296,13 @@ void AnimatedSprite::updateBullet(int elapsedTime) { //timer checks when to go t
 	Sprite::updateBullet(); //since we extend we can call like this
 
 	this->_timeElapsed += elapsedTime;
-	if (this->_timeElapsed > this->_timeToUpdate) { //is it time to update/ change frame
+	if (this->_timeElapsed > this->_timeToUpdate) { // Is it time to update/ change frame
 		this->_timeElapsed -= this->_timeToUpdate;
 		if (this->_frameIndex < this->_animation[this->_currentAnimation].size() - 1) {
-			this->_frameIndex++; //increment by 1
+			this->_frameIndex++; // Increment by 1
 		}
 		else {
-			//if (this->_currentAnimationOnce == true) {
+			// If (this->_currentAnimationOnce == true) {
 			//	this->setVisible(false);
 			//}
 			//this->stopAnimation();

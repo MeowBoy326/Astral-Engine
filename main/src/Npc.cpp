@@ -101,7 +101,7 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 
 int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Player &player)
 {
-	//if (questState == false) {
+	// If (questState == false) {
 		XMLDocument xml;
 		std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
 		cwd.append(name + ".xml");
@@ -184,7 +184,7 @@ int Npc::loadQuests(std::string name)
 		descPtr = ptrElement->Attribute("description");
 		objPtr = ptrElement->Attribute("object");
 		ptrElement->QueryIntAttribute("rewardType", &rewardType);
-		//if (rewardType == 0) {
+		// If (rewardType == 0) {
 		//ptrElement->QueryIntAttribute("reward", &rewardLevel);
 		//}
 		// Else
@@ -255,7 +255,7 @@ void Npc::acceptQuest(Graphics & graphics, std::string npcName, int posX, int po
 	bool isCompleted;
 	if (questLog.empty() && questTable.empty())
 		return;
-	if (selection >= this->questTable.size()) { //If player tries to select and empty quest index
+	if (selection >= this->questTable.size()) { // If player tries to select and empty quest index
 		std::cout << "Cannot find specified index..." << std::endl;
 		return;
 	}	
@@ -300,7 +300,7 @@ void Npc::giveRewards(Graphics & graphics, std::string npcName, int posX, int po
 	auto it = std::find_if(questLog.begin(), questLog.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
 	auto distance = std::distance(this->questLog.begin(), it);
 	// Auto itQT = std::find_if(questTable.begin(), questTable.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
-	//if (itQT == questTable.end()) {
+	// If (itQT == questTable.end()) {
 	//	std::cout << "COULD NOT FIND QUEST IN QUESTABLE!!!" << std::endl;
 	//}
 	// Auto distanceQT = std::distance(questTable.begin(), itQT);

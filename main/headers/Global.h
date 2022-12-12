@@ -27,7 +27,7 @@ namespace sides {
 	// Helper function
 	    inline Side getOppositeSide(Side side) {
 		return
-			side == TOP ? BOTTOM : //If side = TOP, then return BOTTOM ELSE
+			side == TOP ? BOTTOM : // If side = TOP, then return BOTTOM ELSE
 			side == BOTTOM ? TOP :
 			side == LEFT ? RIGHT :
 			side == RIGHT ? LEFT :

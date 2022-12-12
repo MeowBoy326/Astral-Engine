@@ -70,7 +70,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 		if (SDL_PollEvent(&event)) {
 			if (event.type == SDL_KEYDOWN) {
 				if (event.key.repeat == 0) {
-					input.keyDownEvent(event); //if we are holding key start keydown event
+					input.keyDownEvent(event); // If we are holding key start keydown event
 				}
 			}
 			else if (event.type == SDL_KEYUP) { // if key was released

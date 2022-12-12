@@ -496,7 +496,7 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//this->_HPValue._y = others.at(i).getTop() + 1;
 				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					//this->_dx = 0; //stop movement on x-axis
-					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
+					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
 			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
@@ -703,9 +703,9 @@ void JellyFish::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//this->_resettingPos = true;
 				//this->_HPBar._y = others.at(i).getTop() + 1;
 				//this->_HPValue._y = others.at(i).getTop() + 1;
-				//if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
+				// If (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 				//	//this->_dx = 0; //stop movement on x-axis
-				//	this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
+				//	this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				//}
 				break;
 			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
@@ -933,7 +933,7 @@ void Ghost::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//this->_HPValue._y = others.at(i).getTop() + 1;
 				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					//this->_dx = 0; //stop movement on x-axis
-					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
+					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
 			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile

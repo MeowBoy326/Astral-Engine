@@ -9,7 +9,7 @@ Sprite::Sprite() {
 }
 Sprite::Sprite(Graphics &graphics, const std::string &filePath, int sourceX, int sourceY, int width, int height,
 	float posX, float posY) :
-	//intializer
+	// Intializer
 _x(posX), 
 _y(posY)
 
@@ -20,7 +20,7 @@ _y(posY)
 	this->_sourceRect.h = height;
 
 	this->_spriteSheet = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(filePath)); //take a render and surface will give us surface if not load then give us
-	if (this->_spriteSheet == NULL) { //if spritesheet is null that means there was an error while loading image
+	if (this->_spriteSheet == NULL) { // If spritesheet is null that means there was an error while loading image
 		printf("\nError: Unable to load image \n");
 	}
 
@@ -234,7 +234,7 @@ const sides::Side Sprite::getCollisionSide(Rectangle &other) const {
 	amtTop = other.getBottom() - this->getBoundingBox().getTop();
 	amtBottom = this->getBoundingBox().getBottom() - other.getTop();
 	// Create array of absoulte value of these and loop through array to figure out which one is lowest by overrriding the lowest variable
-	//If next one in array is lower than the one thats current lowest replace that one with the lowest.
+	// If next one in array is lower than the one thats current lowest replace that one with the lowest.
 	int vals[4] = { abs(amtRight), abs(amtLeft), abs(amtTop), abs(amtBottom) };
 	int lowest = vals[0];
 	for (int i = 0; i < 4; i++) {
@@ -243,7 +243,7 @@ const sides::Side Sprite::getCollisionSide(Rectangle &other) const {
 		}
 	}
 	return
-		lowest == abs(amtRight) ? sides::RIGHT : //if lowest is right return right..
+		lowest == abs(amtRight) ? sides::RIGHT : // If lowest is right return right..
 		lowest == abs(amtLeft) ? sides::LEFT :
 		lowest == abs(amtTop) ? sides::TOP :
 		lowest == abs(amtBottom) ? sides::BOTTOM :

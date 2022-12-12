@@ -162,7 +162,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	}
 
 	//Load the tilesets.
-	XMLElement* pTileset = mapNode->FirstChildElement("tileset"); //if we have more then 1 tile set its a problem, so a work-around is linked list
+	XMLElement* pTileset = mapNode->FirstChildElement("tileset"); // If we have more then 1 tile set its a problem, so a work-around is linked list
 	if (pTileset != NULL) { //just in case we dont have any tiles(?) so program wont crash
 		while (pTileset) {
 			int firstgid;
@@ -203,7 +203,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 				}
 			}
 			pTileset = pTileset->NextSiblingElement("tileset"); // will try to set our tileset to the next tileset (sibling) after first one process if there
-			//isnt one it will move on to the next code
+			// Isnt one it will move on to the next code
 		}
 	}
 	//Loading the layers
@@ -224,7 +224,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								int tileCounter = 0; // Add this because we need to know what tile we are on thru the loop
 								while (pTile) {
 									// Build each individual tile here
-									//if gid is 0, no tile should be drawn, continue loop.
+									// If gid is 0, no tile should be drawn, continue loop.
 									if (pTile->IntAttribute("gid") == 0) {
 										tileCounter++;
 										if (pTile->NextSiblingElement("tile")) { //just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
@@ -250,7 +250,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 										}
 									}
 
-									//if it cant find any tileset
+									// If it cant find any tileset
 									if (tls.FirstGid == -1) {
 										//no tileset was found for this gid
 										tileCounter++;
@@ -321,7 +321,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						int tileCounter = 0; // Add this because we need to know what tile we are on thru the loop
 						while (pTile) {
 							// Build each individual tile here
-							//if gid is 0, no tile should be drawn, continue loop.
+							// If gid is 0, no tile should be drawn, continue loop.
 							if (pTile->IntAttribute("gid") == 0) {
 								tileCounter++; 
 								if (pTile->NextSiblingElement("tile")) { //just because we dont wanna draw the tile ^ we cant just break we need to figure out if theres more gids
@@ -365,7 +365,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								}
 							}
 
-							//if it cant find any tileset
+							// If it cant find any tileset
 							if (tls.FirstGid == -1) {
 								//no tileset was found for this gid
 								tileCounter++;
@@ -1017,7 +1017,7 @@ std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { // G
 	std::vector<Rectangle> others;
 	for (int i = 0; i < this->_collisionRects.size(); i++) { //loop through our collision rects come from tiles
 		if (this->_collisionRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
-			others.push_back(this->_collisionRects.at(i)); //if it does add it to the others list
+			others.push_back(this->_collisionRects.at(i)); // If it does add it to the others list
 		}
 	}
 	return others; //return whatever collision rects we are colliding with
@@ -1072,7 +1072,7 @@ std::vector<Rectangle> Level::checkCutsceneCollisions(const Rectangle & other)
 	std::vector<Rectangle> others;
 	for (int i = 0; i < this->_cutsceneRects.size(); i++) { //loop through our collision rects come from tiles
 		if (this->_cutsceneRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
-			others.push_back(this->_cutsceneRects.at(i)); //if it does add it to the others list
+			others.push_back(this->_cutsceneRects.at(i)); // If it does add it to the others list
 		}
 	}
 	return others; //return whatever collision rects we are colliding with
@@ -1145,7 +1145,7 @@ std::vector<Rectangle> Level::checkArenaCollisions(const Rectangle & other)
 		return others;
 	for (int i = 0; i < this->_arenaRects.size(); i++) { //loop through our collision rects come from tiles
 		if (this->_arenaRects.at(i).collidesWith(other)) { // Check if any of our collision rects collides with other
-			others.push_back(this->_arenaRects.at(i)); //if it does add it to the others list
+			others.push_back(this->_arenaRects.at(i)); // If it does add it to the others list
 		}
 	}
 	return others; //return whatever collision rects we are colliding with
@@ -1389,7 +1389,7 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 									std::floor(y) * globals::SPRITE_SCALE)));
 								player.addBossTable(ss.str(), mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE);
 							}
-							else { //if the boss was defeated already make sure that the boss arena is set to false
+							else { // If the boss was defeated already make sure that the boss arena is set to false
 								if (this->_arenaName == ss.str()) {
 									this->_arenaName.clear();
 									this->arenaActive = false;

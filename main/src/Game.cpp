@@ -86,7 +86,7 @@ namespace {
 Game::Game() { // Constructor
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
-	//Initialize SDL_mixer
+	// Initialize SDL_mixer
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 	{
 		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
@@ -151,7 +151,7 @@ void Game::gameLoop() {
 			title = _title.Start(graphics, input, event);
 			if (_title.getMenuChoice() == 0) {
 				std::cout << "No save data found...Starting new game!" << std::endl;
-				this->_level = Level("cave", graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
+				this->_level = Level("cave", graphics, this->_inventory); // Intialize level: Map name , spawn point, graphics
 				this->_level.generateItems(graphics);
 				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
@@ -210,7 +210,7 @@ void Game::gameLoop() {
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
 					if (event.key.repeat == 0) {
-						input.keyDownEvent(event); //if we are holding key start keydown event
+						input.keyDownEvent(event); // If we are holding key start keydown event
 					}
 				}
 				else if (event.type == SDL_KEYUP) { // if key was released
@@ -233,7 +233,7 @@ void Game::gameLoop() {
 				targetX = 0;
 				targetY = 0;
 				stopScroll = false;
-				//input.beginNewFrame();
+				// Input.beginNewFrame();
 				this->_player.stopLookingDown();
 				this->_player.addCutSceneTable(sceneName);
 				continue;
@@ -251,7 +251,7 @@ void Game::gameLoop() {
 			if (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
 					if (event.key.repeat == 0) {
-						input.keyDownEvent(event); //if we are holding key start keydown event
+						input.keyDownEvent(event); // If we are holding key start keydown event
 					}
 				}
 				else if (event.type == SDL_KEYUP) { // if key was released
@@ -334,7 +334,7 @@ void Game::gameLoop() {
 				questSelection = 1;
 				activeStatMenu = false;
 			}
-			//if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0
+			// If (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0
 			//	&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
 
 			//	//this->saveGame(graphics);
@@ -448,7 +448,7 @@ void Game::gameLoop() {
 				}
 			}
 			if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT) && this->_player.getCurrentHealth() > 0) {
-				//if player isnt moving left or right(at all) do stopMoving function
+				// If player isnt moving left or right(at all) do stopMoving function
 				this->_player.stopMoving();
 			}
 			
@@ -1014,7 +1014,7 @@ int Game::loadGame(Graphics & graphics)
 	const char* textPtr = nullptr;
 	textPtr = element->Attribute("mapName");
 	std::string mapName = textPtr;
-	this->_level = Level(mapName, graphics, this->_inventory); //intialize level: Map name , spawn point, graphics
+	this->_level = Level(mapName, graphics, this->_inventory); // Intialize level: Map name , spawn point, graphics
 	//Load coordinates
 	Vector2 spawn;
 	int x, y;
@@ -1184,7 +1184,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	//set vector = the result of the checkTileCollisions function
 	// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
 	// Against whatever we give it (player bounding box)
-	//if it returns at least 1, handle Tile collision!
+	// If it returns at least 1, handle Tile collision!
 	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
 		//Player collided with atleast 1 tile
 		this->_player.handleTileCollisions(others);
@@ -1370,7 +1370,7 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 	//set vector = the result of the checkTileCollisions function
 	// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
 	// Against whatever we give it (player bounding box)
-	//if it returns at least 1, handle Tile collision!
+	// If it returns at least 1, handle Tile collision!
 	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
 		//Player collided with atleast 1 title
 		this->_player.handleTileCollisions(others);

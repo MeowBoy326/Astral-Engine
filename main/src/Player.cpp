@@ -329,7 +329,7 @@ const std::string Player::getMapHash(std::string mapName)
 
 void Player::moveLeft() {
 	if (this->_lookingDown == true && this->_grounded == true) // while facing backwards if we are on the ground and looking down that means char
-	//is turned around and interacting with something so don't allow movement!
+	// Is turned around and interacting with something so don't allow movement!
 	{
 		return;
 	}
@@ -403,7 +403,7 @@ void Player::stopMoving() {
 	if (this->_currentHealth <= 0)
 		return;
 	if (this->_lookingUp == false && this->_lookingDown == false) {
-		this->playAnimation(this->_facing == RIGHT ? "IdleRight" : "IdleLeft"); //if player is facing right call IdleRight otherwise use IdleLeft
+		this->playAnimation(this->_facing == RIGHT ? "IdleRight" : "IdleLeft"); // If player is facing right call IdleRight otherwise use IdleLeft
 	}
 }
 
@@ -462,7 +462,7 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 				this->_y = others.at(i).getBottom() + 1; //no longer go through things, stops us
 				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					this->_dx = 0; //stop movement on x-axis
-					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
+					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
 			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
@@ -495,7 +495,7 @@ void Player::handleArenaCollisions(std::vector<Rectangle>& others)
 				this->_y += 2; //no longer go through things, stops us
 				if (this->_grounded) { //only time we hit a top tile is if we are on a slope, (we are grounded on a slope)
 					this->_dx = 0; //stop movement on x-axis
-					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
+					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; // If we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
 			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
@@ -609,8 +609,8 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 
 void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player) {
 	// Check if the player is grounded and holding the down arrow
-	//If so, go through the door
-	//If not, do nothing
+	// If so, go through the door
+	// If not, do nothing
 	AESCipher cipher;
 	for (int i = 0; i < others.size(); i++) {
 		if (this->_grounded == true && this->_lookingDown == true) {
@@ -854,7 +854,7 @@ void Player::gainHealth(float amount) {
 
 void Player::gainHPFromStatus(float amount)
 {   //This function is a constant tick.
-	//It does not give the player iFrames
+	// It does not give the player iFrames
 	if (amount < 0) {
 		this->_currentHealth += amount;
 	}
@@ -1162,7 +1162,7 @@ void Player::update(float elapsedTime) {
 			this->handleHex(elapsedTime);
 		}
 
-		//iFrame timer
+		// IFrame timer
 		if (player_constants::iFrame == true && this->_currentHealth > 0) {
 			this->_timeElapsed += elapsedTime;
 			if (this->getBlink())
@@ -1180,7 +1180,7 @@ void Player::update(float elapsedTime) {
 		}
 
 		for (int i = this->battleMessages.size(); i--;) {
-			std::get<3>(this->battleMessages[i]) += elapsedTime; //increase timer
+			std::get<3>(this->battleMessages[i]) += elapsedTime; // Increase timer
 			//Set X to end of screen on the right then subtract by the width of the texture in TextManager
 			//This will get the correct x position so that the last letter of the string ends right before the end of the screen
 			std::get<1>(this->battleMessages[i]) = this->_x + 320; //Set to player x + screen width / 2 (320)

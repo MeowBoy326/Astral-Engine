@@ -23,7 +23,7 @@ TextManager::TextManager(Graphics & graphics, Player & player)  {
 
 TextManager::TextManager(Graphics &graphics, const std::string &filePath, int sourceX, int sourceY, int width, int height,
 	float posX, float posY) :
-	//intializer
+	// Intializer
 	_textX(posX),
 	_textY(posY)
 
@@ -33,7 +33,7 @@ TextManager::TextManager(Graphics &graphics, const std::string &filePath, int so
 	this->_textSourceRect.w = width;
 	this->_textSourceRect.h = height;
 	this->_textSheet = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(filePath)); //take a render and surface will give us surface if not load then give us
-	if (this->_textSheet == NULL) { //if spritesheet is null that means there was an error while loading image
+	if (this->_textSheet == NULL) { // If spritesheet is null that means there was an error while loading image
 		printf("\nError: Unable to load image \n");
 	}
 	this->_TboundingBox = Rectangle(this->_textX, this->_textY, width * globals::SPRITE_SCALE, height * globals::SPRITE_SCALE);

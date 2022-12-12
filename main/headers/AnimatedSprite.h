@@ -18,7 +18,7 @@ class Graphics;
 * Holds logic for animating sprites
 */
 
-class AnimatedSprite : public Sprite { //inherit from sprite class
+class AnimatedSprite : public Sprite { // Inherit from sprite class
 public:
 	AnimatedSprite();
 	AnimatedSprite(Graphics &graphics, const std::string &filePath, int sourceX, int sourceY, int width, int height,
@@ -112,7 +112,7 @@ private:
 	int _scriptIndex;
 	int _bulletID;
 	double _timeElapsed; // For timer
-	bool _visible; //is animation visible?
+	bool _visible; // Is animation visible?
 	std::queue<std::string> speech;
 
 };
