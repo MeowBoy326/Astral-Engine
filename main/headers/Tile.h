@@ -17,8 +17,8 @@ public:
 protected:
 	SDL_Texture* _tileset;
 	Vector2 _size; //size of tile
-	Vector2 _tilesetPosition; //position on the tileset that the tile is in
-	Vector2 _position; //position in the map the tile is
+	Vector2 _tilesetPosition; // Position on the tileset that the tile is in
+	Vector2 _position; // Position in the map the tile is
 	SDL_RendererFlip _tileFlip;
 };
 

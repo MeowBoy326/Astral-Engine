@@ -122,7 +122,7 @@ private:
 	std::vector<Slope> _slopes; // List of slopes
 	std::vector<Door> _doorList;
 	std::vector<Door> _lockDoor;
-	std::vector<Enemy*> _enemies; //polymorphism to call the update and draw for the bat and not Enemy's functions, so needs to be a pointer for poly to work
+	std::vector<Enemy*> _enemies; // Polymorphism to call the update and draw for the bat and not Enemy's functions, so needs to be a pointer for poly to work
 	std::vector<Projectile*> _projectiles;
 	std::vector<Effects*> _effects;
 	std::vector<Npc*> _npcs;
@@ -131,7 +131,7 @@ private:
 	std::vector<std::tuple<std::string, std::string, int>> levelDropTable; // Mob name, item name, drop rate %
 	std::vector<std::tuple<float, float, float, int>> dmgVector;
 
-	//Private loads a map only call level within level class
+	// Private loads a map only call level within level class
 	void loadMap(std::string mapName, Graphics &graphics, Inventory& invent); // wont need size or spawn because it will be parsed out of the xml within this function later
 	//typedef std::map<std::string, Level* (*)(Graphics&, Vector2)> levelStorage;
 	typedef std::map<std::string, Level (*)(std::string mapName, Graphics &graphics, Inventory &invent)> levelStorage;

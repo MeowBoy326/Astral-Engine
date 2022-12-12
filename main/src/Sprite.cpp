@@ -134,7 +134,7 @@ void Sprite::addProjectile(int x, int y, int width, int height, int bulletID) {
 
 	SDL_Rect newRect = { x, y, width, height };
 	rectangles.push_back(newRect);
-	//pRect.push_back(newRect);
+	// PRect.push_back(newRect);
 	std::cout << "debug: add bulletID# " << bulletID << std::endl;
 	this->_bulletMap.insert({ bulletID, newRect });
 	this->_projectiles.insert(std::pair<int, std::vector<SDL_Rect> >(bulletID, rectangles));
@@ -175,7 +175,7 @@ void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) {
 	
 	// Cout << this->pRect[bulletID].x << endl;
 	//SDL_Rect sourceRect = { this->pRect.at(bulletID).x, this->pRect[bulletID].y, this->pRect[bulletID].w, this->pRect[bulletID].h, };
-	//SDL_Rect sourceRect = this->_projectiles[bulletID][this->_bulletNum]; //pull out correct rectangle
+	//SDL_Rect sourceRect = this->_projectiles[bulletID][this->_bulletNum]; // Pull out correct rectangle
 	
 
 

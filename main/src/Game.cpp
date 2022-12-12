@@ -1186,12 +1186,12 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	// Against whatever we give it (player bounding box)
 	// If it returns at least 1, handle Tile collision!
 	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-		//Player collided with atleast 1 tile
+		// Player collided with atleast 1 tile
 		this->_player.handleTileCollisions(others);
 	}
 
 	if ((others = this->_level.checkBreakableTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-		//Player collided with atleast 1 tile
+		// Player collided with atleast 1 tile
 		this->_player.setBreakableCollision(true);
 		this->_player.handleTileCollisions(others);
 	}
@@ -1200,7 +1200,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	}
 
 	if ((others = this->_level.checkArenaCollisions(this->_player.getBoundingBox())).size() > 0) {
-		//Player collided with atleast 1 tile
+		// Player collided with atleast 1 tile
 		this->_player.handleArenaCollisions(others);
 	}
 
@@ -1231,7 +1231,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 			isClimbing = false;
 			this->_player.setClimbing(false);
 			if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-				//Player collided with atleast 1 tile
+				// Player collided with atleast 1 tile
 				this->_player.handleTileCollisions(others);
 			}
 		}
@@ -1240,7 +1240,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 		isClimbing = false;
 		this->_player.setClimbing(false);
 		if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-			//Player collided with atleast 1 tile
+			// Player collided with atleast 1 tile
 			this->_player.handleTileCollisions(others);
 		}
 	}
@@ -1372,7 +1372,7 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 	// Against whatever we give it (player bounding box)
 	// If it returns at least 1, handle Tile collision!
 	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-		//Player collided with atleast 1 title
+		// Player collided with atleast 1 title
 		this->_player.handleTileCollisions(others);
 	}
 

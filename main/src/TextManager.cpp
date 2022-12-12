@@ -236,7 +236,7 @@ void TextManager::drawMapName(Graphics & graphics, std::string &mapName, int x, 
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
-	TTF_CloseFont(iFont); //previously TTF_CloseFont(font);
+	TTF_CloseFont(iFont); // Previously TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 	SDL_DestroyTexture(bgTex);
 }
@@ -280,7 +280,7 @@ void TextManager::drawVersion(Graphics & graphics, int x, int y)
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
-	TTF_CloseFont(iFont); //previously TTF_CloseFont(font);
+	TTF_CloseFont(iFont); // Previously TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 	SDL_DestroyTexture(bgTex);
 }
@@ -314,7 +314,7 @@ void TextManager::drawDeveloper(Graphics & graphics, int x, int y)
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
-	TTF_CloseFont(iFont); //previously TTF_CloseFont(font);
+	TTF_CloseFont(iFont); // Previously TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 	SDL_DestroyTexture(bgTex);
 }
@@ -394,7 +394,7 @@ void TextManager::drawPlayerStatus(Graphics & graphics, int x, int y, const std:
 	}
 	SDL_Color effectColor = {255, 255, 255, 255}; // Default white
 	if (text == "POISONED") {
-		effectColor = { 128, 0, 128, 255 }; //Purple
+		effectColor = { 128, 0, 128, 255 }; // Purple
 	}
 	else if (text == "BURNING") {
 		effectColor = { 255, 165, 0, 255 }; // Orange
@@ -457,7 +457,7 @@ void TextManager::drawEventMessages(Graphics & graphics, int x, int y, std::stri
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
 	SDL_FreeSurface(backGround);
-	TTF_CloseFont(iFont); //previously TTF_CloseFont(font);
+	TTF_CloseFont(iFont); // Previously TTF_CloseFont(font);
 	SDL_DestroyTexture(tex);
 	SDL_DestroyTexture(bgTex);
 }

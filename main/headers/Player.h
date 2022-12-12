@@ -32,7 +32,7 @@ public:
 	void update(float elapsedTime);
 	bool checkDeathPlayed() const { return this->deathPlayed; }
 
-	//Player handling
+	// Player handling
 	void moveLeft(); 	// Move player left by -dx
 	void moveRight(); 	// Move player right by +dx
 	void moveUp(); // For ladders

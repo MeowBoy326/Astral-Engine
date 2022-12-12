@@ -18,7 +18,7 @@ public:
 
 	virtual void update(int elapsedTime, Player &player);
 	virtual void draw(Graphics &graphics);
-	virtual void touchPlayer(Player* player) = 0; //pure virtual implement in derived classes
+	virtual void touchPlayer(Player* player) = 0; // Pure virtual implement in derived classes
 	virtual void playDeath() = 0;
 	virtual const inline int getEnemyLevel() const { return this->level; }
 	virtual float enemyExpAmount();

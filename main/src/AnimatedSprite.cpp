@@ -201,7 +201,7 @@ void AnimatedSprite::draw(Graphics &graphics, int x, int y) {
 		destinationRectangle.w = this->_sourceRect.w * globals::SPRITE_SCALE;
 		destinationRectangle.h = this->_sourceRect.h * globals::SPRITE_SCALE;
 
-		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
+		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; // Pull out correct rectangle
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 }
@@ -215,7 +215,7 @@ void AnimatedSprite::drawBoss(Graphics &graphics, int x, int y, float scaleFacto
 		destinationRectangle.w = this->_sourceRect.w * globals::SPRITE_SCALE * scaleFactor;
 		destinationRectangle.h = this->_sourceRect.h * globals::SPRITE_SCALE * scaleFactor;
 
-		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
+		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; // Pull out correct rectangle
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 }
@@ -242,7 +242,7 @@ void AnimatedSprite::drawNpc(Graphics &graphics, int x, int y) {
 		destinationRectangle.w = this->_sourceRect.w * 1.22;
 		destinationRectangle.h = this->_sourceRect.h * 1.22;
 
-		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
+		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; // Pull out correct rectangle
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 }
@@ -258,7 +258,7 @@ void AnimatedSprite::drawTitle(Graphics &graphics, int x, int y) {
 		destinationRectangle.w = this->_sourceRect.w;
 		destinationRectangle.h = this->_sourceRect.h;
 
-		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
+		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; // Pull out correct rectangle
 		graphics.windowBlitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 		// Graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
@@ -273,7 +273,7 @@ void AnimatedSprite::drawBullet(Graphics &graphics, int x, int y) {
 		destinationRectangle.w = this->_sourceRect.w * globals::PROJECTILE_SCALE;
 		destinationRectangle.h = this->_sourceRect.h * globals::PROJECTILE_SCALE;
 
-		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
+		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; // Pull out correct rectangle
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 }
@@ -287,7 +287,7 @@ void AnimatedSprite::drawLoot(Graphics & graphics, int x, int y)
 		destinationRectangle.w = this->_sourceRect.w * 1.2;
 		destinationRectangle.h = this->_sourceRect.h * 1.2;
 
-		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
+		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; // Pull out correct rectangle
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 }

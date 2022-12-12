@@ -185,7 +185,7 @@ int Npc::loadQuests(std::string name)
 		objPtr = ptrElement->Attribute("object");
 		ptrElement->QueryIntAttribute("rewardType", &rewardType);
 		// If (rewardType == 0) {
-		//ptrElement->QueryIntAttribute("reward", &rewardLevel);
+		// PtrElement->QueryIntAttribute("reward", &rewardLevel);
 		//}
 		// Else
 		rewardItem = ptrElement->Attribute("reward");
@@ -194,7 +194,7 @@ int Npc::loadQuests(std::string name)
 		std::string text = textPtr, descText = descPtr, objText = objPtr;
 		bool completed = true;
 		auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
-		//push to vector
+		// Push to vector
 		if (this->questTable.empty() && logIt == questLog.end()) { // Check if its not in the accepted quests already
 			this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
 		}

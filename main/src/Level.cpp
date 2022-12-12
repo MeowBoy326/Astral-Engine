@@ -118,7 +118,7 @@ Level::~Level() {
 }
 
 void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) {
-	//parse the .tmx file
+	// Parse the .tmx file
 	XMLDocument doc; //represents entire xml document
 	std::stringstream ss;
 	ss << mapName << ".tmx"; //ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
@@ -198,7 +198,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						}
 					}
 					this->_animatedTileInfos.push_back(ati);
-					//printf("hi\n");
+					// Printf("hi\n");
 					pTileA = pTileA->NextSiblingElement("tile");
 				}
 			}
@@ -305,11 +305,11 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 								}
 							}
 							break;
-							//pData = pData->NextSiblingElement("data");
+							// PData = pData->NextSiblingElement("data");
 						}
 					}
 					break;
-					//pLayer = pLayer->NextSiblingElement("layer");
+					// PLayer = pLayer->NextSiblingElement("layer");
 				}
 
 			XMLElement* pData = pLayer->FirstChildElement("data");
@@ -428,7 +428,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 		}
 	}
 
-	//Parse out the collisions
+	// Parse out the collisions
 	XMLElement* pObjectGroup = mapNode->FirstChildElement("objectgroup");
 	if (pObjectGroup != NULL) {
 		while (pObjectGroup) {
@@ -439,7 +439,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
 				if (pObject != NULL) {
 					while (pObject) {
-						//parse our x y
+						// Parse our x y
 						float x, y, width, height;
 						x = pObject->FloatAttribute("x");
 						y = pObject->FloatAttribute("y");
@@ -1507,7 +1507,7 @@ void Level::checkItemCollisions(Player & player, const Rectangle &other, Graphic
 		if (this->_items.at(i)->getBoundingBox().collidesWith(other)) {
 			int type = itemType.at(i);
 			std::cout << "type = " << type << std::endl;
-			if (type == 1) //Permanent HP+1 item
+			if (type == 1) // Permanent HP+1 item
 				player.gainMaxHealth(5);
 			else if (type == 2)
 				player.gainCurrency(this->_items.at(i)->getAmount());
@@ -1530,7 +1530,7 @@ const Vector2 Level::getPlayerSpawnPoint() const {
 Vector2 Level::getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileHeight) {
 	// Calcualte the position of the tile in the tileset 
 	int tilesetWidth, tilesetHeight;
-	//pass in texture, format, access, width, height. We dont care about format or access so NULL and then reference to width/height
+	// Pass in texture, format, access, width, height. We dont care about format or access so NULL and then reference to width/height
 	SDL_QueryTexture(tls.Texture, NULL, NULL, &tilesetWidth, &tilesetHeight);
 	// Get the tileset X position Subtract the gid - first gid of the tileset
 	//then modulo (TS width / T width)

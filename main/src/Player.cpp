@@ -1142,7 +1142,7 @@ void Player::update(float elapsedTime) {
 			player_constants::GRAVITY = 0.002f;
 			player_constants::GRAVITY_CAP = 0.8f;
 		}
-		//Poison timer
+		// Poison timer
 		if (this->isPoisoned) {
 			this->_poisonDuration += elapsedTime;
 			this->_poisonDOTTimer += elapsedTime;

@@ -67,6 +67,6 @@ public:
 		const inline Vector2 getP1() const { return this->_p1; }
 		const inline Vector2 getP2() const { return this->_p2; }
 private:
-	Vector2 _p1, _p2; //point 1, 2 Every slope has 2 points.
+	Vector2 _p1, _p2; // Point 1, 2 Every slope has 2 points.
 	float _slope; //slopes have...SLOPES?!?! Madness...
 };
