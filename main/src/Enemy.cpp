@@ -499,7 +499,7 @@ void Shade::handleEnemyTileCollision(std::vector<Rectangle>& others)
 					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
-			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
+			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
 				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() / 2;
 				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
@@ -708,7 +708,7 @@ void JellyFish::handleEnemyTileCollision(std::vector<Rectangle>& others)
 				//	this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				//}
 				break;
-			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
+			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
 				//this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_y -= 10;
 				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
@@ -936,7 +936,7 @@ void Ghost::handleEnemyTileCollision(std::vector<Rectangle>& others)
 					this->_x -= this->_direction == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
-			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
+			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
 				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				//this->_HPBar._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				//this->_HPValue._y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;

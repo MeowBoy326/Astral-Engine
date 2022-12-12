@@ -44,7 +44,7 @@ public:
 private:
 	Player _player;
 
-	//Health Sprites
+	// Health Sprites
 	Sprite _iMenu;
 	Sprite _hpPot;
 	Sprite _key;

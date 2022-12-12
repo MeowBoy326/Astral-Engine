@@ -24,7 +24,7 @@ namespace sides {
 		NONE
 	};
 
-	//helper function
+	// Helper function
 	    inline Side getOppositeSide(Side side) {
 		return
 			side == TOP ? BOTTOM : //If side = TOP, then return BOTTOM ELSE
@@ -48,7 +48,7 @@ struct Vector2 {
 		x(0), y(0){}
 	Vector2(int x, int y) : // Constructor we will be using most of the time
 		x(x), y(y) {}
-	Vector2 zero() { //helper function - return new vector2 intializes 0,0 same as constructor but makes more sense to call 0 then to call empty default
+	Vector2 zero() { // Helper function - return new vector2 intializes 0,0 same as constructor but makes more sense to call 0 then to call empty default
 		// so we will use this function whenever we call
 		return Vector2(0, 0);
 	}

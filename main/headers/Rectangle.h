@@ -15,7 +15,7 @@ public:
 
 	}
 
-	//helper function to get certain parts of rectangle
+	// Helper function to get certain parts of rectangle
 	const int getCenterX() const {
 		return this->_x + this->_width / 2; //take rectangle return x position and half the width, put us in the middle of rect
 }

@@ -16,7 +16,7 @@ public:
 private:
 	Player _player;
 
-	//Health Sprites
+	// Health Sprites
 	Sprite _healthBarSprite;
 	Sprite _healthNumber1;
 	Sprite _currentHealthBar;

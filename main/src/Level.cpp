@@ -829,7 +829,7 @@ void Level::draw(Graphics &graphics, Player &player) {
 
 	//Our screen size is obviously bigger than  64 so we need to loop this to draw multiple tiles in different spots
 	//Nested for loop is a good thing to use here
-	for (int x = 0; x < this->_size.x / 64; x++) { //how many pixels across / 64 size of background.
+	for (int x = 0; x < this->_size.x / 64; x++) { // How many pixels across / 64 size of background.
 		// width of level divided by 64 is how many times we gotta draw this background (tile) going from left to right
 		//Now we need to do it for top to bottom
 		for (int y = 0; y < this->_size.y / 64; y++) {

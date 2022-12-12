@@ -1156,7 +1156,7 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 	}
 	this->_camera.Update(elapsedTime, this->_player);
 	this->_level.update(elapsedTime, this->_player);
-    //hud goes on top of everything
+    // Hud goes on top of everything
 	this->_hud.update(elapsedTime, this->_player);
 
 	if (!this->_level.getMapBGM().empty()) {

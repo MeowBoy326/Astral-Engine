@@ -115,7 +115,7 @@ public:
 	void setBreakableCollision(bool condition) { this->isBreakableCollision = condition; }
 	
 
-	//Health handling
+	// Health handling
 	void drawHPNumbers(Graphics &graphics);
 	void setIFrame(bool condition);
 	void gainHealth(float amount);

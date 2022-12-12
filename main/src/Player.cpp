@@ -448,7 +448,7 @@ void Player::setEventMessage(std::string text)
 	this->_timeForEventMsg = 0;
 }
 
-//handles collisions with all tiles the player is colliding with
+// Handles collisions with all tiles the player is colliding with
 void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 	// Figure out what side the collision happened on and move the player accordingly
 	if (this->_climbing && this->isBreakableCollision == false)
@@ -465,7 +465,7 @@ void Player::handleTileCollisions(std::vector<Rectangle> &others) {
 					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
-			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
+			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
 				this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 				this->_dy = 0;
 				this->_grounded = true; // we are on ground since it pushed it back up
@@ -498,7 +498,7 @@ void Player::handleArenaCollisions(std::vector<Rectangle>& others)
 					this->_x -= this->_facing == RIGHT ? 0.5f : -0.5f; //if we face right, subtract .5 from x pos otherwise subtract -.5 (adds .5)
 				}
 				break;
-			case sides::BOTTOM: //hit the top (bottom) of tile push us back up ontop of tile
+			case sides::BOTTOM: // Hit the top (bottom) of tile push us back up ontop of tile
 				this->_y -= 2;
 				this->_dy = 0;
 				this->_grounded = true; // we are on ground since it pushed it back up
@@ -563,7 +563,7 @@ bool Player::handleLadderCollisions(std::vector<Rectangle>& others)
 				this->_climbing = false;
 				break; // Going down the ladder
 			case sides::BOTTOM: // Going up the ladder
-				//hit the top (bottom) of tile push us back up ontop of tile
+				// Hit the top (bottom) of tile push us back up ontop of tile
 				if (this->_climbing) {
 					this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
 					this->_dy = 0;
@@ -583,7 +583,7 @@ bool Player::handleLadderCollisions(std::vector<Rectangle>& others)
 	return true;
 }
 
-//handles collisions with all slopes the player is colliding with
+// Handles collisions with all slopes the player is colliding with
 void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 	for (int i = 0; i < others.size(); i++) {
 		// Calculate where on the slope the player's bottom center is touching
@@ -1157,7 +1157,7 @@ void Player::update(float elapsedTime) {
 			}
 		}
 
-		//Hex timer
+		// Hex timer
 		if (this->isHexed) {
 			this->handleHex(elapsedTime);
 		}
