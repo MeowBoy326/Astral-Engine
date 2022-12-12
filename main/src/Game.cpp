@@ -27,6 +27,7 @@ namespace {
 	const int FPS = 50;
 	// remove 5 *
 	const int MAX_FRAME_TIME = 5* 1000 / FPS; //Max amount of time a frame is allowed to last
+	int soundVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
 	int selection = 1;
 	int npcSelection = 1;
 	int questSelection = 1;
@@ -118,12 +119,6 @@ void Game::gameLoop() {
 	Mix_PlayChannel(321, seWalk, -1);
 	Mix_Pause(321);
 	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 32);
-	if (gMusic == NULL)
-	{
-		printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
-	}
-	else 
-		Mix_PlayMusic(gMusic, -1);
 
 	this->_title = Title(graphics, input, event);
 	this->_gameOver = GameOver(graphics);
@@ -131,6 +126,19 @@ void Game::gameLoop() {
 	this->_chatBox = TextManager(graphics, this->_player);
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
+
+	this->_title.getSettings(soundVolume);
+
+	if (gMusic == NULL)
+	{
+		printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
+	}
+	else
+	{
+		Mix_PlayMusic(gMusic, -1);
+		Mix_VolumeMusic(soundVolume);
+	}
+		
 
 	int LAST_UPDATE_TIME = SDL_GetTicks(); 
 	//Above ^ gets the amount of miliseconds since the SDL library was intialized
