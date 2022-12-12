@@ -481,6 +481,49 @@ void TextManager::drawBattleMessages(Graphics & graphics, int x, int y, std::str
 	SDL_DestroyTexture(tex);
 }
 
+void TextManager::drawSystemMessages(Graphics& graphics, int x, int y, std::string& text, SDL_Color color) {
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(2);
+	}
+	SDL_Surface *backGround;
+	SDL_Surface *surface;
+
+	int fontSize = 52;
+	if (text.length() > 8) {
+		fontSize -= text.length() * 1.2;
+		if (text.length() > 30)
+			fontSize = 16;
+		if (text.length() > 40)
+			fontSize = 12;
+	}
+	std::transform(text.begin(), text.end(), text.begin(), ::toupper);
+	TTF_Font *iFont = TTF_OpenFont("data\\fonts\\Arcadia.ttf", fontSize);
+
+	// Surface = Text surface. backGround = semi-transparent filled rect where the text will be placed on
+	surface = TTF_RenderText_Solid(iFont, text.c_str(), color);
+	backGround = SDL_CreateRGBSurface(0, surface->w + 20, surface->h + 20, 32, 0, 0, 0, 0);
+
+	SDL_FillRect(backGround, NULL, SDL_MapRGB(backGround->format, 41, 40, 40));
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
+	SDL_Texture *bgTex = SDL_CreateTextureFromSurface(graphics.getRenderer(), backGround);
+	SDL_SetTextureAlphaMod(bgTex, 255); //50% opacity (255/2)
+	SDL_SetTextureBlendMode(bgTex, SDL_BLENDMODE_BLEND);
+
+	SDL_Rect destinationRectangle = { x - 160, y - 100, surface->w, surface->h }; // where on screen we will be drawing
+	if (text.length() < 8) {
+		destinationRectangle = { x - 160, y - 100, surface->w, surface->h };
+	}
+
+	graphics.blitSurface(bgTex, NULL, &destinationRectangle);
+	graphics.blitSurface(tex, NULL, &destinationRectangle);
+	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop
+	SDL_FreeSurface(backGround);
+	TTF_CloseFont(iFont); // Previously TTF_CloseFont(font);
+	SDL_DestroyTexture(tex);
+	SDL_DestroyTexture(bgTex);
+}
+
 void TextManager::drawSettings(Graphics & graphics, int x, int y, std::string & text, int fontSize, SDL_Color color)
 {
 	// TTF_Init();
