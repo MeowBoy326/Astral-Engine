@@ -419,3 +419,6 @@ SF-LOC.xml
 resource.h
 SDLProject.rc
 *.pbm
+data/
+update_version.ps1
+*.bat
