@@ -54,7 +54,7 @@ void Npc::setNpcIcon(Graphics & graphics, const std::string name, int posX, int 
 {
 	this->_chatSelection = new Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
 	this->_questSelection = new Sprite(graphics, "data\\npc\\npcTextBox.png", 0, 147, 46, 18, 15, 15);
-	//graphics.loadImage(name+".png");
+	// Graphics.loadImage(name+".png");
 	this->_npcIcon = new Sprite(graphics, "data\\npc\\" + name + ".png", 0, 0, 28, 28, posX, posY);
 	this->_npcBox = new Sprite(graphics, "data\\npc\\npcTextBox.png", 63, 149, 32, 32, posX, posY);
 }
@@ -88,7 +88,7 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 	XMLElement* element = root->FirstChildElement("Talk");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
-	//get number of lines here
+	// Get number of lines here
 	result = element->QueryIntAttribute("lines", &this->lines);
 	const char* textPtr = nullptr;
 	textPtr = element->Attribute((char*)&this->lineChar);

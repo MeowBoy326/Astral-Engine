@@ -553,7 +553,7 @@ void TextManager::drawItemQuantity(Graphics &graphics, int x, int y, const std::
 	surface = TTF_RenderText_Solid(iFont, str.c_str(), color);
 	SDL_Rect destinationRectangle = { posX, posY, surface->w, surface->h }; // where on screen we will be drawing
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), surface);
-	//graphics.blitSurface(tex, NULL, &dest);
+	// Graphics.blitSurface(tex, NULL, &dest);
 
 	graphics.blitSurface(tex, NULL, &destinationRectangle);
 	SDL_FreeSurface(surface); // Fixes crashing for access violation in loop

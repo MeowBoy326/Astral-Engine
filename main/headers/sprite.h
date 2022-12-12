@@ -50,7 +50,7 @@ public:
 
 	const Rectangle getBoundingBox() const;
 	void setBoundingBox(int x, int y, int width, int height);
-	const sides::Side getCollisionSide(Rectangle &other) const; //get collision side of bounding box and rectangle that gets passed in
+	const sides::Side getCollisionSide(Rectangle &other) const; // Get collision side of bounding box and rectangle that gets passed in
 	const sides::Side getArenaCollisionSide(Rectangle &other) const;
 
 	const inline float getX() const { return this->_x; }

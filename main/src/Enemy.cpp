@@ -279,7 +279,7 @@ void Shade::update(int elapsedTime, Player &player) {
 		// Dy is change in y over this frame Delta Y if dy is less than or equal to gravity cap then we need to increase cuz we are not at the cap
 		this->_dy += this->GRAVITY * elapsedTime;
 	}
-	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
+	this->_y += this->_dy * elapsedTime; // Gravity move them by Y
 	this->_shadeBall.update();
 	this->_oppositeShadeBall.update();
 	this->_HPBar.update();
@@ -566,7 +566,7 @@ JellyFish::~JellyFish()
 }
 
 void JellyFish::update(int elapsedTime, Player &player) {
-	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
+	this->_y += this->_dy * elapsedTime; // Gravity move them by Y
 	this->_HPBar.update();
 	this->_HPValue.update();
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
@@ -742,7 +742,7 @@ std::string JellyFish::getName()
 	return this->name;
 }
 
-//Ghost class
+// Ghost class
 Ghost::Ghost() {}
 
 Ghost::Ghost(Graphics &graphics, Vector2 spawnPoint) :
@@ -769,7 +769,7 @@ Ghost::~Ghost()
 }
 
 void Ghost::update(int elapsedTime, Player &player) {
-	this->_y += this->_dy * elapsedTime; //Gravity move them by Y
+	this->_y += this->_dy * elapsedTime; // Gravity move them by Y
 	this->_HPBar.update();
 	this->_HPValue.update();
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;

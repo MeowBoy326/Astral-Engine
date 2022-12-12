@@ -36,7 +36,7 @@ namespace player_constants {
 Player::Player() {}
 
 Player::Player(Graphics &graphics, Vector2 spawnPoint) :
-	//graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
+	// Graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
 	AnimatedSprite(graphics, "data\\graphics\\MyChar.png", 0, 0, 16, 16, spawnPoint.x, spawnPoint.y, 100), 
 	_dx(0),
 	_dy(0),
@@ -561,8 +561,8 @@ bool Player::handleLadderCollisions(std::vector<Rectangle>& others)
 					this->moveRight();
 				this->_grounded = false;
 				this->_climbing = false;
-				break; //going down the ladder
-			case sides::BOTTOM: //going up the ladder
+				break; // Going down the ladder
+			case sides::BOTTOM: // Going up the ladder
 				//hit the top (bottom) of tile push us back up ontop of tile
 				if (this->_climbing) {
 					this->_y = others.at(i).getTop() - this->_boundingBox.getHeight() - 1;
@@ -1085,7 +1085,7 @@ void Player::update(float elapsedTime) {
 		this->_x += this->_dx * elapsedTime; // ElapsedTime will move by a certain amount based on frame rate keeping thing moving smoothly
 		//Move by dy
 		this->previousY = this->_y;
-		this->_y += this->_dy * elapsedTime; //Gravity move them by Y
+		this->_y += this->_dy * elapsedTime; // Gravity move them by Y
 
 		if (this->isGrounded() && this->fallHeight >= 200) {
 			float fallDmg = (this->fallHeight / 100) * 2 + (player_constants::GRAVITY_CAP * this->_dy);

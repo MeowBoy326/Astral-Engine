@@ -27,7 +27,7 @@ private:
 	Sprite _expBarValue;
 	Sprite _expBar;
 
-	//Gun Sprite
+	// Gun Sprite
 	Sprite _slash;
 	Sprite _dashes;
 };

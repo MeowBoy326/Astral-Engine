@@ -80,7 +80,7 @@ public:
 	const int getHex() const { return this->_hexID; }
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
 	const float getX() const;
-	const float getY() const; //getting variables not changes const make sure it doesnt
+	const float getY() const; // Getting variables not changes const make sure it doesnt
 	const float getPreviousY() const;
 	std::string enemyName;
 	void addKillTable(std::string name);

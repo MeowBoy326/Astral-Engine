@@ -135,13 +135,13 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	*/
 
 
-		//Get the width and the height of the whole map and store it in _size
+		// Get the width and the height of the whole map and store it in _size
 	int width, height;
 	mapNode->QueryIntAttribute("width", &width); //20 will be in our temp variable
 	mapNode->QueryIntAttribute("height", &height);
 	this->_size = Vector2(width, height); //Now we have the size of our map
 
-	//Get the width and the height of the Tiles and store it in _tileSize
+	// Get the width and the height of the Tiles and store it in _tileSize
 	int tileWidth, tileHeight;
 	mapNode->QueryIntAttribute("tilewidth", &tileWidth);
 	mapNode->QueryIntAttribute("tileheight", &tileHeight);
@@ -176,7 +176,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 			this->_tilesets.push_back(Tileset(tex, firstgid));
 			// we now loaded our tileset! But now we need to load each tile :( Check below at loading the layers
 
-			//Get all of the animations for that tileset
+			// Get all of the animations for that tileset
 			XMLElement* pTileA = pTileset->FirstChildElement("tile");
 			if (pTileA != NULL) {
 				while (pTileA) {
@@ -235,7 +235,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 											break; //last tile, no more, break.
 										}
 									}
-									//get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
+									// Get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
 									int gid = pTile->IntAttribute("gid");
 									int closest = 0;
 									Tileset tls;
@@ -262,7 +262,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 											break;
 										}
 									}
-									//Get the position of the tile in the level (confusing part)
+									// Get the position of the tile in the level (confusing part)
 									int xx = 0; // we need an x and y. We have a lot of variables so xx!
 									int yy = 0;
 									xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
@@ -332,7 +332,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									break; //last tile, no more, break.
 								}
 								}
-							//get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
+							// Get the tileset for this specific gid. For our current map we only have 1 tileset however that wont always be case so lets add the logic
 							int gid = pTile->IntAttribute("gid");
 							//Read out the flags for flipped tiles
 							SDL_RendererFlip tileFlip = SDL_FLIP_NONE;
@@ -377,7 +377,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 									break;
 								}
 							}
-							//Get the position of the tile in the level (confusing part)
+							// Get the position of the tile in the level (confusing part)
 							int xx = 0; // we need an x and y. We have a lot of variables so xx!
 							int yy = 0;
 							xx = tileCounter % width; //tile counter is which gid we are on(which tile we are on in the map) and mod(%) width
@@ -1011,7 +1011,7 @@ void Level::removeCutscene(std::string name)
 	}
 }
 
-std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { //Goes through all tiles and checks if they are colliding with other rectangle 
+std::vector<Rectangle> Level::checkTileCollisions(const Rectangle &other) { // Goes through all tiles and checks if they are colliding with other rectangle 
 	//(player enemy or anything) and it will add it to a list and return that list of rectangles and return every rectangle we are colliding with might be 
 	//more than 1
 	std::vector<Rectangle> others;
@@ -1532,7 +1532,7 @@ Vector2 Level::getTilesetPosition(Tileset tls, int gid, int tileWidth, int tileH
 	int tilesetWidth, tilesetHeight;
 	//pass in texture, format, access, width, height. We dont care about format or access so NULL and then reference to width/height
 	SDL_QueryTexture(tls.Texture, NULL, NULL, &tilesetWidth, &tilesetHeight);
-	//Get the tileset X position Subtract the gid - first gid of the tileset
+	// Get the tileset X position Subtract the gid - first gid of the tileset
 	//then modulo (TS width / T width)
 	int tsxx = (gid - tls.FirstGid) % (tilesetWidth / tileWidth);
 	tsxx *= tileWidth;

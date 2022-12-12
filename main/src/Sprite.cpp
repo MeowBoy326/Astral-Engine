@@ -188,7 +188,7 @@ void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) {
 	*bulletRect = { x, y, this->_sourceRect.w, this->_sourceRect.h };
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w * globals::PROJECTILE_SCALE, this->_sourceRect.h * globals::PROJECTILE_SCALE }; // where on screen we will be drawing
 	// Cout << "\ns::drawBullet x,y,h,w = " << destinationRectangle.x << ", " << destinationRectangle.y << ", " << destinationRectangle.h << ", " << destinationRectangle.w << endl;																															// Does drawing- Needs spriteSheet, pointer to sourceRectangle and pointer to destination which we just made;
-	//graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
+	// Graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, bulletRect);*/
 }
 

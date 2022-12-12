@@ -21,7 +21,7 @@ namespace {
 Title::Title() {}
 
 Title::Title(Graphics &graphics, Input &input, SDL_Event &event) :
-//graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
+// Graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
 AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0, 140)
 {
 	graphics.loadImage("data\\graphics\\dark_clouds.png"); //loads sprite sheet in

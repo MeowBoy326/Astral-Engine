@@ -260,7 +260,7 @@ void AnimatedSprite::drawTitle(Graphics &graphics, int x, int y) {
 
 		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; //pull out correct rectangle
 		graphics.windowBlitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
-		//graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
+		// Graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 }
 
