@@ -41,10 +41,10 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 
 	this->_settings = Sprite(graphics, "data\\graphics\\startGame.png", 0, 153, 95, 22, 215, 355);
 	this->_settingsMenu = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 195, 40, 42, 35, 70);
-	this->_settingsVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 320, 150);
-	this->_settingsVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 335, 155);
-	this->_settingsSfxVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 320, 185);
-	this->_settingsSfxVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 335, 190);
+	this->_settingsVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 345, 150);
+	this->_settingsVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 360, 155);
+	this->_settingsSfxVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 345, 185);
+	this->_settingsSfxVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 360, 190);
 
 	this->_exitMenu = Sprite(graphics, "data\\npc\\npcTextBox.png", 155, 51, 76, 26, 320, 300);
 
@@ -314,9 +314,9 @@ void Title::draw(Graphics &graphics) {
 		this->_settingsVolumePercent.drawVolumeBar(graphics, this->_settingsVolumePercent.getX(), this->_settingsVolumePercent.getY());
 		std::string label = "BGM Volume: ";
 		if (changeBgmVolume)
-			this->drawSettings(graphics, 240, 155, label, 10, {255,255,0,255});
+			this->drawSettings(graphics, 240, 155, label, 12, {255,255,0,255});
 		else
-			this->drawSettings(graphics, 240, 155, label, 10);
+			this->drawSettings(graphics, 240, 155, label, 12);
 		label = std::to_string(bgmVolumePercent) + "%";
 		this->drawSettings(graphics, 375, 145, label, 10);
 
@@ -325,15 +325,15 @@ void Title::draw(Graphics &graphics) {
 		this->_settingsSfxVolumePercent.drawVolumeBar(graphics, this->_settingsSfxVolumePercent.getX(), this->_settingsSfxVolumePercent.getY());
 		label = "SFX Volume: ";
 		if (changeSfxVolume)
-			this->drawSettings(graphics, 240, 185, label, 10, { 255,255,0,255 });
+			this->drawSettings(graphics, 240, 185, label, 12, { 255,255,0,255 });
 		else
-			this->drawSettings(graphics, 240, 185, label, 10);
+			this->drawSettings(graphics, 240, 185, label, 12);
 		label = std::to_string(sfxVolumePercent) + "%";
 		this->drawSettings(graphics, 375, 175, label, 10);
 
 		// Exit
 		label = "Exit";
-		this->drawSettings(graphics, 240, 215, label, 10);
+		this->drawSettings(graphics, 240, 215, label, 12);
 	}
 	if (exitMenu) {
 		this->_exitMenu.drawSaveMenu(graphics, this->_exitMenu.getX(), this->_exitMenu.getY());
