@@ -80,41 +80,86 @@ void Npc::drawNpcIcon(Graphics & graphics, const std::string name, int posX, int
 int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 {
 	this->endOfChat = false;
-	XMLDocument xml;
-	XMLError result;
-	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
-	cwd.append(name + ".xml");
-	std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "npc";
-	nCwd.append("temp.xml");
-	AESCipher cipher;
-	cipher.AESDecrypt(cwd.string(), nCwd.string());
-	result = xml.LoadFile(nCwd.string().c_str());
-	if (result != tinyxml2::XML_SUCCESS)
-		std::cout << "Could not read the file!";
-	XMLNode* root = xml.FirstChild();
-	if (root == nullptr) {
-		std::cout << XML_ERROR_FILE_READ_ERROR << std::endl;
-		return XML_ERROR_FILE_READ_ERROR;
+	//XMLDocument xml;
+	//XMLError result;
+	//std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
+	//cwd.append(name + ".xml");
+	//std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "npc";
+	//nCwd.append("temp.xml");
+	//AESCipher cipher;
+	//cipher.AESDecrypt(cwd.string(), nCwd.string());
+	//result = xml.LoadFile(nCwd.string().c_str());
+	//if (result != tinyxml2::XML_SUCCESS)
+	//	std::cout << "Could not read the file!";
+	//XMLNode* root = xml.FirstChild();
+	//if (root == nullptr) {
+	//	std::cout << XML_ERROR_FILE_READ_ERROR << std::endl;
+	//	return XML_ERROR_FILE_READ_ERROR;
+	//}
+	//XMLElement* element = root->FirstChildElement("Talk");
+	//if (element == nullptr)
+	//	return XML_ERROR_PARSING_ELEMENT;
+	//// Get number of lines here
+	//result = element->QueryIntAttribute("lines", &this->lines);
+	//const char* textPtr = nullptr;
+	//textPtr = element->Attribute((char*)&this->lineChar);
+	//std::string text = textPtr;
+	////this->drawNpcText(graphics, 100, 100, text, posX, posY);
+	//this->drawNpcDialogue(graphics, 100, 100, text, posX, posY);
+	//cipher.AESEncrypt(nCwd.string(), cwd.string());
+	//XMLCheckResult(result);
+
+	//if (this->npcDialogueTable)
+
+
+	lua_State* L = luaL_newstate(); // create a new Lua state
+	luaL_openlibs(L); // load Lua standard libraries
+	luaL_dofile(L, "data/npc/luna.lua"); // load the dialogue script file
+
+	// retrieve the number and string from the script file
+	lua_getglobal(L, "lines"); // push the "num" variable onto the stack
+	int lines = lua_tonumber(L, -1); // retrieve the number from the top of the stack
+	lua_pop(L, 1); // remove the number from the stack
+
+	int lineID;
+
+	auto it = std::find_if(npcDialogueTable.begin(), npcDialogueTable.end(), [&name](const auto& t) {return t.first == name; });
+	auto distance = std::distance(this->npcDialogueTable.begin(), it);
+	if (it != npcDialogueTable.end()) {
+		if (npcDialogueTable[distance].second > lines) {
+			// Set to +1 of the max amount of lines so we don't have to deal with lineID becoming a large number.
+			lineID = lines + 1; 
+			npcDialogueTable[distance].second = lineID;
+		}
+		lineID = npcDialogueTable[distance].second;
 	}
-	XMLElement* element = root->FirstChildElement("Talk");
-	if (element == nullptr)
-		return XML_ERROR_PARSING_ELEMENT;
-	// Get number of lines here
-	result = element->QueryIntAttribute("lines", &this->lines);
-	const char* textPtr = nullptr;
-	textPtr = element->Attribute((char*)&this->lineChar);
-	std::string text = textPtr;
-	//this->drawNpcText(graphics, 100, 100, text, posX, posY);
-	this->drawNpcDialogue(graphics, 100, 100, text, posX, posY);
-	cipher.AESEncrypt(nCwd.string(), cwd.string());
-	XMLCheckResult(result);
+	else {
+		this->npcDialogueTable.push_back(std::make_pair(name, 1));
+		lineID = 1;
+	}
+
+	// push the function and arguments onto the stack
+	lua_getglobal(L, "getDialogue"); // push the function
+	lua_pushinteger(L, lineID); // push the NPC ID argument
+
+	// call the function with 1 argument and 1 result
+	lua_call(L, 1, 1);
+
+	// retrieve the result from the top of the stack
+	std::string dialogueText = lua_tostring(L, -1);
+
+	// clean up the stack and close the Lua state
+	lua_pop(L, 1);
+	lua_close(L);
+
+	this->drawNpcDialogue(graphics, 100, 100, dialogueText, posX, posY);
 	return 0;
 }
 
 int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Player &player)
 {
 	// If (questState == false) {
-		XMLDocument xml;
+		/*XMLDocument xml;
 		std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
 		cwd.append(name + ".xml");
 		std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "npc";
@@ -148,8 +193,51 @@ int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Pla
 			cipher.AESEncrypt(nCwd.string(), cwd.string());
 			XMLCheckResult(result);
 		}
-		XMLCheckResult(result);
-		return 0;
+		XMLCheckResult(result);*/
+
+	int lineID;
+
+	auto it = std::find_if(npcDialogueTable.begin(), npcDialogueTable.end(), [&name](const auto& t) {return t.first == name; });
+	auto distance = std::distance(this->npcDialogueTable.begin(), it);
+	if (it != npcDialogueTable.end()) {
+		npcDialogueTable[distance].second += 1;
+		lineID = npcDialogueTable[distance].second;
+	}
+	else {
+		this->npcDialogueTable.push_back(std::make_pair(name, 1));
+		lineID = 1;
+	}
+
+	lua_State* L = luaL_newstate(); // create a new Lua state
+	luaL_openlibs(L); // load Lua standard libraries
+	luaL_dofile(L, "data/npc/luna.lua"); // load the dialogue script file
+
+	// retrieve the number and string from the script file
+	lua_getglobal(L, "lines"); // push the "num" variable onto the stack
+	int lines = lua_tonumber(L, -1); // retrieve the number from the top of the stack
+	lua_pop(L, 1); // remove the number from the stack
+
+	// push the function and arguments onto the stack
+	lua_getglobal(L, "getDialogue"); // push the function
+	lua_pushinteger(L, lineID); // push the NPC ID argument
+
+	// call the function with 1 argument and 1 result
+	lua_call(L, 1, 1);
+
+	// retrieve the result from the top of the stack
+	std::string dialogueText = lua_tostring(L, -1);
+
+	// clean up the stack and close the Lua state
+	lua_pop(L, 1);
+	lua_close(L);
+
+	this->drawNpcDialogue(graphics, 100, 100, dialogueText, posX, posY);
+
+	if (lineID > lines) {
+		this->endOfChat = true;
+	}
+
+	return 0;
 }
 
 void Npc::resetScripts()

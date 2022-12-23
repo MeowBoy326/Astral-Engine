@@ -65,6 +65,8 @@ protected:
 	std::vector<std::tuple<std::string, int, std::string, int, std::string, std::string, int, std::string, int, int>> questTable;
 	// QuestName, type, object, amount, isCompleted, isRewarded
 	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> questLog;
+	// Name of NPC, DialogueID player has reached
+	std::vector<std::pair<std::string, int>> npcDialogueTable;
 
 	int _maxHealth;
 	int _currentHealth;
