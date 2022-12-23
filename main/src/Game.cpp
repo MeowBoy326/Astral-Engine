@@ -268,399 +268,402 @@ void Game::gameLoop() {
 				std::cout << "Game pause state = " << pauseGame << std::endl;
 			} 
 
-			if (activeSave && input.wasKeyPressed(SDL_SCANCODE_A) && this->_player.getCurrentHealth() > 0) {
-				activeSaveMenu = true;
-			}
+			if (!pauseGame) {
 
-			if (activeSaveMenu) {
-				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-					if (saveSelection == 1) {
-						this->saveGame(graphics);
-						this->_player.setEventMessage("SAVED SUCESSFULLY.");
+				if (activeSave && input.wasKeyPressed(SDL_SCANCODE_A) && this->_player.getCurrentHealth() > 0) {
+					activeSaveMenu = true;
+				}
+
+				if (activeSaveMenu) {
+					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+						if (saveSelection == 1) {
+							this->saveGame(graphics);
+							this->_player.setEventMessage("SAVED SUCESSFULLY.");
+						}
+						activeSaveMenu = false;
+						activeSave = false;
 					}
+					if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
+						if (saveSelection == 1)
+							this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+						else if (saveSelection != 1) {
+							saveSelection--;
+							this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
+						if (saveSelection == 2)
+							this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+						else if (saveSelection != 2) {
+							saveSelection++;
+							this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+						}
+					}
+				}
+
+				// Bullet
+				if (input.wasKeyPressed(SDL_SCANCODE_X) && input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)
+					&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
+					std::cout << "Bullet right up diag test..." << std::endl;
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
+						this->_level.generateProjectile(graphics, this->_player);
+						Mix_PlayChannel(-1, sBullet, 0);
+					}
+				}
+
+				else if (input.wasKeyPressed(SDL_SCANCODE_X) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false
+						&& !activeSaveMenu) {
+						/*if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)) {
+							this->_level.generateProjectile(graphics, this->_player);
+							Mix_PlayChannel(-1, sBullet, 0);
+						}*/
+						/*else if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_LEFT)) {
+							this->_level.generateProjectile(graphics, this->_player);
+							Mix_PlayChannel(-1, sBullet, 0);
+						}*/
+						this->_level.generateProjectile(graphics, this->_player);
+						Mix_PlayChannel(-1, sBullet, 0);
+					}
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
+					activeInventory = false;
+					activeSave = false;
 					activeSaveMenu = false;
-					activeSave = false;	
-				}
-				if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
-					if (saveSelection == 1)
-						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-					else if (saveSelection != 1) {
-						saveSelection--;
-						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-					}
-				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
-					if (saveSelection == 2)
-						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-					else if (saveSelection != 2) {
-						saveSelection++;
-						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-					}
-				}
-			}
-
-			// Bullet
-			if (input.wasKeyPressed(SDL_SCANCODE_X) && input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)
-				&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
-				std::cout << "Bullet right up diag test..." << std::endl;
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
-					this->_level.generateProjectile(graphics, this->_player);
-					Mix_PlayChannel(-1, sBullet, 0);
-				}
-			}
-
-			else if (input.wasKeyPressed(SDL_SCANCODE_X) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false
-					&& !activeSaveMenu) {
-					/*if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)) {
-						this->_level.generateProjectile(graphics, this->_player);
-						Mix_PlayChannel(-1, sBullet, 0);
-					}*/
-					/*else if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_LEFT)) {
-						this->_level.generateProjectile(graphics, this->_player);
-						Mix_PlayChannel(-1, sBullet, 0);
-					}*/
-					this->_level.generateProjectile(graphics, this->_player);
-					Mix_PlayChannel(-1, sBullet, 0);
-				}
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
-				activeInventory = false;
-				activeSave = false;
-				activeSaveMenu = false;
-				activeTalk = false;
-				this->_chatBox.setTextStatus(false);
-				this->_npc.setNpcTalk(false);
-				this->_npc.setQuestMenuState(false);
-				this->_npc.setQuestState(false);
-				this->_npc.setQuestDone(false);
-				this->_npc.setNoQuest(false);
-				this->_npc.resetScripts();
-				npcSelection = 1;
-				questSelection = 1;
-				activeStatMenu = false;
-			}
-			// If (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0
-			//	&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
-
-			//	// This->saveGame(graphics);
-			//	// Std::cout << "Quitting Game..." << std::endl;
-			//	// Return; // Quit game if ESC was pressed
-			//}
-			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.moveLeft();
-					if (this->_player.isGrounded() && walkSound == false) {
-						// Mix_PlayChannel(321, seWalk, -1);
-						Mix_Resume(321);
-						walkSound = true;
-					}
-				}
-				else if (activeTalk == true) {
-					std::cout << "impaired action" << std::endl;
-				}
-			 
-			}
-			else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.moveRight();
-					if (this->_player.isGrounded() && walkSound == false) {
-						Mix_Resume(321);
-						walkSound = true;
-					}
-						
-				}
-				else if (activeTalk == true) {
-					std::cout << "impaired action" << std::endl;
-				}
-			
-			}
-
-			if (input.wasKeyReleased(SDL_SCANCODE_LEFT) == true || input.wasKeyReleased(SDL_SCANCODE_RIGHT) == true) {
-				Mix_Pause(321);
-				walkSound = false;
-			}
-
-			/*if (isClimbing && input.wasKeyPressed(SDL_SCANCODE_UP)) {
-				this->_player.setClimbing(true);
-			}*/
-
-			if (input.isKeyHeld(SDL_SCANCODE_UP) == true &&
-				(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
-					&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
-					&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN)) 
-				&& this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.lookUp();
-					if (isClimbing) {
-						this->_player.setClimbing(true);
-						this->_player.moveUp();
-					}
-				}
-			}
-			if (input.isKeyHeld(SDL_SCANCODE_UP) == true /*&&
-				(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
-					&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
-					&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN))*/
-				&& this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.lookUp();
-				}
-			}
-			else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true && 
-				(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
-				&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
-				&& !input.isKeyHeld(SDL_SCANCODE_UP) && !input.wasKeyPressed(SDL_SCANCODE_UP))
-				&& this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.lookDown();
-					if (isClimbing) {
-						this->_player.setClimbing(true);
-						this->_player.moveDown();
-					}
-				}
-			}
-			if (input.wasKeyReleased(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
-					this->_player.stopLookingUp();
-			}
-			if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
-					this->_player.stopLookingDown();
-			}
-
-			if (input.isKeyHeld(SDL_SCANCODE_SPACE) && jetPack && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.useJetPack();
-				}
-			}
-
-			else if (!jetPack && input.isKeyHeld(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0){
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.jump();
-					if (!jumpSound)
-						Mix_PlayChannel(-1, seJump, 0);
-					jumpSound = true;
-				}
-				else if (activeTalk == true) {
-					std::cout << "impaired action" << std::endl;
-				}
-			}
-			if (input.wasKeyReleased(SDL_SCANCODE_SPACE) && this->_player.getCurrentHealth() > 0) {
-				if (this->_player.canShortJump() && activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.setPlayerDY(0);
-					this->_player.setShortJump(false);
-					jumpSound = false;
-				}
-			}
-			if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT) && this->_player.getCurrentHealth() > 0) {
-				// If player isnt moving left or right(at all) do stopMoving function
-				this->_player.stopMoving();
-			}
-			
-			if (input.wasKeyPressed(SDL_SCANCODE_A) == true && activeInventory == false && activeStatMenu == false 
-				&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
-				if (activeTalk == false && npcName != ""){
-					activeTalk = true;
-					this->_chatBox.setTextStatus(true);
-					this->_chatBox.drawChatBox(graphics, this->_player);
-					this->_npc.setNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
-					this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
-					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					this->_npc.loadQuests(npcName);
-				}
-				else if (activeTalk == true) {
 					activeTalk = false;
 					this->_chatBox.setTextStatus(false);
+					this->_npc.setNpcTalk(false);
+					this->_npc.setQuestMenuState(false);
+					this->_npc.setQuestState(false);
+					this->_npc.setQuestDone(false);
+					this->_npc.setNoQuest(false);
 					this->_npc.resetScripts();
+					npcSelection = 1;
+					questSelection = 1;
+					activeStatMenu = false;
 				}
-			}
+				// If (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0
+				//	&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
 
-			if (activeTalk) {
-				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && this->_player.getCurrentHealth() > 0) {
-					// Chat
-					if (this->_npc.getQuestState() == true) {
+				//	// This->saveGame(graphics);
+				//	// Std::cout << "Quitting Game..." << std::endl;
+				//	// Return; // Quit game if ESC was pressed
+				//}
+				else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.moveLeft();
+						if (this->_player.isGrounded() && walkSound == false) {
+							// Mix_PlayChannel(321, seWalk, -1);
+							Mix_Resume(321);
+							walkSound = true;
+						}
+					}
+					else if (activeTalk == true) {
+						std::cout << "impaired action" << std::endl;
+					}
+
+				}
+				else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.moveRight();
+						if (this->_player.isGrounded() && walkSound == false) {
+							Mix_Resume(321);
+							walkSound = true;
+						}
+
+					}
+					else if (activeTalk == true) {
+						std::cout << "impaired action" << std::endl;
+					}
+
+				}
+
+				if (input.wasKeyReleased(SDL_SCANCODE_LEFT) == true || input.wasKeyReleased(SDL_SCANCODE_RIGHT) == true) {
+					Mix_Pause(321);
+					walkSound = false;
+				}
+
+				/*if (isClimbing && input.wasKeyPressed(SDL_SCANCODE_UP)) {
+					this->_player.setClimbing(true);
+				}*/
+
+				if (input.isKeyHeld(SDL_SCANCODE_UP) == true &&
+					(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
+						&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
+						&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN))
+					&& this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.lookUp();
+						if (isClimbing) {
+							this->_player.setClimbing(true);
+							this->_player.moveUp();
+						}
+					}
+				}
+				if (input.isKeyHeld(SDL_SCANCODE_UP) == true /*&&
+					(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
+						&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
+						&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN))*/
+					&& this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.lookUp();
+					}
+				}
+				else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true &&
+					(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
+						&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
+						&& !input.isKeyHeld(SDL_SCANCODE_UP) && !input.wasKeyPressed(SDL_SCANCODE_UP))
+					&& this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.lookDown();
+						if (isClimbing) {
+							this->_player.setClimbing(true);
+							this->_player.moveDown();
+						}
+					}
+				}
+				if (input.wasKeyReleased(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
+						this->_player.stopLookingUp();
+				}
+				if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
+						this->_player.stopLookingDown();
+				}
+
+				if (input.isKeyHeld(SDL_SCANCODE_SPACE) && jetPack && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.useJetPack();
+					}
+				}
+
+				else if (!jetPack && input.isKeyHeld(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.jump();
+						if (!jumpSound)
+							Mix_PlayChannel(-1, seJump, 0);
+						jumpSound = true;
+					}
+					else if (activeTalk == true) {
+						std::cout << "impaired action" << std::endl;
+					}
+				}
+				if (input.wasKeyReleased(SDL_SCANCODE_SPACE) && this->_player.getCurrentHealth() > 0) {
+					if (this->_player.canShortJump() && activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.setPlayerDY(0);
+						this->_player.setShortJump(false);
+						jumpSound = false;
+					}
+				}
+				if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT) && this->_player.getCurrentHealth() > 0) {
+					// If player isnt moving left or right(at all) do stopMoving function
+					this->_player.stopMoving();
+				}
+
+				if (input.wasKeyPressed(SDL_SCANCODE_A) == true && activeInventory == false && activeStatMenu == false
+					&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
+					if (activeTalk == false && npcName != "") {
+						activeTalk = true;
+						this->_chatBox.setTextStatus(true);
+						this->_chatBox.drawChatBox(graphics, this->_player);
+						this->_npc.setNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
+						this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
+						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						this->_npc.loadQuests(npcName);
+					}
+					else if (activeTalk == true) {
 						activeTalk = false;
 						this->_chatBox.setTextStatus(false);
-						this->_npc.setNpcTalk(false);
-						this->_npc.setQuestMenuState(false);
-						this->_npc.setQuestState(false);
-						this->_npc.setQuestDone(false);
-						this->_npc.setNoQuest(false);
 						this->_npc.resetScripts();
-						npcSelection = 1;
-						questSelection = 1;
 					}
-					else if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
-						this->_npc.setNpcTalk(true);
-						this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
-					}
-					else if (npcSelection == 1 && this->_npc.getNpcTalk()) {
-						this->_npc.playNext(npcName, graphics, this->_player.getX(), this->_player.getY(), this->_player);
-						if (this->_npc.getChatStatus()) {
-							this->_npc.setNpcTalk(false);
+				}
+
+				if (activeTalk) {
+					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && this->_player.getCurrentHealth() > 0) {
+						// Chat
+						if (this->_npc.getQuestState() == true) {
 							activeTalk = false;
 							this->_chatBox.setTextStatus(false);
+							this->_npc.setNpcTalk(false);
+							this->_npc.setQuestMenuState(false);
+							this->_npc.setQuestState(false);
+							this->_npc.setQuestDone(false);
+							this->_npc.setNoQuest(false);
 							this->_npc.resetScripts();
+							npcSelection = 1;
+							questSelection = 1;
 						}
-					}
-					// Quests
-					else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
-						this->_npc.setNpcTalk(true);
-						this->_npc.setQuestMenuState(true);
-						this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
-					}
-					else if (npcSelection == 2 && this->_npc.getNpcTalk() && this->_npc.checkNoQuests() == false) {
-						if (questSelection == 1) {
-							this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), 
-								this->_player, questSelection - 1);
+						else if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
+							this->_npc.setNpcTalk(true);
+							this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 						}
-						else if (questSelection == 2) {
-							this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), 
-								this->_player, questSelection - 1);
+						else if (npcSelection == 1 && this->_npc.getNpcTalk()) {
+							this->_npc.playNext(npcName, graphics, this->_player.getX(), this->_player.getY(), this->_player);
+							if (this->_npc.getChatStatus()) {
+								this->_npc.setNpcTalk(false);
+								activeTalk = false;
+								this->_chatBox.setTextStatus(false);
+								this->_npc.resetScripts();
+							}
 						}
+						// Quests
+						else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
+							this->_npc.setNpcTalk(true);
+							this->_npc.setQuestMenuState(true);
+							this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
+						}
+						else if (npcSelection == 2 && this->_npc.getNpcTalk() && this->_npc.checkNoQuests() == false) {
+							if (questSelection == 1) {
+								this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(),
+									this->_player, questSelection - 1);
+							}
+							else if (questSelection == 2) {
+								this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(),
+									this->_player, questSelection - 1);
+							}
+						}
+						else if (this->_npc.checkNoQuests()) {
+							activeTalk = false;
+							this->_chatBox.setTextStatus(false);
+							this->_npc.setNpcTalk(false);
+							this->_npc.setQuestMenuState(false);
+							this->_npc.setQuestState(false);
+							this->_npc.setQuestDone(false);
+							this->_npc.setNoQuest(false);
+							this->_npc.resetScripts();
+							npcSelection = 1;
+							questSelection = 1;
+						}
+
 					}
-					else if (this->_npc.checkNoQuests()) {
-						activeTalk = false;
-						this->_chatBox.setTextStatus(false);
+
+					if (input.wasKeyPressed(SDL_SCANCODE_DELETE) == true) {
 						this->_npc.setNpcTalk(false);
+						this->_chatBox.setTextStatus(false);
+						activeTalk = false;
 						this->_npc.setQuestMenuState(false);
-						this->_npc.setQuestState(false);
-						this->_npc.setQuestDone(false);
-						this->_npc.setNoQuest(false);
 						this->_npc.resetScripts();
-						npcSelection = 1;
-						questSelection = 1;
 					}
-					
+
+					if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getNpcTalk() == false
+						&& this->_npc.getQuestMenuState() == false) {
+						if (npcSelection == 1)
+							this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						else if (npcSelection != 1) {
+							npcSelection--;
+							this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getNpcTalk() == false
+						&& this->_npc.getQuestMenuState() == false) {
+						if (npcSelection == 2)
+							this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						else if (npcSelection != 2) {
+							npcSelection++;
+							this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getQuestMenuState() == true) {
+						if (questSelection == 1)
+							this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						else {
+							questSelection--;
+							this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getQuestMenuState() == true) {
+						if (questSelection == 2)
+							this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						else {
+							questSelection++;
+							this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						}
+					}
 				}
 
-				if (input.wasKeyPressed(SDL_SCANCODE_DELETE) == true) {
-					this->_npc.setNpcTalk(false);
-					this->_chatBox.setTextStatus(false);
-					activeTalk = false;
-					this->_npc.setQuestMenuState(false);
-					this->_npc.resetScripts();
-				}
-
-				if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getNpcTalk() == false 
-					&& this->_npc.getQuestMenuState() == false) {
-					if (npcSelection == 1)
-						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					else if (npcSelection != 1) {
-						npcSelection--;
-						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					}
-				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getNpcTalk() == false 
-					&& this->_npc.getQuestMenuState() == false) {
-					if (npcSelection == 2)
-						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					else if (npcSelection != 2) {
-						npcSelection++;
-						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					}
-				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getQuestMenuState() == true) {
-					if (questSelection == 1)
-						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					else {
-						questSelection--;
-						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					}
-				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getQuestMenuState() == true) {
-					if (questSelection == 2)
-						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					else {
-						questSelection++;
-						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					}
-				}
-			}
-
-			if (input.wasKeyPressed(SDL_SCANCODE_D) == true && this->_player.getCurrentHealth() > 0) {
-				if (!activeStatMenu) {
-					selection = 1;
-					activeStatMenu = true;
-					this->_player.drawStatMenu(graphics, this->_player, selection);
-				}
-				else
-					activeStatMenu = false;
-			}
-
-			if (activeStatMenu) {
-				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-					this->_player.statChoice(selection);
-				}
-				if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
-					if (selection == 1)
-						this->_player.drawStatMenu(graphics, this->_player, selection);
-					else if (selection != 1) {
-						selection--;
+				if (input.wasKeyPressed(SDL_SCANCODE_D) == true && this->_player.getCurrentHealth() > 0) {
+					if (!activeStatMenu) {
+						selection = 1;
+						activeStatMenu = true;
 						this->_player.drawStatMenu(graphics, this->_player, selection);
 					}
+					else
+						activeStatMenu = false;
 				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
-					if (selection == 3)
-						this->_player.drawStatMenu(graphics, this->_player, selection);
-					else if (selection != 3) {
-						selection++;
-						this->_player.drawStatMenu(graphics, this->_player, selection);
+
+				if (activeStatMenu) {
+					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+						this->_player.statChoice(selection);
+					}
+					if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
+						if (selection == 1)
+							this->_player.drawStatMenu(graphics, this->_player, selection);
+						else if (selection != 1) {
+							selection--;
+							this->_player.drawStatMenu(graphics, this->_player, selection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
+						if (selection == 3)
+							this->_player.drawStatMenu(graphics, this->_player, selection);
+						else if (selection != 3) {
+							selection++;
+							this->_player.drawStatMenu(graphics, this->_player, selection);
+						}
 					}
 				}
-			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_S) == true && activeStatMenu == false && activeTalk == false 
-				&& this->_player.getCurrentHealth() > 0) {
-				if (activeInventory == false) {
-					activeInventory = true;
-					this->_inventory.draw(graphics, this->_player);
+				if (input.wasKeyPressed(SDL_SCANCODE_S) == true && activeStatMenu == false && activeTalk == false
+					&& this->_player.getCurrentHealth() > 0) {
+					if (activeInventory == false) {
+						activeInventory = true;
+						this->_inventory.draw(graphics, this->_player);
+					}
+
+					else if (activeInventory == true) {
+						activeInventory = false;
+					}
 				}
 
-				else if (activeInventory == true) {
-					activeInventory = false;
+				if (input.wasKeyPressed(SDL_SCANCODE_Z) == true && this->_player.getCurrentHealth() > 0) {
+					if (pickUp == false) {
+						pickUp = true;
+					}
+					else if (pickUp == true) {
+						pickUp = false;
+					}
 				}
-			}
-
-			if (input.wasKeyPressed(SDL_SCANCODE_Z) == true && this->_player.getCurrentHealth() > 0) {
-				if (pickUp == false) {
-					pickUp = true;
+				if (input.wasKeyPressed(SDL_SCANCODE_C) == true && this->_player.getCurrentHealth() > 0) {
+					_inventory.useItem(0, this->_player);
 				}
-				else if (pickUp == true) {
-					pickUp = false;
+				if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
+					// Add weapon swap here
 				}
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_C) == true && this->_player.getCurrentHealth() > 0) {
-				_inventory.useItem(0, this->_player);
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
-				// Add weapon swap here
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
-				// Add weapon swap here
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_3) == true) {
-				if (this->_player.checkEquipmentUnlocked("JetPack")) {
-					jetPack = !jetPack;
-					std::cout << "JetPack state = " << jetPack << std::endl;
+				if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
+					// Add weapon swap here
 				}
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_F5) == true) {
-				showPlayerOutline = !showPlayerOutline;
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_F6) == true) {
-				showEnemyOutline = !showEnemyOutline;
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_F7) == true) {
-				showCollisionOutline = !showCollisionOutline;
-			}
-			if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
-				if (!deathSound) {
-					Mix_PlayChannel(-1, sePlDie, 0);
-					deathSound = true;
+				if (input.wasKeyPressed(SDL_SCANCODE_3) == true) {
+					if (this->_player.checkEquipmentUnlocked("JetPack")) {
+						jetPack = !jetPack;
+						std::cout << "JetPack state = " << jetPack << std::endl;
+					}
 				}
-				this->_player.startDeath();
+				if (input.wasKeyPressed(SDL_SCANCODE_F5) == true) {
+					showPlayerOutline = !showPlayerOutline;
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_F6) == true) {
+					showEnemyOutline = !showEnemyOutline;
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_F7) == true) {
+					showCollisionOutline = !showCollisionOutline;
+				}
+				if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
+					if (!deathSound) {
+						Mix_PlayChannel(-1, sePlDie, 0);
+						deathSound = true;
+					}
+					this->_player.startDeath();
+				}
 			}
 		const int CURRENT_TIME_MS = SDL_GetTicks();
 		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
