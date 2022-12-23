@@ -93,7 +93,8 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 	const char* textPtr = nullptr;
 	textPtr = element->Attribute((char*)&this->lineChar);
 	std::string text = textPtr;
-	this->drawNpcText(graphics, 100, 100, text, posX, posY);
+	//this->drawNpcText(graphics, 100, 100, text, posX, posY);
+	this->drawNpcDialogue(graphics, 100, 100, text, posX, posY);
 	cipher.AESEncrypt(nCwd.string(), cwd.string());
 	XMLCheckResult(result);
 	return 0;

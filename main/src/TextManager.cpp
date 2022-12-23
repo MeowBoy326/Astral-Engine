@@ -112,6 +112,59 @@ void TextManager::drawNpcText(Graphics &graphics, int x, int y, const std::strin
 	SDL_DestroyTexture(tex);
 }
 
+void TextManager::drawNpcDialogue(Graphics& graphics, int x, int y, const std::string& str, int posX, int posY,
+	SDL_Color color) {
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(2);
+	}
+	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 22);
+
+	if (!font) {
+		// Error loading font
+		return;
+	}
+
+	// Set the maximum width of the textbox
+	int maxWidth = 500;
+
+	// Set the color of the text
+	SDL_Color textColor = { 0, 0, 0, 255 };
+
+	// Render the text
+	SDL_Surface *dialogue = TTF_RenderUTF8_Blended_Wrapped(font, str.c_str(), color, maxWidth);
+
+	// Check if the text was rendered successfully
+	if (!dialogue) {
+		// Error rendering text
+		return;
+	}
+
+	// Create a texture from the rendered text
+	SDL_Texture *textTexture = SDL_CreateTextureFromSurface(graphics.getRenderer(), dialogue);
+
+	// Check if the texture was created successfully
+	if (!textTexture) {
+		// Error creating texture
+		return;
+	}
+
+	// Set the position of the textbox
+	SDL_Rect textRect = { posX - 370, posY - 115, dialogue->w, dialogue->h };
+
+	//std::cout << "x/y = " << textRect.x << "," << textRect.y << std::endl;
+
+	// Render the text texture to the screen
+	SDL_RenderCopy(graphics.getRenderer(), textTexture, NULL, &textRect);
+
+	// Free the text surface and texture
+	SDL_FreeSurface(dialogue);
+	SDL_DestroyTexture(textTexture);
+
+	// Close the font and quit the SDL2_ttf library
+	TTF_CloseFont(font);
+}
+
 void TextManager::drawSceneDialogue(Graphics & graphics, int posX, int posY, const std::string & str, SDL_Color color)
 {
 	// TTF_Init();
