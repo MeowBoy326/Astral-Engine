@@ -114,7 +114,8 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 
 	lua_State* L = luaL_newstate(); // create a new Lua state
 	luaL_openlibs(L); // load Lua standard libraries
-	luaL_dofile(L, "data/npc/luna.lua"); // load the dialogue script file
+	std::string scriptName = "data/npc/" + name + ".lua";
+	luaL_dofile(L, scriptName.c_str()); // load the dialogue script file
 
 	// retrieve the number and string from the script file
 	lua_getglobal(L, "lines"); // push the "num" variable onto the stack
@@ -210,7 +211,8 @@ int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Pla
 
 	lua_State* L = luaL_newstate(); // create a new Lua state
 	luaL_openlibs(L); // load Lua standard libraries
-	luaL_dofile(L, "data/npc/luna.lua"); // load the dialogue script file
+	std::string scriptName = "data/npc/" + name + ".lua";
+	luaL_dofile(L, scriptName.c_str()); // load the dialogue script file
 
 	// retrieve the number and string from the script file
 	lua_getglobal(L, "lines"); // push the "num" variable onto the stack
