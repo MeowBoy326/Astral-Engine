@@ -58,6 +58,7 @@ namespace {
 	bool isClimbing = false;
 	bool jetPack = false;
 	bool resetGame = false;
+	bool pauseGame = false;
 	bool showPlayerOutline = false;
 	bool showEnemyOutline = false;
 	bool showCollisionOutline = false;
@@ -261,6 +262,11 @@ void Game::gameLoop() {
 					return; // When the game ends or user exits
 				}
 			}
+
+			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) && this->_player.getCurrentHealth() > 0) {
+				pauseGame = !pauseGame;
+				std::cout << "Game pause state = " << pauseGame << std::endl;
+			} 
 
 			if (activeSave && input.wasKeyPressed(SDL_SCANCODE_A) && this->_player.getCurrentHealth() > 0) {
 				activeSaveMenu = true;
@@ -1143,88 +1149,98 @@ void Game::setSettings() {
 }
 
 void Game::update(float elapsedTime, Graphics &graphics) {
-	this->_player.update(elapsedTime); 
+	if (!pauseGame) {
+		this->_player.update(elapsedTime);
 
-	if (this->_player.getCurrentHealth() <= 0 && this->_player.checkDeathPlayed()) {
-		GAMEOVER = true;
-		Mix_PlayChannel(-1, gameOver, 0);
-	}
-	else {
-		if (this->_player.getPlayerHit()) {
-			Mix_PlayChannel(-1, sePlHit, 0);
-			this->_player.setPlayerHit(false);
+		if (this->_player.getCurrentHealth() <= 0 && this->_player.checkDeathPlayed()) {
+			GAMEOVER = true;
+			Mix_PlayChannel(-1, gameOver, 0);
 		}
-		this->_level.update(elapsedTime, this->_player);
-	    // Hud goes on top of everything
-		this->_hud.update(elapsedTime, this->_player);
-
-		if (!this->_level.getMapBGM().empty()) {
-			if (BGM != this->_level.getMapBGM()) {
-				std::string bgmMusic = "data\\sound\\";
-				bgmMusic.append(this->_level.getMapBGM());
-				BGM = this->_level.getMapBGM();
-				gMusic = Mix_LoadMUS(bgmMusic.c_str());
-				Mix_PlayMusic(gMusic, -1);
+		else {
+			if (this->_player.getPlayerHit()) {
+				Mix_PlayChannel(-1, sePlHit, 0);
+				this->_player.setPlayerHit(false);
 			}
-		}
+			this->_level.update(elapsedTime, this->_player);
+			// Hud goes on top of everything
+			this->_hud.update(elapsedTime, this->_player);
+
+			if (!this->_level.getMapBGM().empty()) {
+				if (BGM != this->_level.getMapBGM()) {
+					std::string bgmMusic = "data\\sound\\";
+					bgmMusic.append(this->_level.getMapBGM());
+					BGM = this->_level.getMapBGM();
+					gMusic = Mix_LoadMUS(bgmMusic.c_str());
+					Mix_PlayMusic(gMusic, -1);
+				}
+			}
 
 
-		std::vector<Npc*> otherNpc;
-		if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
-			npcName = this->_player.getNpcName(otherNpc, graphics);
-		}
-		// This will ensure when we are no long colliding with npc, set name to blank so we cant talk to an npc far away
-		if (otherNpc.size() == 0) {
-			npcName = "";
-		}
-		
-		// Check collisions
-		std::vector<Rectangle> others;
-		// Set vector = the result of the checkTileCollisions function
-		// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
-		// Against whatever we give it (player bounding box)
-		// If it returns at least 1, handle Tile collision!
-		if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-			// Player collided with atleast 1 tile
-			this->_player.handleTileCollisions(others);
-		}
+			std::vector<Npc*> otherNpc;
+			if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
+				npcName = this->_player.getNpcName(otherNpc, graphics);
+			}
+			// This will ensure when we are no long colliding with npc, set name to blank so we cant talk to an npc far away
+			if (otherNpc.size() == 0) {
+				npcName = "";
+			}
 
-		if ((others = this->_level.checkBreakableTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-			// Player collided with atleast 1 tile
-			this->_player.setBreakableCollision(true);
-			this->_player.handleTileCollisions(others);
-		}
-		else {
-			this->_player.setBreakableCollision(false);
-		}
+			// Check collisions
+			std::vector<Rectangle> others;
+			// Set vector = the result of the checkTileCollisions function
+			// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
+			// Against whatever we give it (player bounding box)
+			// If it returns at least 1, handle Tile collision!
+			if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+				// Player collided with atleast 1 tile
+				this->_player.handleTileCollisions(others);
+			}
 
-		if ((others = this->_level.checkArenaCollisions(this->_player.getBoundingBox())).size() > 0) {
-			// Player collided with atleast 1 tile
-			this->_player.handleArenaCollisions(others);
-		}
+			if ((others = this->_level.checkBreakableTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+				// Player collided with atleast 1 tile
+				this->_player.setBreakableCollision(true);
+				this->_player.handleTileCollisions(others);
+			}
+			else {
+				this->_player.setBreakableCollision(false);
+			}
 
-		if ((others = this->_level.checkLavaCollisions(this->_player.getBoundingBox())).size() > 0) {
-			this->_player.handleLavaCollisions(others);
-		}
-		else {
-			this->_player.setBurning(false);
-		}
+			if ((others = this->_level.checkArenaCollisions(this->_player.getBoundingBox())).size() > 0) {
+				// Player collided with atleast 1 tile
+				this->_player.handleArenaCollisions(others);
+			}
 
-		if ((others = this->_level.checkPoisonCollisions(this->_player.getBoundingBox())).size() > 0) {
-			this->_player.handlePoisonCollisions(others);
-		}
-		if ((others = this->_level.checkWaterCollisions(this->_player.getBoundingBox())).size() > 0) {
-			this->_player.handleWaterCollisions(others);
-		}
-		else {
-			this->_player.setDrowning(false);
-		}
-		if ((others = this->_level.checkDeadzoneCollisions(this->_player.getBoundingBox())).size() > 0) {
-			this->_player.handleDeadzoneCollisions(others);
-		}
-		if ((others = this->_level.checkLadderCollisions(this->_player.getBoundingBox())).size() > 0) {
-			if (this->_player.handleLadderCollisions(others)) {
-				isClimbing = true;
+			if ((others = this->_level.checkLavaCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleLavaCollisions(others);
+			}
+			else {
+				this->_player.setBurning(false);
+			}
+
+			if ((others = this->_level.checkPoisonCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handlePoisonCollisions(others);
+			}
+			if ((others = this->_level.checkWaterCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleWaterCollisions(others);
+			}
+			else {
+				this->_player.setDrowning(false);
+			}
+			if ((others = this->_level.checkDeadzoneCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleDeadzoneCollisions(others);
+			}
+			if ((others = this->_level.checkLadderCollisions(this->_player.getBoundingBox())).size() > 0) {
+				if (this->_player.handleLadderCollisions(others)) {
+					isClimbing = true;
+				}
+				else {
+					isClimbing = false;
+					this->_player.setClimbing(false);
+					if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+						// Player collided with atleast 1 tile
+						this->_player.handleTileCollisions(others);
+					}
+				}
 			}
 			else {
 				isClimbing = false;
@@ -1234,73 +1250,65 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 					this->_player.handleTileCollisions(others);
 				}
 			}
-		}
-		else {
-			isClimbing = false;
-			this->_player.setClimbing(false);
-			if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-				// Player collided with atleast 1 tile
-				this->_player.handleTileCollisions(others);
+
+			if ((others = this->_level.checkSaveCollisions(this->_player.getBoundingBox())).size() > 0) {
+				activeSave = true;
 			}
-		}
+			else
+				activeSave = false;
 
-		if ((others = this->_level.checkSaveCollisions(this->_player.getBoundingBox())).size() > 0) {
-			activeSave = true;
-		}
-		else
-			activeSave = false;
-
-		// Check slope
-		std::vector<Slope> otherSlopes;
-		if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
-			this->_player.handleSlopeCollisions(otherSlopes);
-		}
-
-		this->_level.checkEnemyTileCollision().size() > 0;
-		this->_level.checkEnemyProjectileTileCollision().size() > 0;
-		this->_level.checkProjectileCollisions(this->_player);
-		this->_level.checkEnemyHP(this->_player, this->_graphics);
-		if (this->_level.isEnemyDead()) {
-			Mix_PlayChannel(-1, enHurt, 0);
-			this->_level.setEnemyDead(false);
-		}
-		this->_level.checkProjectileBreakableLayer();
-		this->_level.checkProjectileBounds(this->_player);
-		this->_level.checkProjectileTileCollisions();
-
-		if (pickUp == true) {
-			this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics, this->_inventory);
-			pickUp = false; 
-		}
-
-		// Check doors
-		std::vector<Door> otherDoors;
-		if ((otherDoors = this->_level.checkDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
-			this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory, this->_player);
-		}
-		std::vector<Door> lockedDoors;
-		if ((lockedDoors = this->_level.checkLockedDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
-			this->_player.handleLockedDoorCollision(lockedDoors, this->_level, this->_graphics, this->_inventory, this->_player);
-		}
-
-		std::vector<Rectangle> cutScenes;
-		if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
-			std::string cutSceneName = this->_level.getCutscene();
-			if (this->_player.checkCutSceneCompleted(cutSceneName)) {
-				this->_level.removeCutscene("");
+			// Check slope
+			std::vector<Slope> otherSlopes;
+			if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleSlopeCollisions(otherSlopes);
 			}
-			else {
-				this->loadCutscene(cutSceneName);
-				sceneName = cutSceneName;
-				sceneX = this->_player.getX();
-				sceneY = this->_player.getY();
-				activeCutscene = true;
-			}
-		}
 
-		// Update camera last once every object position has been updated to prevent screen shakes 
-		this->_camera.Update(elapsedTime, this->_player);
-  }
+			this->_level.checkEnemyTileCollision().size() > 0;
+			this->_level.checkEnemyProjectileTileCollision().size() > 0;
+			this->_level.checkProjectileCollisions(this->_player);
+			this->_level.checkEnemyHP(this->_player, this->_graphics);
+			if (this->_level.isEnemyDead()) {
+				Mix_PlayChannel(-1, enHurt, 0);
+				this->_level.setEnemyDead(false);
+			}
+			this->_level.checkProjectileBreakableLayer();
+			this->_level.checkProjectileBounds(this->_player);
+			this->_level.checkProjectileTileCollisions();
+
+			if (pickUp == true) {
+				this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics, this->_inventory);
+				pickUp = false;
+			}
+
+			// Check doors
+			std::vector<Door> otherDoors;
+			if ((otherDoors = this->_level.checkDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory, this->_player);
+			}
+			std::vector<Door> lockedDoors;
+			if ((lockedDoors = this->_level.checkLockedDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleLockedDoorCollision(lockedDoors, this->_level, this->_graphics, this->_inventory, this->_player);
+			}
+
+			std::vector<Rectangle> cutScenes;
+			if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
+				std::string cutSceneName = this->_level.getCutscene();
+				if (this->_player.checkCutSceneCompleted(cutSceneName)) {
+					this->_level.removeCutscene("");
+				}
+				else {
+					this->loadCutscene(cutSceneName);
+					sceneName = cutSceneName;
+					sceneX = this->_player.getX();
+					sceneY = this->_player.getY();
+					activeCutscene = true;
+				}
+			}
+
+			// Update camera last once every object position has been updated to prevent screen shakes 
+			this->_camera.Update(elapsedTime, this->_player);
+		}
+	}
 }
 
 void Game::updateCutscene(float elapsedTime, Graphics & graphics)
