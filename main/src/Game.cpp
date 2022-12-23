@@ -27,7 +27,8 @@ namespace {
 	const int FPS = 50;
 	// remove 5 *
 	const int MAX_FRAME_TIME = 5* 1000 / FPS; // Max amount of time a frame is allowed to last
-	int soundVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
+	int bgmVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
+	int sfxVolume = 100;
 	int selection = 1;
 	int npcSelection = 1;
 	int questSelection = 1;
@@ -118,7 +119,7 @@ void Game::gameLoop() {
 	gameOver = Mix_LoadWAV("data\\sound\\gameOver.ogg");
 	Mix_PlayChannel(321, seWalk, -1);
 	Mix_Pause(321);
-	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 32);
+	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 22);
 
 	this->_title = Title(graphics, input, event);
 	this->_gameOver = GameOver(graphics);
@@ -136,7 +137,7 @@ void Game::gameLoop() {
 	else
 	{
 		Mix_PlayMusic(gMusic, -1);
-		Mix_VolumeMusic(soundVolume);
+		Mix_VolumeMusic(bgmVolume);
 	}
 		
 
@@ -1134,8 +1135,8 @@ int Game::loadGame(Graphics & graphics)
 
 void Game::setSettings() {
 	// Volume
-	this->_title.getSettings(soundVolume);
-	Mix_VolumeMusic(soundVolume);
+	this->_title.getSettings(bgmVolume, sfxVolume);
+	Mix_VolumeMusic(bgmVolume);
 
 	// Display
 	// ...

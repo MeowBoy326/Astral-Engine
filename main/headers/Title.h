@@ -21,7 +21,7 @@ public:
 	void setupAnimations();
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
-	void getSettings(int &volume);
+	void getSettings(int &bgmVolume, int &sfxVolume);
 	int saveSettings();
 	int loadSettings();
 	int getMenuChoice();
@@ -42,11 +42,13 @@ private:
 	int menuChoice = 0;
 	int settingsChoice = 0;
 	int exitChoice = 0;
-	int volumePercent = 100;
+	int bgmVolumePercent = 100;
+	int sfxVolumePercent = 100;
 	int msgTimer = 0;
 
 	bool showSettings = false;
-	bool changeVolume = false;
+	bool changeBgmVolume = false;
+	bool changeSfxVolume = false;
 	bool isSubmenu = false;
 	bool exitMenu = false;
 	bool showMsg = false;

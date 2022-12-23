@@ -130,7 +130,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 			}
 			else {
 				if (settingsChoice == 0) {
-					changeVolume = !changeVolume;
+					changeBgmVolume = !changeBgmVolume;
 					isSubmenu = !isSubmenu;
 					this->selectY = 155;
 					this->selectX = 220;
@@ -189,10 +189,10 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
 			if (isSubmenu) {
-				if (changeVolume && volumePercent < 100) {
+				if (changeBgmVolume && bgmVolumePercent < 100) {
 					// Increase volume
-					this->volumePercent += 5;
-					float volNum = (float)volumePercent / 100;
+					this->bgmVolumePercent += 5;
+					float volNum = (float)bgmVolumePercent / 100;
 					this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
 				}
 				else if (exitMenu) {
@@ -206,9 +206,9 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
 			if (isSubmenu) {
-				if (changeVolume && volumePercent > 0) {
-					this->volumePercent -= 5;
-					float volNum = (float)volumePercent / 100;
+				if (changeBgmVolume && bgmVolumePercent > 0) {
+					this->bgmVolumePercent -= 5;
+					float volNum = (float)bgmVolumePercent / 100;
 					this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
 				}
 				else if (exitMenu) {
@@ -292,11 +292,11 @@ void Title::draw(Graphics &graphics) {
 		this->_settingsVolume.drawVolumeBar(graphics, this->_settingsVolume.getX(), this->_settingsVolume.getY());
 		this->_settingsVolumePercent.drawVolumeBar(graphics, this->_settingsVolumePercent.getX(), this->_settingsVolumePercent.getY());
 		std::string label = "Volume: ";
-		if (changeVolume)
+		if (changeBgmVolume)
 			this->drawSettings(graphics, 240, 155, label, 14, {255,255,0,255});
 		else
 			this->drawSettings(graphics, 240, 155, label, 14);
-		label = std::to_string(volumePercent) + "%";
+		label = std::to_string(bgmVolumePercent) + "%";
 		this->drawSettings(graphics, 375, 145, label, 10);
 		label = "Exit";
 		this->drawSettings(graphics, 240, 185, label, 14);
@@ -312,9 +312,10 @@ void Title::draw(Graphics &graphics) {
 	graphics.flip();
 }
 
-void Title::getSettings(int &volume) {
+void Title::getSettings(int &bgmVolume, int &sfxVolume) {
 	// More settings will be added. Each value will be passed by reference
-	volume = this->volumePercent;
+	bgmVolume = this->bgmVolumePercent;
+	sfxVolume = this->sfxVolumePercent;
 }
 
 int Title::saveSettings() {
@@ -325,7 +326,7 @@ int Title::saveSettings() {
 
 	// Save each setting value
 	XMLElement* element = xml.NewElement("Settings");
-	element->SetAttribute("volumePercent", this->volumePercent);
+	element->SetAttribute("volumePercent", this->bgmVolumePercent);
 	root->InsertEndChild(element);
 	// Finalize save
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
@@ -356,8 +357,8 @@ int Title::loadSettings() {
 	XMLElement* element = root->FirstChildElement("Settings");
 	int x, y;
 	result = element->QueryIntAttribute("volumePercent", &x);
-	this->volumePercent = x;
-	float volNum = (float)volumePercent / 100;
+	this->bgmVolumePercent = x;
+	float volNum = (float)bgmVolumePercent / 100;
 	this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
 	XMLCheckResult(result)
 	return result;
