@@ -34,6 +34,8 @@ private:
 	Sprite _settingsMenu;
 	Sprite _settingsVolume;
 	Sprite _settingsVolumePercent;
+	Sprite _settingsSfxVolume;
+	Sprite _settingsSfxVolumePercent;
 	Sprite _exitMenu;
 	Sprite _selectionBox;
 

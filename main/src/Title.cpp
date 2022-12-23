@@ -43,6 +43,8 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 	this->_settingsMenu = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 195, 40, 42, 35, 70);
 	this->_settingsVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 320, 150);
 	this->_settingsVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 335, 155);
+	this->_settingsSfxVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 320, 185);
+	this->_settingsSfxVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 335, 190);
 
 	this->_exitMenu = Sprite(graphics, "data\\npc\\npcTextBox.png", 155, 51, 76, 26, 320, 300);
 
@@ -136,6 +138,13 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectX = 220;
 					settingsChoice = 0;
 				}
+				else if (settingsChoice == 1) {
+					changeSfxVolume = !changeSfxVolume;
+					isSubmenu = !isSubmenu;
+					this->selectY = 185;
+					this->selectX = 220;
+					settingsChoice = 1;
+				}
 				// Exit button -> Open confirmation (Save and Exit?)
 				else {
 					isSubmenu = !isSubmenu;
@@ -152,7 +161,6 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectY = this->_loadGame.getY() + 5;
 					menuChoice++;
 				}
-
 				else if (menuChoice == 1) {
 					this->selectY = this->_settings.getY() + 5;
 					menuChoice++;
@@ -164,6 +172,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectX = 220;
 					settingsChoice++;
 				}
+				std::cout << "Settings Choice = " << settingsChoice << std::endl;
 			}
 
 		}
@@ -173,7 +182,6 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectY = this->_loadGame.getY() + 5;
 					menuChoice--;
 				}
-
 				else if (menuChoice == 1) {
 					this->selectY = this->_startGame.getY() + 5;
 					menuChoice--;
@@ -185,6 +193,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectX = 220;
 					settingsChoice--;
 				}
+				std::cout << "Settings Choice = " << settingsChoice << std::endl;
 			}
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
@@ -194,6 +203,11 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->bgmVolumePercent += 5;
 					float volNum = (float)bgmVolumePercent / 100;
 					this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
+				}
+				else if (changeSfxVolume && sfxVolumePercent < 100) {
+					this->sfxVolumePercent += 5;
+					float volNum = (float)sfxVolumePercent / 100;
+					this->_settingsSfxVolumePercent.setSourceRectW(std::floor(volNum * 64));
 				}
 				else if (exitMenu) {
 					if (exitChoice == 0) {
@@ -210,6 +224,11 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->bgmVolumePercent -= 5;
 					float volNum = (float)bgmVolumePercent / 100;
 					this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
+				}
+				else if (changeSfxVolume && sfxVolumePercent > 0) {
+					this->sfxVolumePercent -= 5;
+					float volNum = (float)sfxVolumePercent / 100;
+					this->_settingsSfxVolumePercent.setSourceRectW(std::floor(volNum * 64));
 				}
 				else if (exitMenu) {
 					if (exitChoice == 1) {
@@ -289,17 +308,32 @@ void Title::draw(Graphics &graphics) {
 	this->drawDeveloper(graphics, 0, 445);
 	if (showSettings) {
 		this->_settingsMenu.drawiMenu(graphics, 210, 125);
+
+		// Bgm volume
 		this->_settingsVolume.drawVolumeBar(graphics, this->_settingsVolume.getX(), this->_settingsVolume.getY());
 		this->_settingsVolumePercent.drawVolumeBar(graphics, this->_settingsVolumePercent.getX(), this->_settingsVolumePercent.getY());
-		std::string label = "Volume: ";
+		std::string label = "BGM Volume: ";
 		if (changeBgmVolume)
-			this->drawSettings(graphics, 240, 155, label, 14, {255,255,0,255});
+			this->drawSettings(graphics, 240, 155, label, 10, {255,255,0,255});
 		else
-			this->drawSettings(graphics, 240, 155, label, 14);
+			this->drawSettings(graphics, 240, 155, label, 10);
 		label = std::to_string(bgmVolumePercent) + "%";
 		this->drawSettings(graphics, 375, 145, label, 10);
+
+		// SFX volume
+		this->_settingsSfxVolume.drawVolumeBar(graphics, this->_settingsSfxVolume.getX(), this->_settingsSfxVolume.getY());
+		this->_settingsSfxVolumePercent.drawVolumeBar(graphics, this->_settingsSfxVolumePercent.getX(), this->_settingsSfxVolumePercent.getY());
+		label = "SFX Volume: ";
+		if (changeSfxVolume)
+			this->drawSettings(graphics, 240, 185, label, 10, { 255,255,0,255 });
+		else
+			this->drawSettings(graphics, 240, 185, label, 10);
+		label = std::to_string(sfxVolumePercent) + "%";
+		this->drawSettings(graphics, 375, 175, label, 10);
+
+		// Exit
 		label = "Exit";
-		this->drawSettings(graphics, 240, 185, label, 14);
+		this->drawSettings(graphics, 240, 215, label, 10);
 	}
 	if (exitMenu) {
 		this->_exitMenu.drawSaveMenu(graphics, this->_exitMenu.getX(), this->_exitMenu.getY());
