@@ -361,7 +361,9 @@ int Title::saveSettings() {
 	// Save each setting value
 	XMLElement* element = xml.NewElement("Settings");
 	element->SetAttribute("volumePercent", this->bgmVolumePercent);
+	element->SetAttribute("sfxVolumePercent", this->sfxVolumePercent);
 	root->InsertEndChild(element);
+
 	// Finalize save
 	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "profile";
 	cwd.append("settings.xml");
@@ -389,11 +391,18 @@ int Title::loadSettings() {
 	if (root == nullptr)
 		return XML_ERROR_FILE_READ_ERROR;
 	XMLElement* element = root->FirstChildElement("Settings");
-	int x, y;
+	int x;
+	// Bgm volume
 	result = element->QueryIntAttribute("volumePercent", &x);
 	this->bgmVolumePercent = x;
 	float volNum = (float)bgmVolumePercent / 100;
 	this->_settingsVolumePercent.setSourceRectW(std::floor(volNum * 64));
+	// Sfx volume
+	result = element->QueryIntAttribute("sfxVolumePercent", &x);
+	this->sfxVolumePercent = x;
+	volNum = (float)sfxVolumePercent / 100;
+	this->_settingsSfxVolumePercent.setSourceRectW(std::floor(volNum * 64));
+
 	XMLCheckResult(result)
 	return result;
 }
