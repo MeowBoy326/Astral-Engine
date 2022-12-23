@@ -37,6 +37,7 @@ public:
 	void drawNpcIcon(Graphics &graphics, const std::string name, int posX, int posY);
 	int playScript(std::string name, Graphics &graphics, int posX, int posY);
 	int playNext(std::string name, Graphics &graphics, int posX, int posY, Player &player);
+	int repeatScript(std::string name, Graphics &graphics, int posX, int posY);
 	inline bool const getChatStatus() { return this->endOfChat; }
 	inline void setChatStatus(bool condition) { this->endOfChat = condition; }
 	inline bool const getNpcTalk() { return this->npcTalking; }
@@ -74,6 +75,7 @@ protected:
 	std::string _npcName;
 	std::string storedQuestName;
 	std::string reward;
+	std::string dialogueText;
 	int levelReward, rewardType, exp, cels;
 
 	Sprite* _chatSelection;

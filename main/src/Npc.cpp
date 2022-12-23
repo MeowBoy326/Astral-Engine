@@ -147,13 +147,13 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 	lua_call(L, 1, 1);
 
 	// retrieve the result from the top of the stack
-	std::string dialogueText = lua_tostring(L, -1);
+	this->dialogueText = lua_tostring(L, -1);
 
 	// clean up the stack and close the Lua state
 	lua_pop(L, 1);
 	lua_close(L);
 
-	this->drawNpcDialogue(graphics, 100, 100, dialogueText, posX, posY);
+	this->drawNpcDialogue(graphics, 100, 100, this->dialogueText, posX, posY);
 	return 0;
 }
 
@@ -227,18 +227,23 @@ int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Pla
 	lua_call(L, 1, 1);
 
 	// retrieve the result from the top of the stack
-	std::string dialogueText = lua_tostring(L, -1);
+	this->dialogueText = lua_tostring(L, -1);
 
 	// clean up the stack and close the Lua state
 	lua_pop(L, 1);
 	lua_close(L);
 
-	this->drawNpcDialogue(graphics, 100, 100, dialogueText, posX, posY);
+	this->drawNpcDialogue(graphics, 100, 100, this->dialogueText, posX, posY);
 
 	if (lineID > lines) {
 		this->endOfChat = true;
 	}
 
+	return 0;
+}
+
+int Npc::repeatScript(std::string name, Graphics& graphics, int posX, int posY) {
+	this->drawNpcDialogue(graphics, 100, 100, this->dialogueText, posX, posY);
 	return 0;
 }
 

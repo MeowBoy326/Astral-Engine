@@ -695,7 +695,7 @@ void Game::draw(Graphics &graphics) {
 	this->_chatBox.drawChatBox(graphics, this->_player);
 	if (activeTalk == true) {
 		if (this->_npc.getNpcTalk() && npcSelection == 1) {
-			this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
+			this->_npc.repeatScript(npcName, graphics, this->_player.getX(), this->_player.getY());
 		}
 		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && !this->_npc.getQuestState()) {
 			this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
