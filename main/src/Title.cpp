@@ -159,8 +159,8 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 				}
 			}
 			else if (showSettings && !isSubmenu) {
-				if (settingsChoice == 0) {
-					this->selectY = 185;
+				if (settingsChoice != 2) {
+					this->selectY += 30;
 					this->selectX = 220;
 					settingsChoice++;
 				}
@@ -180,8 +180,8 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 				}
 			}
 			else if (showSettings && !isSubmenu) {
-				if (settingsChoice == 1) {
-					this->selectY = 155;
+				if (settingsChoice != 0) {
+					this->selectY -= 30;
 					this->selectX = 220;
 					settingsChoice--;
 				}
