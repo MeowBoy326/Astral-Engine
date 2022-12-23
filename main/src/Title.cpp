@@ -318,18 +318,18 @@ void Title::draw(Graphics &graphics) {
 		else
 			this->drawSettings(graphics, 240, 155, label, 12);
 		label = std::to_string(bgmVolumePercent) + "%";
-		this->drawSettings(graphics, 375, 145, label, 10);
+		this->drawSettings(graphics, 405, 145, label, 10);
 
 		// SFX volume
 		this->_settingsSfxVolume.drawVolumeBar(graphics, this->_settingsSfxVolume.getX(), this->_settingsSfxVolume.getY());
 		this->_settingsSfxVolumePercent.drawVolumeBar(graphics, this->_settingsSfxVolumePercent.getX(), this->_settingsSfxVolumePercent.getY());
-		label = "SFX Volume: ";
+		label = "SFX  Volume: ";
 		if (changeSfxVolume)
 			this->drawSettings(graphics, 240, 185, label, 12, { 255,255,0,255 });
 		else
 			this->drawSettings(graphics, 240, 185, label, 12);
 		label = std::to_string(sfxVolumePercent) + "%";
-		this->drawSettings(graphics, 375, 175, label, 10);
+		this->drawSettings(graphics, 405, 175, label, 10);
 
 		// Exit
 		label = "Exit";
