@@ -1143,6 +1143,7 @@ void Game::setSettings() {
 	// Volume
 	this->_title.getSettings(bgmVolume, sfxVolume);
 	Mix_VolumeMusic(bgmVolume);
+	Mix_Volume(-1, sfxVolume);
 
 	// Display
 	// ...
