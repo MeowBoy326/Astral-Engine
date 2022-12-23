@@ -125,7 +125,7 @@ void TextManager::drawNpcDialogue(Graphics& graphics, int x, int y, const std::s
 		return;
 	}
 
-	// Set the maximum width of the textbox
+	// Set the maximum width of the text-box
 	int maxWidth = 500;
 
 	// Set the color of the text
@@ -149,19 +149,17 @@ void TextManager::drawNpcDialogue(Graphics& graphics, int x, int y, const std::s
 		return;
 	}
 
-	// Set the position of the textbox
-	SDL_Rect textRect = { posX - 370, posY - 115, dialogue->w, dialogue->h };
-
-	//std::cout << "x/y = " << textRect.x << "," << textRect.y << std::endl;
+	// Set the position of the text-box
+	SDL_Rect textRect = { posX - 260, posY + 105, dialogue->w, dialogue->h };
 
 	// Render the text texture to the screen
-	SDL_RenderCopy(graphics.getRenderer(), textTexture, NULL, &textRect);
+	graphics.blitSurface(textTexture, NULL, &textRect);
 
 	// Free the text surface and texture
 	SDL_FreeSurface(dialogue);
 	SDL_DestroyTexture(textTexture);
 
-	// Close the font and quit the SDL2_ttf library
+	// Close the font
 	TTF_CloseFont(font);
 }
 
