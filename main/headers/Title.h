@@ -17,10 +17,12 @@ public:
 	~Title();
 	void playNext(int num);
 	bool Start(Graphics &graphics, Input &input, SDL_Event &event);
+	bool Pause(Graphics &graphics, Input &input, SDL_Event &event);
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
+	void drawPauseMenu(Graphics & graphics);
 	void getSettings(int &bgmVolume, int &sfxVolume);
 	int saveSettings();
 	int loadSettings();
