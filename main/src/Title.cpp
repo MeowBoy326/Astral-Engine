@@ -445,6 +445,8 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true) {
 			menuLoop = false;
+			msgTimer = 0;
+			showMsg = false;
 		}
 
 		this->Title::update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
