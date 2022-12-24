@@ -675,8 +675,10 @@ void Game::gameLoop() {
 			this->draw(graphics);
 			// Handle last to draw on top
 			if (pauseGame) {
+				Mix_PauseMusic();
 				pauseGame = this->_title.Pause(graphics, input, event, this->_player);
 				this->setSettings();
+				Mix_ResumeMusic();
 			}
 		}
 	}
