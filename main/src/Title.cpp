@@ -276,9 +276,9 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 			}
 		}
 		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-			if (menuChoice != 2 && !showSettings)
+			if (menuChoice == 0 && !showSettings)
 			{
-				if (menuChoice == 1)
+				if (menuChoice == 0)
 				{
 					if (!std::filesystem::exists(std::filesystem::current_path() / "data" / "profile" / "SF-LOC.xml"))
 					{
@@ -289,10 +289,13 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 					else
 						menuLoop = false;
 				}
-				else
-					menuLoop = false;
 			}
-			else if (!showSettings) {
+			else if (menuChoice == 2 && !showSettings) {
+				// Restart application to load new settings
+				std::system("astral-services.bat");
+				std::exit(0);
+			}
+			else if (menuChoice == 1 && !showSettings) {
 				this->loadSettings();
 				showSettings = !showSettings;
 				this->selectY = 155;
@@ -548,36 +551,36 @@ void Title::drawPauseMenu(Graphics& graphics, Player &player) {
 	this->drawVersion(graphics, player.getX() - 320, player.getY() + 200);
 	this->drawDeveloper(graphics, player.getX() - 320, player.getY() + 220);
 	if (showSettings) {
-		this->_settingsMenu.drawiMenu(graphics, 210, 125);
+		this->_settingsMenu.drawiMenu(graphics, player.getX() - 110, player.getY() - 120);
 
 		// Bgm volume
-		this->_settingsVolume.drawVolumeBar(graphics, this->_settingsVolume.getX(), this->_settingsVolume.getY());
-		this->_settingsVolumePercent.drawVolumeBar(graphics, this->_settingsVolumePercent.getX(), this->_settingsVolumePercent.getY());
+		this->_settingsVolume.drawVolumeBar(graphics, player.getX() + 20, player.getY() - 90);
+		this->_settingsVolumePercent.drawVolumeBar(graphics, player.getX() + 35 , player.getY() - 85);
 		std::string label = "BGM Volume: ";
 		if (changeBgmVolume)
-			this->drawSettings(graphics, 240, 155, label, 12, { 255,255,0,255 });
+			this->drawSettings(graphics, player.getX() - 80, player.getY() - 85, label, 12, { 255,255,0,255 });
 		else
-			this->drawSettings(graphics, 240, 155, label, 12);
+			this->drawSettings(graphics, player.getX() - 80, player.getY() - 85, label, 12);
 		label = std::to_string(bgmVolumePercent) + "%";
-		this->drawSettings(graphics, 405, 145, label, 10);
+		this->drawSettings(graphics, player.getX() + 80, player.getY() - 95, label, 10);
 
 		// SFX volume
-		this->_settingsSfxVolume.drawVolumeBar(graphics, this->_settingsSfxVolume.getX(), this->_settingsSfxVolume.getY());
-		this->_settingsSfxVolumePercent.drawVolumeBar(graphics, this->_settingsSfxVolumePercent.getX(), this->_settingsSfxVolumePercent.getY());
+		this->_settingsSfxVolume.drawVolumeBar(graphics, player.getX() + 20, player.getY() - 55);
+		this->_settingsSfxVolumePercent.drawVolumeBar(graphics, player.getX() + 35, player.getY() - 50);
 		label = "SFX  Volume: ";
 		if (changeSfxVolume)
-			this->drawSettings(graphics, 240, 185, label, 12, { 255,255,0,255 });
+			this->drawSettings(graphics, player.getX() - 80, player.getY() - 55, label, 12, { 255,255,0,255 });
 		else
-			this->drawSettings(graphics, 240, 185, label, 12);
+			this->drawSettings(graphics, player.getX() - 80, player.getY() - 55, label, 12);
 		label = std::to_string(sfxVolumePercent) + "%";
-		this->drawSettings(graphics, 405, 175, label, 10);
+		this->drawSettings(graphics, player.getX() + 80, player.getY() - 65, label, 10);
 
 		// Exit
 		label = "Exit";
-		this->drawSettings(graphics, 240, 215, label, 12);
+		this->drawSettings(graphics, player.getX() - 80, player.getY() - 25, label, 12);
 	}
 	if (exitMenu) {
-		this->_exitMenu.drawSaveMenu(graphics, this->_exitMenu.getX(), this->_exitMenu.getY());
+		this->_exitMenu.drawSaveMenu(graphics, player.getX() + 5, player.getY() + 60);
 	}
 	this->_selectionBox.drawTitle(graphics, selectX, selectY);
 	if (showMsg) {
