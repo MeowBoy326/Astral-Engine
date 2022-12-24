@@ -256,6 +256,12 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 	bool menuLoop = true;
 	int LAST_UPDATE_TIME = SDL_GetTicks();
 
+	menuChoice = 0;
+	settingsChoice = 0;
+	exitChoice = 0;
+	this->selectY = 275;
+	this->selectX = 185;
+
 	while (menuLoop == true) {
 		input.beginNewFrame(); // Resets our released key pressed keys first time around doesnt matter already set to false but good to reset anyway
 
@@ -308,19 +314,17 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 				{
 					this->saveSettings();
 					exitMenu = !exitMenu;
-					this->selectY = this->_settings.getY() + 5;
+					this->selectY = this->_settings.getY() - 30;
 					this->selectX = 185;
 					showSettings = !showSettings;
 					isSubmenu = !isSubmenu;
-					// Restart application to load new settings
-					std::system("astral-services.bat");
-					std::exit(0);
+					// Restart is not required once in-game
 				}
 				else {
 					// Undo any changes by loading the unsaved file
 					this->loadSettings();
 					exitMenu = !exitMenu;
-					this->selectY = this->_settings.getY() + 5;
+					this->selectY = this->_settings.getY() - 30;
 					this->selectX = 185;
 					showSettings = !showSettings;
 					isSubmenu = !isSubmenu;
