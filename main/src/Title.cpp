@@ -39,6 +39,8 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 
 	this->_loadGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 119, 130, 22, 215, 315);
 
+	this->_ExitToMenu = Sprite(graphics, "data\\graphics\\startGame.png", 0, 189, 192, 20, 215, 355);
+
 	this->_settings = Sprite(graphics, "data\\graphics\\startGame.png", 0, 153, 95, 22, 215, 355);
 	this->_settingsMenu = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 195, 40, 42, 35, 70);
 	this->_settingsVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 345, 150);
@@ -250,7 +252,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 	return false;
 }
 
-bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event) {
+bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& player) {
 	bool menuLoop = true;
 	int LAST_UPDATE_TIME = SDL_GetTicks();
 
@@ -436,7 +438,7 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event) {
 
 		this->Title::update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
 		LAST_UPDATE_TIME = CURRENT_TIME_MS; // Loop will go again and current time - new last update will tell us how long next frame will take
-		this->Title::drawPauseMenu(graphics);
+		this->Title::drawPauseMenu(graphics, player);
 	}
 	return false;
 }
@@ -537,11 +539,14 @@ void Title::draw(Graphics &graphics) {
 	graphics.flip();
 }
 
-void Title::drawPauseMenu(Graphics& graphics) {
-	this->_loadGame.drawTitle(graphics, 215, 315);
-	this->_settings.drawTitle(graphics, 215, 355);
-	this->drawVersion(graphics, 0, 455);
-	this->drawDeveloper(graphics, 0, 445);
+void Title::drawPauseMenu(Graphics& graphics, Player &player) {
+	graphics.clear(); // Clear any drawings MUST do
+	this->_title.drawTitle(graphics, 210, 50);
+	this->_loadGame.drawTitle(graphics, 215, 270);
+	this->_settings.drawTitle(graphics, 215, 315);
+	this->_ExitToMenu.drawTitle(graphics, 215, 355);
+	this->drawVersion(graphics, player.getX() - 320, player.getY() + 200);
+	this->drawDeveloper(graphics, player.getX() - 320, player.getY() + 220);
 	if (showSettings) {
 		this->_settingsMenu.drawiMenu(graphics, 210, 125);
 

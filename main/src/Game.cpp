@@ -673,10 +673,9 @@ void Game::gameLoop() {
 			// Loop will go again and current time - new last update will tell us how long next frame will take
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			this->draw(graphics);
-			std::cout << "Reached during Title screen" << std::endl;
 			// Handle last to draw on top
 			if (pauseGame) {
-				pauseGame = this->_title.Pause(graphics, input, event);
+				pauseGame = this->_title.Pause(graphics, input, event, this->_player);
 			}
 		}
 	}
