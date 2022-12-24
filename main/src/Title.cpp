@@ -592,7 +592,7 @@ void Title::drawPauseMenu(Graphics& graphics, Player &player) {
 	}
 	this->_selectionBox.drawTitle(graphics, selectX, selectY);
 	if (showMsg) {
-		this->drawSystemMessages(graphics, 270, 250, this->systemMsg, { 255, 255, 255, 255 });
+		this->drawSystemMessages(graphics, player.getX() - 10, player.getY() + 20, this->systemMsg, { 255, 255, 255, 255 });
 	}
 	graphics.flip();
 }
