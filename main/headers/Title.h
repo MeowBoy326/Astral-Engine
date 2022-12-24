@@ -57,5 +57,7 @@ private:
 	bool isSubmenu = false;
 	bool exitMenu = false;
 	bool showMsg = false;
+
+	std::string systemMsg;
 };
 

@@ -676,6 +676,7 @@ void Game::gameLoop() {
 			// Handle last to draw on top
 			if (pauseGame) {
 				pauseGame = this->_title.Pause(graphics, input, event, this->_player);
+				this->setSettings();
 			}
 		}
 	}

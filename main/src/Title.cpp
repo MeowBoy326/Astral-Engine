@@ -289,6 +289,7 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 					if (!std::filesystem::exists(std::filesystem::current_path() / "data" / "profile" / "SF-LOC.xml"))
 					{
 						std::cout << "File not found!" << std::endl;
+						this->systemMsg = "Save data not found. Start a New Game.";
 						if (!showMsg)
 							showMsg = !showMsg;
 					}
@@ -319,6 +320,9 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 					showSettings = !showSettings;
 					isSubmenu = !isSubmenu;
 					// Restart is not required once in-game
+					this->systemMsg = "Settings will apply once the game resumes.";
+					if (!showMsg)
+						showMsg = !showMsg;
 				}
 				else {
 					// Undo any changes by loading the unsaved file
@@ -588,13 +592,13 @@ void Title::drawPauseMenu(Graphics& graphics, Player &player) {
 	}
 	this->_selectionBox.drawTitle(graphics, selectX, selectY);
 	if (showMsg) {
-		std::string msg = "Save data not found. Start a New Game.";
-		this->drawSystemMessages(graphics, 270, 250, msg, { 255, 255, 255, 255 });
+		this->drawSystemMessages(graphics, 270, 250, this->systemMsg, { 255, 255, 255, 255 });
 	}
 	graphics.flip();
 }
 
 void Title::getSettings(int &bgmVolume, int &sfxVolume) {
+	this->loadSettings();
 	// More settings will be added. Each value will be passed by reference
 	bgmVolume = this->bgmVolumePercent;
 	sfxVolume = this->sfxVolumePercent;
