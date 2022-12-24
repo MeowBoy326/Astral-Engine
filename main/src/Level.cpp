@@ -735,7 +735,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						std::stringstream ss;
 						ss << name;
 						if (ss.str() == "Luna") {
-							this->_npcs.push_back(new Clock(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+							this->_npcs.push_back(new Luna(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 								std::floor(y) * globals::SPRITE_SCALE), ss.str()));
 						}
 						pObject = pObject->NextSiblingElement("object");

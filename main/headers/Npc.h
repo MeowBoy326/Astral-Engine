@@ -95,10 +95,10 @@ protected:
 	bool noQuest = false;
 };
 
-class Clock : public Npc {
+class Luna : public Npc {
 public:
-	Clock();
-	Clock(Graphics &graphics, Vector2 spawPoint, std::string name);
+	Luna();
+	Luna(Graphics &graphics, Vector2 spawPoint, std::string name);
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);

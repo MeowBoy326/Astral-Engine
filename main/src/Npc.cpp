@@ -477,10 +477,10 @@ bool Npc::checkQuest(Graphics & graphics, std::string name, int posX, int posY, 
 	return false;
 }
 
-// Clock class
-Clock::Clock() {}
+// Luna class
+Luna::Luna() {}
 
-Clock::Clock(Graphics &graphics, Vector2 spawnPoint, std::string name) :
+Luna::Luna(Graphics &graphics, Vector2 spawnPoint, std::string name) :
 	Npc(graphics, "data\\npc\\female.png", 2, 33, 30, 30, spawnPoint, 140),
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
@@ -488,14 +488,14 @@ Clock::Clock(Graphics &graphics, Vector2 spawnPoint, std::string name) :
 {
 	_npcName = name;
 	this->setupAnimations();
-	this->playAnimation("clock");
+	this->playAnimation("Luna");
 	// This->loadQuests(name);
 }
 
-void Clock::update(int elapsedTime, Player &player) {
+void Luna::update(int elapsedTime, Player &player) {
 	/*
 	this->_direction = player.getX() > this->_x ? RIGHT : LEFT;
-	this->playAnimation(this->_direction == RIGHT ? "clock" : "clockD");
+	this->playAnimation(this->_direction == RIGHT ? "Luna" : "LunaD");
 
 
 	// Move up or down
@@ -507,25 +507,25 @@ void Clock::update(int elapsedTime, Player &player) {
 	Npc::update(elapsedTime, player);
 }
 
-void Clock::draw(Graphics &graphics) {
+void Luna::draw(Graphics &graphics) {
 	Npc::draw(graphics);
 }
 
-void Clock::animationDone(std::string currentAnimation) {
+void Luna::animationDone(std::string currentAnimation) {
 
 }
 
-void Clock::setupAnimations() {
-	this->addAnimation(1, 1, 1, "clock", 33, 31, Vector2(0, 0));
-	this->addAnimation(1, 2, 33, "clockD", 33, 31, Vector2(0, 0));
+void Luna::setupAnimations() {
+	this->addAnimation(1, 1, 1, "Luna", 33, 31, Vector2(0, 0));
+	this->addAnimation(1, 2, 33, "LunaD", 33, 31, Vector2(0, 0));
 }
 
-void Clock::bulletHit() {
+void Luna::bulletHit() {
 	this->_currentHealth += -1;
 	std::cout << "hit! HP = " << this->_currentHealth << std::endl;
 }
 
-void Clock::touchPlayer(Player* player) {
+void Luna::touchPlayer(Player* player) {
 	player->gainHealth(-1);
 }
 
