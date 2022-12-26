@@ -274,6 +274,16 @@ void Game::gameLoop() {
 						// so that it is up to date with the SDL library. Then set this bool to false.
 						findWindowElapsedTime = true;
 					}
+					if (event.window.event == SDL_WINDOWEVENT_MINIMIZED || event.window.event == SDL_WINDOWEVENT_MAXIMIZED) {
+						windowIsBeingDragged = true;
+					}
+					else if (event.window.event == SDL_WINDOWEVENT_RESTORED || event.window.event == SDL_WINDOWEVENT_EXPOSED) {
+						windowIsBeingDragged = false;
+						// We don't want to update LAST_UPDATE_TIME just yet. So, set this to true and
+						// once we are right before we calculated elapsed time, update LAST_UPDATE_TIME
+						// so that it is up to date with the SDL library. Then set this bool to false.
+						findWindowElapsedTime = true;
+					}
 				}
 			}
 
