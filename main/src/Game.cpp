@@ -29,6 +29,7 @@ namespace {
 	const int MAX_FRAME_TIME = 5* 1000 / FPS; // Max amount of time a frame is allowed to last
 	int bgmVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
 	int sfxVolume = 100;
+	int pauseBlockTimer = 0;
 	int selection = 1;
 	int npcSelection = 1;
 	int questSelection = 1;
@@ -288,7 +289,13 @@ void Game::gameLoop() {
 			}
 
 			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) && this->_player.getCurrentHealth() > 0) {
-				pauseGame = !pauseGame;
+				if (pauseBlockTimer == 0) {
+					pauseGame = !pauseGame;
+					pauseBlockTimer++;
+				}
+				else {
+					pauseGame = false;
+				}
 				std::cout << "Game pause state = " << pauseGame << std::endl;
 			} 
 
@@ -1199,7 +1206,11 @@ void Game::setSettings() {
 void Game::update(float elapsedTime, Graphics &graphics) {
 	if (!pauseGame && !windowIsBeingDragged) {
 		this->_player.update(elapsedTime);
-
+		if (pauseBlockTimer != 0) {
+			pauseBlockTimer += elapsedTime;
+			if (pauseBlockTimer >= 2000)
+				pauseBlockTimer = 0;
+		}
 		if (this->_player.getCurrentHealth() <= 0 && this->_player.checkDeathPlayed()) {
 			GAMEOVER = true;
 			Mix_PlayChannel(-1, gameOver, 0);
