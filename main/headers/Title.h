@@ -18,12 +18,14 @@ public:
 	void playNext(int num);
 	bool Start(Graphics &graphics, Input &input, SDL_Event &event);
 	bool Pause(Graphics &graphics, Input &input, SDL_Event &event, Player &player);
+	bool getReload() const { return this->reloadGame; }
 	void animationDone(std::string currentAnimation);
 	void setupAnimations();
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
 	void drawPauseMenu(Graphics & graphics, Player &player);
 	void getSettings(int &bgmVolume, int &sfxVolume);
+	void setReload() { this->reloadGame = !reloadGame; }
 	int saveSettings();
 	int loadSettings();
 	int getMenuChoice();
@@ -57,6 +59,7 @@ private:
 	bool isSubmenu = false;
 	bool exitMenu = false;
 	bool showMsg = false;
+	bool reloadGame = false;
 
 	std::string systemMsg;
 };

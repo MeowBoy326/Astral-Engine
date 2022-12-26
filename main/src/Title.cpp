@@ -256,9 +256,9 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 	bool menuLoop = true;
 	int LAST_UPDATE_TIME = SDL_GetTicks();
 
-	menuChoice = 0;
-	settingsChoice = 0;
-	exitChoice = 0;
+	this->menuChoice = 0;
+	this->settingsChoice = 0;
+	this->exitChoice = 0;
 	this->selectY = 275;
 	this->selectX = 185;
 
@@ -293,8 +293,10 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 						if (!showMsg)
 							showMsg = !showMsg;
 					}
-					else
+					else {
 						menuLoop = false;
+						this->reloadGame = true;
+					}
 				}
 			}
 			else if (menuChoice == 2 && !showSettings) {

@@ -719,6 +719,11 @@ void Game::gameLoop() {
 				this->setSettings();
 				Mix_ResumeMusic();
 				LAST_UPDATE_TIME = SDL_GetTicks() - 1;
+				if (_title.getMenuChoice() == 0 && _title.getReload())
+				{
+					this->loadGame(graphics);
+					this->_title.setReload();
+				}
 			}
 		}
 	}
