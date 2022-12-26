@@ -1167,8 +1167,10 @@ int Game::loadGame(Graphics & graphics)
 	if (!cipher.verifyHash(mapName, this->_player)) {
 		std::exit(0);
 	}
-	// Generate map items after level, enemies and inventory has been initialized. 
+	// Generate map items and effects after level, enemies and inventory has been initialized.
+	// It's also important to do this after the map hash has been verified to prevent any edits appearing by chance.
 	this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
+	this->_level.generateEffects(graphics, this->_player);
 	this->saveGame(graphics);
 	XMLCheckResult(result);
 	return 0;
