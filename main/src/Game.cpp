@@ -723,6 +723,7 @@ void Game::gameLoop() {
 				{
 					this->loadGame(graphics);
 					this->_title.setReload();
+					Mix_RewindMusic();
 				}
 			}
 		}
