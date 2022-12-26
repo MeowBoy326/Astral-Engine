@@ -62,6 +62,8 @@ namespace {
 	bool showPlayerOutline = false;
 	bool showEnemyOutline = false;
 	bool showCollisionOutline = false;
+	bool windowIsBeingDragged = false;
+	bool findWindowElapsedTime = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -260,6 +262,18 @@ void Game::gameLoop() {
 				}
 				else if (event.type == SDL_QUIT) {
 					return; // When the game ends or user exits
+				}
+				else if (event.type == SDL_WINDOWEVENT) {
+					if (event.window.event == SDL_WINDOWEVENT_MOVED) {
+						windowIsBeingDragged = true;
+					}
+					else if (event.window.event == SDL_WINDOWEVENT_EXPOSED) {
+						windowIsBeingDragged = false;
+						// We don't want to update LAST_UPDATE_TIME just yet. So, set this to true and
+						// once we are right before we calculated elapsed time, update LAST_UPDATE_TIME
+						// so that it is up to date with the SDL library. Then set this bool to false.
+						findWindowElapsedTime = true;
+					}
 				}
 			}
 
@@ -664,6 +678,12 @@ void Game::gameLoop() {
 					}
 					this->_player.startDeath();
 				}
+			}
+			if (findWindowElapsedTime) {
+				// Window was moved, so update the LAST_UPDATE_TIME to be near the SDL_GetTicks() time.
+				// This prevents the elapsed time from becoming large thus messing with the game logic.
+				LAST_UPDATE_TIME = SDL_GetTicks() - 1;
+				findWindowElapsedTime = false;
 			}
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
@@ -1163,7 +1183,7 @@ void Game::setSettings() {
 }
 
 void Game::update(float elapsedTime, Graphics &graphics) {
-	if (!pauseGame) {
+	if (!pauseGame && !windowIsBeingDragged) {
 		this->_player.update(elapsedTime);
 
 		if (this->_player.getCurrentHealth() <= 0 && this->_player.checkDeathPlayed()) {
