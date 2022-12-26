@@ -673,12 +673,15 @@ void Game::gameLoop() {
 			// Loop will go again and current time - new last update will tell us how long next frame will take
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			this->draw(graphics);
-			// Handle last to draw on top
+			// SDL_GetTicks() will still increment while pauseGame = this->_title(...) runs it's own loop.
+			// To account for the time difference, we simply set LAST_UPDATE_TIME = SDL_GetTicks() - 1
+			// This is to ensure a smooth and consistent elapsed time for our next iteration's update/drawing logic.
 			if (pauseGame) {
 				Mix_PauseMusic();
 				pauseGame = this->_title.Pause(graphics, input, event, this->_player);
 				this->setSettings();
 				Mix_ResumeMusic();
+				LAST_UPDATE_TIME = SDL_GetTicks() - 1;
 			}
 		}
 	}
@@ -1274,6 +1277,8 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 				this->_player.handleSlopeCollisions(otherSlopes);
 			}
 
+			/*this->_level.checkCollidingSlopes(this->_player);*/
+
 			this->_level.checkEnemyTileCollision().size() > 0;
 			this->_level.checkEnemyProjectileTileCollision().size() > 0;
 			this->_level.checkProjectileCollisions(this->_player);
@@ -1404,6 +1409,8 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 	if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
 		this->_player.handleSlopeCollisions(otherSlopes);
 	}
+
+	// this->_level.checkCollidingSlopes(this->_player);
 
 	std::vector<Rectangle> cutScenes;
 	if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
