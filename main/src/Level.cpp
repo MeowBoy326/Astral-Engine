@@ -1161,6 +1161,18 @@ std::vector<Slope> Level::checkSlopeCollisions(const Rectangle &other) {
 	return others;
 }
 
+//bool Level::checkCollidingSlopes(Player& player) {
+//	for (int i = 0; i < this->_slopes.size(); i++) {
+//		if (this->_slopes.at(i).checkSlopeCollision(player.getX(), player.getY(), this->_slopes.at(i))) {
+//			player.handlePlayerSlopeCollision(this->_slopes.at(i));
+//			std::cout << "Slope collisions (checkCS in Level)" << std::endl;
+//			return true;
+//		}
+//	}
+//	std::cout << "Return false." << std::endl;
+//	return false;
+//}
+
 std::vector<Door> Level::checkDoorCollisions(const Rectangle &other) {
 	std::vector<Door> others;
 	for (int i = 0; i < this->_doorList.size(); i++) {

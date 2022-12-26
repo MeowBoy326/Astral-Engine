@@ -71,6 +71,7 @@ public:
 	void handleDeadzoneCollisions(std::vector<Rectangle> &others);
 	bool handleLadderCollisions(std::vector<Rectangle> &others);
 	void handleSlopeCollisions(std::vector<Slope> &others);
+	void handlePlayerSlopeCollision(Slope &slope);
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
@@ -253,7 +254,7 @@ protected:
 	std::map<std::string, std::string> mapHash = {
 		{"cave depths",				"8904AD542CFC9BB400F14A090111AD635CC0E26CCE6793DD17B56120F933C431"},
 		{"cave",					"16BE9B99D3874D51C603EA90784BBF6F4155926CE35B8668DCBD584A873D594D"},
-		{"caveFork",				"D47CDCDE93D13DE1C0BF8C01F1B484EA8B00A221DF5E46F0437ACD588E370C2F"},
+		{"caveFork",				"F73EEA06A9CAFE7A311E0A9E9147CF69269FDB615694353E0C14F128639A3E2A"},
 		{"caverns",					"26AD6909D265A070A9C488D25CFD9BB690C6E616251BCFC28E35F1BDAF7152B5"},
 		{"Collapsed Cave",			"E47D0D2F016CAB5DB07F8A5BF437A32CAA41D8B095375FD32EAB9871797393E0"},
 		{"Profaned Capital",		"AC75BD79B413F458D9F8E1BCD6535AC6216620FFFEDDA86FCBA83A29B1A78F76"},

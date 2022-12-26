@@ -598,14 +598,41 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 		int newY = (others.at(i).getSlope() * centerX) + b - 8; //8 is temporary to fix a problem
 
 		// Reposition the player to the correct "y"
-		if (this->_grounded) {
+		if (this->_y + this->_boundingBox.getHeight() > newY) {
 			this->_y = newY - this->_boundingBox.getHeight();
 			this->_grounded = true;
 		}
+		// Previous way did not account for players jumping off a slope and back onto one.
+		/*if (this->_grounded) {
+			this->_y = newY - this->_boundingBox.getHeight();
+			this->_grounded = true;
+		}*/
+
 		this->_lastCollidedSlope = others.at(i);
 		this->_currentSurface = SLOPE;
 	}
 }
+
+//void Player::handlePlayerSlopeCollision(Slope& slope) {
+//	// Calculate where on the slope the player's bottom center is touching
+//		// And use y=mx+b to figure out the y position to place him at
+//		// First calculate "b" (slope) intercept) using one of the points (b = y - mx)
+//	int b = (slope.getP1().y - (slope.getSlope() * fabs(slope.getP1().x)));
+//
+//	// Now get the players center x
+//	int centerX = this->_boundingBox.getCenterX();
+//
+//	// Now pass that X into the equation y = mx + b (using our newly found b and x) to get the new y position
+//	int newY = (slope.getSlope() * centerX) + b - 8; //8 is temporary to fix a problem
+//
+//	// Reposition the player to the correct "y"
+//	if (this->_grounded) {
+//		this->_y = newY - this->_boundingBox.getHeight();
+//		this->_grounded = true;
+//	}
+//	this->_lastCollidedSlope = slope;
+//	this->_currentSurface = SLOPE;
+//}
 
 void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player) {
 	// Check if the player is grounded and holding the down arrow
@@ -1051,6 +1078,14 @@ void Player::update(float elapsedTime) {
 	    // The DY by gravity because we are not at the cap.
 			this->_dy += player_constants::GRAVITY * elapsedTime;
 		}
+
+		/*if (!_grounded || _currentSurface == SLOPE)
+		{
+			if (this->_dy <= player_constants::GRAVITY_CAP)
+			{
+				this->_dy += player_constants::GRAVITY * elapsedTime;
+			}
+		}*/
 		/*if (!isFlying && !_climbing && (!_grounded || _currentSurface == SLOPE)) {
 			if (this->_dy <= player_constants::GRAVITY_CAP) {
 				this->_dy += player_constants::GRAVITY * elapsedTime;
