@@ -259,6 +259,11 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 	this->menuChoice = 0;
 	this->settingsChoice = 0;
 	this->exitChoice = 0;
+	this->showSettings = false;
+	this->isSubmenu = false;
+	this->changeSfxVolume = false;
+	this->changeBgmVolume = false;
+	this->exitMenu = false;
 	this->selectY = 275;
 	this->selectX = 185;
 
