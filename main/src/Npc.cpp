@@ -255,73 +255,163 @@ void Npc::resetScripts()
 	this->endOfChat = false;
 }
 
-int Npc::loadQuests(std::string name)
-{
-	std::cout << "loading quests for: " << name << std::endl;
-	XMLDocument xml;
-	XMLError result;
+int Npc::loadQuests(std::string name) {
+	lua_State* L = luaL_newstate(); // create a new Lua state
+	luaL_openlibs(L); // load Lua standard libraries
+	std::string scriptName = "data/npc/" + name + ".lua";
+	luaL_dofile(L, scriptName.c_str()); // load the dialogue script file
 
-	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
-	cwd.append(name + ".xml");
-	std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "npc";
-	nCwd.append("temp.xml");
-	AESCipher cipher;
-	cipher.AESDecrypt(cwd.string(), nCwd.string());
-	result = xml.LoadFile(nCwd.string().c_str());
+	// Create the references here so that they may be destroyed after the for loop
+	// to prevent any memory leaks and allow the lua state to close properly.
+	luabridge::LuaRef questsTable = luabridge::getGlobal(L, "quests");
+	luabridge::LuaRef quest = questsTable;
+	luabridge::LuaRef dialogueTable = quest["qDialogue"];
+	luabridge::LuaRef finishTable = quest["finish"];
 
-	if (result != tinyxml2::XML_SUCCESS)
-		std::cout << "Could not read the file!";
-	XMLNode* root = xml.FirstChild();
-	if (root == nullptr) {
-		std::cout << XML_ERROR_FILE_READ_ERROR << std::endl;
-		return XML_ERROR_FILE_READ_ERROR;
-	}
-	XMLElement* element = root->FirstChildElement("QuestTable");
-	XMLElement* ptrElement = element->FirstChildElement("Quest");
-	if (ptrElement == nullptr)
-		return XML_ERROR_PARSING_ELEMENT;
-	int amount, type, numOfQuest, rewardType, rewardLevel, exp, cels;
-	ptrElement->QueryIntAttribute("numOfQuest", &numOfQuest);
-	const char* textPtr = nullptr, *descPtr = nullptr, *objPtr = nullptr, *npcPtr = nullptr, *rewardItem;
-	for (int counter = 0; counter < numOfQuest; ++counter) {
-		// Obtain data from XML
-		ptrElement->QueryIntAttribute("amount", &amount);
-		ptrElement->QueryIntAttribute("type", &type);
-		textPtr = ptrElement->Attribute("questName");
-		descPtr = ptrElement->Attribute("description");
-		objPtr = ptrElement->Attribute("object");
-		ptrElement->QueryIntAttribute("rewardType", &rewardType);
-		// If (rewardType == 0) {
-		// PtrElement->QueryIntAttribute("reward", &rewardLevel);
-		//}
-		// Else
-		rewardItem = ptrElement->Attribute("reward");
-		ptrElement->QueryIntAttribute("exp", &exp);
-		ptrElement->QueryIntAttribute("cels", &cels);
-		std::string text = textPtr, descText = descPtr, objText = objPtr;
-		bool completed = true;
-		auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
-		// Push to vector
-		if (this->questTable.empty() && logIt == questLog.end()) { // Check if its not in the accepted quests already
-			this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
+	// Get the number of quests in the quests table
+	int numQuests = questsTable.length();
+
+	for (int i = 1; i <= numQuests; i++) {
+		// Get a reference to the current quest
+		quest = questsTable[i];
+
+		// Get the name of the quest
+		std::string qName = quest["name"].cast<std::string>();
+
+		std::cout << "Quest name: " << qName << std::endl;
+
+		// Get a reference to the dialogue table for the quest
+		dialogueTable = quest["qDialogue"];
+
+		// Get the number of dialogue strings for the quest
+		int numDialogue = dialogueTable.length();
+
+		for (int j = 1; j <= numDialogue; j++) {
+			// Get the current dialogue string
+			std::string dialogue = dialogueTable[j].cast<std::string>();
+
+			std::cout << dialogue << std::endl;
 		}
-		else { // Find_if algorithm with lambda function
-			auto it = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-			if (it == questTable.end() && logIt == questLog.end()) {
-				this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
-			}
+
+		// Get a reference to the quest finish dialogue table for the quest
+		finishTable = quest["finish"];
+
+		// Get the number of dialogue strings for the quest
+		int numFinish = finishTable.length();
+
+		for (int k = 1; k <= numFinish; k++) {
+			// Get the current dialogue string
+			std::string finish = finishTable[k].cast<std::string>();
+
+			std::cout << finish << std::endl;
 		}
-		if (ptrElement->NextSiblingElement("Quest") != nullptr)
-			ptrElement = ptrElement->NextSiblingElement("Quest");
+
+		// Get the quest object (enemy/loot to kill/collect)
+		std::string object = quest["object"].cast<std::string>();
+
+		// Get the quest type (1 = Kill and 2 = collect)
+		int qType = quest["qType"].cast<int>();
+
+		// Get the amount needed (kill/collect)
+		int qAmount = quest["amount"].cast<int>();
+
+		// Get the exp reward
+		int rExp = quest["rExp"].cast<int>();
+
+		// Get the celestial reward
+		int rCels = quest["rCels"].cast<int>();
+
+		// Get the item reward (as a itemID that we can check in a Item vector for to give)
+		int rItem = quest["rItem"].cast<int>();
+
+		// Get the reward quantity
+		int rQuantity = quest["rQuantity"].cast<int>();
+
+		std::cout << "Quest object: " << object << std::endl;
+		std::cout << "Quest type: " << qType << std::endl;
+		std::cout << "Quest amount: " << qAmount << std::endl;
+		std::cout << "Reward exp: " << rExp << std::endl;
+		std::cout << "Reward cels: " << rCels << std::endl;
+		std::cout << "Reward item: " << rItem << std::endl;
+		std::cout << "Item quantity: " << rQuantity << std::endl;
+
 	}
-	for (auto &t : this->questLog) {
-		if (std::get<5>(t) == true && std::get<4>(t) == false) {
-			std::get<4>(t) = true;
-			// Once rewarded and player opens menu again, mark as completed.
-		}
-	}
-	cipher.AESEncrypt(nCwd.string(), cwd.string());
-	XMLCheckResult(result);
+	// Set all the LuaRef to Nil so that when lua_close(L) is called it can close properly by dereferencing Nil
+	// since the original values are no longer accessible after the for loop
+	questsTable = luabridge::Nil();
+	quest = luabridge::Nil();
+	dialogueTable = luabridge::Nil();
+	finishTable = luabridge::Nil();
+
+	// close the Lua state
+	lua_close(L);
+
+
+	//std::cout << "loading quests for: " << name << std::endl;
+	//XMLDocument xml;
+	//XMLError result;
+
+	//std::filesystem::path cwd = std::filesystem::current_path() / "data" / "npc";
+	//cwd.append(name + ".xml");
+	//std::filesystem::path nCwd = std::filesystem::current_path() / "data" / "npc";
+	//nCwd.append("temp.xml");
+	//AESCipher cipher;
+	//cipher.AESDecrypt(cwd.string(), nCwd.string());
+	//result = xml.LoadFile(nCwd.string().c_str());
+
+	//if (result != tinyxml2::XML_SUCCESS)
+	//	std::cout << "Could not read the file!";
+	//XMLNode* root = xml.FirstChild();
+	//if (root == nullptr) {
+	//	std::cout << XML_ERROR_FILE_READ_ERROR << std::endl;
+	//	return XML_ERROR_FILE_READ_ERROR;
+	//}
+	//XMLElement* element = root->FirstChildElement("QuestTable");
+	//XMLElement* ptrElement = element->FirstChildElement("Quest");
+	//if (ptrElement == nullptr)
+	//	return XML_ERROR_PARSING_ELEMENT;
+	//int amount, type, numOfQuest, rewardType, rewardLevel, exp, cels;
+	//ptrElement->QueryIntAttribute("numOfQuest", &numOfQuest);
+	//const char* textPtr = nullptr, *descPtr = nullptr, *objPtr = nullptr, *npcPtr = nullptr, *rewardItem;
+	//for (int counter = 0; counter < numOfQuest; ++counter) {
+	//	// Obtain data from XML
+	//	ptrElement->QueryIntAttribute("amount", &amount);
+	//	ptrElement->QueryIntAttribute("type", &type);
+	//	textPtr = ptrElement->Attribute("questName");
+	//	descPtr = ptrElement->Attribute("description");
+	//	objPtr = ptrElement->Attribute("object");
+	//	ptrElement->QueryIntAttribute("rewardType", &rewardType);
+	//	// If (rewardType == 0) {
+	//	// PtrElement->QueryIntAttribute("reward", &rewardLevel);
+	//	//}
+	//	// Else
+	//	rewardItem = ptrElement->Attribute("reward");
+	//	ptrElement->QueryIntAttribute("exp", &exp);
+	//	ptrElement->QueryIntAttribute("cels", &cels);
+	//	std::string text = textPtr, descText = descPtr, objText = objPtr;
+	//	bool completed = true;
+	//	auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
+	//	// Push to vector
+	//	if (this->questTable.empty() && logIt == questLog.end()) { // Check if its not in the accepted quests already
+	//		this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
+	//	}
+	//	else { // Find_if algorithm with lambda function
+	//		auto it = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+	//		if (it == questTable.end() && logIt == questLog.end()) {
+	//			this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
+	//		}
+	//	}
+	//	if (ptrElement->NextSiblingElement("Quest") != nullptr)
+	//		ptrElement = ptrElement->NextSiblingElement("Quest");
+	//}
+	//for (auto &t : this->questLog) {
+	//	if (std::get<5>(t) == true && std::get<4>(t) == false) {
+	//		std::get<4>(t) = true;
+	//		// Once rewarded and player opens menu again, mark as completed.
+	//	}
+	//}
+	//cipher.AESEncrypt(nCwd.string(), cwd.string());
+	//XMLCheckResult(result);
 	return 0;
 }
 
