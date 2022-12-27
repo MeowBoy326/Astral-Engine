@@ -719,8 +719,7 @@ void Game::gameLoop() {
 				this->setSettings();
 				Mix_ResumeMusic();
 				LAST_UPDATE_TIME = SDL_GetTicks() - 1;
-				if (_title.getMenuChoice() == 0 && _title.getReload())
-				{
+				if (_title.getMenuChoice() == 0 && _title.getReload()) {
 					this->loadGame(graphics);
 					this->_title.setReload();
 					Mix_RewindMusic();
@@ -1227,8 +1226,6 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 				this->_player.setPlayerHit(false);
 			}
 			this->_level.update(elapsedTime, this->_player);
-			// Hud goes on top of everything
-			this->_hud.update(elapsedTime, this->_player);
 
 			if (!this->_level.getMapBGM().empty()) {
 				if (BGM != this->_level.getMapBGM()) {
@@ -1371,7 +1368,8 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 					activeCutscene = true;
 				}
 			}
-
+			// Hud goes on top of everything
+			this->_hud.update(elapsedTime, this->_player);
 			// Update camera last once every object position has been updated to prevent screen shakes 
 			this->_camera.Update(elapsedTime, this->_player);
 		}

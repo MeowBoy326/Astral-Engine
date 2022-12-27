@@ -30,4 +30,6 @@ private:
 	// Gun Sprite
 	Sprite _slash;
 	Sprite _dashes;
+
+	int posX, posY;
 };

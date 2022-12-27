@@ -34,18 +34,21 @@ void HUD::update(int ElapsedTime, Player &player) {
 	int expNum = (player.getCurrentExp() / player.getRequiredExp()) * 84;
 	this->_expBarValue.setSourceRectW(expNum);
 	this->_lvNumber.setSourceRectX(8 * player.getLevel());
+
+	this->posX = player.getX();
+	this->posY = player.getY();
 }
 
 void HUD::draw(Graphics &graphics, Player &player) {
 	// This->_healthBarSprite.draw(graphics, this->_healthBarSprite.getX(), this->_healthBarSprite.getY());
 	// This->_healthNumber1.draw(graphics, player.getX() - 285, player.getY() - 185);
-	this->_healthBarSprite.drawHPBar(graphics, player.getX() - 317, player.getY() - 240);
-	this->_currentHealthBar.drawHPBar(graphics, player.getX() - 260, player.getY() - 216);
+	this->_healthBarSprite.drawHPBar(graphics, this->posX - 317, this->posY - 240);
+	this->_currentHealthBar.drawHPBar(graphics, this->posX - 260, this->posY - 216);
 
-	this->_lvWord.draw(graphics, player.getX() - 314, player.getY() - 179);
-	this->_lvNumber.draw(graphics, player.getX() - 285, player.getY() - 179);
-	this->_expBar.draw(graphics, player.getX() - 261, player.getY() - 201);
-	this->_expBarValue.draw(graphics, player.getX() - 260, player.getY() - 202);
+	this->_lvWord.draw(graphics, this->posX - 314, this->posY - 179);
+	this->_lvNumber.draw(graphics, this->posX - 285, this->posY - 179);
+	this->_expBar.draw(graphics, this->posX - 261, this->posY - 201);
+	this->_expBarValue.draw(graphics, this->posX - 260, this->posY - 202);
 
 	// This->_slash.draw(graphics, player.getX() - 255, player.getY() - 220);
 	// This->_dashes.draw(graphics, player.getX() - 230, player.getY() - 235);
