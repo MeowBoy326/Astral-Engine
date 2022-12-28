@@ -727,6 +727,18 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 			else if (ss.str() == "npc") {
 				float x, y;
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+				int npcID = 0;
+				// Get Custom Properties first
+				XMLElement* propsNode = pObject->FirstChildElement("properties");
+				if (propsNode != NULL) {
+					const char* propsName = propsNode->FirstChildElement("property")->Attribute("name");
+					std::stringstream ssProp;
+					ssProp << propsName;
+					if (ssProp.str() == "NpcID") {
+						const int getNpcId = propsNode->FirstChildElement("property")->IntAttribute("value");
+						npcID = getNpcId;
+					}
+				}
 				if (pObject != NULL) {
 					while (pObject) {
 						x = pObject->FloatAttribute("x");
@@ -736,7 +748,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						ss << name;
 						if (ss.str() == "Luna") {
 							this->_npcs.push_back(new Luna(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE), ss.str()));
+								std::floor(y) * globals::SPRITE_SCALE), ss.str(), npcID));
 						}
 						pObject = pObject->NextSiblingElement("object");
 					}
