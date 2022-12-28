@@ -258,124 +258,114 @@ void Npc::resetScripts()
 }
 
 int Npc::loadQuests(int npcID) {
-	lua_State* L = luaL_newstate(); // create a new Lua state
-	luaL_openlibs(L); // load Lua standard libraries
-	std::string scriptName = "data/npc/" + std::to_string(npcID) + ".lua";
-	std::cout << scriptName << std::endl;
-	luaL_dofile(L, scriptName.c_str()); // load the dialogue script file
+	// If the quest for the NPC hasn't been loaded yet then get the data and insert into the questTable.
+	// This will save a lot of time checking this first and also prevent duplicate quests.
+	auto it = std::find_if(questTable.begin(), questTable.end(), [&npcID](const auto& t) {return std::get<6>(t) == npcID; });
+	if (this->questTable.empty() || it == questTable.end()) {
+		lua_State* L = luaL_newstate(); // create a new Lua state
+		luaL_openlibs(L); // load Lua standard libraries
+		std::string scriptName = "data/npc/" + std::to_string(npcID) + ".lua";
+		std::cout << scriptName << std::endl;
+		luaL_dofile(L, scriptName.c_str()); // load the dialogue script file
 
-	// Create the references here so that they may be destroyed after the for loop
-	// to prevent any memory leaks and allow the lua state to close properly.
-	luabridge::LuaRef questsTable = luabridge::getGlobal(L, "quests");
-	luabridge::LuaRef quest = questsTable;
-	luabridge::LuaRef dialogueTable = quest["qDialogue"];
-	luabridge::LuaRef finishTable = quest["finish"];
+		// Create the references here so that they may be destroyed after the for loop
+		// to prevent any memory leaks and allow the lua state to close properly.
+		luabridge::LuaRef questsTable = luabridge::getGlobal(L, "quests");
+		luabridge::LuaRef quest = questsTable;
+		luabridge::LuaRef dialogueTable = quest["qDialogue"];
+		luabridge::LuaRef finishTable = quest["finish"];
 
-	// Get the number of quests in the quests table
-	int numQuests = questsTable.length();
+		// Get the number of quests in the quests table
+		int numQuests = questsTable.length();
 
-	for (int i = 1; i <= numQuests; i++) {
-		// Get a reference to the current quest
-		quest = questsTable[i];
+		for (int i = 1; i <= numQuests; i++) {
+			// Get a reference to the current quest
+			quest = questsTable[i];
 
-		// Get the name of the quest
-		std::string qName = quest["name"].cast<std::string>();
+			// Get the name of the quest
+			std::string qName = quest["name"].cast<std::string>();
 
-		std::cout << "Quest name: " << qName << std::endl;
+			std::cout << "Quest name: " << qName << std::endl;
 
-		// Get a reference to the dialogue table for the quest
-		dialogueTable = quest["qDialogue"];
+			// Get a reference to the dialogue table for the quest
+			dialogueTable = quest["qDialogue"];
 
-		// Get the number of dialogue strings for the quest
-		int numDialogue = dialogueTable.length();
-		// Create the vector to store the dialogue
-		std::vector<std::string> questDialogueVec;
+			// Get the number of dialogue strings for the quest
+			int numDialogue = dialogueTable.length();
+			// Create the vector to store the dialogue
+			std::vector<std::string> questDialogueVec;
 
-		for (int j = 1; j <= numDialogue; j++) {
-			// Get the current dialogue string
-			std::string dialogue = dialogueTable[j].cast<std::string>();
-			questDialogueVec.push_back(dialogue);
-			std::cout << dialogue << std::endl;
-		}
-
-		// Get a reference to the quest finish dialogue table for the quest
-		finishTable = quest["finish"];
-
-		// Get the number of dialogue strings for the quest
-		int numFinish = finishTable.length();
-		// Create the vector to store the quest finished dialogue
-		std::vector<std::string> questFinishDialogueVec;
-
-		for (int k = 1; k <= numFinish; k++) {
-			// Get the current dialogue string
-			std::string finish = finishTable[k].cast<std::string>();
-			questFinishDialogueVec.push_back(finish);
-			std::cout << finish << std::endl;
-		}
-
-		// Get the quest object (enemy/loot to kill/collect)
-		std::string object = quest["object"].cast<std::string>();
-
-		// Get the quest type (1 = Kill and 2 = collect)
-		int qType = quest["qType"].cast<int>();
-
-		// Get the amount needed (kill/collect)
-		int qAmount = quest["amount"].cast<int>();
-
-		// Get the exp reward
-		int rExp = quest["rExp"].cast<int>();
-
-		// Get the celestial reward
-		int rCels = quest["rCels"].cast<int>();
-
-		// Get the item reward (as a itemID that we can check in a Item vector for to give)
-		int rItem = quest["rItem"].cast<int>();
-
-		// Get the reward quantity
-		int rQuantity = quest["rQuantity"].cast<int>();
-
-		std::cout << "Quest object: " << object << std::endl;
-		std::cout << "Quest type: " << qType << std::endl;
-		std::cout << "Quest amount: " << qAmount << std::endl;
-		std::cout << "Reward exp: " << rExp << std::endl;
-		std::cout << "Reward cels: " << rCels << std::endl;
-		std::cout << "Reward item: " << rItem << std::endl;
-		std::cout << "Item quantity: " << rQuantity << std::endl;
-
-		bool completed = true;
-		auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
-		// Push to vector
-		// Check if its not in the accepted quests already
-		// First check if the questTable is empty so that we can just insert immediately.
-		if (this->questTable.empty() && logIt == questLog.end()) { 
-			this->questTable.push_back(std::make_tuple(qName, qType, object, qAmount, questDialogueVec, questFinishDialogueVec, npcID, rItem, rQuantity, rExp, rCels));
-		}
-		else { // Find_if algorithm with lambda function to check if the quest already exist in the table (already inserted).
-			auto it = std::find_if(questTable.begin(), questTable.end(), [&qName](const auto& t) {return std::get<0>(t) == qName; });
-			if (it == questTable.end() && logIt == questLog.end()) {
-				this->questTable.push_back(std::make_tuple(qName, qType, object, qAmount, questDialogueVec, questFinishDialogueVec, npcID, rItem, rQuantity, rExp, rCels));
+			for (int j = 1; j <= numDialogue; j++) {
+				// Get the current dialogue string
+				std::string dialogue = dialogueTable[j].cast<std::string>();
+				questDialogueVec.push_back(dialogue);
+				std::cout << dialogue << std::endl;
 			}
+
+			// Get a reference to the quest finish dialogue table for the quest
+			finishTable = quest["finish"];
+
+			// Get the number of dialogue strings for the quest
+			int numFinish = finishTable.length();
+			// Create the vector to store the quest finished dialogue
+			std::vector<std::string> questFinishDialogueVec;
+
+			for (int k = 1; k <= numFinish; k++) {
+				// Get the current dialogue string
+				std::string finish = finishTable[k].cast<std::string>();
+				questFinishDialogueVec.push_back(finish);
+				std::cout << finish << std::endl;
+			}
+
+			// Get the quest object (enemy/loot to kill/collect)
+			std::string object = quest["object"].cast<std::string>();
+
+			// Get the quest type (1 = Kill and 2 = collect)
+			int qType = quest["qType"].cast<int>();
+
+			// Get the amount needed (kill/collect)
+			int qAmount = quest["amount"].cast<int>();
+
+			// Get the exp reward
+			int rExp = quest["rExp"].cast<int>();
+
+			// Get the celestial reward
+			int rCels = quest["rCels"].cast<int>();
+
+			// Get the item reward (as a itemID that we can check in a Item vector for to give)
+			int rItem = quest["rItem"].cast<int>();
+
+			// Get the reward quantity
+			int rQuantity = quest["rQuantity"].cast<int>();
+
+			std::cout << "Quest object: " << object << std::endl;
+			std::cout << "Quest type: " << qType << std::endl;
+			std::cout << "Quest amount: " << qAmount << std::endl;
+			std::cout << "Reward exp: " << rExp << std::endl;
+			std::cout << "Reward cels: " << rCels << std::endl;
+			std::cout << "Reward item: " << rItem << std::endl;
+			std::cout << "Item quantity: " << rQuantity << std::endl;
+
+			this->questTable.push_back(std::make_tuple(qName, qType, object, qAmount, questDialogueVec, questFinishDialogueVec, npcID, rItem, rQuantity, rExp, rCels, false));
 		}
+		// Set all the LuaRef to Nil so that when lua_close(L) is called it can close properly by dereferencing Nil
+		// since the original values are no longer accessible after the for loop
+		questsTable = luabridge::Nil();
+		quest = luabridge::Nil();
+		dialogueTable = luabridge::Nil();
+		finishTable = luabridge::Nil();
+
+		// close the Lua state
+		lua_close(L);
 	}
-	// Set all the LuaRef to Nil so that when lua_close(L) is called it can close properly by dereferencing Nil
-	// since the original values are no longer accessible after the for loop
-	questsTable = luabridge::Nil();
-	quest = luabridge::Nil();
-	dialogueTable = luabridge::Nil();
-	finishTable = luabridge::Nil();
-
-	// close the Lua state
-	lua_close(L);
-
-
 
 	// Once rewarded and player opens menu again, mark as completed.
-	for (auto &t : this->questLog) {
-		if (std::get<5>(t) == true && std::get<4>(t) == false) {
-			std::get<4>(t) = true;
+	//for (auto &t : this->questLog) {
+	//	if (std::get<5>(t) == true && std::get<4>(t) == false) {
+	//		std::get<4>(t) = true;
 
-		}
-	}
+	//	}
+	//}
 
 
 	//std::cout << "loading quests for: " << name << std::endl;
@@ -477,28 +467,28 @@ void Npc::acceptQuest(Graphics & graphics, int npcID, int posX, int posY, Player
 			return;
 		}
 	}
-	//std::string completeMsg;
-	//auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-	//auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-	//auto distance = std::distance(this->questLog.begin(), it);
-	// if (!questTable.empty()) {
-	//	this->drawNpcText(graphics, 100, 100, std::get<4>(this->questTable[selection]), posX, posY);
-	//	if (this->questLog.empty()) {
-	//		this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
-	//			std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false, 
-	//			std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]), 
-	//			std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
-	//	}
-	//	else { // Find_if algorithm with lambda function
-	//		auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-	//		if (it == questLog.end()) {
-	//			this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
-	//				std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false,
-	//				std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]),
-	//				std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
-	//		}
-	//	}
-	//}
+	std::string completeMsg;
+	auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+	auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+	auto distance = std::distance(this->questLog.begin(), it);
+	 if (!questTable.empty()) {
+		this->drawNpcText(graphics, 100, 100, std::get<4>(this->questTable[selection]), posX, posY);
+		if (this->questLog.empty()) {
+			this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
+				std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false, 
+				std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]), 
+				std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
+		}
+		else { // Find_if algorithm with lambda function
+			auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+			if (it == questLog.end()) {
+				this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
+					std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false,
+					std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]),
+					std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
+			}
+		}
+	}
 }
 
 void Npc::giveRewards(Graphics & graphics, std::string questName, int posX, int posY, Player & player, int selection)
