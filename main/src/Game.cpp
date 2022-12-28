@@ -41,6 +41,7 @@ namespace {
 	int sceneType = 0;
 	int sceneLines = 0;
 	int sceneLineCounter = 1;
+	int npcID = 0;
 	char sceneLineChar = 'a';
 
 	bool title = true;
@@ -500,7 +501,7 @@ void Game::gameLoop() {
 						this->_npc.setNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
 						this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
 						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-						this->_npc.loadQuests(npcName);
+						this->_npc.loadQuests(npcID);
 					}
 					else if (activeTalk == true) {
 						activeTalk = false;
@@ -526,10 +527,10 @@ void Game::gameLoop() {
 						}
 						else if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
 							this->_npc.setNpcTalk(true);
-							this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
+							this->_npc.playScript(npcID, graphics, this->_player.getX(), this->_player.getY());
 						}
 						else if (npcSelection == 1 && this->_npc.getNpcTalk()) {
-							this->_npc.playNext(npcName, graphics, this->_player.getX(), this->_player.getY(), this->_player);
+							this->_npc.playNext(npcID, graphics, this->_player.getX(), this->_player.getY(), this->_player);
 							if (this->_npc.getChatStatus()) {
 								this->_npc.setNpcTalk(false);
 								activeTalk = false;
@@ -541,15 +542,15 @@ void Game::gameLoop() {
 						else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
 							this->_npc.setNpcTalk(true);
 							this->_npc.setQuestMenuState(true);
-							this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
+							this->_npc.displayQuests(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player);
 						}
 						else if (npcSelection == 2 && this->_npc.getNpcTalk() && this->_npc.checkNoQuests() == false) {
 							if (questSelection == 1) {
-								this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(),
+								this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(),
 									this->_player, questSelection - 1);
 							}
 							else if (questSelection == 2) {
-								this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(),
+								this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(),
 									this->_player, questSelection - 1);
 							}
 						}
@@ -757,14 +758,14 @@ void Game::draw(Graphics &graphics) {
 	this->_chatBox.drawChatBox(graphics, this->_player);
 	if (activeTalk == true) {
 		if (this->_npc.getNpcTalk() && npcSelection == 1) {
-			this->_npc.repeatScript(npcName, graphics, this->_player.getX(), this->_player.getY());
+			this->_npc.repeatScript(graphics, this->_player.getX(), this->_player.getY());
 		}
 		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && !this->_npc.getQuestState()) {
-			this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
+			this->_npc.displayQuests(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player);
 			this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), questSelection);
 		}
 		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && this->_npc.getQuestState() && this->_npc.checkNoQuests() == false) {
-			this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
+			this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
 		}
 		else {
 			this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
@@ -1241,10 +1242,12 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 			std::vector<Npc*> otherNpc;
 			if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
 				npcName = this->_player.getNpcName(otherNpc, graphics);
+				npcID = this->_player.getNpcId(otherNpc, graphics);
 			}
 			// This will ensure when we are no long colliding with npc, set name to blank so we cant talk to an npc far away
 			if (otherNpc.size() == 0) {
 				npcName = "";
+				npcID = 0;
 			}
 
 			// Check collisions

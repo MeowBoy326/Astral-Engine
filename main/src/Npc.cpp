@@ -77,7 +77,7 @@ void Npc::drawNpcIcon(Graphics & graphics, const std::string name, int posX, int
 	this->drawNpcName(graphics, posX, posY, name);
 }
 
-int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
+int Npc::playScript(int npcID, Graphics & graphics, int posX, int posY)
 {
 	this->endOfChat = false;
 	//XMLDocument xml;
@@ -114,7 +114,8 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 
 	lua_State* L = luaL_newstate(); // create a new Lua state
 	luaL_openlibs(L); // load Lua standard libraries
-	std::string scriptName = "data/npc/" + name + ".lua";
+	std::string scriptName = "data/npc/" + std::to_string(npcID) + ".lua";
+	std::cout << scriptName << std::endl;
 	luaL_dofile(L, scriptName.c_str()); // load the dialogue script file
 
 	// retrieve the number and string from the script file
@@ -124,7 +125,7 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 
 	int lineID;
 
-	auto it = std::find_if(npcDialogueTable.begin(), npcDialogueTable.end(), [&name](const auto& t) {return t.first == name; });
+	auto it = std::find_if(npcDialogueTable.begin(), npcDialogueTable.end(), [&npcID](const auto& t) {return t.first == npcID; });
 	auto distance = std::distance(this->npcDialogueTable.begin(), it);
 	if (it != npcDialogueTable.end()) {
 		if (npcDialogueTable[distance].second > lines) {
@@ -135,7 +136,7 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 		lineID = npcDialogueTable[distance].second;
 	}
 	else {
-		this->npcDialogueTable.push_back(std::make_pair(name, 1));
+		this->npcDialogueTable.push_back(std::make_pair(npcID, 1));
 		lineID = 1;
 	}
 
@@ -157,7 +158,7 @@ int Npc::playScript(std::string name, Graphics & graphics, int posX, int posY)
 	return 0;
 }
 
-int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Player &player)
+int Npc::playNext(int npcID, Graphics & graphics, int posX, int posY, Player &player)
 {
 	// If (questState == false) {
 		/*XMLDocument xml;
@@ -198,20 +199,21 @@ int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Pla
 
 	int lineID;
 
-	auto it = std::find_if(npcDialogueTable.begin(), npcDialogueTable.end(), [&name](const auto& t) {return t.first == name; });
+	auto it = std::find_if(npcDialogueTable.begin(), npcDialogueTable.end(), [&npcID](const auto& t) {return t.first == npcID; });
 	auto distance = std::distance(this->npcDialogueTable.begin(), it);
 	if (it != npcDialogueTable.end()) {
 		npcDialogueTable[distance].second += 1;
 		lineID = npcDialogueTable[distance].second;
 	}
 	else {
-		this->npcDialogueTable.push_back(std::make_pair(name, 1));
+		this->npcDialogueTable.push_back(std::make_pair(npcID, 1));
 		lineID = 1;
 	}
 
 	lua_State* L = luaL_newstate(); // create a new Lua state
 	luaL_openlibs(L); // load Lua standard libraries
-	std::string scriptName = "data/npc/" + name + ".lua";
+	std::string scriptName = "data/npc/" + std::to_string(npcID) + ".lua";
+	std::cout << scriptName << std::endl;
 	luaL_dofile(L, scriptName.c_str()); // load the dialogue script file
 
 	// retrieve the number and string from the script file
@@ -242,7 +244,7 @@ int Npc::playNext(std::string name, Graphics & graphics, int posX, int posY, Pla
 	return 0;
 }
 
-int Npc::repeatScript(std::string name, Graphics& graphics, int posX, int posY) {
+int Npc::repeatScript(Graphics& graphics, int posX, int posY) {
 	this->drawNpcDialogue(graphics, 100, 100, this->dialogueText, posX, posY);
 	return 0;
 }
@@ -255,10 +257,11 @@ void Npc::resetScripts()
 	this->endOfChat = false;
 }
 
-int Npc::loadQuests(std::string name) {
+int Npc::loadQuests(int npcID) {
 	lua_State* L = luaL_newstate(); // create a new Lua state
 	luaL_openlibs(L); // load Lua standard libraries
-	std::string scriptName = "data/npc/" + name + ".lua";
+	std::string scriptName = "data/npc/" + std::to_string(npcID) + ".lua";
+	std::cout << scriptName << std::endl;
 	luaL_dofile(L, scriptName.c_str()); // load the dialogue script file
 
 	// Create the references here so that they may be destroyed after the for loop
@@ -415,12 +418,12 @@ int Npc::loadQuests(std::string name) {
 	return 0;
 }
 
-void Npc::displayQuests(Graphics & graphics, std::string npcName, int posX, int posY, Player & player)
+void Npc::displayQuests(Graphics & graphics, int npcID, int posX, int posY, Player & player)
 {
 	int dy = 0;
 	if (!this->questTable.empty()) {
 		for (auto &t : this->questTable) {
-			if (npcName == std::get<5>(t)) {
+			if (npcID == std::get<5>(t)) {
 				this->drawQuestText(graphics, posX + 10, posY + dy, std::get<0>(t));
 				dy += 40;
 			}
@@ -442,7 +445,7 @@ void Npc::questSelection(Graphics & graphics, int posX, int posY, int selection)
 	}
 }
 
-void Npc::acceptQuest(Graphics & graphics, std::string npcName, int posX, int posY, Player & player, int selection)
+void Npc::acceptQuest(Graphics & graphics, int npcID, int posX, int posY, Player & player, int selection)
 {
 	this->questState = true;
 	if (questDone) {
@@ -490,11 +493,11 @@ void Npc::acceptQuest(Graphics & graphics, std::string npcName, int posX, int po
 	}
 }
 
-void Npc::giveRewards(Graphics & graphics, std::string npcName, int posX, int posY, Player & player, int selection)
+void Npc::giveRewards(Graphics & graphics, std::string questName, int posX, int posY, Player & player, int selection)
 {
 	std::string completeMsg;
 	std::stringstream ss;
-	auto it = std::find_if(questLog.begin(), questLog.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
+	auto it = std::find_if(questLog.begin(), questLog.end(), [&questName](const auto& t) {return std::get<0>(t) == questName; });
 	auto distance = std::distance(this->questLog.begin(), it);
 	// Auto itQT = std::find_if(questTable.begin(), questTable.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
 	// If (itQT == questTable.end()) {
@@ -567,16 +570,27 @@ bool Npc::checkQuest(Graphics & graphics, std::string name, int posX, int posY, 
 	return false;
 }
 
+const std::string Npc::getNpcNameID(int npcID) {
+	auto it = std::find_if(this->npcIDTable.begin(), this->npcIDTable.end(), [&npcID](const auto& t) {return t.second == npcID; });
+	auto distance = std::distance(this->npcIDTable.begin(), it);
+	if (it != npcIDTable.end()) {
+		return npcIDTable[distance].first;
+	}
+	std::printf("Error resolving NPC name with ID(%s) at file:%s:%d\n",npcID, __FILE__, __LINE__);
+	return "NULL";
+}
+
 // Luna class
 Luna::Luna() {}
 
-Luna::Luna(Graphics &graphics, Vector2 spawnPoint, std::string name) :
+Luna::Luna(Graphics &graphics, Vector2 spawnPoint, std::string name, int npcId) :
 	Npc(graphics, "data\\npc\\female.png", 2, 33, 30, 30, spawnPoint, 140),
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false)
 {
 	_npcName = name;
+	npcID = npcId;
 	this->setupAnimations();
 	this->playAnimation("Luna");
 	// This->loadQuests(name);

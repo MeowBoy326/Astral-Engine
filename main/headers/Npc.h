@@ -31,23 +31,24 @@ public:
 	const inline int getMaxHealth() const { return this->_maxHealth; }
 	const inline int getCurrentHealth() const { return this->_currentHealth; }
 	const inline std::string getName() const { return this->_npcName; }
+	const inline int getNpcId() const { return this->npcID; }
 
 	void npcSelection(Graphics &graphics, int posX, int posY, int selection);
 	void setNpcIcon(Graphics &graphics, const std::string name, int posX, int posY);
 	void drawNpcIcon(Graphics &graphics, const std::string name, int posX, int posY);
-	int playScript(std::string name, Graphics &graphics, int posX, int posY);
-	int playNext(std::string name, Graphics &graphics, int posX, int posY, Player &player);
-	int repeatScript(std::string name, Graphics &graphics, int posX, int posY);
+	int playScript(int npcID, Graphics &graphics, int posX, int posY);
+	int playNext(int npcID, Graphics &graphics, int posX, int posY, Player &player);
+	int repeatScript(Graphics &graphics, int posX, int posY);
 	inline bool const getChatStatus() { return this->endOfChat; }
 	inline void setChatStatus(bool condition) { this->endOfChat = condition; }
 	inline bool const getNpcTalk() { return this->npcTalking; }
 	inline void setNpcTalk(bool condition) { this->npcTalking = condition; }
 	void resetScripts();
 	
-	int loadQuests(std::string name);
-	void displayQuests(Graphics &grpahics, std::string npcName, int posX, int posY, Player &player);
+	int loadQuests(int npcID);
+	void displayQuests(Graphics &grpahics, int npcID, int posX, int posY, Player &player);
 	void questSelection(Graphics &graphics, int posX, int posY, int selection);
-	void acceptQuest(Graphics &graphics, std::string npcName, int posX, int posY, Player &player, int selection);
+	void acceptQuest(Graphics &graphics, int npcID, int posX, int posY, Player &player, int selection);
 	void giveRewards(Graphics &graphics, std::string npcName, int posX, int posY, Player &player, int selection);
 	bool checkQuest(Graphics &graphics, std::string name, int posX, int posY, Player &player);
 	inline bool const getQuestState() { return this->questState; }
@@ -60,14 +61,18 @@ public:
 	inline void setNoQuest(bool condition) { this->noQuest = condition; }
 	inline const std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> getQuestLog() const { return this->questLog; }
 	inline void setQuestLog(std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> table) { this->questLog = table; }
+	inline const std::vector<std::pair<std::string, int>> getNpcIdTable() const { return this->npcIDTable; }
+	const std::string getNpcNameID(int npcID);
 protected:
 	Direction _direction;
-	// QuestName, type, object, amount, description, npcName, rewardType, reward(can be converted to int for level), exp, cels
-	std::vector<std::tuple<std::string, int, std::string, int, std::string, std::string, int, std::string, int, int>> questTable;
+	// QuestName, type, object, amount, description, npcID (formerly npcName), rewardType, reward(can be converted to int for level), exp, cels
+	std::vector<std::tuple<std::string, int, std::string, int, std::string, int, int, std::string, int, int>> questTable;
 	// QuestName, type, object, amount, isCompleted, isRewarded
 	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> questLog;
-	// Name of NPC, DialogueID player has reached
-	std::vector<std::pair<std::string, int>> npcDialogueTable;
+	// ID of NPC, DialogueID player has reached
+	std::vector<std::pair<int, int>> npcDialogueTable;
+	// NPC ID table - Stores the name with the corresponding ID
+	std::vector<std::pair<std::string, int>> npcIDTable;
 
 	int _maxHealth;
 	int _currentHealth;
@@ -76,7 +81,7 @@ protected:
 	std::string storedQuestName;
 	std::string reward;
 	std::string dialogueText;
-	int levelReward, rewardType, exp, cels;
+	int levelReward, rewardType, exp, cels, npcID;
 
 	Sprite* _chatSelection;
 	Sprite* _questSelection;
@@ -98,7 +103,7 @@ protected:
 class Luna : public Npc {
 public:
 	Luna();
-	Luna(Graphics &graphics, Vector2 spawPoint, std::string name);
+	Luna(Graphics &graphics, Vector2 spawPoint, std::string name, int npcId);
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics);
