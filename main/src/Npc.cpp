@@ -288,11 +288,13 @@ int Npc::loadQuests(int npcID) {
 
 		// Get the number of dialogue strings for the quest
 		int numDialogue = dialogueTable.length();
+		// Create the vector to store the dialogue
+		std::vector<std::string> questDialogueVec;
 
 		for (int j = 1; j <= numDialogue; j++) {
 			// Get the current dialogue string
 			std::string dialogue = dialogueTable[j].cast<std::string>();
-
+			questDialogueVec.push_back(dialogue);
 			std::cout << dialogue << std::endl;
 		}
 
@@ -301,11 +303,13 @@ int Npc::loadQuests(int npcID) {
 
 		// Get the number of dialogue strings for the quest
 		int numFinish = finishTable.length();
+		// Create the vector to store the quest finished dialogue
+		std::vector<std::string> questFinishDialogueVec;
 
 		for (int k = 1; k <= numFinish; k++) {
 			// Get the current dialogue string
 			std::string finish = finishTable[k].cast<std::string>();
-
+			questFinishDialogueVec.push_back(finish);
 			std::cout << finish << std::endl;
 		}
 
@@ -338,6 +342,20 @@ int Npc::loadQuests(int npcID) {
 		std::cout << "Reward item: " << rItem << std::endl;
 		std::cout << "Item quantity: " << rQuantity << std::endl;
 
+		bool completed = true;
+		auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
+		// Push to vector
+		// Check if its not in the accepted quests already
+		// First check if the questTable is empty so that we can just insert immediately.
+		if (this->questTable.empty() && logIt == questLog.end()) { 
+			this->questTable.push_back(std::make_tuple(qName, qType, object, qAmount, questDialogueVec, questFinishDialogueVec, npcID, rItem, rQuantity, rExp, rCels));
+		}
+		else { // Find_if algorithm with lambda function to check if the quest already exist in the table (already inserted).
+			auto it = std::find_if(questTable.begin(), questTable.end(), [&qName](const auto& t) {return std::get<0>(t) == qName; });
+			if (it == questTable.end() && logIt == questLog.end()) {
+				this->questTable.push_back(std::make_tuple(qName, qType, object, qAmount, questDialogueVec, questFinishDialogueVec, npcID, rItem, rQuantity, rExp, rCels));
+			}
+		}
 	}
 	// Set all the LuaRef to Nil so that when lua_close(L) is called it can close properly by dereferencing Nil
 	// since the original values are no longer accessible after the for loop
@@ -348,6 +366,16 @@ int Npc::loadQuests(int npcID) {
 
 	// close the Lua state
 	lua_close(L);
+
+
+
+	// Once rewarded and player opens menu again, mark as completed.
+	for (auto &t : this->questLog) {
+		if (std::get<5>(t) == true && std::get<4>(t) == false) {
+			std::get<4>(t) = true;
+
+		}
+	}
 
 
 	//std::cout << "loading quests for: " << name << std::endl;
@@ -392,27 +420,7 @@ int Npc::loadQuests(int npcID) {
 	//	ptrElement->QueryIntAttribute("exp", &exp);
 	//	ptrElement->QueryIntAttribute("cels", &cels);
 	//	std::string text = textPtr, descText = descPtr, objText = objPtr;
-	//	bool completed = true;
-	//	auto logIt = std::find_if(questLog.begin(), questLog.end(), [&completed](const auto& t) {return std::get<5>(t) == completed; });
-	//	// Push to vector
-	//	if (this->questTable.empty() && logIt == questLog.end()) { // Check if its not in the accepted quests already
-	//		this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
-	//	}
-	//	else { // Find_if algorithm with lambda function
-	//		auto it = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-	//		if (it == questTable.end() && logIt == questLog.end()) {
-	//			this->questTable.push_back(std::make_tuple(text, type, objText, amount, descText, name, rewardType, rewardItem, exp, cels));
-	//		}
-	//	}
-	//	if (ptrElement->NextSiblingElement("Quest") != nullptr)
-	//		ptrElement = ptrElement->NextSiblingElement("Quest");
-	//}
-	//for (auto &t : this->questLog) {
-	//	if (std::get<5>(t) == true && std::get<4>(t) == false) {
-	//		std::get<4>(t) = true;
-	//		// Once rewarded and player opens menu again, mark as completed.
-	//	}
-	//}
+
 	//cipher.AESEncrypt(nCwd.string(), cwd.string());
 	//XMLCheckResult(result);
 	return 0;
@@ -423,7 +431,7 @@ void Npc::displayQuests(Graphics & graphics, int npcID, int posX, int posY, Play
 	int dy = 0;
 	if (!this->questTable.empty()) {
 		for (auto &t : this->questTable) {
-			if (npcID == std::get<5>(t)) {
+			if (npcID == std::get<6>(t)) {
 				this->drawQuestText(graphics, posX + 10, posY + dy, std::get<0>(t));
 				dy += 40;
 			}
@@ -469,28 +477,28 @@ void Npc::acceptQuest(Graphics & graphics, int npcID, int posX, int posY, Player
 			return;
 		}
 	}
-	std::string completeMsg;
-	auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-	auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-	auto distance = std::distance(this->questLog.begin(), it);
-	 if (!questTable.empty()) {
-		this->drawNpcText(graphics, 100, 100, std::get<4>(this->questTable[selection]), posX, posY);
-		if (this->questLog.empty()) {
-			this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
-				std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false, 
-				std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]), 
-				std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
-		}
-		else { // Find_if algorithm with lambda function
-			auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-			if (it == questLog.end()) {
-				this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
-					std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false,
-					std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]),
-					std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
-			}
-		}
-	}
+	//std::string completeMsg;
+	//auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+	//auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+	//auto distance = std::distance(this->questLog.begin(), it);
+	// if (!questTable.empty()) {
+	//	this->drawNpcText(graphics, 100, 100, std::get<4>(this->questTable[selection]), posX, posY);
+	//	if (this->questLog.empty()) {
+	//		this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
+	//			std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false, 
+	//			std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]), 
+	//			std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
+	//	}
+	//	else { // Find_if algorithm with lambda function
+	//		auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+	//		if (it == questLog.end()) {
+	//			this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
+	//				std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false,
+	//				std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]),
+	//				std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
+	//		}
+	//	}
+	//}
 }
 
 void Npc::giveRewards(Graphics & graphics, std::string questName, int posX, int posY, Player & player, int selection)
