@@ -80,6 +80,7 @@ public:
 	void nullifyHex(int hexID);
 	const int getHex() const { return this->_hexID; }
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
+	const int getNpcId(std::vector<Npc*> &others, Graphics &graphics);
 	const float getX() const;
 	const float getY() const; // Getting variables not changes const make sure it doesnt
 	const float getPreviousY() const;
@@ -253,7 +254,7 @@ protected:
 
 	std::map<std::string, std::string> mapHash = {
 		{"cave depths",				"8904AD542CFC9BB400F14A090111AD635CC0E26CCE6793DD17B56120F933C431"},
-		{"cave",					"16BE9B99D3874D51C603EA90784BBF6F4155926CE35B8668DCBD584A873D594D"},
+		{"cave",					"3532FD9027C647EA0EF3C6B69C82DB976877F0F9DDE2A017C605BF9BCBEA543B"},
 		{"caveFork",				"F73EEA06A9CAFE7A311E0A9E9147CF69269FDB615694353E0C14F128639A3E2A"},
 		{"caverns",					"26AD6909D265A070A9C488D25CFD9BB690C6E616251BCFC28E35F1BDAF7152B5"},
 		{"Collapsed Cave",			"E47D0D2F016CAB5DB07F8A5BF437A32CAA41D8B095375FD32EAB9871797393E0"},
