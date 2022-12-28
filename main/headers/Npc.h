@@ -65,8 +65,10 @@ public:
 	const std::string getNpcNameID(int npcID);
 protected:
 	Direction _direction;
-	// QuestName, type, object, amount, description, npcID (formerly npcName), rewardType, reward(can be converted to int for level), exp, cels
-	std::vector<std::tuple<std::string, int, std::string, int, std::string, int, int, std::string, int, int>> questTable;
+	// QuestName, type, object, amount, dialogueText(Vector of strings), finishText(Vector of strings),
+	// npcID (formerly npcName), rewardItemID, rewardAmount, exp, cels
+	std::vector<std::tuple<std::string, int, std::string, int, std::vector<std::string>, std::vector<std::string>,
+	int, int, int, int, int>> questTable;
 	// QuestName, type, object, amount, isCompleted, isRewarded
 	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> questLog;
 	// ID of NPC, DialogueID player has reached
