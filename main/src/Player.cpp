@@ -835,6 +835,14 @@ std::string Player::getNpcName(std::vector<Npc*> &others, Graphics &graphics) {
 	return name;
 }
 
+const int Player::getNpcId(std::vector<Npc*>& others, Graphics& graphics) {
+	int npcID;
+	for (int i = 0; i < others.size(); i++) {
+		npcID = others.at(i)->getNpcId();
+	}
+	return npcID;
+}
+
 void Player::drawHPNumbers(Graphics & graphics)
 {
 	double percent = ((double)this->_currentHealth / (double)this->_maxHealth) * 100;
