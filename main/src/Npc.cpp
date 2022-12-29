@@ -350,8 +350,8 @@ int Npc::playNextQuest(int npcID, Graphics& graphics, int posX, int posY, Player
 	{
 		this->giveRewards(player);
 		this->isQuestRewarded = true;
+		this->endOfChat = true;
 	}
-
 	else {
 		this->endOfChat = true;
 	}
