@@ -596,78 +596,123 @@ void Npc::acceptQuest(Graphics & graphics, int npcID, int posX, int posY, Player
 
 void Npc::giveRewards(Graphics & graphics, std::string questName, int posX, int posY, Player & player, int selection)
 {
-	std::string completeMsg;
-	std::stringstream ss;
-	auto it = std::find_if(questLog.begin(), questLog.end(), [&questName](const auto& t) {return std::get<0>(t) == questName; });
-	auto distance = std::distance(this->questLog.begin(), it);
-	// Auto itQT = std::find_if(questTable.begin(), questTable.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
-	// If (itQT == questTable.end()) {
-	//	std::cout << "COULD NOT FIND QUEST IN QUESTABLE!!!" << std::endl;
-	//}
-	// Auto distanceQT = std::distance(questTable.begin(), itQT);
-	if (questDone) {
-		if (this->exp >= 0) {
-			if (std::get<6>(this->questLog[distance]) == 0) {
-				ss << "Here is your reward!$n" << this->levelReward << " level," << this->exp << "exp," << this->cels << "cels.$e";
-				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+	if (!this->questTable.empty()) {
+		std::string qstName = this->storedQuestName;
+		auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&qstName](const auto& t) {return std::get<0>(t) == qstName; });
+		auto distanceTable = std::distance(this->questTable.begin(), tableIt);
+		if (tableIt != questTable.end() && std::get<11>(this->questTable[distanceTable]) == false) {
+			std::cout << "Quest was already checked for completion. Mark completed now and distribute rewards." << std::endl;
+			std::get<11>(this->questTable[distanceTable]) = true;
+
+			// Store the rewards and check if not 0 (Stored to draw rewards later).
+			this->itemReward = std::get<7>(this->questTable[distanceTable]);
+			this->itemQuantityReward = std::get<8>(this->questTable[distanceTable]);
+			this->expReward = std::get<9>(this->questTable[distanceTable]);
+			this->celsReward = std::get<10>(this->questTable[distanceTable]);
+
+			if (itemReward != 0) {
+				// TODO: Change equipment to itemID + handle inventory items such as hp pots
+				player.addEquipment("JetPack");
 			}
-			else if (std::get<6>(this->questLog[distance]) == 1) {
-				ss << "Here is your reward!$n" << this->reward << " item," << this->exp << "exp," << this->cels << "cels.$e";
-				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+			if (expReward != 0) {
+				player.gainExp(this->expReward);
 			}
-		}
-		if (std::get<5>(this->questLog[distance]) != true) {
-			if (std::get<6>(this->questLog[distance]) == 0) {
-				std::cout << "rewardType = " << std::get<6>(this->questLog[distance]) << std::endl;
-				this->levelReward = std::stoi(std::get<7>(this->questLog[distance]));
-				this->exp = std::get<8>(this->questLog[distance]);
-				this->cels = std::get<9>(this->questLog[distance]);
-				player.addLevel(levelReward);
-				player.gainExp(exp);
-				player.gainCurrency(cels);
-				ss << "Here is your reward!$n" << levelReward << " level," << exp << "exp," << cels << "cels.$e";
-				// CompleteMsg = "Thank you! Here is your reward.$n" + levelGain + "level, "; // TODO: push rewards into vector to distibute any reward for any quest.
-				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
-			}
-			else if (std::get<6>(this->questLog[distance]) == 1) {
-				std::cout << "rewardType = " << std::get<6>(this->questLog[distance]) << std::endl;
-				this->exp = std::get<8>(this->questLog[distance]);
-				this->cels = std::get<9>(this->questLog[distance]);
-				this->reward = std::get<7>(this->questLog[distance]);
-				player.addEquipment(reward);
-				player.gainExp(exp);
-				player.gainCurrency(cels);
-				ss << "Here is your reward!$n" << reward << " item," << exp << "exp," << cels << "cels.$e";
-				this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+			if (celsReward != 0) {
+				player.gainCurrency(this->celsReward);
 			}
 		}
-			
-		std::get<5>(this->questLog[distance]) = true;
 	}
+
+
+	//std::string completeMsg;
+	//std::stringstream ss;
+	//auto it = std::find_if(questLog.begin(), questLog.end(), [&questName](const auto& t) {return std::get<0>(t) == questName; });
+	//auto distance = std::distance(this->questLog.begin(), it);
+	//// Auto itQT = std::find_if(questTable.begin(), questTable.end(), [&npcName](const auto& t) {return std::get<0>(t) == npcName; });
+	//// If (itQT == questTable.end()) {
+	////	std::cout << "COULD NOT FIND QUEST IN QUESTABLE!!!" << std::endl;
+	////}
+	//// Auto distanceQT = std::distance(questTable.begin(), itQT);
+	//if (questDone) {
+	//	if (this->exp >= 0) {
+	//		if (std::get<6>(this->questLog[distance]) == 0) {
+	//			ss << "Here is your reward!$n" << this->levelReward << " level," << this->exp << "exp," << this->cels << "cels.$e";
+	//			this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+	//		}
+	//		else if (std::get<6>(this->questLog[distance]) == 1) {
+	//			ss << "Here is your reward!$n" << this->reward << " item," << this->exp << "exp," << this->cels << "cels.$e";
+	//			this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+	//		}
+	//	}
+	//	if (std::get<5>(this->questLog[distance]) != true) {
+	//		if (std::get<6>(this->questLog[distance]) == 0) {
+	//			std::cout << "rewardType = " << std::get<6>(this->questLog[distance]) << std::endl;
+	//			this->levelReward = std::stoi(std::get<7>(this->questLog[distance]));
+	//			this->exp = std::get<8>(this->questLog[distance]);
+	//			this->cels = std::get<9>(this->questLog[distance]);
+	//			player.addLevel(levelReward);
+	//			player.gainExp(exp);
+	//			player.gainCurrency(cels);
+	//			ss << "Here is your reward!$n" << levelReward << " level," << exp << "exp," << cels << "cels.$e";
+	//			// CompleteMsg = "Thank you! Here is your reward.$n" + levelGain + "level, "; // TODO: push rewards into vector to distibute any reward for any quest.
+	//			this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+	//		}
+	//		else if (std::get<6>(this->questLog[distance]) == 1) {
+	//			std::cout << "rewardType = " << std::get<6>(this->questLog[distance]) << std::endl;
+	//			this->exp = std::get<8>(this->questLog[distance]);
+	//			this->cels = std::get<9>(this->questLog[distance]);
+	//			this->reward = std::get<7>(this->questLog[distance]);
+	//			player.addEquipment(reward);
+	//			player.gainExp(exp);
+	//			player.gainCurrency(cels);
+	//			ss << "Here is your reward!$n" << reward << " item," << exp << "exp," << cels << "cels.$e";
+	//			this->drawNpcText(graphics, 100, 100, ss.str(), posX, posY);
+	//		}
+	//	}
+	//		
+	//	std::get<5>(this->questLog[distance]) = true;
+	//}
 }
 
 
 bool Npc::checkQuest(Graphics & graphics, std::string name, int posX, int posY, Player &player)
 {
-	if (!this->questLog.empty()) {
-		std::string text = name;
-		std::string completeMsg;
-		auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-		auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+
+	if (!this->questTable.empty()) {
+		std::string qstName = this->storedQuestName;
+		auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&qstName](const auto& t) {return std::get<0>(t) == qstName; });
 		auto distanceTable = std::distance(this->questTable.begin(), tableIt);
-		auto distance = std::distance(this->questLog.begin(), it);
-		if (it != questLog.end() && std::get<4>(this->questLog[distance]) == false) {
-			if (std::get<1>(this->questLog[distance]) == 1) { // Kill quests
-				if (player.checkKillQuestComplete(std::get<2>(this->questLog[distance]), std::get<3>(this->questLog[distance]))) {
-					std::cout << "Quest is completed! Remove from available quests!" << std::endl;
-					if (tableIt != questTable.end()) {
-						this->questTable.erase(this->questTable.begin() + distanceTable);
-					}
+		if (tableIt != questTable.end() && std::get<11>(this->questTable[distanceTable]) == false) {
+			if (std::get<1>(this->questTable[distanceTable]) == 1) { // Kill quests
+				if (player.checkKillQuestComplete(std::get<2>(this->questTable[distanceTable]), std::get<3>(this->questTable[distanceTable]))) {
+					std::cout << "Quest is completed. Mark completed." << std::endl;
+					std::get<11>(this->questTable[distanceTable]) = true;
 					return true;
 				}
 			}
+			// else if {} TODO: Collect quest type handled here
 		}
 	}
+
+	//if (!this->questLog.empty()) {
+	//	std::string text = name;
+	//	std::string completeMsg;
+	//	auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+	//	auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+	//	auto distanceTable = std::distance(this->questTable.begin(), tableIt);
+	//	auto distance = std::distance(this->questLog.begin(), it);
+	//	if (it != questLog.end() && std::get<4>(this->questLog[distance]) == false) {
+	//		if (std::get<1>(this->questLog[distance]) == 1) { // Kill quests
+	//			if (player.checkKillQuestComplete(std::get<2>(this->questLog[distance]), std::get<3>(this->questLog[distance]))) {
+	//				std::cout << "Quest is completed! Remove from available quests!" << std::endl;
+	//				if (tableIt != questTable.end()) {
+	//					this->questTable.erase(this->questTable.begin() + distanceTable);
+	//				}
+	//				return true;
+	//			}
+	//		}
+	//	}
+	//}
 	return false;
 }
 
