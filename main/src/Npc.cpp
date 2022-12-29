@@ -251,7 +251,8 @@ int Npc::repeatScript(Graphics& graphics, int posX, int posY) {
 
 int Npc::playQuest(int npcID, int selection, Graphics& graphics, int posX, int posY, Player &player) {
 	this->endOfChat = false;
-
+	this->isQuestDone = false;
+	this->isQuestRewarded = false;
 	
 
 	if (selection == 1)
