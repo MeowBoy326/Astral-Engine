@@ -39,6 +39,9 @@ public:
 	int playScript(int npcID, Graphics &graphics, int posX, int posY);
 	int playNext(int npcID, Graphics &graphics, int posX, int posY, Player &player);
 	int repeatScript(Graphics &graphics, int posX, int posY);
+	int playQuest(int npcID, int selection, Graphics &graphics, int posX, int posY);
+	int playNextQuest(int npcID, Graphics &graphics, int posX, int posY);
+	int repeatQuestScript(Graphics &graphics, int posX, int posY);
 	inline bool const getChatStatus() { return this->endOfChat; }
 	inline void setChatStatus(bool condition) { this->endOfChat = condition; }
 	inline bool const getNpcTalk() { return this->npcTalking; }
@@ -75,12 +78,17 @@ protected:
 	std::vector<std::pair<int, int>> npcDialogueTable;
 	// NPC ID table - Stores the name with the corresponding ID
 	std::vector<std::pair<std::string, int>> npcIDTable;
+	// Store the currently selected quest dialogue to be accessed throughout the chat
+	std::vector<std::string> currentQuestDialogue;
 
 	int _maxHealth;
 	int _currentHealth;
 
 	std::string _npcName;
+	// NPC's will never have more than 2 quests per NPC ID.
+	std::string questName1, questName2;
 	std::string storedQuestName;
+	std::string questDialogueText;
 	std::string reward;
 	std::string dialogueText;
 	int levelReward, rewardType, exp, cels, npcID;
@@ -93,6 +101,8 @@ protected:
 
 	int lines = 1;
 	int lineCounter = 1;
+	int questDialogueSize;
+	int questDialogueLine = 0;
 	char lineChar = 'a';
 	bool endOfChat = false;
 	bool questState = false;
