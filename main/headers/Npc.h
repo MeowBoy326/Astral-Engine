@@ -68,8 +68,8 @@ public:
 	const std::string getNpcNameID(int npcID);
 protected:
 	Direction _direction;
-	// QuestName, type, object, amount, dialogueText(Vector of strings), finishText(Vector of strings),
-	// npcID (formerly npcName), rewardItemID, rewardAmount, exp, cels, isCompleted
+	// (0)QuestName, (1)type, (2)object, (3)amount, (4)dialogueText(Vector of strings), (5)finishText(Vector of strings),
+	// (6)npcID (formerly npcName), (7)rewardItemID, (8)rewardAmount, (9)exp, (10)cels, (11)isCompleted
 	std::vector<std::tuple<std::string, int, std::string, int, std::vector<std::string>, std::vector<std::string>,
 	int, int, int, int, int, bool>> questTable;
 	// QuestName, type, object, amount, isCompleted, isRewarded, 
@@ -91,7 +91,8 @@ protected:
 	std::string questDialogueText;
 	std::string reward;
 	std::string dialogueText;
-	int levelReward, rewardType, exp, cels, npcID;
+	int expReward, celsReward, itemReward, itemQuantityReward, npcID;
+	//int levelReward, rewardType, exp, cels, npcID;
 
 	Sprite* _chatSelection;
 	Sprite* _questSelection;
