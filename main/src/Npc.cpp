@@ -352,8 +352,8 @@ int Npc::playNextQuest(int npcID, Graphics& graphics, int posX, int posY, Player
 		this->isQuestRewarded = true;
 	}
 
-	if (this->isQuestRewarded) {
-		// End the chat and reset.
+	else {
+		this->endOfChat = true;
 	}
 
 	return 0;
