@@ -39,8 +39,8 @@ public:
 	int playScript(int npcID, Graphics &graphics, int posX, int posY);
 	int playNext(int npcID, Graphics &graphics, int posX, int posY, Player &player);
 	int repeatScript(Graphics &graphics, int posX, int posY);
-	int playQuest(int npcID, int selection, Graphics &graphics, int posX, int posY);
-	int playNextQuest(int npcID, Graphics &graphics, int posX, int posY);
+	int playQuest(int npcID, int selection, Graphics &graphics, int posX, int posY, Player &player);
+	int playNextQuest(int npcID, Graphics &graphics, int posX, int posY, Player &player);
 	int repeatQuestScript(Graphics &graphics, int posX, int posY);
 	inline bool const getChatStatus() { return this->endOfChat; }
 	inline void setChatStatus(bool condition) { this->endOfChat = condition; }
@@ -52,8 +52,8 @@ public:
 	void displayQuests(Graphics &grpahics, int npcID, int posX, int posY, Player &player);
 	void questSelection(Graphics &graphics, int posX, int posY, int selection);
 	void acceptQuest(Graphics &graphics, int npcID, int posX, int posY, Player &player, int selection);
-	void giveRewards(Graphics &graphics, std::string npcName, int posX, int posY, Player &player, int selection);
-	bool checkQuest(Graphics &graphics, std::string name, int posX, int posY, Player &player);
+	void giveRewards(Player &player);
+	bool checkQuest(Player &player);
 	inline bool const getQuestState() { return this->questState; }
 	inline void setQuestState(bool condition) { this->questState = condition; }
 	inline bool const checkQuestDone() { return this->questDone; }
@@ -62,8 +62,8 @@ public:
 	inline void setQuestDone(bool condition) { this->questDone = condition; }
 	inline bool const checkNoQuests() { return this->noQuest; }
 	inline void setNoQuest(bool condition) { this->noQuest = condition; }
-	inline const std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> getQuestLog() const { return this->questLog; }
-	inline void setQuestLog(std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> table) { this->questLog = table; }
+	/*inline const std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> getQuestLog() const { return this->questLog; }
+	inline void setQuestLog(std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> table) { this->questLog = table; }*/
 	inline const std::vector<std::pair<std::string, int>> getNpcIdTable() const { return this->npcIDTable; }
 	const std::string getNpcNameID(int npcID);
 protected:
@@ -111,6 +111,8 @@ protected:
 	bool npcTalking = false;
 	bool questMenu = false;
 	bool noQuest = false;
+	bool isQuestDone = false;
+	bool isQuestRewarded = false;
 };
 
 class Luna : public Npc {
