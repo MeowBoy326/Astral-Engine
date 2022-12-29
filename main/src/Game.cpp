@@ -66,6 +66,7 @@ namespace {
 	bool showCollisionOutline = false;
 	bool windowIsBeingDragged = false;
 	bool findWindowElapsedTime = false;
+	bool hasSelectedQuest = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -544,16 +545,67 @@ void Game::gameLoop() {
 							this->_npc.setQuestMenuState(true);
 							this->_npc.displayQuests(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player);
 						}
-						else if (npcSelection == 2 && this->_npc.getNpcTalk() && this->_npc.checkNoQuests() == false) {
-							if (questSelection == 1) {
-								this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(),
-									this->_player, questSelection - 1);
-							}
-							else if (questSelection == 2) {
-								this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(),
-									this->_player, questSelection - 1);
+						//this->_npc.checkNoQuests() == false
+						else if (npcSelection == 2 && this->_npc.getNpcTalk() && !hasSelectedQuest) {
+							//if (questSelection == 1) {
+								// Here we will call playQuest()
+								// This function is similar to playScript() as it will initialize the dialogue table
+								// How many lines are calculated and the table stores the text(s) and quest name
+								// Quest selection is passed to know which quest name for this NPCID
+
+								// Also check using checkQuestDone(int questSelection...etc) within playQuest()
+								// to see if the quest is complete so we can show the quest finished dialogue instead
+
+								this->_npc.playQuest(npcID, selection, graphics, this->_player.getX(), this->_player.getY(),
+									this->_player);
+
+								hasSelectedQuest = true;
+
+								//this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(),
+								//	this->_player, questSelection - 1);
+							//}
+							//else if (questSelection == 2) {
+								// Here we will call playQuest()
+								// This function is similar to playScript() as it will initialize the dialogue table
+								// How many lines are calculated and the table stores the text(s) and quest name
+								// Quest selection is passed to know which quest name for this NPCID
+
+								// Also check using checkQuestDone(int questSelection...etc) within playQuest()
+								// to see if the quest is complete so we can show the quest finished dialogue instead
+
+								//this->_npc.playQuest(npcID, selection, graphics, this->_player.getX(), this->_player.getY(),
+								//	this->_player);
+
+								//hasSelectedQuest = true;
+
+								//this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(),
+									//this->_player, questSelection - 1);
+							//}
+						}
+
+						else if (npcSelection == 2 && this->_npc.getNpcTalk() && hasSelectedQuest) {
+							// Continue to the next quest dialogue (PlayNextQuest() function)
+							// This function will handle showing the next dialogue when pressing enter
+							// Once all dialogue has been displayed, accept the quest within the same call (only once)
+							// It will also read the next line for quest finish dialogue.
+							// Once at the end it can give the rewards and set it to complete
+							this->_npc.playNextQuest(npcID, graphics, this->_player.getX(), this->_player.getY(),
+								this->_player);
+							if (this->_npc.getChatStatus()) {
+								activeTalk = false;
+								this->_chatBox.setTextStatus(false);
+								this->_npc.setNpcTalk(false);
+								this->_npc.setQuestMenuState(false);
+								this->_npc.setQuestState(false);
+								this->_npc.setQuestDone(false);
+								this->_npc.setNoQuest(false);
+								this->_npc.resetScripts();
+								npcSelection = 1;
+								questSelection = 1;
+								hasSelectedQuest = false;
 							}
 						}
+
 						else if (this->_npc.checkNoQuests()) {
 							activeTalk = false;
 							this->_chatBox.setTextStatus(false);
@@ -760,12 +812,14 @@ void Game::draw(Graphics &graphics) {
 		if (this->_npc.getNpcTalk() && npcSelection == 1) {
 			this->_npc.repeatScript(graphics, this->_player.getX(), this->_player.getY());
 		}
-		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && !this->_npc.getQuestState()) {
+		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && !hasSelectedQuest) {
 			this->_npc.displayQuests(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player);
 			this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), questSelection);
 		}
-		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && this->_npc.getQuestState() && this->_npc.checkNoQuests() == false) {
-			this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
+		// && this->_npc.getQuestState() && this->_npc.checkNoQuests() == false
+		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && hasSelectedQuest) {
+			//this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
+			this->_npc.repeatQuestScript(graphics, this->_player.getX(), this->_player.getY()); 
 		}
 		else {
 			this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
@@ -923,22 +977,22 @@ int Game::saveGame(Graphics & graphics)
 	element = xml.NewElement("QuestLog");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
-	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec = this->_npc.getQuestLog();
-	for (int counter = 0; counter < qVec.size(); ++counter) {
-		XMLElement* qElement = xml.NewElement("Quest");
-		qElement->SetAttribute("questName", std::get<0>(qVec[counter]).c_str());
-		qElement->SetAttribute("type", std::get<1>(qVec[counter]));
-		qElement->SetAttribute("object", std::get<2>(qVec[counter]).c_str());
-		qElement->SetAttribute("amount", std::get<3>(qVec[counter]));
-		qElement->SetAttribute("completed", std::get<4>(qVec[counter]));
-		qElement->SetAttribute("rewarded", std::get<5>(qVec[counter]));
-		qElement->SetAttribute("rewardType", std::get<6>(qVec[counter]));
-		qElement->SetAttribute("reward", std::get<7>(qVec[counter]).c_str());
-		qElement->SetAttribute("exp", std::get<8>(qVec[counter]));
-		qElement->SetAttribute("cels", std::get<9>(qVec[counter]));
-		element->InsertEndChild(qElement);
-	}
-	root->InsertEndChild(element);
+	//std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec = this->_npc.getQuestLog();
+	//for (int counter = 0; counter < qVec.size(); ++counter) {
+	//	XMLElement* qElement = xml.NewElement("Quest");
+	//	qElement->SetAttribute("questName", std::get<0>(qVec[counter]).c_str());
+	//	qElement->SetAttribute("type", std::get<1>(qVec[counter]));
+	//	qElement->SetAttribute("object", std::get<2>(qVec[counter]).c_str());
+	//	qElement->SetAttribute("amount", std::get<3>(qVec[counter]));
+	//	qElement->SetAttribute("completed", std::get<4>(qVec[counter]));
+	//	qElement->SetAttribute("rewarded", std::get<5>(qVec[counter]));
+	//	qElement->SetAttribute("rewardType", std::get<6>(qVec[counter]));
+	//	qElement->SetAttribute("reward", std::get<7>(qVec[counter]).c_str());
+	//	qElement->SetAttribute("exp", std::get<8>(qVec[counter]));
+	//	qElement->SetAttribute("cels", std::get<9>(qVec[counter]));
+	//	element->InsertEndChild(qElement);
+	//}
+	//root->InsertEndChild(element);
 	element = xml.NewElement("KillTable");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
@@ -1044,7 +1098,7 @@ int Game::loadGame(Graphics & graphics)
 	}
 	this->_inventory.setInventoryTable(iVec);
 	// Load QuestLog
-	element = root->FirstChildElement("QuestLog");
+	/*element = root->FirstChildElement("QuestLog");
 	ptrVec = element->FirstChildElement("Quest");
 	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec;
 	while (ptrVec != nullptr) {
@@ -1068,7 +1122,7 @@ int Game::loadGame(Graphics & graphics)
 		qVec.push_back(std::make_tuple(qName, type, objName, amount, completed, rewarded, rewardType, itemName, exp, cels));
 		ptrVec = ptrVec->NextSiblingElement("Quests");
 	}
-	this->_npc.setQuestLog(qVec);
+	this->_npc.setQuestLog(qVec);*/
 	// Load Map
 	element = root->FirstChildElement("Spawn");
 	if (element == nullptr)
