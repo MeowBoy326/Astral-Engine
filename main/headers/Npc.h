@@ -66,6 +66,7 @@ public:
 	inline void setQuestLog(std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> table) { this->questLog = table; }*/
 	inline const std::vector<std::pair<std::string, int>> getNpcIdTable() const { return this->npcIDTable; }
 	const std::string getNpcNameID(int npcID);
+	inline bool const checkQuestBlocked() { return this->blockSelectedQuest; }
 protected:
 	Direction _direction;
 	// (0)QuestName, (1)type, (2)object, (3)amount, (4)dialogueText(Vector of strings), (5)finishText(Vector of strings),
@@ -113,6 +114,7 @@ protected:
 	bool noQuest = false;
 	bool isQuestDone = false;
 	bool isQuestRewarded = false;
+	bool blockSelectedQuest = false;
 };
 
 class Luna : public Npc {

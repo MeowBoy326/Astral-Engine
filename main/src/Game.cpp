@@ -559,7 +559,8 @@ void Game::gameLoop() {
 								this->_npc.playQuest(npcID, questSelection, graphics, this->_player.getX(), this->_player.getY(),
 									this->_player);
 
-								hasSelectedQuest = true;
+							   if (!this->_npc.checkQuestBlocked())
+								   hasSelectedQuest = true;
 
 								//this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(),
 								//	this->_player, questSelection - 1);

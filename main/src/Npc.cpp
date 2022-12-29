@@ -252,6 +252,8 @@ int Npc::repeatScript(Graphics& graphics, int posX, int posY) {
 int Npc::playQuest(int npcID, int selection, Graphics& graphics, int posX, int posY, Player &player) {
 	this->endOfChat = false;
 
+	
+
 	if (selection == 1)
 		this->storedQuestName = this->questName1;
 	else
@@ -261,6 +263,9 @@ int Npc::playQuest(int npcID, int selection, Graphics& graphics, int posX, int p
 
 	// Check if quest is completed now. If so, do not use the quest dialogue get<4> use quest finish get<5> and set to complete at playNext() for rewards
 	if (checkQuest(player)) {
+		if (this->blockSelectedQuest) {
+			return 0;
+		}
 		this->isQuestDone = true;
 		if (!this->questTable.empty()) {
 			for (auto &t : this->questTable) {
@@ -701,7 +706,7 @@ void Npc::giveRewards(Player & player)
 
 bool Npc::checkQuest(Player &player)
 {
-
+	this->blockSelectedQuest = false;
 	if (!this->questTable.empty()) {
 		std::string qstName = this->storedQuestName;
 		auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&qstName](const auto& t) {return std::get<0>(t) == qstName; });
@@ -714,6 +719,10 @@ bool Npc::checkQuest(Player &player)
 				}
 			}
 			// else if {} TODO: Collect quest type handled here
+		}
+		// Quest was completed already and rewards were given. So, block from selecting it.
+		else {
+			this->blockSelectedQuest = true;
 		}
 	}
 
