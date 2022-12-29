@@ -544,7 +544,11 @@ void Npc::displayQuests(Graphics & graphics, int npcID, int posX, int posY, Play
 		for (auto &t : this->questTable) {
 			if (npcID == std::get<6>(t)) {
 				std::string qtName = std::get<0>(t);
-				this->drawQuestText(graphics, posX + 10, posY + dy, qtName);
+				// If Quest was completed. Show a green visual indicator that it is done.
+				if (std::get<11>(t) == true)
+					this->drawQuestText(graphics, posX + 10, posY + dy, qtName, { 0, 255, 0, 0 });
+				else
+					this->drawQuestText(graphics, posX + 10, posY + dy, qtName);
 				if (qNum == 1)
 					this->questName1 = qtName;
 				else
