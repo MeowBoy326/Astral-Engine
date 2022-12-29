@@ -249,6 +249,95 @@ int Npc::repeatScript(Graphics& graphics, int posX, int posY) {
 	return 0;
 }
 
+int Npc::playQuest(int npcID, int selection, Graphics& graphics, int posX, int posY) {
+	this->endOfChat = false;
+
+	//TODO: check if quest is completed now. If so, do not use the quest dialogue get<4> use quest finish get<5> and set to complete at playNext() for rewards
+
+	if (selection == 1)
+		this->storedQuestName = this->questName1;
+	else
+		this->storedQuestName = this->questName2;
+
+	
+	// Retrieve the text and store into a vector that serves only the currently selected quest
+	// As many quests will be in the game, searching through all the quests each time can become expensive
+	if (!this->questTable.empty()) {
+		for (auto &t : this->questTable) {
+			if (this->storedQuestName == std::get<0>(t)) {
+				this->questDialogueSize = std::get<4>(t).size();
+				for (int i = 0; i < this->questDialogueSize; i++) {
+					this->currentQuestDialogue.push_back(std::get<4>(t)[i]);
+				}
+				//this->questDialogueText = std::get<4>(t)[0];
+			}
+		}
+	}
+	// Start at line 0
+	this->questDialogueLine = 0;
+
+	//lua_State* L = luaL_newstate(); // create a new Lua state
+	//luaL_openlibs(L); // load Lua standard libraries
+	//std::string scriptName = "data/npc/" + std::to_string(npcID) + ".lua";
+	//std::cout << scriptName << std::endl;
+	//luaL_dofile(L, scriptName.c_str()); // load the dialogue script file
+
+	//luabridge::LuaRef questsTable = luabridge::getGlobal(L, "quests");
+	//luabridge::LuaRef quest = questsTable;
+	//luabridge::LuaRef dialogueTable = quest["qDialogue"];
+
+	//int lineID, lines;
+	//lines = dialogueTable.length();
+
+
+	//auto it = std::find_if(npcDialogueTable.begin(), npcDialogueTable.end(), [&npcID](const auto& t) {return t.first == npcID; });
+	//auto distance = std::distance(this->npcDialogueTable.begin(), it);
+	//if (it != npcDialogueTable.end()) {
+	//	if (npcDialogueTable[distance].second > lines) {
+	//		// Set to +1 of the max amount of lines so we don't have to deal with lineID becoming a large number.
+	//		lineID = lines + 1;
+	//		npcDialogueTable[distance].second = lineID;
+	//	}
+	//	lineID = npcDialogueTable[distance].second;
+	//}
+	//else {
+	//	this->npcDialogueTable.push_back(std::make_pair(npcID, 1));
+	//	lineID = 1;
+	//}
+
+	//// push the function and arguments onto the stack
+	//lua_getglobal(L, "getDialogue"); // push the function
+	//lua_pushinteger(L, lineID); // push the NPC ID argument
+
+	//// call the function with 1 argument and 1 result
+	//lua_call(L, 1, 1);
+
+	//// retrieve the result from the top of the stack
+	//this->dialogueText = lua_tostring(L, -1);
+
+	//// clean up the stack and close the Lua state
+	//lua_pop(L, 1);
+	//lua_close(L);
+
+	this->drawNpcDialogue(graphics, 100, 100, this->currentQuestDialogue[this->questDialogueLine], posX, posY);
+	return 0;
+}
+
+int Npc::playNextQuest(int npcID, Graphics& graphics, int posX, int posY) {
+	this->questDialogueLine++;
+	if (this->questDialogueLine <= this->questDialogueSize) {
+		this->drawNpcDialogue(graphics, 100, 100, this->currentQuestDialogue[this->questDialogueLine], posX, posY);
+	}
+	else if ()
+	
+	return 0;
+}
+
+int Npc::repeatQuestScript(Graphics& graphics, int posX, int posY) {
+	this->drawNpcDialogue(graphics, 100, 100, this->currentQuestDialogue[this->questDialogueLine], posX, posY);
+	return 0;
+}
+
 void Npc::resetScripts()
 {
 	this->lines = 1;
@@ -419,10 +508,17 @@ int Npc::loadQuests(int npcID) {
 void Npc::displayQuests(Graphics & graphics, int npcID, int posX, int posY, Player & player)
 {
 	int dy = 0;
+	int qNum = 1;
 	if (!this->questTable.empty()) {
 		for (auto &t : this->questTable) {
 			if (npcID == std::get<6>(t)) {
-				this->drawQuestText(graphics, posX + 10, posY + dy, std::get<0>(t));
+				std::string qtName = std::get<0>(t);
+				this->drawQuestText(graphics, posX + 10, posY + dy, qtName);
+				if (qNum == 1)
+					this->questName1 = qtName;
+				else
+					this->questName2 = qtName;
+				qNum++;
 				dy += 40;
 			}
 		}
@@ -451,14 +547,19 @@ void Npc::acceptQuest(Graphics & graphics, int npcID, int posX, int posY, Player
 		return;
 	}
 	bool isCompleted;
-	if (questLog.empty() && questTable.empty())
+	if (questTable.empty())
 		return;
+	if (questName1 || questName2)
 	if (selection >= this->questTable.size()) { // If player tries to select and empty quest index
 		std::cout << "Cannot find specified index..." << std::endl;
 		return;
 	}	
-	std::string text = std::get<0>(this->questTable[selection]);
-	this->storedQuestName = text;
+	//std::string text = std::get<0>(this->questTable[selection]);
+	//this->storedQuestName = text;
+
+
+
+
 	if (!questLog.empty() && !questTable.empty()) {
 		isCompleted = this->checkQuest(graphics, text, posX, posY, player);
 		if (isCompleted == true) {
@@ -489,6 +590,8 @@ void Npc::acceptQuest(Graphics & graphics, int npcID, int posX, int posY, Player
 			}
 		}
 	}
+
+
 }
 
 void Npc::giveRewards(Graphics & graphics, std::string questName, int posX, int posY, Player & player, int selection)
