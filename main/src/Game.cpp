@@ -556,7 +556,7 @@ void Game::gameLoop() {
 								// Also check using checkQuestDone(int questSelection...etc) within playQuest()
 								// to see if the quest is complete so we can show the quest finished dialogue instead
 
-								this->_npc.playQuest(npcID, selection, graphics, this->_player.getX(), this->_player.getY(),
+								this->_npc.playQuest(npcID, questSelection, graphics, this->_player.getX(), this->_player.getY(),
 									this->_player);
 
 								hasSelectedQuest = true;
