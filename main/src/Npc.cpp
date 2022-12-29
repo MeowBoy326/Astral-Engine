@@ -249,30 +249,48 @@ int Npc::repeatScript(Graphics& graphics, int posX, int posY) {
 	return 0;
 }
 
-int Npc::playQuest(int npcID, int selection, Graphics& graphics, int posX, int posY) {
+int Npc::playQuest(int npcID, int selection, Graphics& graphics, int posX, int posY, Player &player) {
 	this->endOfChat = false;
-
-	//TODO: check if quest is completed now. If so, do not use the quest dialogue get<4> use quest finish get<5> and set to complete at playNext() for rewards
 
 	if (selection == 1)
 		this->storedQuestName = this->questName1;
 	else
 		this->storedQuestName = this->questName2;
 
-	
-	// Retrieve the text and store into a vector that serves only the currently selected quest
-	// As many quests will be in the game, searching through all the quests each time can become expensive
-	if (!this->questTable.empty()) {
-		for (auto &t : this->questTable) {
-			if (this->storedQuestName == std::get<0>(t)) {
-				this->questDialogueSize = std::get<4>(t).size();
-				for (int i = 0; i < this->questDialogueSize; i++) {
-					this->currentQuestDialogue.push_back(std::get<4>(t)[i]);
+	this->currentQuestDialogue.clear();
+
+	// Check if quest is completed now. If so, do not use the quest dialogue get<4> use quest finish get<5> and set to complete at playNext() for rewards
+	if (checkQuest(player)) {
+		this->isQuestDone = true;
+		if (!this->questTable.empty()) {
+			for (auto &t : this->questTable) {
+				if (this->storedQuestName == std::get<0>(t)) {
+					this->questDialogueSize = std::get<5>(t).size();
+					for (int i = 0; i < this->questDialogueSize; i++) {
+						this->currentQuestDialogue.push_back(std::get<5>(t)[i]);
+					}
+					//this->questDialogueText = std::get<4>(t)[0];
 				}
-				//this->questDialogueText = std::get<4>(t)[0];
 			}
 		}
 	}
+
+	else {
+		// Retrieve the text and store into a vector that serves only the currently selected quest
+		// As many quests will be in the game, searching through all the quests each time can become expensive
+		if (!this->questTable.empty()) {
+			for (auto &t : this->questTable) {
+				if (this->storedQuestName == std::get<0>(t)) {
+					this->questDialogueSize = std::get<4>(t).size();
+					for (int i = 0; i < this->questDialogueSize; i++) {
+						this->currentQuestDialogue.push_back(std::get<4>(t)[i]);
+					}
+					//this->questDialogueText = std::get<4>(t)[0];
+				}
+			}
+		}
+	}
+
 	// Start at line 0
 	this->questDialogueLine = 0;
 
@@ -323,13 +341,21 @@ int Npc::playQuest(int npcID, int selection, Graphics& graphics, int posX, int p
 	return 0;
 }
 
-int Npc::playNextQuest(int npcID, Graphics& graphics, int posX, int posY) {
+int Npc::playNextQuest(int npcID, Graphics& graphics, int posX, int posY, Player &player) {
 	this->questDialogueLine++;
-	if (this->questDialogueLine <= this->questDialogueSize) {
+	if (this->questDialogueLine <= this->questDialogueSize - 1) {
 		this->drawNpcDialogue(graphics, 100, 100, this->currentQuestDialogue[this->questDialogueLine], posX, posY);
 	}
-	else if ()
-	
+	else if (this->questDialogueLine == this->questDialogueSize && this->isQuestDone && !this->isQuestRewarded)
+	{
+		this->giveRewards(player);
+		this->isQuestRewarded = true;
+	}
+
+	if (this->isQuestRewarded) {
+		// End the chat and reset.
+	}
+
 	return 0;
 }
 
@@ -539,62 +565,60 @@ void Npc::questSelection(Graphics & graphics, int posX, int posY, int selection)
 	}
 }
 
-void Npc::acceptQuest(Graphics & graphics, int npcID, int posX, int posY, Player & player, int selection)
-{
-	this->questState = true;
-	if (questDone) {
-		this->giveRewards(graphics, this->storedQuestName, posX, posY, player, selection);
-		return;
-	}
-	bool isCompleted;
-	if (questTable.empty())
-		return;
-	if (questName1 || questName2)
-	if (selection >= this->questTable.size()) { // If player tries to select and empty quest index
-		std::cout << "Cannot find specified index..." << std::endl;
-		return;
-	}	
-	//std::string text = std::get<0>(this->questTable[selection]);
-	//this->storedQuestName = text;
+//void Npc::acceptQuest(Graphics & graphics, int npcID, int posX, int posY, Player & player, int selection)
+//{
+//	this->questState = true;
+//	if (questDone) {
+//		this->giveRewards(graphics, this->storedQuestName, posX, posY, player, selection);
+//		return;
+//	}
+//	bool isCompleted;
+//	if (questTable.empty())
+//		return;
+//	if (questName1 || questName2)
+//	if (selection >= this->questTable.size()) { // If player tries to select and empty quest index
+//		std::cout << "Cannot find specified index..." << std::endl;
+//		return;
+//	}	
+//	//std::string text = std::get<0>(this->questTable[selection]);
+//	//this->storedQuestName = text;
+//
+//
+//
+//
+//	if (!questLog.empty() && !questTable.empty()) {
+//		isCompleted = this->checkQuest(graphics, text, posX, posY, player);
+//		if (isCompleted == true) {
+//			this->questDone = true;
+//			this->giveRewards(graphics, this->storedQuestName, posX, posY, player, selection);
+//			return;
+//		}
+//	}
+//	std::string completeMsg;
+//	auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+//	auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+//	auto distance = std::distance(this->questLog.begin(), it);
+//	 if (!questTable.empty()) {
+//		this->drawNpcText(graphics, 100, 100, std::get<4>(this->questTable[selection]), posX, posY);
+//		if (this->questLog.empty()) {
+//			this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
+//				std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false, 
+//				std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]), 
+//				std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
+//		}
+//		else { // Find_if algorithm with lambda function
+//			auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
+//			if (it == questLog.end()) {
+//				this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
+//					std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false,
+//					std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]),
+//					std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
+//			}
+//		}
+//	}
+//}
 
-
-
-
-	if (!questLog.empty() && !questTable.empty()) {
-		isCompleted = this->checkQuest(graphics, text, posX, posY, player);
-		if (isCompleted == true) {
-			this->questDone = true;
-			this->giveRewards(graphics, this->storedQuestName, posX, posY, player, selection);
-			return;
-		}
-	}
-	std::string completeMsg;
-	auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-	auto tableIt = std::find_if(questTable.begin(), questTable.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-	auto distance = std::distance(this->questLog.begin(), it);
-	 if (!questTable.empty()) {
-		this->drawNpcText(graphics, 100, 100, std::get<4>(this->questTable[selection]), posX, posY);
-		if (this->questLog.empty()) {
-			this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
-				std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false, 
-				std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]), 
-				std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
-		}
-		else { // Find_if algorithm with lambda function
-			auto it = std::find_if(questLog.begin(), questLog.end(), [&text](const auto& t) {return std::get<0>(t) == text; });
-			if (it == questLog.end()) {
-				this->questLog.push_back(std::make_tuple(std::get<0>(this->questTable[selection]), std::get<1>(this->questTable[selection]),
-					std::get<2>(this->questTable[selection]), std::get<3>(this->questTable[selection]), false, false,
-					std::get<6>(this->questTable[selection]), std::get<7>(this->questTable[selection]),
-					std::get<8>(this->questTable[selection]), std::get<9>(this->questTable[selection])));
-			}
-		}
-	}
-
-
-}
-
-void Npc::giveRewards(Graphics & graphics, std::string questName, int posX, int posY, Player & player, int selection)
+void Npc::giveRewards(Player & player)
 {
 	if (!this->questTable.empty()) {
 		std::string qstName = this->storedQuestName;
@@ -675,7 +699,7 @@ void Npc::giveRewards(Graphics & graphics, std::string questName, int posX, int 
 }
 
 
-bool Npc::checkQuest(Graphics & graphics, std::string name, int posX, int posY, Player &player)
+bool Npc::checkQuest(Player &player)
 {
 
 	if (!this->questTable.empty()) {
@@ -685,8 +709,7 @@ bool Npc::checkQuest(Graphics & graphics, std::string name, int posX, int posY, 
 		if (tableIt != questTable.end() && std::get<11>(this->questTable[distanceTable]) == false) {
 			if (std::get<1>(this->questTable[distanceTable]) == 1) { // Kill quests
 				if (player.checkKillQuestComplete(std::get<2>(this->questTable[distanceTable]), std::get<3>(this->questTable[distanceTable]))) {
-					std::cout << "Quest is completed. Mark completed." << std::endl;
-					std::get<11>(this->questTable[distanceTable]) = true;
+					std::cout << "Quest is completed. Return true to setup finish dialogue and rewards" << std::endl;
 					return true;
 				}
 			}
