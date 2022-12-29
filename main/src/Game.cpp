@@ -367,9 +367,6 @@ void Game::gameLoop() {
 					this->_chatBox.setTextStatus(false);
 					this->_npc.setNpcTalk(false);
 					this->_npc.setQuestMenuState(false);
-					this->_npc.setQuestState(false);
-					this->_npc.setQuestDone(false);
-					this->_npc.setNoQuest(false);
 					this->_npc.resetScripts();
 					npcSelection = 1;
 					questSelection = 1;
@@ -509,9 +506,6 @@ void Game::gameLoop() {
 						this->_chatBox.setTextStatus(false);
 						this->_npc.setNpcTalk(false);
 						this->_npc.setQuestMenuState(false);
-						this->_npc.setQuestState(false);
-						this->_npc.setQuestDone(false);
-						this->_npc.setNoQuest(false);
 						this->_npc.resetScripts();
 						npcSelection = 1;
 						questSelection = 1;
@@ -521,20 +515,8 @@ void Game::gameLoop() {
 
 				if (activeTalk) {
 					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && this->_player.getCurrentHealth() > 0) {
-						// Chat
-						if (this->_npc.getQuestState() == true) {
-							activeTalk = false;
-							this->_chatBox.setTextStatus(false);
-							this->_npc.setNpcTalk(false);
-							this->_npc.setQuestMenuState(false);
-							this->_npc.setQuestState(false);
-							this->_npc.setQuestDone(false);
-							this->_npc.setNoQuest(false);
-							this->_npc.resetScripts();
-							npcSelection = 1;
-							questSelection = 1;
-						}
-						else if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
+						/* Chat */
+						if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
 							this->_npc.setNpcTalk(true);
 							this->_npc.playScript(npcID, graphics, this->_player.getX(), this->_player.getY());
 						}
@@ -547,15 +529,13 @@ void Game::gameLoop() {
 								this->_npc.resetScripts();
 							}
 						}
-						// Quests
+						/* Quests */
 						else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
 							this->_npc.setNpcTalk(true);
 							this->_npc.setQuestMenuState(true);
 							this->_npc.displayQuests(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player);
 						}
-						//this->_npc.checkNoQuests() == false
 						else if (npcSelection == 2 && this->_npc.getNpcTalk() && !hasSelectedQuest) {
-							//if (questSelection == 1) {
 								// Here we will call playQuest()
 								// This function is similar to playScript() as it will initialize the dialogue table
 								// How many lines are calculated and the table stores the text(s) and quest name
@@ -569,27 +549,6 @@ void Game::gameLoop() {
 
 							   if (!this->_npc.checkQuestBlocked())
 								   hasSelectedQuest = true;
-
-								//this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(),
-								//	this->_player, questSelection - 1);
-							//}
-							//else if (questSelection == 2) {
-								// Here we will call playQuest()
-								// This function is similar to playScript() as it will initialize the dialogue table
-								// How many lines are calculated and the table stores the text(s) and quest name
-								// Quest selection is passed to know which quest name for this NPCID
-
-								// Also check using checkQuestDone(int questSelection...etc) within playQuest()
-								// to see if the quest is complete so we can show the quest finished dialogue instead
-
-								//this->_npc.playQuest(npcID, selection, graphics, this->_player.getX(), this->_player.getY(),
-								//	this->_player);
-
-								//hasSelectedQuest = true;
-
-								//this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(),
-									//this->_player, questSelection - 1);
-							//}
 						}
 
 						else if (npcSelection == 2 && this->_npc.getNpcTalk() && hasSelectedQuest) {
@@ -605,37 +564,12 @@ void Game::gameLoop() {
 								this->_chatBox.setTextStatus(false);
 								this->_npc.setNpcTalk(false);
 								this->_npc.setQuestMenuState(false);
-								this->_npc.setQuestState(false);
-								this->_npc.setQuestDone(false);
-								this->_npc.setNoQuest(false);
 								this->_npc.resetScripts();
 								npcSelection = 1;
 								questSelection = 1;
 								hasSelectedQuest = false;
 							}
 						}
-
-						else if (this->_npc.checkNoQuests()) {
-							activeTalk = false;
-							this->_chatBox.setTextStatus(false);
-							this->_npc.setNpcTalk(false);
-							this->_npc.setQuestMenuState(false);
-							this->_npc.setQuestState(false);
-							this->_npc.setQuestDone(false);
-							this->_npc.setNoQuest(false);
-							this->_npc.resetScripts();
-							npcSelection = 1;
-							questSelection = 1;
-						}
-
-					}
-
-					if (input.wasKeyPressed(SDL_SCANCODE_DELETE) == true) {
-						this->_npc.setNpcTalk(false);
-						this->_chatBox.setTextStatus(false);
-						activeTalk = false;
-						this->_npc.setQuestMenuState(false);
-						this->_npc.resetScripts();
 					}
 
 					if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getNpcTalk() == false
@@ -825,9 +759,7 @@ void Game::draw(Graphics &graphics) {
 			this->_npc.displayQuests(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player);
 			this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), questSelection);
 		}
-		// && this->_npc.getQuestState() && this->_npc.checkNoQuests() == false
 		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && hasSelectedQuest) {
-			//this->_npc.acceptQuest(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
 			this->_npc.repeatQuestScript(graphics, this->_player.getX(), this->_player.getY()); 
 		}
 		else {
