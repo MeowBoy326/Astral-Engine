@@ -507,7 +507,15 @@ void Game::gameLoop() {
 					else if (activeTalk == true) {
 						activeTalk = false;
 						this->_chatBox.setTextStatus(false);
+						this->_npc.setNpcTalk(false);
+						this->_npc.setQuestMenuState(false);
+						this->_npc.setQuestState(false);
+						this->_npc.setQuestDone(false);
+						this->_npc.setNoQuest(false);
 						this->_npc.resetScripts();
+						npcSelection = 1;
+						questSelection = 1;
+						hasSelectedQuest = false;
 					}
 				}
 
