@@ -20,6 +20,8 @@
 #include <set>
 #include <filesystem>
 
+#include "../headers/Inventory.h"
+
 using namespace tinyxml2; // All tinyxml2 is in a namespace because we will use so many features dont wanna write tinyxml:: all the time :D
 
 template<typename T> Items * createInstance(Graphics& graphics, Vector2 spawnPoint) { return new T(graphics, spawnPoint); }
@@ -68,7 +70,7 @@ Level & Level::operator=(const Level & levelMap)
 	this->_projectiles.clear();
 	this->_items.clear();
 	this->_enemies.clear();
-	this->itemType = levelMap.itemType;
+	//this->itemType = levelMap.itemType;
 	this->_npcs = levelMap._npcs;
 	this->_animatedTileInfos = levelMap._animatedTileInfos;
 	this->_animatedTileList = levelMap._animatedTileList;
@@ -1215,11 +1217,11 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					this->_enemies.at(i)->setRemoveable();
 					if (dropRate && this->_enemies.at(i)->getEnemyLevel() <= 10 && !this->_enemies.at(i)->isMiniBoss() && !this->_enemies.at(i)->isBoss()) {
 						this->_items.push_back(new BronzeCoin(graphics, Vector2(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY())));
-						this->itemType.push_back(2);
+						//this->itemType.push_back(2);
 					}
 					else if (this->_enemies.at(i)->isMiniBoss() || this->_enemies.at(i)->isBoss()) {
 							this->_items.push_back(new RedCoin(graphics, Vector2(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY())));
-							this->itemType.push_back(2);
+							//this->itemType.push_back(2);
 							player.completeBossTable(this->_enemies.at(i)->getName(), this->_mapName, this->_enemies.at(i)->getStartingX(), this->_enemies.at(i)->getStartingY());
 					}
 					std::string mob = this->_enemies.at(i)->getName();
@@ -1233,7 +1235,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 							Items *b = classMap[std::get<1>(this->levelDropTable[cDistance])](graphics, Vector2(this->_enemies.at(i)->getX(),
 								this->_enemies.at(i)->getY()));
 							this->_items.push_back(b);
-							this->itemType.push_back(4);
+							//this->itemType.push_back(4);
 						}
 					}
 					player.gainExpFromEnemy(this->_enemies.at(i)->getEnemyLevel(), this->_enemies.at(i)->enemyExpAmount());
@@ -1295,19 +1297,18 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 							if (!invent.isLooted(mapName, 0)) {
 								this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 									std::floor(y) * globals::SPRITE_SCALE)));
-								this->itemType.push_back(0);
 							}
 						}
 						else if (ss.str() == "permHP") {
 							if (!invent.isLooted(mapName, 1)) {
 								this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
-								this->itemType.push_back(1);
+								//this->itemType.push_back(1);
 							}
 						}
 						else if (ss.str() == "key") {
 							if (!invent.isLooted(mapName, 3)) {
 								this->_items.push_back(new Key(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
-								this->itemType.push_back(3);
+								//this->itemType.push_back(3);
 							}
 						}
 						pObject = pObject->NextSiblingElement("object");
@@ -1529,19 +1530,35 @@ std::vector<Npc*> Level::checkNpcCollisions(const Rectangle &other, Graphics &gr
 void Level::checkItemCollisions(Player & player, const Rectangle &other, Graphics &graphics, Inventory &invent) {
 	for (int i = 0; i < this->_items.size(); i++) {
 		if (this->_items.at(i)->getBoundingBox().collidesWith(other)) {
-			int type = itemType.at(i);
-			std::cout << "type = " << type << std::endl;
-			if (type == 1) // Permanent HP+1 item
+			//int type = itemType.at(i);
+			
+			if (this->_items.at(i)->getID() == 1) {
 				player.gainMaxHealth(5);
-			else if (type == 2)
+				//invent.storeItem(1);
+			}
+			else if (this->_items.at(i)->isCurrency()) {
 				player.gainCurrency(this->_items.at(i)->getAmount());
-			else
-				invent.storeItem(type);
-			if (type != 2)
-				invent.addInstancedLoot(this->_mapName, type);
+			}
+			else {
+				invent.addItem(this->_items.at(i)->getID());
+			}
+
+			if (!this->_items.at(i)->isCurrency()){
+				invent.addInstancedLoot(this->_mapName, this->_items.at(i)->getID());
+			}
+
+			//if (type == 1) // Permanent HP+1 item
+			//	player.gainMaxHealth(5);
+			//else if (type == 2)
+			//	player.gainCurrency(this->_items.at(i)->getAmount());
+			//else
+			//	invent.storeItem(type);
+			//if (type != 2)
+			//	invent.addInstancedLoot(this->_mapName, type);
+
 			delete this->_items.at(i);
 			this->_items.erase(_items.begin() + i);
-			itemType.erase(itemType.begin() + i);
+			//itemType.erase(itemType.begin() + i);
 		}
 	}
 }
