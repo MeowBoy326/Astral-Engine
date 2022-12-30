@@ -13,6 +13,8 @@
 #include <sstream>
 #include <iomanip>
 
+#include "../headers/Inventory.h"
+
 namespace player_constants {
 	float WALK_SPEED = 0.2f;
 	float JUMP_DISTANCE = 0.7f;
@@ -694,7 +696,7 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 				this->_timeForEventMsg = 0;
 				return;
 			}
-			if (!this->checkLockedDoorCompleted(others.at(i).getDestination()) && !invent.hasKeyStored()) {
+			if (!this->checkLockedDoorCompleted(others.at(i).getDestination())  && !invent.hasKeyStored() ) {
 				this->eventMessage = "Key required";
 				this->showEventMsg = true;
 				this->_timeForEventMsg = 0;
@@ -1316,6 +1318,7 @@ void Player::draw(Graphics &graphics) {
 				std::get<0>(this->battleMessages[i]));
 		}
 	}
+	this->_txt->drawItemQuantity(graphics, 0, 0, std::to_string(this->_hpPotAmount), this->getX() - 310, this->getY() - 120);
 }
 
 void Player::drawGun(Graphics & graphics)
