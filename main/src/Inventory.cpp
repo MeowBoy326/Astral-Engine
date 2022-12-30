@@ -13,6 +13,8 @@ Inventory::Inventory(Graphics & graphics, Player & player)
 	this->_hpPot = Sprite(graphics, "data\\maps\\NpcSym.png", 32, 83, 13, 11, 35, 70);
 	this->_key = Sprite(graphics, "data\\maps\\NpcSym.png", 194, 4, 12, 10, 35, 70);
 	this->_silverGem = Sprite(graphics, "data\\maps\\loot.png", 72, 50, 16, 16, 35, 70);
+
+	initPrototypes();
 }
 
 void Inventory::storeItem(int type)
@@ -60,25 +62,25 @@ void Inventory::update(int elapsedTime, Player & player)
 {
 }
 
-void Inventory::useItem(int type, Player &player) {
-	if (type == 0 && this->inventoryTable.size() > 0) {
-		for (int index = 0; index < this->inventoryTable.size(); ++index) {
-			if (this->inventoryTable[index].second == 0 && this->inventoryTable[index].first >=1 && 
-				player.getCurrentHealth() < player.getMaxHealth()) {
-				player.gainHealth(player.getMaxHealth() / 3);
-				this->inventoryTable[index].first -= 1;
-				if (this->inventoryTable[index].first == 0)
-					this->inventoryTable.erase(this->inventoryTable.begin() + index);
-			}
-			else {
-				std::cout << "Either your HP is full or you do not have a Health Potion!" << std::endl;
-			}
-		}
-	}
-	else {
-		std::cout << "Inventory is empty" << std::endl;
-	}
-}
+//void Inventory::useItem(int itemID, Player &player) {
+//	if (type == 0) {
+//		for (int index = 0; index < this->inventoryTable.size(); ++index) {
+//			if (this->inventoryTable[index].second == 0 && this->inventoryTable[index].first >=1 && 
+//				player.getCurrentHealth() < player.getMaxHealth()) {
+//				player.gainHealth(player.getMaxHealth() / 3);
+//				this->inventoryTable[index].first -= 1;
+//				/*if (this->inventoryTable[index].first == 0)
+//					this->inventoryTable.erase(this->inventoryTable.begin() + index);*/
+//			}
+//			else {
+//				std::cout << "Either your HP is full or you do not have a Health Potion!" << std::endl;
+//			}
+//		}
+//	}
+//	else {
+//		std::cout << "Inventory is empty" << std::endl;
+//	}
+//}
 
 void Inventory::draw(Graphics & graphics, Player & player)
 {
