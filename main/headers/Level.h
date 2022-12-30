@@ -85,6 +85,8 @@ public:
 	bool isArenaActive() const { return this->arenaActive; }
 
 private:
+	//Inventory* inv;
+
 	bool enemyDead = false;
 	bool arenaActive = false;
 
@@ -128,7 +130,7 @@ private:
 	std::vector<Effects*> _effects;
 	std::vector<Npc*> _npcs;
 	std::vector<Items*> _items;
-	std::vector<int> itemType;
+	//std::vector<int> itemType;
 	std::vector<std::tuple<std::string, std::string, int>> levelDropTable; // Mob name, item name, drop rate %
 	std::vector<std::tuple<float, float, float, int>> dmgVector;
 
