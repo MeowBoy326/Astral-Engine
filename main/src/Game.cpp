@@ -662,7 +662,11 @@ void Game::gameLoop() {
 					}
 				}
 				if (input.wasKeyPressed(SDL_SCANCODE_C) == true && this->_player.getCurrentHealth() > 0) {
-					_inventory.useItem(0, this->_player);
+					if (this->_player.hasHpPot()) {
+						_inventory.useItem(0, this->_player);
+						this->_player.subtractHpPot();
+					}
+					
 				}
 				if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
 					// Add weapon swap here
