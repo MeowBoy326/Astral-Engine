@@ -52,6 +52,10 @@ public:
 	inline bool const getQuestMenuState() { return this->questMenu; }
 	inline void const setQuestMenuState(bool condition) { this->questMenu = condition; }
 	inline bool const checkQuestBlocked() { return this->blockSelectedQuest; }
+	inline const std::vector<std::tuple<std::string, int, std::string, int, std::vector<std::string>, std::vector<std::string>,
+		int, int, int, int, int, bool>> getQuestTable() const { return this->questTable; }
+	inline void setQuestTable(std::vector<std::tuple<std::string, int, std::string, int, std::vector<std::string>, std::vector<std::string>,
+		int, int, int, int, int, bool>> table) { this->questTable = table; }
 protected:
 	Direction _direction;
 	/*
