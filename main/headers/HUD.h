@@ -14,12 +14,13 @@ public:
 	void draw(Graphics &graphics, Player &player);
 
 private:
-	Player _player;
+	//Player _player;
 
 	// Health Sprites
 	Sprite _healthBarSprite;
 	Sprite _healthNumber1;
 	Sprite _currentHealthBar;
+	Sprite _healthPotion;
 
 	// Exp Sprites
 	Sprite _lvWord;
