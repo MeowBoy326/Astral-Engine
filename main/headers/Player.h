@@ -103,6 +103,7 @@ public:
 	inline void setLockedDoorTable(std::vector<std::string> table) { this->lockedDoorTable = table; }
 	void addLockedDoorTable(std::string name);
 	bool checkLockedDoorCompleted(std::string name);
+	void addItem(int itemID);
 	inline const std::vector<std::string> getEquipmentTable() const { return this->equipmentTable; }
 	inline void setEquipmentTable(std::vector<std::string> table) { this->equipmentTable = table; }
 	void addEquipment(std::string name);
@@ -132,6 +133,9 @@ public:
 	const inline float getCurrentHealth() const { return this->_currentHealth; }
 	inline void setMaxHealth(float hp) { this->_maxHealth = hp; }
 	inline void setCurrentHealth(float hp) { this->_currentHealth = hp; }
+	inline void subtractHpPot() { this->_hpPotAmount -= 1; }
+	inline void refillHpPot() { this->_hpPotAmount = this->_hpPotCapacity; }
+	inline bool hasHpPot() const { if (this->_hpPotAmount > 0) { return true; } return false; }
 
 	// Exp, Level, & currency handling
 	void drawExpNumbers(Graphics &graphics);
@@ -199,6 +203,8 @@ private:
 	bool deathPlayed = false;
 	bool showEventMsg = false;
 
+	int _hpPotAmount = 2;
+	int _hpPotCapacity = 2;
 	int _requiredExp;
 	int _statPoints = 1;
 	int _playerLevel = 0;
