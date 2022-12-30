@@ -4,15 +4,47 @@
 #include "Player.h"
 #include <vector>
 #include "TextManager.h"
+#include "Items.h"
+#include <map>
 
 class Graphics;
-// Class Player; Can't foward declare player here because Player_player is not a pointer
+// Class Player; Can't forward declare player here because Player_player is not a pointer
 
 class Inventory : public TextManager
 {
 public:
 	Inventory();
 	Inventory(Graphics &graphics, Player &player);
+
+	 void initPrototypes() {
+		 /* Create a map for the ID system. Create items based off the mappings in map items*/
+		 item_prototypes_[HealthPotion::ID] = new HealthPotion();
+		 item_prototypes_[PermHP::ID] = new PermHP();
+		 item_prototypes_[Key::ID] = new Key();
+
+		 this->addItem(0);
+	}
+
+	void addItem(Items* item) {
+		items[item->getID()] = item;
+	}
+
+	void addItem(Items::ItemID id) {
+		/* Find the item in the prototype map and clone into the inventory map items */
+		std::cout << "Adding Item: " << id << std::endl;
+		auto it = item_prototypes_.find(id);
+		if (it != item_prototypes_.end()) {
+			items[id] = it->second->clone();
+		}
+	}
+
+	void useItem(Items::ItemID id, Player &player) {
+		/* Call the overriden function use that the item has */
+		auto it = items.find(id);
+		if (it != items.end()) {
+			it->second->use(player);
+		}
+	}
 
 	
 	enum ItemType {
@@ -27,7 +59,6 @@ public:
 	};
 
 	void update(int elapsedTime, Player &player);
-	void useItem(int type, Player & player);
 	void draw(Graphics &graphics, Player &player);
 	void drawQuantity(Graphics &graphics, int x, int y, int quantity);
 	void addInstancedLoot(std::string mapName, int type);
@@ -43,6 +74,8 @@ public:
 
 private:
 	Player _player;
+	std::map<Items::ItemID, Items*> items;
+	std::map<Items::ItemID, Items*> item_prototypes_;
 
 	// Health Sprites
 	Sprite _iMenu;
