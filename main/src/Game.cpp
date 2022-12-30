@@ -19,6 +19,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <sstream>
 
 using namespace tinyxml2;
 using namespace CryptoPP;
@@ -915,25 +916,46 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
+	// Save the quest log
 	element = xml.NewElement("QuestLog");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
-	//std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec = this->_npc.getQuestLog();
-	//for (int counter = 0; counter < qVec.size(); ++counter) {
-	//	XMLElement* qElement = xml.NewElement("Quest");
-	//	qElement->SetAttribute("questName", std::get<0>(qVec[counter]).c_str());
-	//	qElement->SetAttribute("type", std::get<1>(qVec[counter]));
-	//	qElement->SetAttribute("object", std::get<2>(qVec[counter]).c_str());
-	//	qElement->SetAttribute("amount", std::get<3>(qVec[counter]));
-	//	qElement->SetAttribute("completed", std::get<4>(qVec[counter]));
-	//	qElement->SetAttribute("rewarded", std::get<5>(qVec[counter]));
-	//	qElement->SetAttribute("rewardType", std::get<6>(qVec[counter]));
-	//	qElement->SetAttribute("reward", std::get<7>(qVec[counter]).c_str());
-	//	qElement->SetAttribute("exp", std::get<8>(qVec[counter]));
-	//	qElement->SetAttribute("cels", std::get<9>(qVec[counter]));
-	//	element->InsertEndChild(qElement);
-	//}
-	//root->InsertEndChild(element);
+	std::vector<std::tuple<std::string, int, std::string, int, std::vector<std::string>, std::vector<std::string>,
+		int, int, int, int, int, bool>> qVec = this->_npc.getQuestTable();
+	for (int counter = 0; counter < qVec.size(); ++counter) {
+		XMLElement* qElement = xml.NewElement("Quest");
+		qElement->SetAttribute("questName", std::get<0>(qVec[counter]).c_str());
+		qElement->SetAttribute("type", std::get<1>(qVec[counter]));
+		qElement->SetAttribute("object", std::get<2>(qVec[counter]).c_str());
+		qElement->SetAttribute("amount", std::get<3>(qVec[counter]));
+		/* 
+		 * Append all the dialogue into one string that is delimited by a tilde (~)
+		 * This is because we want the Attribute to store the entire string vector
+		 * And when we load the save file, we can use the delimiter to make them
+		 * back into their own sentences and store it into the string vector
+		 */
+		std::stringstream qd, fd;
+		for (const auto& qDialogue : std::get<4>(qVec[counter])) {
+			qd << qDialogue << "~";
+		}
+		std::string qDiaStr = qd.str();
+		qElement->SetAttribute("questDialogue", qDiaStr.c_str());
+		/* Do the same for finishDialogue vector */
+		for (const auto& fDialogue : std::get<5>(qVec[counter])) {
+			fd << fDialogue << "~";
+		}
+		std::string fDiaStr = fd.str();
+		qElement->SetAttribute("finishDialogue", fDiaStr.c_str());
+		qElement->SetAttribute("npcID", std::get<6>(qVec[counter]));
+		qElement->SetAttribute("rewardItemID", std::get<7>(qVec[counter]));
+		qElement->SetAttribute("rewardAmount", std::get<8>(qVec[counter]));
+		qElement->SetAttribute("exp", std::get<9>(qVec[counter]));
+		qElement->SetAttribute("cels", std::get<10>(qVec[counter]));
+		qElement->SetAttribute("isCompleted", std::get<11>(qVec[counter]));
+		element->InsertEndChild(qElement);
+	}
+	root->InsertEndChild(element);
+	// Save the kill table
 	element = xml.NewElement("KillTable");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
@@ -947,6 +969,7 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
+	// Save the boss table
 	element = xml.NewElement("BossTable");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
@@ -1039,31 +1062,76 @@ int Game::loadGame(Graphics & graphics)
 	}
 	this->_inventory.setInventoryTable(iVec);
 	// Load QuestLog
-	/*element = root->FirstChildElement("QuestLog");
+	element = root->FirstChildElement("QuestLog");
 	ptrVec = element->FirstChildElement("Quest");
-	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec;
+	std::vector<std::tuple<std::string, int, std::string, int, std::vector<std::string>, std::vector<std::string>,
+		int, int, int, int, int, bool>> qVec;
 	while (ptrVec != nullptr) {
-		int amount, type, rewardType, exp, cels;
-		const char* textPtr = nullptr, *objPtr = nullptr, *itemPtr = nullptr;
-		std::string qName, objName, itemName;
-		bool completed, rewarded;
+		int amount, type, rewardItemID, rewardAmount, exp, cels, npcID;
+		std::vector<std::string> dialogueText, finishText;
+		std::string qName, objName, dialogueStr;
+		bool isCompleted;
+		const char* textPtr = nullptr, *objPtr = nullptr, *dialoguePtr = nullptr;
+
 		result = ptrVec->QueryIntAttribute("type", &type);
 		result = ptrVec->QueryIntAttribute("amount", &amount);
 		textPtr = ptrVec->Attribute("questName");
 		qName = textPtr;
 		objPtr = ptrVec->Attribute("object");
 		objName = objPtr;
-		result = ptrVec->QueryBoolAttribute("completed", &completed);
-		result = ptrVec->QueryBoolAttribute("rewarded", &rewarded);
-		result = ptrVec->QueryIntAttribute("rewardType", &rewardType);
-		itemPtr = ptrVec->Attribute("reward");
-		itemName = itemPtr;
+		result = ptrVec->QueryBoolAttribute("isCompleted", &isCompleted);
+		result = ptrVec->QueryIntAttribute("rewardItemID", &rewardItemID);
+		result = ptrVec->QueryIntAttribute("rewardAmount", &rewardAmount);
+		result = ptrVec->QueryIntAttribute("npcID", &npcID);
 		result = ptrVec->QueryIntAttribute("exp", &exp);
 		result = ptrVec->QueryIntAttribute("cels", &cels);
-		qVec.push_back(std::make_tuple(qName, type, objName, amount, completed, rewarded, rewardType, itemName, exp, cels));
-		ptrVec = ptrVec->NextSiblingElement("Quests");
+
+		/* 
+		 * Get the "questDialogue" attribute by splitting the string value using the delimiter (~)
+		 * This will allow us to form the sentences back and store them invidiually into the string vector
+		 */
+		const char* questDialogueAttr = ptrVec->Attribute("questDialogue");
+		if (questDialogueAttr) {
+			// Split the attribute value into separate strings using a delimiter (~)
+			std::stringstream ss(questDialogueAttr);
+			std::string line;
+			while (std::getline(ss, line, '~')) {
+				// Trim whitespace from the beginning and end of the string
+				line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) {
+					return !std::isspace(ch);
+					}));
+				line.erase(std::find_if(line.rbegin(), line.rend(), [](int ch) {
+					return !std::isspace(ch);
+					}).base(), line.end());
+
+				// Add the string to the std::vector<std::string>
+				dialogueText.push_back(line);
+			}
+		}
+		/* Do the same for finishDialogue */
+		const char* questFinishDialogueAttr = ptrVec->Attribute("finishDialogue");
+		if (questFinishDialogueAttr) {
+			// Split the attribute value into separate strings using a delimiter (~)
+			std::stringstream ss(questFinishDialogueAttr);
+			std::string line;
+			while (std::getline(ss, line, '~')) {
+				// Trim whitespace from the beginning and end of the string
+				line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) {
+					return !std::isspace(ch);
+					}));
+				line.erase(std::find_if(line.rbegin(), line.rend(), [](int ch) {
+					return !std::isspace(ch);
+					}).base(), line.end());
+
+				// Add the string to the std::vector<std::string>
+				finishText.push_back(line);
+			}
+		}
+		qVec.push_back(std::make_tuple(qName, type, objName, amount, dialogueText, finishText, npcID, rewardItemID,
+			rewardAmount, exp, cels, isCompleted));
+		ptrVec = ptrVec->NextSiblingElement("Quest");
 	}
-	this->_npc.setQuestLog(qVec);*/
+	this->_npc.setQuestTable(qVec);
 	// Load Map
 	element = root->FirstChildElement("Spawn");
 	if (element == nullptr)
