@@ -244,6 +244,22 @@ bool Player::checkBossCompleted(std::string name, std::string mapName, float x, 
 	return false;
 }
 
+bool Player::checkEnemyDespawn(std::string name, std::string mapName, float x, float y) {
+	/* 
+	 * 1st: Start at beginning of vector. 2nd: One past the last element. 3: Predicate function that takes a single argument
+	 * of the same type as the elements of the range and returns a bool. It will check if the elements match using a
+	 * lambda function that returns true. Otherwise, return false.
+	 */
+	auto it = std::find_if(despawnEnemy.begin(), despawnEnemy.end(), [&](const auto& t) {
+		return std::get<0>(t) == name && std::get<1>(t) == mapName && std::get<2>(t) == x && std::get<3>(t) == y;
+		});
+	return it != despawnEnemy.end();
+}
+
+void Player::addDespawnTable(std::string name, std::string mapName, float x, float y) {
+	despawnEnemy.push_back(std::make_tuple(name, mapName, x, y));
+}
+
 void Player::addCutSceneTable(std::string name)
 {
 	this->cutSceneTable.push_back(name);
