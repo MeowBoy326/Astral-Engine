@@ -107,8 +107,8 @@ public:
 	void addInstancedLoot(std::string mapName, int type);
 	inline const std::vector<std::pair<std::string, int>> getLootTable() const { return this->lootTable; }
 	inline void setLootTable(std::vector<std::pair<std::string, int>> table) { this->lootTable = table; }
-	inline const std::vector<std::pair<int, int>> getInventoryTable() const { return this->inventoryTable; }
-	inline void setInventoryTable(std::vector<std::pair<int, int>> table) { this->inventoryTable = table; }
+	inline const std::map<Items::ItemID, int> getInventoryTable() const { return this->items; }
+	inline void setInventoryTable(std::map<Items::ItemID, int> table) { this->items = table; }
 	bool isLooted(std::string map, int iType);
 	void storeItem(int type);
 	bool hasKeyStored(int keyID);
