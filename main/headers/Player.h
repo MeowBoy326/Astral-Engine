@@ -103,7 +103,7 @@ public:
 	inline void setLockedDoorTable(std::vector<std::string> table) { this->lockedDoorTable = table; }
 	void addLockedDoorTable(std::string name);
 	bool checkLockedDoorCompleted(std::string name);
-	void addItem(int itemID);
+	void addItem(int itemID, Inventory &invent);
 	inline const std::vector<std::string> getEquipmentTable() const { return this->equipmentTable; }
 	inline void setEquipmentTable(std::vector<std::string> table) { this->equipmentTable = table; }
 	void addEquipment(std::string name);

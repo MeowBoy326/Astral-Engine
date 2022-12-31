@@ -35,7 +35,7 @@ public:
 	int playNext(int npcID, Graphics &graphics, int posX, int posY, Player &player);
 	int repeatScript(Graphics &graphics, int posX, int posY);
 	int playQuest(int npcID, int selection, Graphics &graphics, int posX, int posY, Player &player);
-	int playNextQuest(int npcID, Graphics &graphics, int posX, int posY, Player &player);
+	int playNextQuest(int npcID, Graphics &graphics, int posX, int posY, Player &player, Inventory &invent);
 	int repeatQuestScript(Graphics &graphics, int posX, int posY);
 	inline bool const getChatStatus() { return this->endOfChat; }
 	inline void setChatStatus(bool condition) { this->endOfChat = condition; }
@@ -47,7 +47,7 @@ public:
 	int loadQuests(int npcID);
 	void displayQuests(Graphics &grpahics, int npcID, int posX, int posY, Player &player);
 	void questSelection(Graphics &graphics, int posX, int posY, int selection);
-	void giveRewards(Player &player);
+	void giveRewards(Player &player, Inventory &invent);
 	bool checkQuest(Player &player);
 	inline bool const getQuestMenuState() { return this->questMenu; }
 	inline void const setQuestMenuState(bool condition) { this->questMenu = condition; }

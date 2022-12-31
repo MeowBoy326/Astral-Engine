@@ -559,7 +559,7 @@ void Game::gameLoop() {
 							// It will also read the next line for quest finish dialogue.
 							// Once at the end it can give the rewards and set it to complete
 							this->_npc.playNextQuest(npcID, graphics, this->_player.getX(), this->_player.getY(),
-								this->_player);
+								this->_player, this->_inventory);
 							if (this->_npc.getChatStatus()) {
 								activeTalk = false;
 								this->_chatBox.setTextStatus(false);

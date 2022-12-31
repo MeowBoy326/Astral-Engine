@@ -232,14 +232,14 @@ int Npc::playQuest(int npcID, int selection, Graphics& graphics, int posX, int p
 	return 0;
 }
 
-int Npc::playNextQuest(int npcID, Graphics& graphics, int posX, int posY, Player &player) {
+int Npc::playNextQuest(int npcID, Graphics& graphics, int posX, int posY, Player &player, Inventory &invent) {
 	this->questDialogueLine++;
 	if (this->questDialogueLine <= this->questDialogueSize - 1) {
 		this->drawNpcDialogue(graphics, 100, 100, this->currentQuestDialogue[this->questDialogueLine], posX, posY);
 	}
 	else if (this->questDialogueLine == this->questDialogueSize && this->isQuestDone && !this->isQuestRewarded)
 	{
-		this->giveRewards(player);
+		this->giveRewards(player, invent);
 		this->isQuestRewarded = true;
 		this->endOfChat = true;
 	}
@@ -412,7 +412,7 @@ void Npc::questSelection(Graphics & graphics, int posX, int posY, int selection)
 	}
 }
 
-void Npc::giveRewards(Player & player)
+void Npc::giveRewards(Player &player, Inventory &invent)
 {
 	if (!this->questTable.empty()) {
 		std::string qstName = this->storedQuestName;

@@ -49,7 +49,6 @@ public:
 
 	void use(Player &player) override {
 		// Implement HP pot
-		std::cout << "NEW HEAL USED!" << std::endl;
 		player.gainHealth(player.getMaxHealth() / 3);
 	}
 
