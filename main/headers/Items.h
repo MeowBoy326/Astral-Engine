@@ -50,7 +50,7 @@ public:
 
 	void use(Player &player) override {
 		// Implement HP pot
-		player.gainHealth(player.getMaxHealth() / 3);
+		player.gainHealth(((player.getMaxHealth() / 3)) + (player.getHpPotStrength() * 8));
 	}
 
 	void raiseEventMsg(Player &player) override {}
