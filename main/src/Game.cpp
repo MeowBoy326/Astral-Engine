@@ -1027,8 +1027,9 @@ int Game::saveGame(Graphics & graphics)
 	this->cipher.AESEncrypt(cwd.string(), nCwd.string());
 	XMLCheckResult(result);
 
-	/* Once save is complete, refill the HP Pot */
+	/* Once save is complete, refill the HP Pot and respawn the enemies except bosses */
 	this->_player.refillHpPot();
+	this->_player.clearDespawnTable();
 	return 0;
 }
 
@@ -1274,8 +1275,9 @@ int Game::loadGame(Graphics & graphics)
 	this->saveGame(graphics);
 	XMLCheckResult(result);
 
-	/* Refill HP Pot on load */
+	/* Refill HP Pot on load and respawn enemies */
 	this->_player.refillHpPot();
+	this->_player.clearDespawnTable();
 	return 0;
 }
 
