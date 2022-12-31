@@ -1264,9 +1264,14 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 								this->_arenaName.clear();
 							}
 						}
-						delete this->_enemies.at(i);
-						this->_enemies.erase(this->_enemies.begin() + i);
 					}
+					if (!this->_enemies.at(i)->isMiniBoss() || !this->_enemies.at(i)->isBoss()) {
+						/* It is a regular enemy. So, do not allow for respawn until the game is saved, which saving respawns enemies. */
+						player.addDespawnTable(this->_enemies.at(i)->getName(), this->_mapName, this->_enemies.at(i)->getStartingX(),
+							this->_enemies.at(i)->getStartingY());
+					}
+					delete this->_enemies.at(i);
+					this->_enemies.erase(this->_enemies.begin() + i);
 				}
 			}
 		}
@@ -1410,18 +1415,21 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 						ss << name;
 						if (ss.str() == "bat") {
 							std::string mobName = "bat";
-							this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
+							if (!player.checkEnemyDespawn(mobName, mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE))
+								this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE)));
 						}
 						else if (ss.str() == "JellyFish") {
 							std::string mobName = "JellyFish";
-							this->_enemies.push_back(new JellyFish(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
+							if (!player.checkEnemyDespawn(mobName, mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE))
+								this->_enemies.push_back(new JellyFish(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE)));
 						}
 						else if (ss.str() == "Ghost") {
 							std::string mobName = "Ghost";
-							this->_enemies.push_back(new Ghost(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
+							if (!player.checkEnemyDespawn(mobName, mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE))
+								this->_enemies.push_back(new Ghost(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE)));
 						}
 						else if (ss.str() == "shade") {
 							if (!player.checkBossCompleted(ss.str(), mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)) {
