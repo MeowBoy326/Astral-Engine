@@ -161,6 +161,7 @@ void Bat::update(int elapsedTime, Player &player) {
 			this->removeEnemy = false;
 			this->canDropLoot = false;
 			_deathTimeElapsed = 0;
+			this->~Bat();
 		}
 	}
 
@@ -425,6 +426,7 @@ void Shade::update(int elapsedTime, Player &player) {
 		if (timerRespawn > respawnTime && isVisible == false && dyingAnimation == false) {
 			timerRespawn = 0;
 			_deathTimeElapsed = 0;
+			this->~Shade();
 		}
 	}
 
@@ -631,6 +633,7 @@ void JellyFish::update(int elapsedTime, Player &player) {
 			this->removeEnemy = false;
 			this->canDropLoot = false;
 			_deathTimeElapsed = 0;
+			this->~JellyFish();
 		}
 	}
 
@@ -854,6 +857,7 @@ void Ghost::update(int elapsedTime, Player &player) {
 			this->removeEnemy = false;
 			this->canDropLoot = false;
 			_deathTimeElapsed = 0;
+			this->~Ghost();
 		}
 	}
 
