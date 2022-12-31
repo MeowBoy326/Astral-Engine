@@ -21,8 +21,31 @@ public:
 		 item_prototypes_[HealthPotion::ID] = new HealthPotion();
 		 item_prototypes_[PermHP::ID] = new PermHP();
 		 item_prototypes_[Key::ID] = new Key();
+		 item_prototypes_[JetPack::ID] = new JetPack();
 
 		 this->addItem(0, 1);
+	}
+
+	void addItem(Items::ItemID id, int quantity, Player &player) {
+		/* Find the item in the prototype map and clone into the inventory map items */
+		std::cout << "Adding Item: " << id << std::endl;
+		/* Check if the ItemID exist */
+		auto it = item_prototypes_.find(id);
+		if (it != item_prototypes_.end()) {
+			/* Now check to see if the player has one already */
+			auto itr = items.find(id);
+			if (itr != items.end()) {
+				std::cout << "Item exist already, so increasing quantity" << std::endl;
+				std::cout << "Pre-Quantity: " << itr->second << std::endl;
+				items[id] += quantity;
+				std::cout << "Post-Quantity: " << itr->second << std::endl;
+			}
+			else {
+				std::cout << "Item did not exist. Adding it now" << std::endl;
+				items.insert({ id, quantity });
+				item_prototypes_[id]->raiseEventMsg(player);
+			}
+		}
 	}
 
 	void addItem(Items::ItemID id, int quantity) {
@@ -45,6 +68,17 @@ public:
 			}
 		}
 	}
+
+	bool checkItem(Items::ItemID id, int quantity) {
+		auto itr = items.find(id);
+		if (itr != items.end()) {
+			if (items[id] >= quantity) {
+				return true;
+			}
+			return false;
+		}
+		return false;
+	 }
 
 	void useItem(Items::ItemID id, Player &player) {
 		/* Call the overriden function use that the item has */
