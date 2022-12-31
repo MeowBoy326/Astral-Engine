@@ -95,6 +95,9 @@ public:
 	inline void setKillTable(std::vector<std::pair<std::string, int>> table) { this->killTable = table; }
 	bool checkKillQuestComplete(std::string name, int count);
 	bool checkBossCompleted(std::string name, std::string mapName, float x, float y);
+	bool checkEnemyDespawn(std::string name, std::string mapName, float x, float y);
+	void addDespawnTable(std::string name, std::string mapName, float x, float y);
+	void clearDespawnTable() { this->despawnEnemy.clear(); }
 	inline const std::vector<std::string> getSceneTable() const { return this->cutSceneTable; }
 	inline void setCutsceneTable(std::vector<std::string> table) { this->cutSceneTable = table; }
 	void addCutSceneTable(std::string name);
@@ -241,6 +244,8 @@ private:
 	std::vector<std::pair<std::string, int>> killTable;
 	// Name, mapName, initial x & y, spawn
 	std::vector<std::tuple<std::string, std::string, float, float, bool>> bossTable;
+	// Name, mapName, initial x & y - Despawn enemy until the game is Saved
+	std::vector<std::tuple<std::string, std::string, float, float>> despawnEnemy;
 	// map name, level object (stores the state of the level I.E: item was taken already)
 	std::map<std::string, Level> mapStorage;
 	std::vector<std::string> cutSceneTable;
