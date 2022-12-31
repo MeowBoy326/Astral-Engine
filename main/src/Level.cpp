@@ -697,29 +697,44 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							while (pProperties) {
 								XMLElement* pProperty = pProperties->FirstChildElement("property");
 								if (pProperty != NULL) {
+									int keyID = 0;
+									bool isLocked = false;
+									std::stringstream ss2;
 									while (pProperty) {
 										const char* name = pProperty->Attribute("name");
 										std::stringstream ss;
 										ss << name;
 										if (ss.str() == "destination") {
 											const char* value = pProperty->Attribute("value");
-											std::stringstream ss2;
+											//std::stringstream ss2;
 											ss2 << value;
-											Door door = Door(rect, ss2.str());
+											Door door = Door(rect, ss2.str(), 0);
 											this->_doorList.push_back(door);
 										}
 										else if (ss.str() == "lockedDoor") {
 											const char* value = pProperty->Attribute("value");
-											std::stringstream ss2;
+											//std::stringstream ss2;
 											ss2 << value;
-											Door lDoor = Door(rect, ss2.str());
-											this->_lockDoor.push_back(lDoor);
+											//Door lDoor = Door(rect, ss2.str());
+											//this->_lockDoor.push_back(lDoor);
+										}
+										else if (ss.str() == "keyID") {
+											int value = pProperty->IntAttribute("value");
+											keyID = value;
+											isLocked = true;
 										}
 										pProperty = pProperty->NextSiblingElement("property");
 									}
+									if (isLocked)
+									{
+										Door lDoor = Door(rect, ss2.str(), keyID);
+										this->_lockDoor.push_back(lDoor);
+									}
+									
 								}
 								pProperties = pProperties->NextSiblingElement("properties");
 							}
+
 						}
 
 						pObject = pObject->NextSiblingElement("object");
@@ -1306,7 +1321,7 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 							}
 						}
 						else if (ss.str() == "key") {
-							if (!invent.isLooted(mapName, 3)) {
+							if (!invent.isLooted(mapName, 1001)) {
 								this->_items.push_back(new Key(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
 								//this->itemType.push_back(3);
 							}
