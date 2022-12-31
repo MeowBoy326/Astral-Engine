@@ -138,6 +138,8 @@ public:
 	inline bool hasHpPot() const { if (this->_hpPotAmount > 0) { return true; } return false; }
 	inline int getHpPotCapacity() const { this->_hpPotCapacity; }
 	inline void setHpPotCapacity(int capacity) { this->_hpPotCapacity = capacity; }
+	inline int getHpPotStrength() const { this->_hpPotStrength; }
+	inline void setHpPotStrength(int strength) { this->_hpPotStrength = strength; }
 
 	// Exp, Level, & currency handling
 	void drawExpNumbers(Graphics &graphics);
@@ -207,6 +209,7 @@ private:
 
 	int _hpPotAmount = 2;
 	int _hpPotCapacity = 2;
+	int _hpPotStrength = 0;
 	int _requiredExp;
 	int _statPoints = 1;
 	int _playerLevel = 0;
