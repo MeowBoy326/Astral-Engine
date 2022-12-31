@@ -898,6 +898,7 @@ int Game::saveGame(Graphics & graphics)
 	element->SetAttribute("KillCount", this->_player.getKillCount());
 	element->SetAttribute("Celestial", this->_player.getCurrency());
 	element->SetAttribute("hpPot", this->_player.getHpPotCapacity());
+	element->SetAttribute("hpPotStr", this->_player.getHpPotStrength());
 	root->InsertEndChild(element);
 	// Save loot table
 	element = xml.NewElement("Loot");
@@ -1259,6 +1260,8 @@ int Game::loadGame(Graphics & graphics)
 	this->_player.setCurrency(iValue);
 	result = element->QueryIntAttribute("hpPot", &iValue);
 	this->_player.setHpPotCapacity(iValue);
+	result = element->QueryIntAttribute("hpPotStr", &iValue);
+	this->_player.setHpPotStrength(iValue);
 
 	this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
 	if (!cipher.verifyHash(mapName, this->_player)) {
