@@ -22,8 +22,6 @@ public:
 		 item_prototypes_[PermHP::ID] = new PermHP();
 		 item_prototypes_[Key::ID] = new Key();
 		 item_prototypes_[JetPack::ID] = new JetPack();
-
-		 this->addItem(0, 1);
 	}
 
 	void addItem(Items::ItemID id, int quantity, Player &player) {
