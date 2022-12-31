@@ -431,7 +431,7 @@ void Npc::giveRewards(Player &player, Inventory &invent)
 			this->celsReward = std::get<10>(this->questTable[distanceTable]);
 
 			if (itemReward != 0) {
-				invent.addItem(this->itemReward, this->itemQuantityReward);
+				invent.addItem(this->itemReward, this->itemQuantityReward, player);
 			}
 			if (expReward != 0) {
 				player.gainExp(this->expReward);

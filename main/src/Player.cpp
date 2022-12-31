@@ -278,7 +278,7 @@ bool Player::checkLockedDoorCompleted(std::string name)
 }
 
 void Player::addItem(int itemID, int quantity, Inventory &invent) {
-	invent.addItem(itemID, quantity);
+	invent.addItem(itemID, quantity, *this);
 }
 
 void Player::addEquipment(std::string name)

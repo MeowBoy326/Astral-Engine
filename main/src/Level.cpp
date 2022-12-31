@@ -1555,7 +1555,7 @@ void Level::checkItemCollisions(Player & player, const Rectangle &other, Graphic
 				player.gainCurrency(this->_items.at(i)->getAmount());
 			}
 			else {
-				invent.addItem(this->_items.at(i)->getID(), 1);
+				invent.addItem(this->_items.at(i)->getID(), 1, player);
 			}
 
 			if (!this->_items.at(i)->isCurrency()){
