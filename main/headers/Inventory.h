@@ -22,19 +22,27 @@ public:
 		 item_prototypes_[PermHP::ID] = new PermHP();
 		 item_prototypes_[Key::ID] = new Key();
 
-		 this->addItem(0);
+		 this->addItem(0, 1);
 	}
 
-	void addItem(Items* item) {
-		items[item->getID()] = item;
-	}
-
-	void addItem(Items::ItemID id) {
+	void addItem(Items::ItemID id, int quantity) {
 		/* Find the item in the prototype map and clone into the inventory map items */
 		std::cout << "Adding Item: " << id << std::endl;
+		/* Check if the ItemID exist */
 		auto it = item_prototypes_.find(id);
 		if (it != item_prototypes_.end()) {
-			items[id] = it->second->clone();
+			/* Now check to see if the player has one already */
+			auto itr = items.find(id);
+			if (itr != items.end()) {
+				std::cout << "Item exist already, so increasing quantity" << std::endl;
+				std::cout << "Pre-Quantity: " << itr->second << std::endl;
+				items[id] += quantity;
+				std::cout << "Post-Quantity: " << itr->second << std::endl;
+			}
+			else {
+				std::cout << "Item did not exist. Adding it now" << std::endl;
+				items.insert({ id, quantity });
+			}
 		}
 	}
 
@@ -42,7 +50,10 @@ public:
 		/* Call the overriden function use that the item has */
 		auto it = items.find(id);
 		if (it != items.end()) {
-			it->second->use(player);
+			auto itr = item_prototypes_.find(id);
+			if (itr != item_prototypes_.end()) {
+				itr->second->use(player);
+			}
 		}
 	}
 
@@ -74,7 +85,7 @@ public:
 
 private:
 	Player _player;
-	std::map<Items::ItemID, Items*> items;
+	std::map<Items::ItemID, int> items;
 	std::map<Items::ItemID, Items*> item_prototypes_;
 
 	// Health Sprites
