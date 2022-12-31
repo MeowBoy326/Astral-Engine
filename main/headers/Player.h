@@ -137,6 +137,7 @@ public:
 	inline void refillHpPot() { this->_hpPotAmount = this->_hpPotCapacity; }
 	inline bool hasHpPot() const { if (this->_hpPotAmount > 0) { return true; } return false; }
 	inline int getHpPotCapacity() const { this->_hpPotCapacity; }
+	inline void setHpPotCapacity(int capacity) { this->_hpPotCapacity = capacity; }
 
 	// Exp, Level, & currency handling
 	void drawExpNumbers(Graphics &graphics);
