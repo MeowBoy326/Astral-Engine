@@ -227,3 +227,31 @@ private:
 	int currencyAmount = 0;
 	bool wasDropped = false;
 };
+
+class JetPack : public Items {
+public:
+	JetPack();
+	JetPack(Graphics &graphics, Vector2 spawnPoint);
+	~JetPack();
+
+	static const ItemID ID = 2100;
+
+	void use(Player &player) override {}
+
+	Items* clone() const override { return new JetPack(*this); }
+
+
+	//void addToInventory();
+	const inline bool isDroppedItem() { return this->wasDropped; }
+	const inline int getAmount() { return this->currencyAmount; }
+	void update(int elapsedTime, Player & player);
+
+	void draw(Graphics & graphics);
+	void drawDrops(Graphics &graphics, float x, float y);
+
+	void animationDone(std::string currentAnimation);
+	void setupAnimations();
+private:
+	bool wasDropped = false;
+	int currencyAmount = 0;
+};

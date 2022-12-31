@@ -373,3 +373,32 @@ void SilverGem::setupAnimations()
 {
 	this->addSpecialAnimation(3, 70, 50, "Rotate", 16, 16, Vector2(0, 0));
 }
+
+
+/*
+*	JetPack
+*/
+
+JetPack::JetPack() {};
+
+JetPack::JetPack(Graphics &graphics, Vector2 spawnPoint) :
+	Items(graphics, "data\\maps\\NpcSym.png", 194, 4, 16, 16, spawnPoint, 140)
+{
+	_id = ID;
+	currencyItem = false;
+}
+
+JetPack::~JetPack()
+{
+	this->destroySprite();
+}
+
+void JetPack::draw(Graphics &graphics) {}
+
+void JetPack::drawDrops(Graphics & graphics, float x, float y) {}
+
+void JetPack::update(int elapsedTime, Player & player) {}
+
+void JetPack::animationDone(std::string currentAnimation) {}
+
+void JetPack::setupAnimations() {}
