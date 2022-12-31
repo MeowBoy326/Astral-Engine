@@ -35,26 +35,23 @@ void Inventory::storeItem(int type)
 	}
 }
 
-bool Inventory::hasKeyStored()
+bool Inventory::hasKeyStored(int keyID)
 {
 	std::cout << "Finding Key in Inventory" << std::endl;
-	bool found = false;
-	if (this->inventoryTable.size() == 0)
-		return false;
-	else {
-		for (int index = 0; index < this->inventoryTable.size(); ++index) {
-			if (this->inventoryTable[index].second == 3) {
-				if (this->inventoryTable[index].first >= 2) {
-					this->inventoryTable[index].first -= 1;
-					return true;
-				}
-				else if (this->inventoryTable[index].first == 1) {
-					this->inventoryTable.erase(this->inventoryTable.begin() + index);
-					return true;
-				}
-			}
+
+	auto itr = items.find(keyID);
+	if (itr != items.end()) {
+		std::cout << "Key found." << std::endl;
+		if (items[keyID] > 0)
+		{
+			items[keyID] -= 1;
+			std::cout << "Post-Quantity: " << itr->second << std::endl;
+			return true;
 		}
+		std::cout << "Key found but quantity = 0" << std::endl;
+		return false;
 	}
+	std::cout << "Key not found." << std::endl;
 	return false;
 }
 

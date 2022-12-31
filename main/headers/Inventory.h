@@ -79,7 +79,7 @@ public:
 	inline void setInventoryTable(std::vector<std::pair<int, int>> table) { this->inventoryTable = table; }
 	bool isLooted(std::string map, int iType);
 	void storeItem(int type);
-	bool hasKeyStored();
+	bool hasKeyStored(int keyID);
 	
 	~Inventory();
 
