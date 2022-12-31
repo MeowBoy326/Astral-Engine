@@ -897,6 +897,7 @@ int Game::saveGame(Graphics & graphics)
 	element->SetAttribute("SoulLevel", this->_player.getSoulLevel());
 	element->SetAttribute("KillCount", this->_player.getKillCount());
 	element->SetAttribute("Celestial", this->_player.getCurrency());
+	element->SetAttribute("hpPot", this->_player.getHpPotCapacity());
 	root->InsertEndChild(element);
 	// Save loot table
 	element = xml.NewElement("Loot");
@@ -1253,6 +1254,8 @@ int Game::loadGame(Graphics & graphics)
 	this->_player.setKillCount(iValue);
 	result = element->QueryIntAttribute("Celestial", &iValue);
 	this->_player.setCurrency(iValue);
+	result = element->QueryIntAttribute("hpPot", &iValue);
+	this->_player.setHpPotCapacity(iValue);
 
 	this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
 	if (!cipher.verifyHash(mapName, this->_player)) {
