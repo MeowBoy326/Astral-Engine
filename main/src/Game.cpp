@@ -675,7 +675,7 @@ void Game::gameLoop() {
 					// Add weapon swap here
 				}
 				if (input.wasKeyPressed(SDL_SCANCODE_3) == true) {
-					if (this->_player.checkEquipmentUnlocked("JetPack")) {
+					if (this->_inventory.checkItem(2100, 1)) {
 						jetPack = !jetPack;
 						std::cout << "JetPack state = " << jetPack << std::endl;
 					}
