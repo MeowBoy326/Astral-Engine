@@ -136,9 +136,9 @@ public:
 	inline void subtractHpPot() { this->_hpPotAmount -= 1; }
 	inline void refillHpPot() { this->_hpPotAmount = this->_hpPotCapacity; }
 	inline bool hasHpPot() const { if (this->_hpPotAmount > 0) { return true; } return false; }
-	inline int getHpPotCapacity() const { this->_hpPotCapacity; }
+	inline int getHpPotCapacity() const { return this->_hpPotCapacity; }
 	inline void setHpPotCapacity(int capacity) { this->_hpPotCapacity = capacity; }
-	inline int getHpPotStrength() const { this->_hpPotStrength; }
+	inline int getHpPotStrength() const { return this->_hpPotStrength; }
 	inline void setHpPotStrength(int strength) { this->_hpPotStrength = strength; }
 
 	// Exp, Level, & currency handling
