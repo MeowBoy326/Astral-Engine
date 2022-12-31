@@ -277,6 +277,10 @@ bool Player::checkLockedDoorCompleted(std::string name)
 	return false;
 }
 
+void Player::addItem(int itemID, int quantity, Inventory &invent) {
+	invent.addItem(itemID, quantity);
+}
+
 void Player::addEquipment(std::string name)
 {
 	if (std::find(this->equipmentTable.begin(), this->equipmentTable.end(), name) != this->equipmentTable.end())
@@ -696,7 +700,7 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 				this->_timeForEventMsg = 0;
 				return;
 			}
-			if (!this->checkLockedDoorCompleted(others.at(i).getDestination())  && !invent.hasKeyStored() ) {
+			if (!this->checkLockedDoorCompleted(others.at(i).getDestination())  && !invent.hasKeyStored(others.at(i).getDoorKeyID()) ) {
 				this->eventMessage = "Key required";
 				this->showEventMsg = true;
 				this->_timeForEventMsg = 0;
