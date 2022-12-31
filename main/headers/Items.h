@@ -18,6 +18,7 @@ public:
 	ItemID getID() const { return _id; }
 	bool isCurrency() const { return currencyItem; }
 	virtual Items* clone() const = 0;
+	virtual void raiseEventMsg(Player &player) = 0;
 	virtual void use(Player &player) = 0;
 	virtual ~Items() {};
 
@@ -44,13 +45,15 @@ public:
 	HealthPotion();
 	HealthPotion(Graphics &graphics, Vector2 spawnPoint);
 	~HealthPotion();
-
+	
 	static const ItemID ID = 0;
 
 	void use(Player &player) override {
 		// Implement HP pot
 		player.gainHealth(player.getMaxHealth() / 3);
 	}
+
+	void raiseEventMsg(Player &player) override {}
 
 	Items* clone() const override { return new HealthPotion(*this); }
 
@@ -80,6 +83,7 @@ public:
 	static const ItemID ID = 1;
 
 	void use(Player &player) override {}
+	void raiseEventMsg(Player &player) override {}
 
 	Items* clone() const override { return new PermHP(*this); }
 
@@ -107,6 +111,7 @@ public:
 	static const ItemID ID = 3001;
 
 	void use(Player &player) override {}
+	void raiseEventMsg(Player &player) override {}
 
 	Items* clone() const override { return new GoldCoin(*this); }
 
@@ -133,6 +138,7 @@ public:
 	static const ItemID ID = 3002;
 
 	void use(Player &player) override {}
+	void raiseEventMsg(Player &player) override {}
 
 	Items* clone() const override { return new RedCoin(*this); }
 
@@ -159,6 +165,7 @@ public:
 	static const ItemID ID = 3000;
 
 	void use(Player &player) override {}
+	void raiseEventMsg(Player &player) override {}
 
 	Items* clone() const override { return new BronzeCoin(*this); }
 
@@ -184,6 +191,7 @@ public:
 	static const ItemID ID = 1100;
 
 	void use(Player &player) override {}
+	void raiseEventMsg(Player &player) override {}
 
 	Items* clone() const override { return new SilverGem(*this); }
 
@@ -211,6 +219,7 @@ public:
 	static const ItemID ID = 1001;
 
 	void use(Player &player) override {}
+	void raiseEventMsg(Player &player) override {}
 
 	Items* clone() const override { return new Key(*this); }
 
@@ -237,6 +246,9 @@ public:
 	static const ItemID ID = 2100;
 
 	void use(Player &player) override {}
+	void raiseEventMsg(Player &player) override {
+		player.setEventMessage("Press 3 to use the JetPack");
+	}
 
 	Items* clone() const override { return new JetPack(*this); }
 
