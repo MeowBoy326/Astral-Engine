@@ -1025,6 +1025,9 @@ int Game::saveGame(Graphics & graphics)
 	nCwd.append("SF-LOC.xml");
 	this->cipher.AESEncrypt(cwd.string(), nCwd.string());
 	XMLCheckResult(result);
+
+	/* Once save is complete, refill the HP Pot */
+	this->_player.refillHpPot();
 	return 0;
 }
 
@@ -1267,6 +1270,9 @@ int Game::loadGame(Graphics & graphics)
 	this->_level.generateEffects(graphics, this->_player);
 	this->saveGame(graphics);
 	XMLCheckResult(result);
+
+	/* Refill HP Pot on load */
+	this->_player.refillHpPot();
 	return 0;
 }
 
