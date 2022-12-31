@@ -912,12 +912,12 @@ int Game::saveGame(Graphics & graphics)
 	root->InsertEndChild(element);
 	// Save inventory
 	element = xml.NewElement("Inventory");
-	std::vector<std::pair<int, int>> iVec = this->_inventory.getInventoryTable();
+	std::map<Items::ItemID, int> iVec = this->_inventory.getInventoryTable();
 	for (auto iter = iVec.begin(); iter != iVec.end(); iter++) {
 		auto first = iter->first, second = iter->second;
 		XMLElement* ptrElement = xml.NewElement("iTable");
-		ptrElement->SetAttribute("type", second);
-		ptrElement->SetAttribute("quantity", first);
+		ptrElement->SetAttribute("itemID", first);
+		ptrElement->SetAttribute("quantity", second);
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
@@ -1057,12 +1057,12 @@ int Game::loadGame(Graphics & graphics)
 	// Load Inventory
 	element = root->FirstChildElement("Inventory");
 	ptrVec = element->FirstChildElement("iTable");
-	std::vector<std::pair<int, int>> iVec;
+	std::map<Items::ItemID, int> iVec;
 	while (ptrVec != nullptr) {
-		int type, quantity;
-		result = ptrVec->QueryIntAttribute("type", &type);
+		int itemID, quantity;
+		result = ptrVec->QueryIntAttribute("itemID", &itemID);
 		result = ptrVec->QueryIntAttribute("quantity", &quantity);
-		iVec.push_back(std::make_pair(quantity, type));
+		iVec.insert({ itemID, quantity });
 		ptrVec = ptrVec->NextSiblingElement("iTable");
 	}
 	this->_inventory.setInventoryTable(iVec);
