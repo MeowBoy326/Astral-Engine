@@ -70,6 +70,10 @@ protected:
 	void addSpecialAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset);
 	void addScript(int frames, int x, int y, std::string name, int width, int height, Vector2 offset);
 	void addBulletAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset, int id);
+
+	void removeAnimation(std::string name);
+	void removeSprite() { this->destroySprite(); }
+
 	/* resetAnimations();
 	* Resets all animations associated with this sprite
 	*/
@@ -100,6 +104,7 @@ protected:
 	*/
 
 	virtual void setupAnimations() = 0; // virtual because we are not actually implementing here in animated sprite, eventually pure virtual until we make player class
+
 
 private:
 	std::map<std::string, std::vector<SDL_Rect>> _animation;
