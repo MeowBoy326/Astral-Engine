@@ -780,8 +780,6 @@ void Game::draw(Graphics &graphics) {
 		this->_player.drawStatMenu(graphics, this->_player, selection);
 	if (activeSaveMenu)
 		this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-	this->_player.drawHPNumbers(graphics);
-	this->_player.drawExpNumbers(graphics);
 	this->_player.drawCurrentMapName(graphics);
 	if (showPlayerOutline)
 		this->_player.drawPlayerOutline(graphics);
@@ -1453,10 +1451,12 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 					activeCutscene = true;
 				}
 			}
-			// Hud goes on top of everything
-			this->_hud.update(elapsedTime, this->_player);
+			
 			// Update camera last once every object position has been updated to prevent screen shakes 
 			this->_camera.Update(elapsedTime, this->_player);
+
+			// Hud goes on top of everything
+			this->_hud.update(elapsedTime, this->_player, this->_camera);
 		}
 	}
 }
