@@ -19,6 +19,7 @@ public:
 	void setupAnimations();
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
+	void destroyImage();
 private:
 	Sprite _defeat;
 	Sprite _endGame;
