@@ -24,16 +24,26 @@ AnimatedSprite(graphics, "data\\graphics\\endGame.png", 0, 0, 640, 480, 0, 0, 34
 
 	this->_defeat = Sprite(graphics, "data\\graphics\\title.png", 2, 0, 241, 68, 300, 100);
 	// x, y, width, height, screen pos x, screen pos y
-	graphics.loadImage("data\\graphics\\title.png"); // loads sprite sheet in
+	//graphics.loadImage("data\\graphics\\title.png"); // loads sprite sheet in
 
 	this->_endGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 7, 213, 51, 210, 400);
-	graphics.loadImage("data\\graphics\\startGame.png");
+	//graphics.loadImage("data\\graphics\\startGame.png");
 }
 
 
-GameOver::~GameOver()
-{
+GameOver::~GameOver() {
+	this->_defeat.destroySprite();
+	this->_endGame.destroySprite();
+	AnimatedSprite::removeAnimation("NG0");
+	AnimatedSprite::removeAnimation("NG1");
+	AnimatedSprite::removeAnimation("NG2");
+	AnimatedSprite::removeAnimation("NG3");
+	AnimatedSprite::removeAnimation("NG4");
+	AnimatedSprite::removeSprite();
 }
+
+void GameOver::destroyImage() {}
+
 
 void GameOver::playNext(int num)
 {
