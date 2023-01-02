@@ -17,6 +17,23 @@ Graphics::Graphics() {
 	SDL_SetWindowTitle(this->_window, "Astral");
 	SDL_Surface* icon = IMG_Load("icon.png");
 	SDL_SetWindowIcon(this->_window, icon);
+
+	/* Lower quality less GPU % */
+	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+
+	/*						Higher resolutions 
+	 * The HUD needs to be aligned.
+	 */
+
+
+	/*						Scaled Mode
+	 * If you use scaling mode, camera needs to be adjusted to display correctly.
+	 * Setting a bool in globals to know if the game is in scaling mode.
+	 */
+	/*float scale_x = (float)globals::SCREEN_WIDTH / 640;
+	float scale_y = (float)globals::SCREEN_HEIGHT / 480;
+
+	SDL_RenderSetScale(this->_renderer, scale_x, scale_y);*/
 }
 
 Graphics::~Graphics() {
@@ -27,12 +44,21 @@ Graphics::~Graphics() {
 SDL_Surface* Graphics::loadImage(const std::string &filePath) {
 	// Sprite hasnt been loaded yet
 	// Map count takes in a key for the map (string/filepath) and tells if any exist with that key and if its 0
+	
 	if (this->_spriteSheets.count(filePath) == 0) {
+		std::cout << "Image was not created. Creating now..." << std::endl;
 		this->_spriteSheets[filePath] = IMG_Load(filePath.c_str()); // will use SDL to load image, it uses a c-string
 	}
-	// Cout << "graphics.cpp ::loadImage - loaded..." << endl;
 	return this->_spriteSheets[filePath]; // Regaurdless we will return sprite if its loaded already or needs to be
-	
+}
+
+void Graphics::unloadImage(const std::string& filePath) {
+	if (this->_spriteSheets.count(filePath) != 0) {
+		std::cout << "Image does exist. Removing now..." << std::endl;
+		// Erase from map and free the memory
+		SDL_FreeSurface(this->_spriteSheets[filePath]);
+		this->_spriteSheets.erase(filePath);
+	}
 }
 
 void Graphics::blitSurface(SDL_Texture* texture, SDL_Rect* sourceRectangle, SDL_Rect* destinationRectangle) {
