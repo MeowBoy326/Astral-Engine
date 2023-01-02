@@ -12,6 +12,8 @@
 #include "../headers/Graphics.h"
 #include "../headers/Input.h"
 
+#include "../headers/Global.h"
+
 #include <algorithm>﻿
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -91,6 +93,7 @@ namespace {
 	bool jumpSound = false;
 }
 
+
 Game::Game() { // Constructor
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
@@ -129,7 +132,6 @@ void Game::gameLoop() {
 	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 22);
 
 	this->_title = Title(graphics, input, event);
-	this->_gameOver = GameOver(graphics);
 	this->_camera = Camera();
 	this->_chatBox = TextManager(graphics, this->_player);
 	this->_hud = HUD(graphics, this->_player);
@@ -176,6 +178,12 @@ void Game::gameLoop() {
 		}
 // Death Loop
 		if (title == false && GAMEOVER == true) {
+
+			if (this->_gameOver == nullptr) {
+				/* Only create the Game Over object when needed to reduce memory. */
+				this->_gameOver = new GameOver(graphics);
+			}
+
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
 
@@ -195,14 +203,6 @@ void Game::gameLoop() {
 					return; // When the game ends or user exits
 				}
 			}
-			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true) {
-				Mix_ResumeMusic();
-				Mix_RewindMusic();
-				this->loadGame(graphics);
-				deathSound = false;
-				GAMEOVER = false;
-				resetGame = false;
-			}
 
 			this->_graphics = graphics; // Updated graphics
 			// Take standard min : elapsed time ms and max frame time
@@ -212,6 +212,18 @@ void Game::gameLoop() {
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			
 			this->drawGameOver(graphics);
+			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true) {
+				Mix_ResumeMusic();
+				Mix_RewindMusic();
+				this->loadGame(graphics);
+				deathSound = false;
+				GAMEOVER = false;
+				resetGame = false;
+				/* Handle any memory leaks */
+				graphics.unloadImage("data\\graphics\\endGame.png");
+				delete this->_gameOver;
+				this->_gameOver = nullptr;
+			}
 		}
 // Cutscene Loop
 		if (title == false && GAMEOVER == false && activeCutscene == true) {
@@ -742,12 +754,12 @@ void Game::updateTitle(float elapsedTime) {
 }
 
 void Game::updateGameOver(float elapsedTime) {
-	this->_gameOver.update(elapsedTime);
+	this->_gameOver->update(elapsedTime);
 }
 
 void Game::drawGameOver(Graphics &graphics) {
 	graphics.clear();
-	this->_gameOver.draw(graphics);
+	this->_gameOver->draw(graphics);
 	graphics.flip();
 }
 
