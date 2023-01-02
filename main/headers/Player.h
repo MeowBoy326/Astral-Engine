@@ -122,7 +122,8 @@ public:
 	
 
 	// Health handling
-	void drawHPNumbers(Graphics &graphics);
+	void drawHPNumbers(Graphics &graphics, int x, int y);
+	void drawHPPotAvailable(Graphics &graphics, int x, int y);
 	void setIFrame(bool condition);
 	void gainHealth(float amount);
 	void gainHPFromStatus(float amount);
@@ -145,7 +146,7 @@ public:
 	inline void setHpPotStrength(int strength) { this->_hpPotStrength = strength; }
 
 	// Exp, Level, & currency handling
-	void drawExpNumbers(Graphics &graphics);
+	void drawExpNumbers(Graphics &graphics, int x, int y);
 	void gainExp(float exp);
 	void gainExpFromEnemy(int enemyLevel, float exp);
 	float getCurrentExp();

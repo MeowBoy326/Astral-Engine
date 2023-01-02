@@ -865,16 +865,20 @@ const int Player::getNpcId(std::vector<Npc*>& others, Graphics& graphics) {
 	return npcID;
 }
 
-void Player::drawHPNumbers(Graphics & graphics)
+void Player::drawHPNumbers(Graphics & graphics, int x, int y)
 {
 	double percent = ((double)this->_currentHealth / (double)this->_maxHealth) * 100;
-	this->_txt->drawPercentNumber(graphics, this->_x - 245, this->_y - 215, percent);
+	this->_txt->drawPercentNumber(graphics, x, y, percent);
 }
 
-void Player::drawExpNumbers(Graphics & graphics)
+void Player::drawHPPotAvailable(Graphics& graphics, int x, int y) {
+	this->_txt->drawItemQuantity(graphics, 0, 0, std::to_string(this->_hpPotAmount), x, y);
+}
+
+void Player::drawExpNumbers(Graphics & graphics, int x, int y)
 {
 	double percent = ((double)this->getCurrentExp() / (double)this->getRequiredExp()) * 100;
-	this->_txt->drawPercentNumber(graphics, this->_x - 245, this->_y - 200, percent);
+	this->_txt->drawPercentNumber(graphics, x, y, percent);
 }
 
 void Player::setIFrame(bool condition) {
@@ -1338,7 +1342,6 @@ void Player::draw(Graphics &graphics) {
 				std::get<0>(this->battleMessages[i]));
 		}
 	}
-	this->_txt->drawItemQuantity(graphics, 0, 0, std::to_string(this->_hpPotAmount), this->getX() - 310, this->getY() - 120);
 }
 
 void Player::drawGun(Graphics & graphics)
