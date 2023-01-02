@@ -1,4 +1,7 @@
 #include "../headers/AnimatedSprite.h"
+
+#include <iostream>
+
 #include "../headers/Graphics.h"
 #include "../headers/sprite.h"
 
@@ -67,6 +70,14 @@ void AnimatedSprite::addScript(int frames, int x, int y, std::string name, int w
 	this->_bulletAnimation.insert(int, std::pair<std::string, std::vector<SDL_Rect>>(name, rectangles));
 	this->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
 } */
+
+void AnimatedSprite::removeAnimation(std::string name) {
+	if (this->_animation.count(name) != 0) {
+		std::cout << "Animation does exist. Removing now..." << std::endl;
+		this->_animation.erase(name);
+		this->_offsets.erase(name);
+	}
+}
 
 void AnimatedSprite::resetAnimations() {
 	this->_animation.clear();
