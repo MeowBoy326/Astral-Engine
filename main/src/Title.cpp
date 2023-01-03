@@ -57,7 +57,25 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 
 Title::~Title()
 {
-
+	this->_title.destroySprite();
+	this->_startGame.destroySprite();
+	this->_loadGame.destroySprite();
+	this->_ExitToMenu.destroySprite();
+	this->_settings.destroySprite();
+	this->_settingsMenu.destroySprite();
+	this->_settingsVolume.destroySprite();
+	this->_settingsVolumePercent.destroySprite();
+	this->_settingsSfxVolume.destroySprite();
+	this->_settingsSfxVolumePercent.destroySprite();
+	this->_settingsDisplayRes.destroySprite();
+	this->_exitMenu.destroySprite();
+	this->_selectionBox.destroySprite();
+	AnimatedSprite::removeAnimation("zero");
+	AnimatedSprite::removeAnimation("one");
+	AnimatedSprite::removeAnimation("two");
+	AnimatedSprite::removeAnimation("three");
+	AnimatedSprite::removeAnimation("four");
+	AnimatedSprite::removeSprite();
 }
 
 bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
