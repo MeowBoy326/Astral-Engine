@@ -32,6 +32,8 @@ namespace {
 	const int MAX_FRAME_TIME = 5* 1000 / FPS; // Max amount of time a frame is allowed to last
 	int bgmVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
 	int sfxVolume = 100;
+	int resWidth = 640;
+	int resHeight = 480;
 	int pauseBlockTimer = 0;
 	int selection = 1;
 	int npcSelection = 1;
@@ -93,6 +95,10 @@ namespace {
 	bool jumpSound = false;
 }
 
+namespace globals {
+	int SCREEN_WIDTH = 1024;
+	int SCREEN_HEIGHT = 768;
+}
 
 Game::Game() { // Constructor
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -103,6 +109,7 @@ Game::Game() { // Constructor
 		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 	}
 	// TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
+	this->setSettings();
 	this->cipher = AESCipher();
 	this->gameLoop(); // Start game
 }
@@ -137,7 +144,7 @@ void Game::gameLoop() {
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
 
-	this->setSettings();
+	//this->setSettings();
 
 	if (gMusic == NULL)
 	{
@@ -1292,13 +1299,13 @@ int Game::loadGame(Graphics & graphics)
 }
 
 void Game::setSettings() {
+	/* Display settings only need their values updated */
+	this->_title.getSettings(bgmVolume, sfxVolume, resWidth, resHeight);
+
 	// Volume
-	this->_title.getSettings(bgmVolume, sfxVolume);
 	Mix_VolumeMusic(bgmVolume);
 	Mix_Volume(-1, sfxVolume);
 
-	// Display
-	// ...
 }
 
 void Game::update(float elapsedTime, Graphics &graphics) {
