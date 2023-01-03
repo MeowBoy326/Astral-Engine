@@ -29,7 +29,7 @@ public:
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
 	void drawPauseMenu(Graphics & graphics, Player &player);
-	void getSettings(int &bgmVolume, int &sfxVolume);
+	void getSettings(int &bgmVolume, int &sfxVolume, int &resWidth, int &resHeight);
 	void setReload() { this->reloadGame = !reloadGame; }
 	int saveSettings();
 	int loadSettings();
