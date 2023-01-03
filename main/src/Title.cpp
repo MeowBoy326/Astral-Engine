@@ -638,11 +638,13 @@ void Title::drawPauseMenu(Graphics& graphics, Player &player) {
 	graphics.flip();
 }
 
-void Title::getSettings(int &bgmVolume, int &sfxVolume) {
+void Title::getSettings(int &bgmVolume, int &sfxVolume, int &resWidth, int &resHeight) {
 	this->loadSettings();
 	// More settings will be added. Each value will be passed by reference
 	bgmVolume = this->bgmVolumePercent;
 	sfxVolume = this->sfxVolumePercent;
+	resWidth = this->res.sWidth;
+	resHeight = this->res.sHeight;
 }
 
 int Title::saveSettings() {
