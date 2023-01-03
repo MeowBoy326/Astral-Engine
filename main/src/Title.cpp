@@ -248,9 +248,11 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->_settingsSfxVolumePercent.setSourceRectW(std::floor(volNum * 64));
 				}
 				else if (changeDisplay) {
-					displayOption--;
-					if (displayOption == 0)
+					if (displayOption == 0) {
 						displayOption = this->availableRes.size() - 1;
+					}
+					else
+						displayOption--;
 					this->res.sHeight = this->availableRes[displayOption].second;
 					this->res.sWidth = this->availableRes[displayOption].first;
 				}
