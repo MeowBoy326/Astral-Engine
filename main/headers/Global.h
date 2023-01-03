@@ -1,9 +1,18 @@
+#pragma once
+
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
 namespace globals {
-	const int SCREEN_WIDTH = 640;
-	const int SCREEN_HEIGHT = 480;
+	/*
+	 * Original: 640x480
+	 * New available sizes:
+	 * 1024x768
+	 * 1280x720
+	 * 1920x1080
+	 */
+	extern int SCREEN_WIDTH;
+	extern int SCREEN_HEIGHT;
 
 	const float SPRITE_SCALE = 2.0f; // will make it 2x
 	const float PROJECTILE_SCALE = 1.2f; 
