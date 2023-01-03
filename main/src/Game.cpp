@@ -317,7 +317,9 @@ void Game::gameLoop() {
 				}
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) && this->_player.getCurrentHealth() > 0) {
+			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) && this->_player.getCurrentHealth() > 0 
+				&& activeCutscene == false && activeSaveMenu == false && activeTalk == false 
+				&& activeInventory == false && activeStatMenu == false) {
 				if (pauseBlockTimer == 0) {
 					pauseGame = !pauseGame;
 					pauseBlockTimer++;
@@ -386,6 +388,7 @@ void Game::gameLoop() {
 						Mix_PlayChannel(-1, sBullet, 0);
 					}
 				}
+
 				if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
 					activeInventory = false;
 					activeSave = false;
