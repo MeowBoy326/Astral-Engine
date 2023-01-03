@@ -54,7 +54,7 @@ private:
 	Level _level;
 	HUD _hud;
 	Camera _camera;
-	Title _title;
+	Title* _title;
 	GameOver* _gameOver;
 	TextManager _chatBox;
 	Inventory _inventory;
