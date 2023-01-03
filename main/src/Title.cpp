@@ -31,7 +31,6 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 
 	this->_title = Sprite(graphics, "data\\graphics\\title.png", 2, 0, 241, 68, 300, 100);
 	// x, y, width, height, screen pos x, screen pos y
-	std::cout << "sprite added" << std::endl;
 	graphics.loadImage("data\\graphics\\title.png"); // Loads sprite sheet in
 
 	this->_startGame = Sprite(graphics, "data\\graphics\\startGame.png", 0, 84, 124, 23, 215, 270);
@@ -52,6 +51,7 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 	this->_exitMenu = Sprite(graphics, "data\\npc\\npcTextBox.png", 155, 51, 76, 26, 320, 300);
 
 	this->_selectionBox = Sprite(graphics, "data\\graphics\\startGame.png", 0, 63, 19, 12, 185, 275);
+
 	this->loadSettings();
 }
 
