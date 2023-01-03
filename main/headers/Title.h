@@ -11,6 +11,11 @@ class Graphics;
 
 class Title : public AnimatedSprite, public TextManager
 {
+protected:
+	struct screenRes {
+		int sWidth = 640;
+		int sHeight = 480;
+	};
 public:
 	Title();
 	Title(Graphics &graphics, Input &input, SDL_Event &event);
@@ -29,6 +34,8 @@ public:
 	int saveSettings();
 	int loadSettings();
 	int getMenuChoice();
+
+	screenRes& getResolution() { return res; }
 private:
 	Sprite _title;
 	Sprite _startGame;
@@ -40,8 +47,12 @@ private:
 	Sprite _settingsVolumePercent;
 	Sprite _settingsSfxVolume;
 	Sprite _settingsSfxVolumePercent;
+	Sprite _settingsDisplayRes;
 	Sprite _exitMenu;
 	Sprite _selectionBox;
+
+	screenRes res;
+	std::vector<std::pair<int, int>> availableRes = { {640, 480}, {1024, 768}, {1280, 720}, {1920, 1080} };
 
 	int selectX = 185;
 	int selectY = 275;
@@ -51,10 +62,12 @@ private:
 	int bgmVolumePercent = 100;
 	int sfxVolumePercent = 100;
 	int msgTimer = 0;
+	int displayOption = 0;
 
 	bool showSettings = false;
 	bool changeBgmVolume = false;
 	bool changeSfxVolume = false;
+	bool changeDisplay = false;
 	bool isSubmenu = false;
 	bool exitMenu = false;
 	bool showMsg = false;
