@@ -1081,6 +1081,7 @@ int Game::loadGame(Graphics & graphics)
 	XMLNode* root = xml.FirstChild();
 	if (root == nullptr)
 		return XML_ERROR_FILE_READ_ERROR;
+
 	// Load loot table
 	XMLElement* element = root->FirstChildElement("Loot");
 	XMLElement* ptrVec = element->FirstChildElement("Table");
@@ -1094,6 +1095,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("Table");
 	}
 	this->_inventory.setLootTable(tempVec);
+
 	// Load Inventory
 	element = root->FirstChildElement("Inventory");
 	ptrVec = element->FirstChildElement("iTable");
@@ -1106,6 +1108,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("iTable");
 	}
 	this->_inventory.setInventoryTable(iVec);
+
 	// Load QuestLog
 	element = root->FirstChildElement("QuestLog");
 	ptrVec = element->FirstChildElement("Quest");
@@ -1177,6 +1180,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("Quest");
 	}
 	this->_npc.setQuestTable(qVec);
+
 	// Load Map
 	element = root->FirstChildElement("Spawn");
 	if (element == nullptr)
@@ -1185,6 +1189,7 @@ int Game::loadGame(Graphics & graphics)
 	textPtr = element->Attribute("mapName");
 	std::string mapName = textPtr;
 	this->_level = Level(mapName, graphics, this->_inventory); // Intialize level: Map name , spawn point, graphics
+
 	// Load coordinates
 	Vector2 spawn;
 	int x, y;
@@ -1192,8 +1197,8 @@ int Game::loadGame(Graphics & graphics)
 	result = element->QueryIntAttribute("yCoordinate", &y);
 	spawn = Vector2((int)std::ceil(x), (int)std::ceil(y));
 	this->_level.generateItems(graphics);
-	// Spawn = this->_level.getPlayerSpawnPoint();
-	this->_player = Player(graphics, spawn);
+	this->_player.setPlayerPosition(spawn.x, spawn.y);
+
 	// Load KillTable
 	element = root->FirstChildElement("KillTable");
 	ptrVec = element->FirstChildElement("kTable");
@@ -1207,6 +1212,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("kTable");
 	}
 	this->_player.setKillTable(kVec);
+
 	// Load BossTable
 	element = root->FirstChildElement("BossTable");
 	ptrVec = element->FirstChildElement("bTable");
@@ -1227,6 +1233,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("bTable");
 	}
 	this->_player.setBossTable(btVec);
+
 	// Load completed cutscenes
 	element = root->FirstChildElement("SceneTable");
 	ptrVec = element->FirstChildElement("csTable");
@@ -1240,6 +1247,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("csTable");
 	}
 	this->_player.setCutsceneTable(csVec);
+
 	// Load unlocked doors
 	element = root->FirstChildElement("LockedDoorTable");
 	ptrVec = element->FirstChildElement("ldTable");
@@ -1253,6 +1261,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("ldTable");
 	}
 	this->_player.setLockedDoorTable(ldVec);
+
 	// Load equipment
 	element = root->FirstChildElement("EquipmentTable");
 	ptrVec = element->FirstChildElement("eqTable");
@@ -1266,6 +1275,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("eqTable");
 	}
 	this->_player.setEquipmentTable(eqVec);
+
 	// Load stats
 	element = root->FirstChildElement("Stats");
 	if (element == nullptr)
