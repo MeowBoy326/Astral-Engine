@@ -43,6 +43,8 @@ public:
 	void clear();
 	// Return our render so we can use it elsewhere (sprite class)
 	SDL_Renderer* getRenderer() const;
+
+	void setWindowResolution(int w, int h);
 private:
 	SDL_Window * _window;
 	SDL_Renderer* _renderer;
