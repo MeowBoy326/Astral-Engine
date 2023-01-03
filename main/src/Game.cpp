@@ -146,8 +146,6 @@ void Game::gameLoop() {
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
 
-	//this->setSettings();
-
 	if (gMusic == NULL)
 	{
 		printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
