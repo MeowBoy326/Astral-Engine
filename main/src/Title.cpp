@@ -661,6 +661,7 @@ int Title::saveSettings() {
 	element->SetAttribute("sfxVolumePercent", this->sfxVolumePercent);
 	element->SetAttribute("displayWidth", this->res.sWidth);
 	element->SetAttribute("displayHeight", this->res.sHeight);
+	element->SetAttribute("displayOption", this->displayOption);
 	root->InsertEndChild(element);
 
 	// Finalize save
@@ -705,6 +706,8 @@ int Title::loadSettings() {
 	this->res.sWidth = x;
 	result = element->QueryIntAttribute("displayHeight", &x);
 	this->res.sHeight = x;
+	result = element->QueryIntAttribute("displayOption", &x);
+	this->displayOption = x;
 
 	XMLCheckResult(result)
 	return result;
