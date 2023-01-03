@@ -32,8 +32,6 @@ namespace {
 	const int MAX_FRAME_TIME = 5* 1000 / FPS; // Max amount of time a frame is allowed to last
 	int bgmVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
 	int sfxVolume = 100;
-	int resWidth = 640;
-	int resHeight = 480;
 	int pauseBlockTimer = 0;
 	int selection = 1;
 	int npcSelection = 1;
@@ -96,8 +94,8 @@ namespace {
 }
 
 namespace globals {
-	int SCREEN_WIDTH = 1024;
-	int SCREEN_HEIGHT = 768;
+	int SCREEN_WIDTH = 640;
+	int SCREEN_HEIGHT = 480;
 }
 
 Game::Game() { // Constructor
@@ -109,9 +107,6 @@ Game::Game() { // Constructor
 		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 	}
 	// TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
-	this->setSettings();
-	globals::SCREEN_WIDTH = resWidth;
-	globals::SCREEN_HEIGHT = resHeight;
 	this->cipher = AESCipher();
 	this->gameLoop(); // Start game
 }
@@ -140,11 +135,12 @@ void Game::gameLoop() {
 	Mix_Pause(321);
 	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 22);
 
-	this->_title = Title(graphics, input, event);
+	this->_title = new Title(graphics, input, event);
 	this->_camera = Camera();
 	this->_chatBox = TextManager(graphics, this->_player);
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
+
 
 	if (gMusic == NULL)
 	{
@@ -165,8 +161,12 @@ void Game::gameLoop() {
 		input.beginNewFrame();
 // Title screen Loop
 		if (title == true) {
-			title = _title.Start(graphics, input, event);
-			if (_title.getMenuChoice() == 0) {
+			if (this->_title == nullptr) {
+				/* Only create the Title object when needed to reduce memory. */
+				this->_title = new Title(graphics, input, event);
+			}
+			title = _title->Start(graphics, input, event);
+			if (_title->getMenuChoice() == 0) {
 				this->_level = Level("cave", graphics, this->_inventory); // Initialize level: Map name , spawn point, graphics
 				this->_level.generateItems(graphics);
 				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
@@ -182,6 +182,10 @@ void Game::gameLoop() {
 			else {
 				this->loadGame(graphics);
 			}
+			/* Free memory to prevent any leaks */
+			graphics.unloadImage("data\\graphics\\dark_clouds.png");
+			delete this->_title;
+			this->_title = nullptr;
 		}
 // Death Loop
 		if (title == false && GAMEOVER == true) {
@@ -735,16 +739,24 @@ void Game::gameLoop() {
 			// To account for the time difference, we simply set LAST_UPDATE_TIME = SDL_GetTicks() - 1
 			// This is to ensure a smooth and consistent elapsed time for our next iteration's update/drawing logic.
 			if (pauseGame) {
+				if (this->_title == nullptr) {
+					/* Only create the Title object when needed to reduce memory. */
+					this->_title = new Title(graphics, input, event);
+				}
 				Mix_PauseMusic();
-				pauseGame = this->_title.Pause(graphics, input, event, this->_player);
+				pauseGame = this->_title->Pause(graphics, input, event, this->_player);
 				this->setSettings();
 				Mix_ResumeMusic();
 				LAST_UPDATE_TIME = SDL_GetTicks() - 1;
-				if (_title.getMenuChoice() == 0 && _title.getReload()) {
+				if (_title->getMenuChoice() == 0 && _title->getReload()) {
 					this->loadGame(graphics);
-					this->_title.setReload();
+					this->_title->setReload();
 					Mix_RewindMusic();
 				}
+				/* Free memory to prevent any leaks */
+				graphics.unloadImage("data\\graphics\\dark_clouds.png");
+				delete this->_title;
+				this->_title = nullptr;
 			}
 		}
 	}
@@ -752,12 +764,12 @@ void Game::gameLoop() {
 
 void Game::drawTitle(Graphics &graphics) {
 	graphics.clear(); // Clear any drawings MUST do
-	this->_title.draw(graphics);
+	this->_title->draw(graphics);
 	graphics.flip(); 
 }
 
 void Game::updateTitle(float elapsedTime) { 
-	this->_title.update(elapsedTime);
+	this->_title->update(elapsedTime);
 }
 
 void Game::updateGameOver(float elapsedTime) {
@@ -1300,7 +1312,7 @@ int Game::loadGame(Graphics & graphics)
 
 void Game::setSettings() {
 	/* Display settings only need their values updated */
-	this->_title.getSettings(bgmVolume, sfxVolume, resWidth, resHeight);
+	this->_title->getSettings(bgmVolume, sfxVolume, globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT);
 
 	// Volume
 	Mix_VolumeMusic(bgmVolume);
