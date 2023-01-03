@@ -141,6 +141,8 @@ void Game::gameLoop() {
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
 
+	this->setSettings();
+	graphics.setWindowResolution(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT);
 
 	if (gMusic == NULL)
 	{
