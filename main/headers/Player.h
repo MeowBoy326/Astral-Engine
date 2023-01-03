@@ -47,6 +47,7 @@ public:
 	void startDeath();
 	void setPlayerDX(float dx) { this->_dx = dx; }
 	void setPlayerDY(float dy) { this->_dy = dy; }
+	void setPlayerPosition(float x, float y);
 	virtual void animationDone(std::string currentAnimation);
 	std::string getMap();
 	bool lookingUp();
@@ -84,7 +85,7 @@ public:
 	const float getX() const;
 	const float getY() const; // Getting variables not changes const make sure it doesnt
 	const float getPreviousY() const;
-	std::string enemyName;
+	std::string enemyName = "";
 	void addKillTable(std::string name);
 	void addBossTable(std::string name, std::string mapName, float x, float y);
 	void setBossTable(std::vector<std::tuple<std::string, std::string, float, float, bool>> table) { this->bossTable = table; }
