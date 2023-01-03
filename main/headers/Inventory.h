@@ -116,7 +116,6 @@ public:
 	~Inventory();
 
 private:
-	Player _player;
 	std::map<Items::ItemID, int> items;
 	std::map<Items::ItemID, Items*> item_prototypes_;
 
