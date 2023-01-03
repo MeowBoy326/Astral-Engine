@@ -81,6 +81,19 @@ void Player::setupAnimations() {
 	this->addAnimation(7, 0, 72, "PlayerDead", 16, 16, Vector2(0, 0));
 }
 
+void Player::setPlayerPosition(float x, float y) {
+	this->_x = x;
+	this->_y = y;
+	this->_dy = 0;
+	this->_dx = 0;
+	this->_grounded = false;
+	this->_facing = RIGHT;
+	this->_lookingUp = false;
+	this->_lookingDown = false;
+	this->fallHeight = 0;
+	this->_climbing = false;
+}
+
 void Player::animationDone(std::string currentAnimation) {
 	if (this->_currentHealth <= 0) {
 		if (!this->deathPlayed)
