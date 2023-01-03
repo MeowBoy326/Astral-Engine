@@ -47,6 +47,7 @@ AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0
 	this->_settingsVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 360, 155);
 	this->_settingsSfxVolume = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 345, 185);
 	this->_settingsSfxVolumePercent = Sprite(graphics, "data\\graphics\\TextBox.png", 95, 182, 64, 6, 360, 190);
+	this->_settingsDisplayRes = Sprite(graphics, "data\\graphics\\TextBox.png", 93, 166, 82, 10, 345, 215);
 
 	this->_exitMenu = Sprite(graphics, "data\\npc\\npcTextBox.png", 155, 51, 76, 26, 320, 300);
 
@@ -147,6 +148,13 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->selectX = 220;
 					settingsChoice = 1;
 				}
+				else if (settingsChoice == 2) {
+					changeDisplay = !changeDisplay;
+					isSubmenu = !isSubmenu;
+					this->selectY = 220;
+					this->selectX = 220;
+					settingsChoice = 2;
+				}
 				// Exit button -> Open confirmation (Save and Exit?)
 				else {
 					isSubmenu = !isSubmenu;
@@ -169,7 +177,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 				}
 			}
 			else if (showSettings && !isSubmenu) {
-				if (settingsChoice != 2) {
+				if (settingsChoice != 3) {
 					this->selectY += 30;
 					this->selectX = 220;
 					settingsChoice++;
@@ -211,6 +219,13 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					float volNum = (float)sfxVolumePercent / 100;
 					this->_settingsSfxVolumePercent.setSourceRectW(std::floor(volNum * 64));
 				}
+				else if (changeDisplay) {
+					displayOption++;
+					if (displayOption >= this->availableRes.size())
+						displayOption = 0;
+					this->res.sHeight = this->availableRes[displayOption].second;
+					this->res.sWidth = this->availableRes[displayOption].first;
+				}
 				else if (exitMenu) {
 					if (exitChoice == 0) {
 						this->selectY = 325;
@@ -231,6 +246,13 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					this->sfxVolumePercent -= 5;
 					float volNum = (float)sfxVolumePercent / 100;
 					this->_settingsSfxVolumePercent.setSourceRectW(std::floor(volNum * 64));
+				}
+				else if (changeDisplay) {
+					displayOption--;
+					if (displayOption == 0)
+						displayOption = this->availableRes.size() - 1;
+					this->res.sHeight = this->availableRes[displayOption].second;
+					this->res.sWidth = this->availableRes[displayOption].first;
 				}
 				else if (exitMenu) {
 					if (exitChoice == 1) {
@@ -544,9 +566,19 @@ void Title::draw(Graphics &graphics) {
 		label = std::to_string(sfxVolumePercent) + "%";
 		this->drawSettings(graphics, 405, 175, label, 10);
 
+		// Display
+		this->_settingsDisplayRes.drawVolumeBar(graphics, this->_settingsDisplayRes.getX(), this->_settingsDisplayRes.getY());
+		label = "Display:";
+		if (changeDisplay)
+			this->drawSettings(graphics, 240, 220, label, 12, {255, 255, 0, 255});
+		else
+			this->drawSettings(graphics, 240, 220, label, 12);
+		label = std::to_string(res.sWidth) + "x" + std::to_string(res.sHeight);
+		this->drawSettings(graphics, 380, 220, label, 12);
+
 		// Exit
 		label = "Exit";
-		this->drawSettings(graphics, 240, 215, label, 12);
+		this->drawSettings(graphics, 240, 255, label, 12);
 	}
 	if (exitMenu) {
 		this->_exitMenu.drawSaveMenu(graphics, this->_exitMenu.getX(), this->_exitMenu.getY());
