@@ -655,6 +655,8 @@ int Title::saveSettings() {
 	XMLElement* element = xml.NewElement("Settings");
 	element->SetAttribute("volumePercent", this->bgmVolumePercent);
 	element->SetAttribute("sfxVolumePercent", this->sfxVolumePercent);
+	element->SetAttribute("displayWidth", this->res.sWidth);
+	element->SetAttribute("displayHeight", this->res.sHeight);
 	root->InsertEndChild(element);
 
 	// Finalize save
@@ -695,6 +697,10 @@ int Title::loadSettings() {
 	this->sfxVolumePercent = x;
 	volNum = (float)sfxVolumePercent / 100;
 	this->_settingsSfxVolumePercent.setSourceRectW(std::floor(volNum * 64));
+	result = element->QueryIntAttribute("displayWidth", &x);
+	this->res.sWidth = x;
+	result = element->QueryIntAttribute("displayHeight", &x);
+	this->res.sHeight = x;
 
 	XMLCheckResult(result)
 	return result;
