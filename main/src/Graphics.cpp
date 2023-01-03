@@ -113,3 +113,7 @@ void Graphics::clear() {
 SDL_Renderer* Graphics::getRenderer() const {
 	return this->_renderer;
 }
+
+void Graphics::setWindowResolution(int w, int h) {
+	SDL_SetWindowSize(this->_window, w, h);
+}
