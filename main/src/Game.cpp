@@ -110,6 +110,8 @@ Game::Game() { // Constructor
 	}
 	// TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
 	this->setSettings();
+	globals::SCREEN_WIDTH = resWidth;
+	globals::SCREEN_HEIGHT = resHeight;
 	this->cipher = AESCipher();
 	this->gameLoop(); // Start game
 }
