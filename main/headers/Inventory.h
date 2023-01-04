@@ -22,6 +22,7 @@ public:
 		 item_prototypes_[PermHP::ID] = new PermHP();
 		 item_prototypes_[Key::ID] = new Key();
 		 item_prototypes_[JetPack::ID] = new JetPack();
+		 item_prototypes_[SilverGem::ID] = new SilverGem();
 	}
 
 	void addItem(Items::ItemID id, int quantity, Player &player) {
@@ -146,6 +147,7 @@ public:
 private:
 	std::map<Items::ItemID, int> items;
 	std::map<Items::ItemID, Items*> item_prototypes_;
+	std::map<Items::ItemID, Sprite> itemSprites;
 
 	// Health Sprites
 	Sprite _iMenu;
