@@ -31,6 +31,7 @@ public:
 ;	void drawSceneDialogue(Graphics & graphics, int posX, int posY, const std::string &str, SDL_Color color = { 255, 255, 255, 255 });
 	void drawStats(Graphics & graphics, int posX, int posY, float hPoints, double dmgPoints, double defPoints, int available, SDL_Color color = { 255, 255, 255, 255 });
 	void drawItemQuantity(Graphics & graphics, int x, int y, const std::string & str, int posX, int posY, SDL_Color color = { 255, 255, 255, 255 });
+	void drawInventItem(Graphics &graphics, int posX, int posY, const std::string &str, SDL_Color color = { 255, 255, 255, 255 });
 	void drawCurrency(Graphics &graphics, int x, int y, const std::string &str, SDL_Color color = { 255, 255, 255, 255 });
 	void drawDmg(Graphics & graphics, int x, int y, double dmg);
 	void drawMapName(Graphics & graphics, std::string &mapName, int x, int y);
