@@ -13,6 +13,12 @@ Inventory::Inventory(Graphics & graphics, Player & player)
 	this->_key = Sprite(graphics, "data\\maps\\NpcSym.png", 194, 4, 12, 10, 35, 70);
 	this->_silverGem = Sprite(graphics, "data\\maps\\loot.png", 72, 50, 16, 16, 35, 70);
 
+	itemSprites[HealthPotion::ID] = this->_hpPot;
+	itemSprites[PermHP::ID] = this->_hpPot;
+	itemSprites[Key::ID] = this->_key;
+	itemSprites[JetPack::ID] = this->_silverGem;
+	itemSprites[SilverGem::ID] = this->_silverGem;
+
 	initPrototypes();
 }
 
@@ -83,7 +89,29 @@ void Inventory::draw(Graphics & graphics, Player & player)
 	this->_iMenu.drawiMenu(graphics, player.getX()-130, player.getY() - 130);
 	std::string cels = "Celestials:"+std::to_string(player.getCurrency());
 	this->drawCurrency(graphics, player.getX() - 100, player.getY() + 125, cels);
-	for (int index = 0; index < this->inventoryTable.size(); ++index) {
+
+	//this->drawItemProperties(graphics, player, 0);
+
+	int x = player.getX() - 105;
+	int y = player.getY() - 105;
+	int counter = 0;
+
+	for (const auto&[itemID, itemCount] : items) {
+		// Draw the item sprite at the current x and y position
+		itemSprites[itemID].draw(graphics, x, y);
+
+		// Increment the counter and update the x and y positions as necessary
+		counter++;
+		if (counter % 4 == 0) {
+			y += 34;
+			x = player.getX() - 105;
+		}
+		else {
+			x += 34;
+		}
+	}
+
+	/*for (int index = 0; index < this->inventoryTable.size(); ++index) {
 		if (this->inventoryTable[index].second == 0) {
 			this->_hpPot.draw(graphics, player.getX() - 120, player.getY() - 110);
 			this->drawQuantity(graphics, player.getX() - 110, player.getY() - 100, this->inventoryTable[index].first);
@@ -96,7 +124,7 @@ void Inventory::draw(Graphics & graphics, Player & player)
 			this->_silverGem.draw(graphics, player.getX() - 60, player.getY() - 110);
 			this->drawQuantity(graphics, player.getX() - 50, player.getY() - 100, this->inventoryTable[index].first);
 		}
-	}
+	}*/
 }
 
 void Inventory::drawQuantity(Graphics & graphics, int x, int y, int quantity)
