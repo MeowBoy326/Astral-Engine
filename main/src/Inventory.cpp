@@ -113,6 +113,8 @@ void Inventory::draw(Graphics & graphics, Player & player)
 		}
 	}
 
+	this->drawItemProperties(graphics, player, this->currentItem);
+
 	/*for (int index = 0; index < this->inventoryTable.size(); ++index) {
 		if (this->inventoryTable[index].second == 0) {
 			this->_hpPot.draw(graphics, player.getX() - 120, player.getY() - 110);
