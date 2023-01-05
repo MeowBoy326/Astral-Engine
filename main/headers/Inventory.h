@@ -117,7 +117,7 @@ public:
 
 		iName = item_prototypes_[itemID]->getItemName();
 
-		this->drawInventItem(graphics, player.getX() - 320, player.getY() - 105, iName);
+		this->drawInventItem(graphics, player.getX() - 320, player.getY() - 110, iName);
 
 		int x = player.getX() - 320;
 		int y = player.getY() - 95;
@@ -140,7 +140,7 @@ public:
 				/* Draw here */
 				this->drawInventItem(graphics, x, y, text);
 			}
-			y += 10;
+			y += 14;
 		}
 		this->drawInventItem(graphics, x, y, description);
 	}
