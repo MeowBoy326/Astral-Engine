@@ -9,6 +9,8 @@ Inventory::Inventory()
 Inventory::Inventory(Graphics & graphics, Player & player)
 {
 	this->_iMenu = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 87, 40, 45, 35, 70); // x, y, width, height, screen pos x, screen pos y
+	this->_iSelection = Sprite(graphics, "data\\graphics\\startGame.png", 0, 63, 19, 12, 185, 275);
+
 	this->_hpPot = Sprite(graphics, "data\\maps\\NpcSym.png", 32, 83, 13, 11, 35, 70);
 	this->_key = Sprite(graphics, "data\\maps\\NpcSym.png", 194, 4, 12, 10, 35, 70);
 	this->_silverGem = Sprite(graphics, "data\\maps\\loot.png", 72, 50, 16, 16, 35, 70);
@@ -103,11 +105,11 @@ void Inventory::draw(Graphics & graphics, Player & player)
 		// Increment the counter and update the x and y positions as necessary
 		counter++;
 		if (counter % 4 == 0) {
-			y += 34;
+			y += 68;
 			x = player.getX() - 105;
 		}
 		else {
-			x += 34;
+			x += 68;
 		}
 	}
 
@@ -125,6 +127,10 @@ void Inventory::draw(Graphics & graphics, Player & player)
 			this->drawQuantity(graphics, player.getX() - 50, player.getY() - 100, this->inventoryTable[index].first);
 		}
 	}*/
+}
+
+void Inventory::drawInventSelection(Graphics& graphics, int x, int y) {
+	this->_iSelection.drawScaled(graphics, x - 15, y + 5, 0);
 }
 
 void Inventory::drawQuantity(Graphics & graphics, int x, int y, int quantity)
