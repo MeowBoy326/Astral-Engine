@@ -36,6 +36,18 @@ void Sprite::draw(Graphics &graphics, int x, int y) { // This will do all the dr
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle); 
 	}
 
+void Sprite::drawScaled(Graphics& graphics, int x, int y, float scale) {
+	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w, this->_sourceRect.h };
+
+	if (scale > 0) {
+		destinationRectangle.w *= scale;
+		destinationRectangle.h *= scale;
+	}
+
+	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
+}
+
+
 void Sprite::drawBoundingbox(Graphics & graphics, int x, int y, SDL_Color color)
 {
 	SDL_Rect bbRect = { x, y, this->_boundingBox.getWidth(), this->_boundingBox.getHeight() };
