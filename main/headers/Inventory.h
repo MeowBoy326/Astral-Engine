@@ -95,6 +95,10 @@ public:
 		return false;
 	 }
 
+	void useItemFromInvent(Player &player) {
+		 this->useItem(this->currentItem, player);
+	 }
+
 	void useItem(Items::ItemID id, Player &player) {
 		/* Call the overriden function use that the item has */
 		auto it = items.find(id);
