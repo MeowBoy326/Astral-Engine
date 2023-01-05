@@ -695,6 +695,7 @@ void Game::gameLoop() {
 				if (activeInventory && this->_player.getCurrentHealth() > 0) {
 					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
 						// Use item
+						this->_inventory.useItemFromInvent(this->_player);
 					}
 					else if (input.wasKeyPressed(SDL_SCANCODE_UP)) {
 						// Move selection box sprite up to select item
