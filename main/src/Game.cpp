@@ -37,6 +37,11 @@ namespace {
 	int npcSelection = 1;
 	int questSelection = 1;
 	int saveSelection = 1;
+	int inventSelectionRow = 1;
+	int inventSelectionColumn = 1;
+	int inventSelectedItem = 1;
+	int inventSelectionX;
+	int inventSelectionY;
 	int lineNum = 0;
 	int currentLine = 0;
 	int sceneTimer = 0;
@@ -675,11 +680,77 @@ void Game::gameLoop() {
 					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene) {
 					if (activeInventory == false) {
 						activeInventory = true;
+						inventSelectionX = this->_player.getX() - 105;
+						inventSelectionY = this->_player.getY() - 105;
 						this->_inventory.draw(graphics, this->_player);
 					}
-
 					else if (activeInventory == true) {
 						activeInventory = false;
+						inventSelectedItem = 1;
+						inventSelectionColumn = 1;
+						inventSelectionRow = 1;
+					}
+				}
+
+				if (activeInventory && this->_player.getCurrentHealth() > 0) {
+					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+						// Use item
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_UP)) {
+						// Move selection box sprite up to select item
+						if (inventSelectionRow != 1) {
+							inventSelectionY -= 68;
+							inventSelectionRow -= 1;
+							inventSelectedItem -= 4;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_inventory.checkInventorySlot(inventSelectedItem)) {
+							inventSelectionY += 68;
+							inventSelectionRow += 1;
+							inventSelectedItem += 4;
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_DOWN)) {
+						// Move selection box sprite down to select item
+						if (inventSelectionRow != 4) { // max rows
+							inventSelectionY += 68;
+							inventSelectionRow += 1;
+							inventSelectedItem += 4;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_inventory.checkInventorySlot(inventSelectedItem)) {
+							inventSelectionY -= 68;
+							inventSelectionRow -= 1;
+							inventSelectedItem -= 4;
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_LEFT)) {
+						// Move selection box sprite left to select item
+						if (inventSelectionColumn != 1) {
+							inventSelectionX -= 68;
+							inventSelectionColumn -= 1;
+							inventSelectedItem -= 1;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_inventory.checkInventorySlot(inventSelectedItem)) {
+							inventSelectionX += 68;
+							inventSelectionColumn += 1;
+							inventSelectedItem += 1;
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT)) {
+						// Move selection box sprite right to select item
+						if (inventSelectionColumn != 4) {
+							inventSelectionX += 68;
+							inventSelectionColumn += 1;
+							inventSelectedItem += 1;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_inventory.checkInventorySlot(inventSelectedItem)) {
+							inventSelectionX -= 68;
+							inventSelectionColumn -= 1;
+							inventSelectedItem -= 1;
+						}
 					}
 				}
 
@@ -811,8 +882,10 @@ void Game::draw(Graphics &graphics) {
 		this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
 	}
 	this->_hud.draw(graphics, this->_player);
-	if (activeInventory == true)
+	if (activeInventory == true) {
 		this->_inventory.draw(graphics, this->_player);
+		this->_inventory.drawInventSelection(graphics, inventSelectionX, inventSelectionY);
+	}
 	if (activeStatMenu)
 		this->_player.drawStatMenu(graphics, this->_player, selection);
 	if (activeSaveMenu)
