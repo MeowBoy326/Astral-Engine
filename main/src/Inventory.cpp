@@ -101,6 +101,7 @@ void Inventory::draw(Graphics & graphics, Player & player)
 	for (const auto&[itemID, itemCount] : items) {
 		// Draw the item sprite at the current x and y position
 		itemSprites[itemID].draw(graphics, x, y);
+		this->drawQuantity(graphics, x + 10, y + 25, itemCount);
 
 		// Increment the counter and update the x and y positions as necessary
 		counter++;
