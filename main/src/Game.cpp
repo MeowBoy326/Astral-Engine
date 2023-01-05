@@ -186,6 +186,7 @@ void Game::gameLoop() {
 				this->saveGame(graphics);
 			}
 			else {
+				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				this->loadGame(graphics);
 			}
 			/* Free memory to prevent any leaks */
