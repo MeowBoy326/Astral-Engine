@@ -111,31 +111,38 @@ public:
 	}
 
 	void drawItemProperties(Graphics &graphics, Player& player, int itemID) {
-		// TODO: Update drawings to 2nd inventory window
 		/* Get the map that holds the properties for each item. */
 		const std::map<std::string, std::variant<int, std::string>> properties = item_prototypes_[itemID]->getProperties();
 		std::string iName = "NULL";
 
 		iName = item_prototypes_[itemID]->getItemName();
 
-		this->drawInventItem(graphics, player.getX() - 60, player.getY() - 125, iName);
+		this->drawInventItem(graphics, player.getX() - 320, player.getY() - 105, iName);
 
+		int x = player.getX() - 320;
+		int y = player.getY() - 95;
+		int counter = 0;
+		std::string description = "Description: NULL";
 		/* Get each properties of the item and draw */
 		for (const auto& property : properties) {
 			if (property.second.index() == 0) {
 				int num = std::get<int>(property.second);
-				std::cout << property.first << ": " << num << std::endl;
 				std::string text = property.first + ": " + std::to_string(num);
 				/* Convert to string and draw */
-				this->drawInventItem(graphics, player.getX() - 60, player.getY() - 50, text);
+				this->drawInventItem(graphics, x, y, text);
 			}
 			else {
 				std::string text = property.first + ": " + std::get<std::string>(property.second);
-				std::cout << text << std::endl;
+				if (property.first == "Description") {
+					description = text;
+					continue;
+				}
 				/* Draw here */
-				this->drawInventItem(graphics, player.getX() - 60, player.getY() - 50, text);
+				this->drawInventItem(graphics, x, y, text);
 			}
+			y += 10;
 		}
+		this->drawInventItem(graphics, x, y, description);
 	}
 
 	
