@@ -56,7 +56,11 @@ public:
 
 	void use(Player &player) override {
 		// Implement HP pot
-		player.gainHealth(((player.getMaxHealth() / 3)) + (player.getHpPotStrength() * 8));
+		if (player.hasHpPot()) {
+			player.subtractHpPot();
+			player.gainHealth(((player.getMaxHealth() / 3)) + (player.getHpPotStrength() * 8));
+		}
+		
 	}
 
 	void updateItemStats(Player &player) {
