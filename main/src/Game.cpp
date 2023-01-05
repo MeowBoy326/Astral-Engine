@@ -229,6 +229,7 @@ void Game::gameLoop() {
 				Mix_ResumeMusic();
 				Mix_RewindMusic();
 				this->loadGame(graphics);
+				this->_player.resetDeath();
 				deathSound = false;
 				GAMEOVER = false;
 				resetGame = false;
