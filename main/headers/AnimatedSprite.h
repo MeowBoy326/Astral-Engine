@@ -46,6 +46,7 @@ public:
 	Draws the sprite to the screen
 	*/
 	void draw(Graphics &graphics, int x, int y);
+	void drawPlayer(Graphics &graphics, int x, int y);
 	void drawBoss(Graphics &graphics, int x, int y, float scaleFactor);
 	// void drawTextBox(Graphics & graphics, std::string speech, TTF_Font *font);
 	void drawNpc(Graphics & graphics, int x, int y);
