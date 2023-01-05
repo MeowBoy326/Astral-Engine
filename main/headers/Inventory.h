@@ -79,6 +79,22 @@ public:
 		return false;
 	 }
 
+	bool checkInventorySlot(int inventIndex) {
+		std::vector<int> keys;
+		for (const auto&[itemID, itemCount] : items) {
+			keys.push_back(itemID);
+		}
+		std::sort(keys.begin(), keys.end());
+
+		if (keys.size() >= inventIndex) {
+			/* Now that the index is validated do -1 to get the correct itemID*/
+			inventIndex -= 1;
+			this->currentItem = keys[inventIndex];
+			return true;
+		}
+		return false;
+	 }
+
 	void useItem(Items::ItemID id, Player &player) {
 		/* Call the overriden function use that the item has */
 		auto it = items.find(id);
@@ -132,6 +148,7 @@ public:
 
 	void update(int elapsedTime, Player &player);
 	void draw(Graphics &graphics, Player &player);
+	void drawInventSelection(Graphics &graphics, int x, int y);
 	void drawQuantity(Graphics &graphics, int x, int y, int quantity);
 	void addInstancedLoot(std::string mapName, int type);
 	inline const std::vector<std::pair<std::string, int>> getLootTable() const { return this->lootTable; }
@@ -151,11 +168,13 @@ private:
 
 	// Health Sprites
 	Sprite _iMenu;
+	Sprite _iSelection;
 	Sprite _hpPot;
 	Sprite _key;
 	Sprite _silverGem;
 
 	int hpToGain;
+	int currentItem = 0;
 	std::vector<std::pair<int, int>> inventoryTable;
 	std::vector<std::pair<std::string, int>> lootTable;
 protected:
