@@ -39,7 +39,7 @@ Player::Player() {}
 
 Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	// Graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
-	AnimatedSprite(graphics, "data\\graphics\\MyChar.png", 0, 0, 16, 16, spawnPoint.x, spawnPoint.y, 100), 
+	AnimatedSprite(graphics, "data\\graphics\\Char.png", 0, 0, 16, 16, spawnPoint.x, spawnPoint.y, 100), 
 	_dx(0),
 	_dy(0),
 	_facing(RIGHT),
@@ -49,7 +49,7 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	_maxHealth(100.0f),
 	_currentHealth(100.0f)
 {
-	graphics.loadImage("data\\graphics\\MyChar.png"); // Loads sprite sheet in
+	graphics.loadImage("data\\graphics\\Char.png"); // Loads sprite sheet in
 
 	this->setupAnimations();
 	this->playAnimation("RunRight");
@@ -66,19 +66,19 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 }
 
 void Player::setupAnimations() {
-	this->addAnimation(1, 0, 0, "IdleLeft", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 0, 16, "IdleRight", 16, 16, Vector2(0, 0)); // we are 16 pixels down now on sprite sheet
-	this->addAnimation(3, 0, 0, "RunLeft", 16, 16, Vector2(0, 0)); //# of frames, x, y, name(RunLeft), height, width, offset (no so empty vector)
-	this->addAnimation(3, 0, 16, "RunRight", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 3, 0, "IdleLeftUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 3, 16, "IdleRightUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(3, 3, 0, "RunLeftUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(3, 3, 16, "RunRightUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 6, 0, "LookDownLeft", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 6, 16, "LookDownRight", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 7, 0, "LookBackwardsLeft", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 7, 16, "LookBackwardsRight", 16, 16, Vector2(0, 0));
-	this->addAnimation(7, 0, 72, "PlayerDead", 16, 16, Vector2(0, 0));
+	this->addAnimation(6, 0, 0, "IdleLeft", 20, 23, Vector2(-5, -10));
+	this->addAnimation(6, 0, 25, "IdleRight", 20, 23, Vector2(-5, -10)); // we are 16 pixels down now on sprite sheet
+	this->addAnimation(8, 0, 77, "RunLeft", 20, 23, Vector2(-5, -10)); //# of frames, x, y, name(RunLeft), height, width, offset (no so empty vector)
+	this->addAnimation(8, 0, 52, "RunRight", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 1, 99, "IdleLeftUp", 20, 23, Vector2(-5, -7));
+	this->addAnimation(1, 0, 99, "IdleRightUp", 20, 23, Vector2(-5, -7));
+	this->addAnimation(8, 0, 77, "RunLeftUp", 20, 23, Vector2(-5, -10));
+	this->addAnimation(8, 0, 52, "RunRightUp", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 1, 121, "LookDownLeft", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 0, 121, "LookDownRight", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 1, 121, "LookBackwardsLeft", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 0, 121, "LookBackwardsRight", 20, 23, Vector2(-5, -10));
+	this->addAnimation(8, 0, 149, "PlayerDead", 28, 25, Vector2(-5, -7));
 }
 
 void Player::setPlayerPosition(float x, float y) {
@@ -1332,7 +1332,7 @@ void Player::update(float elapsedTime) {
 }
 
 void Player::draw(Graphics &graphics) {
-	AnimatedSprite::draw(graphics, this->_x, this->_y);
+	AnimatedSprite::drawPlayer(graphics, this->_x, this->_y);
 	this->drawJetPack(graphics);
 	this->drawGun(graphics);
 	if (this->isPoisoned)
