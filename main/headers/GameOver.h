@@ -20,7 +20,11 @@ public:
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
 	void destroyImage();
+
+	bool isRespawnAllowed() { return this->allowRespawn; }
 private:
 	Sprite _defeat;
 	Sprite _endGame;
+	int respawnTimer = 5000;
+	bool allowRespawn = false;
 };
