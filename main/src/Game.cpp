@@ -680,7 +680,7 @@ void Game::gameLoop() {
 					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene) {
 					if (activeInventory == false) {
 						activeInventory = true;
-						inventSelectionX = this->_player.getX() - 105;
+						inventSelectionX = this->_player.getX() - 70;
 						inventSelectionY = this->_player.getY() - 105;
 						this->_inventory.draw(graphics, this->_player);
 					}
