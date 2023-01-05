@@ -225,7 +225,8 @@ void Game::gameLoop() {
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			
 			this->drawGameOver(graphics);
-			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true) {
+			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true 
+				&& this->_gameOver->isRespawnAllowed()) {
 				Mix_ResumeMusic();
 				Mix_RewindMusic();
 				this->loadGame(graphics);
