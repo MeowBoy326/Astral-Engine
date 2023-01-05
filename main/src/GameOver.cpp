@@ -65,6 +65,11 @@ void GameOver::setupAnimations()
 void GameOver::update(float elapsedTime)
 {
 	AnimatedSprite::update(elapsedTime);
+	if (respawnTimer <= 0) {
+		this->allowRespawn = true;
+	}
+	else
+		this->respawnTimer -= elapsedTime;
 }
 
 void GameOver::draw(Graphics & graphics)
@@ -72,5 +77,6 @@ void GameOver::draw(Graphics & graphics)
 	AnimatedSprite::drawTitle(graphics, this->_x, this->_y);
 	// AnimatedSprite::drawTitle(graphics, this->_x - 80, this->_y + 64);
 	this->_defeat.drawTitle(graphics, 180, 10);
-	this->_endGame.drawTitle(graphics, 180, 425);
+	if (this->allowRespawn)
+		this->_endGame.drawTitle(graphics, 180, 425);
 }
