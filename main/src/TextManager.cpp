@@ -661,7 +661,7 @@ void TextManager::drawInventItem(Graphics& graphics, int posX, int posY, const s
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
 	}
-	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 10);
+	TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 13);
 
 	if (!font) {
 		// Error loading font
@@ -669,7 +669,7 @@ void TextManager::drawInventItem(Graphics& graphics, int posX, int posY, const s
 	}
 
 	// Set the maximum width of the text-box
-	int maxWidth = 185;
+	int maxWidth = 206;
 
 	// Set the color of the text
 	SDL_Color textColor = { 0, 0, 0, 255 };
