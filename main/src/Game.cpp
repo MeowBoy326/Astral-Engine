@@ -333,7 +333,8 @@ void Game::gameLoop() {
 
 			if (!pauseGame) {
 
-				if (activeSave && input.wasKeyPressed(SDL_SCANCODE_A) && this->_player.getCurrentHealth() > 0) {
+				if (activeSave && input.wasKeyPressed(SDL_SCANCODE_A) && this->_player.getCurrentHealth() > 0
+					&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
 					activeSaveMenu = true;
 				}
 
@@ -637,7 +638,8 @@ void Game::gameLoop() {
 					}
 				}
 
-				if (input.wasKeyPressed(SDL_SCANCODE_D) == true && this->_player.getCurrentHealth() > 0) {
+				if (input.wasKeyPressed(SDL_SCANCODE_D) == true && this->_player.getCurrentHealth() > 0
+					&& !activeCutscene && !activeInventory && !activeTalk && !activeSaveMenu) {
 					if (!activeStatMenu) {
 						selection = 1;
 						activeStatMenu = true;
@@ -669,8 +671,8 @@ void Game::gameLoop() {
 					}
 				}
 
-				if (input.wasKeyPressed(SDL_SCANCODE_S) == true && activeStatMenu == false && activeTalk == false
-					&& this->_player.getCurrentHealth() > 0) {
+				if (input.wasKeyPressed(SDL_SCANCODE_S) == true && this->_player.getCurrentHealth() > 0
+					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene) {
 					if (activeInventory == false) {
 						activeInventory = true;
 						this->_inventory.draw(graphics, this->_player);
@@ -689,12 +691,12 @@ void Game::gameLoop() {
 						pickUp = false;
 					}
 				}
-				if (input.wasKeyPressed(SDL_SCANCODE_C) == true && this->_player.getCurrentHealth() > 0) {
+				if (input.wasKeyPressed(SDL_SCANCODE_C) == true && this->_player.getCurrentHealth() > 0
+					&& !activeCutscene && !activeInventory && !activeSaveMenu && !activeStatMenu && !activeTalk) {
 					if (this->_player.hasHpPot()) {
 						_inventory.useItem(0, this->_player);
 						this->_player.subtractHpPot();
 					}
-					
 				}
 				if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
 					// Add weapon swap here
