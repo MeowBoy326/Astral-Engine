@@ -90,7 +90,6 @@ namespace {
 	Mix_Chunk *gameOver = NULL;
 	bool walkSound = false;
 	bool deathSound = false;
-	bool jumpSound = false;
 }
 
 namespace globals {
@@ -502,9 +501,8 @@ void Game::gameLoop() {
 				else if (!jetPack && input.isKeyHeld(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0) {
 					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 						this->_player.jump();
-						if (!jumpSound)
-							Mix_PlayChannel(-1, seJump, 0);
-						jumpSound = true;
+						if (!Mix_Playing(244))
+							Mix_PlayChannel(244, seJump, 0);
 					}
 					else if (activeTalk == true) {
 						std::cout << "impaired action" << std::endl;
@@ -514,7 +512,6 @@ void Game::gameLoop() {
 					if (this->_player.canShortJump() && activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
 						this->_player.setPlayerDY(0);
 						this->_player.setShortJump(false);
-						jumpSound = false;
 					}
 				}
 				if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT) && this->_player.getCurrentHealth() > 0) {
