@@ -11,14 +11,17 @@ Inventory::Inventory(Graphics & graphics, Player & player)
 	this->_iMenu = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 87, 40, 45, 35, 70); // x, y, width, height, screen pos x, screen pos y
 	this->_iSelection = Sprite(graphics, "data\\graphics\\startGame.png", 0, 63, 19, 12, 185, 275);
 
-	this->_hpPot = Sprite(graphics, "data\\maps\\NpcSym.png", 32, 83, 13, 11, 35, 70);
+	this->_hpPot = Sprite(graphics, "data\\graphics\\hpFlask.png", 0, 0, 8, 11, 35, 70);
 	this->_key = Sprite(graphics, "data\\maps\\NpcSym.png", 194, 4, 12, 10, 35, 70);
-	this->_silverGem = Sprite(graphics, "data\\maps\\loot.png", 72, 50, 16, 16, 35, 70);
-
+	this->_silverGem = Sprite(graphics, "data\\maps\\loot.png", 68, 50, 16, 16, 35, 70);
+	this->_permHP = Sprite(graphics, "data\\maps\\NpcSym.png", 288, 1, 14, 15, 35, 70);
+	graphics.loadImage("data\\graphics\\JetPack.png");
+	this->_JetPack = Sprite(graphics, "data\\graphics\\JetPack.png", 0, 0, 14, 14, 35, 70);
+	
 	itemSprites[HealthPotion::ID] = this->_hpPot;
-	itemSprites[PermHP::ID] = this->_hpPot;
+	itemSprites[PermHP::ID] = this->_permHP;
 	itemSprites[Key::ID] = this->_key;
-	itemSprites[JetPack::ID] = this->_silverGem;
+	itemSprites[JetPack::ID] = this->_JetPack;
 	itemSprites[SilverGem::ID] = this->_silverGem;
 
 	initPrototypes();
