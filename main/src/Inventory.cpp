@@ -88,13 +88,13 @@ void Inventory::update(int elapsedTime, Player & player)
 
 void Inventory::draw(Graphics & graphics, Player & player)
 {
-	this->_iMenu.drawiMenu(graphics, player.getX()-130, player.getY() - 130);
+	this->_iMenu.drawiMenu(graphics, player.getX() - 95, player.getY() - 130);
 	std::string cels = "Celestials:"+std::to_string(player.getCurrency());
-	this->drawCurrency(graphics, player.getX() - 100, player.getY() + 125, cels);
+	this->drawCurrency(graphics, player.getX() - 70, player.getY() + 125, cels);
 
 	//this->drawItemProperties(graphics, player, 0);
 
-	int x = player.getX() - 105;
+	int x = player.getX() - 65;
 	int y = player.getY() - 105;
 	int counter = 0;
 
@@ -106,7 +106,7 @@ void Inventory::draw(Graphics & graphics, Player & player)
 		counter++;
 		if (counter % 4 == 0) {
 			y += 68;
-			x = player.getX() - 105;
+			x = player.getX() - 65;
 		}
 		else {
 			x += 68;
