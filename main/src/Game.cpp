@@ -767,7 +767,6 @@ void Game::gameLoop() {
 					&& !activeCutscene && !activeInventory && !activeSaveMenu && !activeStatMenu && !activeTalk) {
 					if (this->_player.hasHpPot()) {
 						_inventory.useItem(0, this->_player);
-						this->_player.subtractHpPot();
 					}
 				}
 				if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
