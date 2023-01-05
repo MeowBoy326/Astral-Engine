@@ -45,6 +45,7 @@ public:
 	void lookDown();
 	void stopLookingDown();
 	void startDeath();
+	void resetDeath() { this->deathPlayed = false; }
 	void setPlayerDX(float dx) { this->_dx = dx; }
 	void setPlayerDY(float dy) { this->_dy = dy; }
 	void setPlayerPosition(float x, float y);
