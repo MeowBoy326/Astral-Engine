@@ -181,6 +181,8 @@ private:
 	Sprite _iMenu;
 	Sprite _iSelection;
 	Sprite _hpPot;
+	Sprite _permHP;
+	Sprite _JetPack;
 	Sprite _key;
 	Sprite _silverGem;
 
