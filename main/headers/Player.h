@@ -126,6 +126,7 @@ public:
 	// Health handling
 	void drawHPNumbers(Graphics &graphics, int x, int y);
 	void drawHPPotAvailable(Graphics &graphics, int x, int y);
+	void drawHPPotStrength(Graphics &graphics, int x, int y);
 	void setIFrame(bool condition);
 	void gainHealth(float amount);
 	void gainHPFromStatus(float amount);
