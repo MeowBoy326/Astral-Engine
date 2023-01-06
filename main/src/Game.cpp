@@ -678,9 +678,11 @@ void Game::gameLoop() {
 				}
 
 				if (input.wasKeyPressed(SDL_SCANCODE_S) == true && this->_player.getCurrentHealth() > 0
-					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene) {
+					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene
+					&& this->_player.isGrounded()) {
 					if (activeInventory == false) {
 						activeInventory = true;
+						this->_player.stopMoving();
 						inventSelectionX = this->_player.getX() - 70;
 						inventSelectionY = this->_player.getY() - 105;
 						this->_inventory.draw(graphics, this->_player);
