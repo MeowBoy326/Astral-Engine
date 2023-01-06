@@ -616,15 +616,15 @@ void Title::draw(Graphics &graphics) {
 		this->_settingsDisplayRes.drawVolumeBar(graphics, this->_settingsDisplayRes.getX(), this->_settingsDisplayRes.getY());
 		label = "Display:";
 		if (changeDisplay)
-			this->drawSettings(graphics, 240, 220, label, 12, {255, 255, 0, 255});
+			this->drawSettings(graphics, 240, 218, label, 12, {255, 255, 0, 255});
 		else
-			this->drawSettings(graphics, 240, 220, label, 12);
+			this->drawSettings(graphics, 240, 218, label, 12);
 		label = std::to_string(res.sWidth) + "x" + std::to_string(res.sHeight);
 		this->drawSettings(graphics, 380, 220, label, 12);
 
 		// Exit
 		label = "Exit";
-		this->drawSettings(graphics, 240, 255, label, 12);
+		this->drawSettings(graphics, 240, 247, label, 12);
 	}
 	if (exitMenu) {
 		this->_exitMenu.drawSaveMenu(graphics, this->_exitMenu.getX(), this->_exitMenu.getY());
