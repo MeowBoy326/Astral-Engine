@@ -30,10 +30,10 @@ Graphics::Graphics() {
 	 * If you use scaling mode, camera needs to be adjusted to display correctly.
 	 * Setting a bool in globals to know if the game is in scaling mode.
 	 */
-	/*float scale_x = (float)globals::SCREEN_WIDTH / 640;
-	float scale_y = (float)globals::SCREEN_HEIGHT / 480;
+	//float scale_x = (float)globals::SCREEN_WIDTH / 640;
+	//float scale_y = (float)globals::SCREEN_HEIGHT / 480;
 
-	SDL_RenderSetScale(this->_renderer, scale_x, scale_y);*/
+	//SDL_RenderSetScale(this->_renderer, scale_x, scale_y);
 }
 
 Graphics::~Graphics() {
@@ -114,6 +114,12 @@ SDL_Renderer* Graphics::getRenderer() const {
 	return this->_renderer;
 }
 
-void Graphics::setWindowResolution(int w, int h) {
+void Graphics::setWindowResolution(int w, int h, bool scaled) {
 	SDL_SetWindowSize(this->_window, w, h);
+	if (scaled) {
+		float scale_x = (float)globals::SCREEN_WIDTH / 640;
+		float scale_y = (float)globals::SCREEN_HEIGHT / 480;
+
+		SDL_RenderSetScale(this->_renderer, scale_x, scale_y);
+	}
 }
