@@ -99,6 +99,8 @@ public:
 		 this->useItem(this->currentItem, player);
 	 }
 
+	void resetCurrentItem() { this->currentItem = 0; }
+
 	void useItem(Items::ItemID id, Player &player) {
 		/* Call the overriden function use that the item has */
 		auto it = items.find(id);
