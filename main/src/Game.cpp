@@ -399,6 +399,9 @@ void Game::gameLoop() {
 
 				if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
 					activeInventory = false;
+					inventSelectedItem = 1;
+					inventSelectionColumn = 1;
+					inventSelectionRow = 1;
 					activeSave = false;
 					activeSaveMenu = false;
 					activeTalk = false;
