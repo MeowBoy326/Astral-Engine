@@ -888,6 +888,10 @@ void Player::drawHPPotAvailable(Graphics& graphics, int x, int y) {
 	this->_txt->drawItemQuantity(graphics, 0, 0, std::to_string(this->_hpPotAmount), x, y);
 }
 
+void Player::drawHPPotStrength(Graphics& graphics, int x, int y) {
+	this->_txt->drawItemQuantity(graphics, 0, 0, "+" + std::to_string(this->_hpPotStrength), x, y, {0, 210, 0, 0});
+}
+
 void Player::drawExpNumbers(Graphics & graphics, int x, int y)
 {
 	double percent = ((double)this->getCurrentExp() / (double)this->getRequiredExp()) * 100;
