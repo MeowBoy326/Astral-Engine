@@ -104,7 +104,7 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 			}
 		}
 		if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-			if (menuChoice != 2 && !showSettings)
+			if (menuChoice != 2 && !showSettings && !startNew)
 			{
 				if (menuChoice == 1)
 				{
@@ -117,8 +117,20 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					else
 						menuLoop = false;
 				}
-				else
+				else {
+					this->startNew = !startNew;
+					this->selectY = 325;
+					this->selectX = 395;
+				}
+			}
+			else if (startNew) {
+				if (startOption == 0)
 					menuLoop = false;
+				else {
+					this->startNew = !startNew;
+					this->selectY = 275;
+					this->selectX = 185;
+				}
 			}
 			else if (!showSettings) {
 				this->loadSettings();
@@ -252,6 +264,13 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 					}
 				}
 			}
+			else if (startNew) {
+				if (startOption == 0) {
+					this->selectY = 325;
+					this->selectX = 395;
+					startOption++;
+				}
+			}
 		}
 		else if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
 			if (isSubmenu) {
@@ -280,6 +299,13 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 						this->selectX = 320;
 						exitChoice--;
 					}
+				}
+			}
+			else if (startNew) {
+				if (startOption == 1) {
+					this->selectY = 325;
+					this->selectX = 320;
+					startOption--;
 				}
 			}
 		}
@@ -601,6 +627,9 @@ void Title::draw(Graphics &graphics) {
 		this->drawSettings(graphics, 240, 255, label, 12);
 	}
 	if (exitMenu) {
+		this->_exitMenu.drawSaveMenu(graphics, this->_exitMenu.getX(), this->_exitMenu.getY());
+	}
+	else if (startNew) {
 		this->_exitMenu.drawSaveMenu(graphics, this->_exitMenu.getX(), this->_exitMenu.getY());
 	}
 	this->_selectionBox.drawTitle(graphics, selectX, selectY);
