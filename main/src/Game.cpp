@@ -402,6 +402,7 @@ void Game::gameLoop() {
 					inventSelectedItem = 1;
 					inventSelectionColumn = 1;
 					inventSelectionRow = 1;
+					this->_inventory.resetCurrentItem();
 					activeSave = false;
 					activeSaveMenu = false;
 					activeTalk = false;
@@ -695,6 +696,7 @@ void Game::gameLoop() {
 						inventSelectedItem = 1;
 						inventSelectionColumn = 1;
 						inventSelectionRow = 1;
+						this->_inventory.resetCurrentItem();
 					}
 				}
 
