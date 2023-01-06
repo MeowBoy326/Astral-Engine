@@ -63,6 +63,7 @@ private:
 	int sfxVolumePercent = 100;
 	int msgTimer = 0;
 	int displayOption = 0;
+	int startOption = 1;
 
 	bool showSettings = false;
 	bool changeBgmVolume = false;
@@ -72,6 +73,7 @@ private:
 	bool exitMenu = false;
 	bool showMsg = false;
 	bool reloadGame = false;
+	bool startNew = false;
 
 	std::string systemMsg;
 };
