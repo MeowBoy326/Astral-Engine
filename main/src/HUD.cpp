@@ -53,6 +53,7 @@ void HUD::draw(Graphics &graphics, Player &player) {
 	player.drawHPNumbers(graphics, this->posX + 70, this->posY + 25);
 	this->_healthPotion.drawHPBar(graphics, this->posX, this->posY + 80);
 	player.drawHPPotAvailable(graphics, this->posX + 7, this->posY + 114);
+	player.drawHPPotStrength(graphics, this->posX + 25, this->posY + 90);
 
 	this->_lvWord.draw(graphics, this->posX, this->posY + 60);
 	this->_lvNumber.draw(graphics, this->posX + 25, this->posY + 60);
