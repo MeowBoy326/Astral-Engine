@@ -100,6 +100,7 @@ namespace {
 namespace globals {
 	int SCREEN_WIDTH = 640;
 	int SCREEN_HEIGHT = 480;
+	bool SCALED_MODE = false;
 }
 
 Game::Game() { // Constructor
@@ -140,14 +141,18 @@ void Game::gameLoop() {
 	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 22);
 
 	this->_title = new Title(graphics, input, event);
-	this->_camera = Camera();
 	this->_chatBox = TextManager(graphics, this->_player);
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
 
 	this->setSettings();
-	graphics.setWindowResolution(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT);
+	if (globals::SCREEN_WIDTH != 640 && globals::SCREEN_HEIGHT != 480)
+		globals::SCALED_MODE = true;
+	else
+		globals::SCALED_MODE = false;
+	graphics.setWindowResolution(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, globals::SCALED_MODE);
 
+	this->_camera = Camera();
 	if (gMusic == NULL)
 	{
 		printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
