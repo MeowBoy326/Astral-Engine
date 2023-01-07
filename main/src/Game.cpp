@@ -1017,6 +1017,8 @@ int Game::saveGame(Graphics & graphics)
 	xml.InsertFirstChild(root);
 	std::cout << "Creating the XML Document..." << std::endl;
 
+	this->_player.setCurrentHealth(this->_player.getMaxHealth());
+
 	// Save player location
 	XMLElement* element = xml.NewElement("Spawn");
 	element->SetAttribute("mapName", this->_level.getMapName().c_str());
