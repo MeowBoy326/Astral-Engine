@@ -119,6 +119,18 @@ Game::Game() { // Constructor
 Game::~Game() {}
 
 void Game::gameLoop() {
+	/* Multi-threading (Not necessary, used as a demonstration) */
+
+	//SDL_Init(SDL_INIT_EVERYTHING);
+	//TTF_Init();
+	//// Initialize SDL_mixer
+	//if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	//{
+	//	printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+	//}
+	//// TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
+	//this->cipher = AESCipher();
+
 	Graphics graphics;
 	Input input;
 	SDL_Event event;
@@ -811,12 +823,14 @@ void Game::gameLoop() {
 					this->_player.startDeath();
 				}
 			}
+
 			if (findWindowElapsedTime) {
 				// Window was moved, so update the LAST_UPDATE_TIME to be near the SDL_GetTicks() time.
 				// This prevents the elapsed time from becoming large thus messing with the game logic.
 				LAST_UPDATE_TIME = SDL_GetTicks() - 1;
 				findWindowElapsedTime = false;
 			}
+
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
 			this->_graphics = graphics; // Updated graphics
@@ -824,7 +838,9 @@ void Game::gameLoop() {
 			this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
 			// Loop will go again and current time - new last update will tell us how long next frame will take
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
+
 			this->draw(graphics);
+
 			// SDL_GetTicks() will still increment while pauseGame = this->_title(...) runs it's own loop.
 			// To account for the time difference, we simply set LAST_UPDATE_TIME = SDL_GetTicks() - 1
 			// This is to ensure a smooth and consistent elapsed time for our next iteration's update/drawing logic.
@@ -833,10 +849,12 @@ void Game::gameLoop() {
 					/* Only create the Title object when needed to reduce memory. */
 					this->_title = new Title(graphics, input, event);
 				}
+
 				Mix_PauseMusic();
 				pauseGame = this->_title->Pause(graphics, input, event, this->_player);
 				this->setSettings();
 				Mix_ResumeMusic();
+
 				LAST_UPDATE_TIME = SDL_GetTicks() - 1;
 				if (_title->getMenuChoice() == 0 && _title->getReload()) {
 					this->loadGame(graphics);

@@ -34,6 +34,12 @@ class Game {
 public:
 	Game();
 	~Game();
+
+	/* Multi-threading (Not necessary, used as a demonstration) */
+
+	/*void gameLoop();
+	void update(float elapsedTime, Graphics &graphics);
+	Graphics& getGraphics() { return this->_graphics; }*/
 private:
 	void gameLoop();
 	void draw(Graphics &graphics);

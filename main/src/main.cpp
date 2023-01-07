@@ -26,7 +26,44 @@
 #include <iostream>
 #include "../headers/game.h"
 
+
+/* Multi-threading (Not necessary, used as a demonstration) */
+
+//// This function will be run on the update thread
+//int UpdateThreadFunction(void* data) {
+//	Game* game = static_cast<Game*>(data);
+//
+//	// Set up a timer to control the update loop
+//	int LAST_UPDATE_TIME = SDL_GetTicks();
+//	const int FPS = 50;
+//	const int MAX_FRAME_TIME = 5 * 1000 / FPS; // Max amount of time a frame is allowed to last
+//
+//	while (true) {
+//		// Calculate the elapsed time since the last update
+//
+//		const int CURRENT_TIME_MS = SDL_GetTicks();
+//		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
+//
+//		// Update the game
+//		game->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), game->getGraphics());
+//
+//		LAST_UPDATE_TIME = CURRENT_TIME_MS;
+//	}
+//
+//	return 0;
+//}
+
 int main(int argc, char * argv[]) {
 	Game game;
+
+	/* Multi-threading (Not necessary, used as a demonstration) */
+
+	//SDL_Thread* update_thread =
+	//	SDL_CreateThread(UpdateThreadFunction, "UpdateThread", &game);
+
+	//game.gameLoop();
+
+	//SDL_WaitThread(update_thread, NULL);
+
 	return 0;
 }
