@@ -48,6 +48,8 @@ public:
 	void resetDeath() { this->deathPlayed = false; }
 	void setPlayerDX(float dx) { this->_dx = dx; }
 	void setPlayerDY(float dy) { this->_dy = dy; }
+	float getPlayerDX() { return this->_dx; }
+	float getPlayerDY() { return this->_dy; }
 	void setPlayerPosition(float x, float y);
 	void resetPlayer();
 	virtual void animationDone(std::string currentAnimation);
