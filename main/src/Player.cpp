@@ -92,6 +92,18 @@ void Player::setPlayerPosition(float x, float y) {
 	this->_lookingDown = false;
 	this->fallHeight = 0;
 	this->_climbing = false;
+	this->isFlying = false;
+}
+
+void Player::resetPlayer() {
+	this->_air = 100;
+	this->iFrame;
+	this->isPoisoned = false;
+	this->isBurning = false;
+	this->isDrowning = false;
+	this->isHexed = false;
+	this->drawExhaust = false;
+	this->gotHit = false;
 }
 
 void Player::animationDone(std::string currentAnimation) {
