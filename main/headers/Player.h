@@ -49,6 +49,7 @@ public:
 	void setPlayerDX(float dx) { this->_dx = dx; }
 	void setPlayerDY(float dy) { this->_dy = dy; }
 	void setPlayerPosition(float x, float y);
+	void resetPlayer();
 	virtual void animationDone(std::string currentAnimation);
 	std::string getMap();
 	bool lookingUp();
