@@ -32,12 +32,12 @@ void Items::drawDrops(Graphics & graphics, float x, float y)
 
 
 
-void Items::addToInventory(int type) {
-}
-
-Items::~Items()
-{
-}
+//void Items::addToInventory(int type) {
+//}
+//
+//Items::~Items()
+//{
+//}
 
 /*
 *	Health Potion Item
@@ -55,6 +55,9 @@ HealthPotion::HealthPotion(Graphics & graphics, Vector2 spawnPoint) :
 	// This->addToInventory();
 	this->setupAnimations();
 	this->playAnimation("Blink");
+
+	_id = ID;
+	currencyItem = false;
 }
 
 HealthPotion::~HealthPotion()
@@ -62,8 +65,8 @@ HealthPotion::~HealthPotion()
 	this->destroySprite();
 }
 
-void HealthPotion::addToInventory() {
-}
+//void HealthPotion::addToInventory() {
+//}
 
 void HealthPotion::update(int elapsedTime, Player &player) {
 	this->playAnimation("Blink");
@@ -101,6 +104,8 @@ PermHP::PermHP(Graphics &graphics, Vector2 spawnPoint) :
 	// This->addToInventory();
 	this->setupAnimations();
 	this->playAnimation("Blink");
+	_id = ID;
+	currencyItem = false;
 }
 
 PermHP::~PermHP()
@@ -141,6 +146,8 @@ Key::Key(Graphics &graphics, Vector2 spawnPoint) :
 	graphics.loadImage("data\\maps\\NpcSym.png"); // Loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Blink");
+	_id = ID;
+	currencyItem = false;
 }
 
 Key::~Key()
@@ -186,6 +193,8 @@ GoldCoin::GoldCoin(Graphics & graphics, Vector2 spawnPoint) :
 	graphics.loadImage("data\\maps\\loot.png"); // Loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
+	_id = ID;
+	currencyItem = true;
 }
 
 GoldCoin::~GoldCoin()
@@ -234,6 +243,8 @@ RedCoin::RedCoin(Graphics & graphics, Vector2 spawnPoint) :
 	graphics.loadImage("data\\maps\\loot.png"); // Loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
+	_id = ID;
+	currencyItem = true;
 }
 
 RedCoin::~RedCoin()
@@ -282,6 +293,8 @@ BronzeCoin::BronzeCoin(Graphics & graphics, Vector2 spawnPoint) :
 	graphics.loadImage("data\\maps\\loot.png"); // Loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
+	_id = ID;
+	currencyItem = true;
 }
 
 BronzeCoin::~BronzeCoin()
@@ -326,6 +339,8 @@ SilverGem::SilverGem(Graphics & graphics, Vector2 spawnPoint) :
 	graphics.loadImage("data\\maps\\loot.png"); // Loads sprite sheet in
 	this->setupAnimations();
 	this->playAnimation("Rotate");
+	_id = ID;
+	currencyItem = false;
 }
 
 SilverGem::~SilverGem()
@@ -358,3 +373,32 @@ void SilverGem::setupAnimations()
 {
 	this->addSpecialAnimation(3, 70, 50, "Rotate", 16, 16, Vector2(0, 0));
 }
+
+
+/*
+*	JetPack
+*/
+
+JetPack::JetPack() {};
+
+JetPack::JetPack(Graphics &graphics, Vector2 spawnPoint) :
+	Items(graphics, "data\\maps\\NpcSym.png", 194, 4, 16, 16, spawnPoint, 140)
+{
+	_id = ID;
+	currencyItem = false;
+}
+
+JetPack::~JetPack()
+{
+	this->destroySprite();
+}
+
+void JetPack::draw(Graphics &graphics) {}
+
+void JetPack::drawDrops(Graphics & graphics, float x, float y) {}
+
+void JetPack::update(int elapsedTime, Player & player) {}
+
+void JetPack::animationDone(std::string currentAnimation) {}
+
+void JetPack::setupAnimations() {}

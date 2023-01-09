@@ -19,8 +19,12 @@ public:
 	void setupAnimations();
 	void update(float elapsedTime);
 	void draw(Graphics & graphics);
+	void destroyImage();
+
+	bool isRespawnAllowed() { return this->allowRespawn; }
 private:
-	Graphics _graphics; // Store graphics object
 	Sprite _defeat;
 	Sprite _endGame;
+	int respawnTimer = 5000;
+	bool allowRespawn = false;
 };

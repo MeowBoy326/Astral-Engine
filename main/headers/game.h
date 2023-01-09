@@ -1,6 +1,19 @@
 #ifndef GAME_H
 #define GAME_H
 
+
+//#define WIN32_LEAN_AND_MEAN
+//#define NOMINMAX
+//#undef APIENTRY
+//#undef RECTANGLE
+//#include <Windows.h>
+
+//#define SIZE_MOVE_TIMER_ID 1
+
+#include <SDL.h>
+#include <SDL_mixer.h>
+//#include <SDL_syswm.h>
+
 #include "Player.h"
 #include "Level.h"
 #include "HUD.h"
@@ -21,6 +34,12 @@ class Game {
 public:
 	Game();
 	~Game();
+
+	/* Multi-threading (Not necessary, used as a demonstration) */
+
+	/*void gameLoop();
+	void update(float elapsedTime, Graphics &graphics);
+	Graphics& getGraphics() { return this->_graphics; }*/
 private:
 	void gameLoop();
 	void draw(Graphics &graphics);
@@ -41,8 +60,8 @@ private:
 	Level _level;
 	HUD _hud;
 	Camera _camera;
-	Title _title;
-	GameOver _gameOver;
+	Title* _title;
+	GameOver* _gameOver;
 	TextManager _chatBox;
 	Inventory _inventory;
 	Npc _npc;

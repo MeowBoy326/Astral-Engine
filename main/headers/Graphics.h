@@ -24,6 +24,7 @@ public:
 	* Returns the image from the map regaurdless of wether or not it was just loaded
 	*/
 	SDL_Surface* loadImage(const std::string &filePath);
+	void unloadImage(const std::string &filePath);
 	// void blitzSurface will draw a texture to a certain part of the screen
 	// Source is what we are drawing to the screen, sourceRectangle is what part of the spritesheet we will draw
 	// DestinationRectangle is where on the screen we will draw it
@@ -42,10 +43,11 @@ public:
 	void clear();
 	// Return our render so we can use it elsewhere (sprite class)
 	SDL_Renderer* getRenderer() const;
+
+	void setWindowResolution(int w, int h, bool scaled);
 private:
 	SDL_Window * _window;
 	SDL_Renderer* _renderer;
-	SDL_Renderer* _rendTwo;
 
 	std::map<std::string, SDL_Surface*> _spriteSheets; // This map is going to hold in memory in our graphics object every spritesheet we loaded
 };

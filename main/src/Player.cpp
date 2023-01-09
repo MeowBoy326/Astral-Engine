@@ -13,6 +13,8 @@
 #include <sstream>
 #include <iomanip>
 
+#include "../headers/Inventory.h"
+
 namespace player_constants {
 	float WALK_SPEED = 0.2f;
 	float JUMP_DISTANCE = 0.7f;
@@ -37,7 +39,7 @@ Player::Player() {}
 
 Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	// Graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
-	AnimatedSprite(graphics, "data\\graphics\\MyChar.png", 0, 0, 16, 16, spawnPoint.x, spawnPoint.y, 100), 
+	AnimatedSprite(graphics, "data\\graphics\\Char.png", 0, 0, 16, 16, spawnPoint.x, spawnPoint.y, 100), 
 	_dx(0),
 	_dy(0),
 	_facing(RIGHT),
@@ -47,7 +49,7 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 	_maxHealth(100.0f),
 	_currentHealth(100.0f)
 {
-	graphics.loadImage("data\\graphics\\MyChar.png"); // Loads sprite sheet in
+	graphics.loadImage("data\\graphics\\Char.png"); // Loads sprite sheet in
 
 	this->setupAnimations();
 	this->playAnimation("RunRight");
@@ -64,19 +66,44 @@ Player::Player(Graphics &graphics, Vector2 spawnPoint) :
 }
 
 void Player::setupAnimations() {
-	this->addAnimation(1, 0, 0, "IdleLeft", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 0, 16, "IdleRight", 16, 16, Vector2(0, 0)); // we are 16 pixels down now on sprite sheet
-	this->addAnimation(3, 0, 0, "RunLeft", 16, 16, Vector2(0, 0)); //# of frames, x, y, name(RunLeft), height, width, offset (no so empty vector)
-	this->addAnimation(3, 0, 16, "RunRight", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 3, 0, "IdleLeftUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 3, 16, "IdleRightUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(3, 3, 0, "RunLeftUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(3, 3, 16, "RunRightUp", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 6, 0, "LookDownLeft", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 6, 16, "LookDownRight", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 7, 0, "LookBackwardsLeft", 16, 16, Vector2(0, 0));
-	this->addAnimation(1, 7, 16, "LookBackwardsRight", 16, 16, Vector2(0, 0));
-	this->addAnimation(7, 0, 72, "PlayerDead", 16, 16, Vector2(0, 0));
+	this->addAnimation(6, 0, 0, "IdleLeft", 20, 23, Vector2(-5, -10));
+	this->addAnimation(6, 0, 25, "IdleRight", 20, 23, Vector2(-5, -10)); // we are 16 pixels down now on sprite sheet
+	this->addAnimation(8, 0, 77, "RunLeft", 20, 23, Vector2(-5, -10)); //# of frames, x, y, name(RunLeft), height, width, offset (no so empty vector)
+	this->addAnimation(8, 0, 52, "RunRight", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 1, 99, "IdleLeftUp", 20, 23, Vector2(-5, -7));
+	this->addAnimation(1, 0, 99, "IdleRightUp", 20, 23, Vector2(-5, -7));
+	this->addAnimation(8, 0, 77, "RunLeftUp", 20, 23, Vector2(-5, -10));
+	this->addAnimation(8, 0, 52, "RunRightUp", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 1, 121, "LookDownLeft", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 0, 121, "LookDownRight", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 1, 121, "LookBackwardsLeft", 20, 23, Vector2(-5, -10));
+	this->addAnimation(1, 0, 121, "LookBackwardsRight", 20, 23, Vector2(-5, -10));
+	this->addAnimation(8, 0, 149, "PlayerDead", 28, 25, Vector2(-5, -7));
+}
+
+void Player::setPlayerPosition(float x, float y) {
+	this->_x = x;
+	this->_y = y;
+	this->_dy = 0;
+	this->_dx = 0;
+	this->_grounded = false;
+	this->_facing = RIGHT;
+	this->_lookingUp = false;
+	this->_lookingDown = false;
+	this->fallHeight = 0;
+	this->_climbing = false;
+	this->isFlying = false;
+}
+
+void Player::resetPlayer() {
+	this->_air = 100;
+	this->iFrame;
+	this->isPoisoned = false;
+	this->isBurning = false;
+	this->isDrowning = false;
+	this->isHexed = false;
+	this->drawExhaust = false;
+	this->gotHit = false;
 }
 
 void Player::animationDone(std::string currentAnimation) {
@@ -242,6 +269,22 @@ bool Player::checkBossCompleted(std::string name, std::string mapName, float x, 
 	return false;
 }
 
+bool Player::checkEnemyDespawn(std::string name, std::string mapName, float x, float y) {
+	/* 
+	 * 1st: Start at beginning of vector. 2nd: One past the last element. 3: Predicate function that takes a single argument
+	 * of the same type as the elements of the range and returns a bool. It will check if the elements match using a
+	 * lambda function that returns true. Otherwise, return false.
+	 */
+	auto it = std::find_if(despawnEnemy.begin(), despawnEnemy.end(), [&](const auto& t) {
+		return std::get<0>(t) == name && std::get<1>(t) == mapName && std::get<2>(t) == x && std::get<3>(t) == y;
+		});
+	return it != despawnEnemy.end();
+}
+
+void Player::addDespawnTable(std::string name, std::string mapName, float x, float y) {
+	despawnEnemy.push_back(std::make_tuple(name, mapName, x, y));
+}
+
 void Player::addCutSceneTable(std::string name)
 {
 	this->cutSceneTable.push_back(name);
@@ -273,6 +316,10 @@ bool Player::checkLockedDoorCompleted(std::string name)
 		}
 	}
 	return false;
+}
+
+void Player::addItem(int itemID, int quantity, Inventory &invent) {
+	invent.addItem(itemID, quantity, *this);
 }
 
 void Player::addEquipment(std::string name)
@@ -598,14 +645,41 @@ void Player::handleSlopeCollisions(std::vector<Slope> &others) {
 		int newY = (others.at(i).getSlope() * centerX) + b - 8; //8 is temporary to fix a problem
 
 		// Reposition the player to the correct "y"
-		if (this->_grounded) {
+		if (this->_y + this->_boundingBox.getHeight() > newY) {
 			this->_y = newY - this->_boundingBox.getHeight();
 			this->_grounded = true;
 		}
+		// Previous way did not account for players jumping off a slope and back onto one.
+		/*if (this->_grounded) {
+			this->_y = newY - this->_boundingBox.getHeight();
+			this->_grounded = true;
+		}*/
+
 		this->_lastCollidedSlope = others.at(i);
 		this->_currentSurface = SLOPE;
 	}
 }
+
+//void Player::handlePlayerSlopeCollision(Slope& slope) {
+//	// Calculate where on the slope the player's bottom center is touching
+//		// And use y=mx+b to figure out the y position to place him at
+//		// First calculate "b" (slope) intercept) using one of the points (b = y - mx)
+//	int b = (slope.getP1().y - (slope.getSlope() * fabs(slope.getP1().x)));
+//
+//	// Now get the players center x
+//	int centerX = this->_boundingBox.getCenterX();
+//
+//	// Now pass that X into the equation y = mx + b (using our newly found b and x) to get the new y position
+//	int newY = (slope.getSlope() * centerX) + b - 8; //8 is temporary to fix a problem
+//
+//	// Reposition the player to the correct "y"
+//	if (this->_grounded) {
+//		this->_y = newY - this->_boundingBox.getHeight();
+//		this->_grounded = true;
+//	}
+//	this->_lastCollidedSlope = slope;
+//	this->_currentSurface = SLOPE;
+//}
 
 void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player) {
 	// Check if the player is grounded and holding the down arrow
@@ -667,7 +741,7 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 				this->_timeForEventMsg = 0;
 				return;
 			}
-			if (!this->checkLockedDoorCompleted(others.at(i).getDestination()) && !invent.hasKeyStored()) {
+			if (!this->checkLockedDoorCompleted(others.at(i).getDestination())  && !invent.hasKeyStored(others.at(i).getDoorKeyID()) ) {
 				this->eventMessage = "Key required";
 				this->showEventMsg = true;
 				this->_timeForEventMsg = 0;
@@ -808,16 +882,32 @@ std::string Player::getNpcName(std::vector<Npc*> &others, Graphics &graphics) {
 	return name;
 }
 
-void Player::drawHPNumbers(Graphics & graphics)
-{
-	double percent = ((double)this->_currentHealth / (double)this->_maxHealth) * 100;
-	this->_txt->drawPercentNumber(graphics, this->_x - 245, this->_y - 215, percent);
+const int Player::getNpcId(std::vector<Npc*>& others, Graphics& graphics) {
+	int npcID;
+	for (int i = 0; i < others.size(); i++) {
+		npcID = others.at(i)->getNpcId();
+	}
+	return npcID;
 }
 
-void Player::drawExpNumbers(Graphics & graphics)
+void Player::drawHPNumbers(Graphics & graphics, int x, int y)
+{
+	double percent = ((double)this->_currentHealth / (double)this->_maxHealth) * 100;
+	this->_txt->drawPercentNumber(graphics, x, y, percent);
+}
+
+void Player::drawHPPotAvailable(Graphics& graphics, int x, int y) {
+	this->_txt->drawItemQuantity(graphics, 0, 0, std::to_string(this->_hpPotAmount), x, y);
+}
+
+void Player::drawHPPotStrength(Graphics& graphics, int x, int y) {
+	this->_txt->drawItemQuantity(graphics, 0, 0, "+" + std::to_string(this->_hpPotStrength), x, y, {0, 210, 0, 0});
+}
+
+void Player::drawExpNumbers(Graphics & graphics, int x, int y)
 {
 	double percent = ((double)this->getCurrentExp() / (double)this->getRequiredExp()) * 100;
-	this->_txt->drawPercentNumber(graphics, this->_x - 245, this->_y - 200, percent);
+	this->_txt->drawPercentNumber(graphics, x, y, percent);
 }
 
 void Player::setIFrame(bool condition) {
@@ -1051,6 +1141,14 @@ void Player::update(float elapsedTime) {
 	    // The DY by gravity because we are not at the cap.
 			this->_dy += player_constants::GRAVITY * elapsedTime;
 		}
+
+		/*if (!_grounded || _currentSurface == SLOPE)
+		{
+			if (this->_dy <= player_constants::GRAVITY_CAP)
+			{
+				this->_dy += player_constants::GRAVITY * elapsedTime;
+			}
+		}*/
 		/*if (!isFlying && !_climbing && (!_grounded || _currentSurface == SLOPE)) {
 			if (this->_dy <= player_constants::GRAVITY_CAP) {
 				this->_dy += player_constants::GRAVITY * elapsedTime;
@@ -1250,7 +1348,7 @@ void Player::update(float elapsedTime) {
 }
 
 void Player::draw(Graphics &graphics) {
-	AnimatedSprite::draw(graphics, this->_x, this->_y);
+	AnimatedSprite::drawPlayer(graphics, this->_x, this->_y);
 	this->drawJetPack(graphics);
 	this->drawGun(graphics);
 	if (this->isPoisoned)

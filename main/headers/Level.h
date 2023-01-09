@@ -11,6 +11,7 @@
 #include "Slope.h"
 #include "AnimatedTile.h"
 #include "Door.h"
+#include "Parallax.h"
 
 class TextManager;
 class Graphics; // Foward decalre
@@ -58,11 +59,13 @@ public:
 	std::vector<Rectangle> checkSaveCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkArenaCollisions(const Rectangle &other);
 	std::vector<Slope> checkSlopeCollisions(const Rectangle &other);
+	bool checkCollidingSlopes(Player &player);
 	std::vector<Door> checkDoorCollisions(const Rectangle &other);
 	std::vector<Door> checkLockedDoorCollisions(const Rectangle &other);
 	std::vector<Enemy*> checkEnemyCollisions(const Rectangle &other);
 	std::vector<Enemy*> checkBulletCollisions(const Rectangle & other);
 	std::vector<Npc*> checkNpcCollisions(const Rectangle & other, Graphics &graphics);
+
 	void checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
 	void checkItemFloorCollisions(Items* obj);
 	void checkProjectileCollisions(Player &player);
@@ -84,6 +87,8 @@ public:
 	bool isArenaActive() const { return this->arenaActive; }
 
 private:
+	//Inventory* inv;
+
 	bool enemyDead = false;
 	bool arenaActive = false;
 
@@ -105,6 +110,7 @@ private:
 
 	SDL_Texture* _backgroundTexture; // BkBlue.png
 
+	std::vector<std::pair<int, Parallax*>> _parallaxList;
 	std::vector<Tile> _tileList;
 	std::vector<Tile> _breakTileList;
 	std::vector<Tileset> _tilesets;
@@ -127,7 +133,7 @@ private:
 	std::vector<Effects*> _effects;
 	std::vector<Npc*> _npcs;
 	std::vector<Items*> _items;
-	std::vector<int> itemType;
+	//std::vector<int> itemType;
 	std::vector<std::tuple<std::string, std::string, int>> levelDropTable; // Mob name, item name, drop rate %
 	std::vector<std::tuple<float, float, float, int>> dmgVector;
 

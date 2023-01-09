@@ -21,6 +21,26 @@ public:
 			return this->_slope;
 		}
 
+		//bool checkSlopeCollision(const int posX, const int posY, const Slope &slope)
+		//{
+		//	// Calculate the slope's equation (y = mx + b)
+		//	float m = slope.getSlope();
+		//	int b = slope.getP1().y - (m * slope.getP1().x);
+
+		//	// Calculate the y-coordinate of the slope at the player's x-coordinate
+		//	float slopeY = m * posX + b;
+
+		//	float height = 16;
+
+		//	// Check if the player's bottom is below the slope
+		//	if (posY + height > slopeY) {
+		//		return true;
+		//	}
+		//	return false;
+		//}
+
+		
+
 		const bool collidesWith(const Rectangle &other) {
 			// Rectangle we are passing in is the player or monster that is running on a slope
 			if ((other.getRight() >= this->_p2.x &&

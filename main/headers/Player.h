@@ -45,8 +45,13 @@ public:
 	void lookDown();
 	void stopLookingDown();
 	void startDeath();
+	void resetDeath() { this->deathPlayed = false; }
 	void setPlayerDX(float dx) { this->_dx = dx; }
 	void setPlayerDY(float dy) { this->_dy = dy; }
+	float getPlayerDX() { return this->_dx; }
+	float getPlayerDY() { return this->_dy; }
+	void setPlayerPosition(float x, float y);
+	void resetPlayer();
 	virtual void animationDone(std::string currentAnimation);
 	std::string getMap();
 	bool lookingUp();
@@ -71,6 +76,7 @@ public:
 	void handleDeadzoneCollisions(std::vector<Rectangle> &others);
 	bool handleLadderCollisions(std::vector<Rectangle> &others);
 	void handleSlopeCollisions(std::vector<Slope> &others);
+	void handlePlayerSlopeCollision(Slope &slope);
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
@@ -79,10 +85,11 @@ public:
 	void nullifyHex(int hexID);
 	const int getHex() const { return this->_hexID; }
 	std::string getNpcName(std::vector<Npc*>& others, Graphics & graphics);
+	const int getNpcId(std::vector<Npc*> &others, Graphics &graphics);
 	const float getX() const;
 	const float getY() const; // Getting variables not changes const make sure it doesnt
 	const float getPreviousY() const;
-	std::string enemyName;
+	std::string enemyName = "";
 	void addKillTable(std::string name);
 	void addBossTable(std::string name, std::string mapName, float x, float y);
 	void setBossTable(std::vector<std::tuple<std::string, std::string, float, float, bool>> table) { this->bossTable = table; }
@@ -93,6 +100,9 @@ public:
 	inline void setKillTable(std::vector<std::pair<std::string, int>> table) { this->killTable = table; }
 	bool checkKillQuestComplete(std::string name, int count);
 	bool checkBossCompleted(std::string name, std::string mapName, float x, float y);
+	bool checkEnemyDespawn(std::string name, std::string mapName, float x, float y);
+	void addDespawnTable(std::string name, std::string mapName, float x, float y);
+	void clearDespawnTable() { this->despawnEnemy.clear(); }
 	inline const std::vector<std::string> getSceneTable() const { return this->cutSceneTable; }
 	inline void setCutsceneTable(std::vector<std::string> table) { this->cutSceneTable = table; }
 	void addCutSceneTable(std::string name);
@@ -101,6 +111,7 @@ public:
 	inline void setLockedDoorTable(std::vector<std::string> table) { this->lockedDoorTable = table; }
 	void addLockedDoorTable(std::string name);
 	bool checkLockedDoorCompleted(std::string name);
+	void addItem(int itemID, int quantity, Inventory &invent);
 	inline const std::vector<std::string> getEquipmentTable() const { return this->equipmentTable; }
 	inline void setEquipmentTable(std::vector<std::string> table) { this->equipmentTable = table; }
 	void addEquipment(std::string name);
@@ -116,7 +127,9 @@ public:
 	
 
 	// Health handling
-	void drawHPNumbers(Graphics &graphics);
+	void drawHPNumbers(Graphics &graphics, int x, int y);
+	void drawHPPotAvailable(Graphics &graphics, int x, int y);
+	void drawHPPotStrength(Graphics &graphics, int x, int y);
 	void setIFrame(bool condition);
 	void gainHealth(float amount);
 	void gainHPFromStatus(float amount);
@@ -130,9 +143,16 @@ public:
 	const inline float getCurrentHealth() const { return this->_currentHealth; }
 	inline void setMaxHealth(float hp) { this->_maxHealth = hp; }
 	inline void setCurrentHealth(float hp) { this->_currentHealth = hp; }
+	inline void subtractHpPot() { this->_hpPotAmount -= 1; }
+	inline void refillHpPot() { this->_hpPotAmount = this->_hpPotCapacity; }
+	inline bool hasHpPot() const { if (this->_hpPotAmount > 0) { return true; } return false; }
+	inline int getHpPotCapacity() const { return this->_hpPotCapacity; }
+	inline void setHpPotCapacity(int capacity) { this->_hpPotCapacity = capacity; }
+	inline int getHpPotStrength() const { return this->_hpPotStrength; }
+	inline void setHpPotStrength(int strength) { this->_hpPotStrength = strength; }
 
 	// Exp, Level, & currency handling
-	void drawExpNumbers(Graphics &graphics);
+	void drawExpNumbers(Graphics &graphics, int x, int y);
 	void gainExp(float exp);
 	void gainExpFromEnemy(int enemyLevel, float exp);
 	float getCurrentExp();
@@ -197,6 +217,9 @@ private:
 	bool deathPlayed = false;
 	bool showEventMsg = false;
 
+	int _hpPotAmount = 2;
+	int _hpPotCapacity = 2;
+	int _hpPotStrength = 0;
 	int _requiredExp;
 	int _statPoints = 1;
 	int _playerLevel = 0;
@@ -228,6 +251,8 @@ private:
 	std::vector<std::pair<std::string, int>> killTable;
 	// Name, mapName, initial x & y, spawn
 	std::vector<std::tuple<std::string, std::string, float, float, bool>> bossTable;
+	// Name, mapName, initial x & y - Despawn enemy until the game is Saved
+	std::vector<std::tuple<std::string, std::string, float, float>> despawnEnemy;
 	// map name, level object (stores the state of the level I.E: item was taken already)
 	std::map<std::string, Level> mapStorage;
 	std::vector<std::string> cutSceneTable;
@@ -252,12 +277,14 @@ protected:
 
 	std::map<std::string, std::string> mapHash = {
 		{"cave depths",				"8904AD542CFC9BB400F14A090111AD635CC0E26CCE6793DD17B56120F933C431"},
-		{"cave",					"28CFE1D4EA4C11D0C5022E16120D19FDF83FEB89ADF86C05A0256F5D3E42D345"},
-		{"caveFork",				"D47CDCDE93D13DE1C0BF8C01F1B484EA8B00A221DF5E46F0437ACD588E370C2F"},
-		{"caverns",					"26AD6909D265A070A9C488D25CFD9BB690C6E616251BCFC28E35F1BDAF7152B5"},
-		{"Collapsed Cave",			"E47D0D2F016CAB5DB07F8A5BF437A32CAA41D8B095375FD32EAB9871797393E0"},
+		{"cave",					"E081B6F917DFF9FF0F8A7FF0AC553906007790068F86571FD70D8505917FE84C"},
+		{"caveFork",				"F3C053043D66A537F7B4F0749D5D47E48C1AA248B54159FF7C71BD3B0ECC2AB8"},
+		{"caverns",					"E4D4EF86D92722162F939C4B09374DDF97DA58060DB90126904D85863885E9E2"},
+		{"Collapsed Cave",			"839543BA70275648F126A47B8839964C3793257B3966CB9C9ED4C786869F124D"},
 		{"Profaned Capital",		"AC75BD79B413F458D9F8E1BCD6535AC6216620FFFEDDA86FCBA83A29B1A78F76"},
-		{"Up To The Forest",		"C991610C4B5A585142456B012AFC435E090B745DF9A01936326651DC072D5436"}
+		{"Up To The Forest",		"C991610C4B5A585142456B012AFC435E090B745DF9A01936326651DC072D5436"},
+		{"New York",				"B5E27439DA36A2AA2C90366B6F074202A592A1D4F58BD7607E020DDB1F9F0906"},
+		{"The Mines",				"6D377F741AF307288022D864B1D3F53E873F60974C0E39554AF9FCD703A78B1D"}
 	};
 };
 

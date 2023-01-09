@@ -12,6 +12,8 @@
 #include "../headers/Graphics.h"
 #include "../headers/Input.h"
 
+#include "../headers/Global.h"
+
 #include <algorithm>﻿
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -19,6 +21,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <sstream>
 
 using namespace tinyxml2;
 using namespace CryptoPP;
@@ -27,11 +30,18 @@ namespace {
 	const int FPS = 50;
 	// remove 5 *
 	const int MAX_FRAME_TIME = 5* 1000 / FPS; // Max amount of time a frame is allowed to last
-	int soundVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
+	int bgmVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
+	int sfxVolume = 100;
+	int pauseBlockTimer = 0;
 	int selection = 1;
 	int npcSelection = 1;
 	int questSelection = 1;
 	int saveSelection = 1;
+	int inventSelectionRow = 1;
+	int inventSelectionColumn = 1;
+	int inventSelectedItem = 1;
+	int inventSelectionX;
+	int inventSelectionY;
 	int lineNum = 0;
 	int currentLine = 0;
 	int sceneTimer = 0;
@@ -39,6 +49,7 @@ namespace {
 	int sceneType = 0;
 	int sceneLines = 0;
 	int sceneLineCounter = 1;
+	int npcID = 0;
 	char sceneLineChar = 'a';
 
 	bool title = true;
@@ -57,9 +68,13 @@ namespace {
 	bool isClimbing = false;
 	bool jetPack = false;
 	bool resetGame = false;
+	bool pauseGame = false;
 	bool showPlayerOutline = false;
 	bool showEnemyOutline = false;
 	bool showCollisionOutline = false;
+	bool windowIsBeingDragged = false;
+	bool findWindowElapsedTime = false;
+	bool hasSelectedQuest = false;
 
 	float sceneX = 0;
 	float sceneY = 0;
@@ -80,7 +95,12 @@ namespace {
 	Mix_Chunk *gameOver = NULL;
 	bool walkSound = false;
 	bool deathSound = false;
-	bool jumpSound = false;
+}
+
+namespace globals {
+	int SCREEN_WIDTH = 640;
+	int SCREEN_HEIGHT = 480;
+	bool SCALED_MODE = false;
 }
 
 Game::Game() { // Constructor
@@ -99,6 +119,18 @@ Game::Game() { // Constructor
 Game::~Game() {}
 
 void Game::gameLoop() {
+	/* Multi-threading (Not necessary, used as a demonstration) */
+
+	//SDL_Init(SDL_INIT_EVERYTHING);
+	//TTF_Init();
+	//// Initialize SDL_mixer
+	//if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	//{
+	//	printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+	//}
+	//// TTF_Font *font = TTF_OpenFont("data\\fonts\\Arcadia.ttf", 24);
+	//this->cipher = AESCipher();
+
 	Graphics graphics;
 	Input input;
 	SDL_Event event;
@@ -118,17 +150,21 @@ void Game::gameLoop() {
 	gameOver = Mix_LoadWAV("data\\sound\\gameOver.ogg");
 	Mix_PlayChannel(321, seWalk, -1);
 	Mix_Pause(321);
-	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 32);
+	Mix_VolumeChunk(seWalk, MIX_MAX_VOLUME + 22);
 
-	this->_title = Title(graphics, input, event);
-	this->_gameOver = GameOver(graphics);
-	this->_camera = Camera();
+	this->_title = new Title(graphics, input, event);
 	this->_chatBox = TextManager(graphics, this->_player);
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
 
 	this->setSettings();
+	if (globals::SCREEN_WIDTH != 640 && globals::SCREEN_HEIGHT != 480)
+		globals::SCALED_MODE = true;
+	else
+		globals::SCALED_MODE = false;
+	graphics.setWindowResolution(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, globals::SCALED_MODE);
 
+	this->_camera = Camera();
 	if (gMusic == NULL)
 	{
 		printf("Failed to load specified music! SDL_mixer Error: %s\n", Mix_GetError());
@@ -136,7 +172,7 @@ void Game::gameLoop() {
 	else
 	{
 		Mix_PlayMusic(gMusic, -1);
-		Mix_VolumeMusic(soundVolume);
+		Mix_VolumeMusic(bgmVolume);
 	}
 		
 
@@ -148,12 +184,17 @@ void Game::gameLoop() {
 		input.beginNewFrame();
 // Title screen Loop
 		if (title == true) {
-			title = _title.Start(graphics, input, event);
-			if (_title.getMenuChoice() == 0) {
+			if (this->_title == nullptr) {
+				/* Only create the Title object when needed to reduce memory. */
+				this->_title = new Title(graphics, input, event);
+			}
+			title = _title->Start(graphics, input, event);
+			if (_title->getMenuChoice() == 0) {
 				this->_level = Level("cave", graphics, this->_inventory); // Initialize level: Map name , spawn point, graphics
 				this->_level.generateItems(graphics);
 				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
+				this->_inventory.addItem(0, 1);
 				this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
 				this->_level.generateEffects(graphics, this->_player);
 				if (!cipher.verifyHash("cave", this->_player)) {
@@ -162,11 +203,22 @@ void Game::gameLoop() {
 				this->saveGame(graphics);
 			}
 			else {
+				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				this->loadGame(graphics);
 			}
+			/* Free memory to prevent any leaks */
+			graphics.unloadImage("data\\graphics\\dark_clouds.png");
+			delete this->_title;
+			this->_title = nullptr;
 		}
 // Death Loop
 		if (title == false && GAMEOVER == true) {
+
+			if (this->_gameOver == nullptr) {
+				/* Only create the Game Over object when needed to reduce memory. */
+				this->_gameOver = new GameOver(graphics);
+			}
+
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
 
@@ -186,14 +238,6 @@ void Game::gameLoop() {
 					return; // When the game ends or user exits
 				}
 			}
-			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true) {
-				Mix_ResumeMusic();
-				Mix_RewindMusic();
-				this->loadGame(graphics);
-				deathSound = false;
-				GAMEOVER = false;
-				resetGame = false;
-			}
 
 			this->_graphics = graphics; // Updated graphics
 			// Take standard min : elapsed time ms and max frame time
@@ -203,6 +247,20 @@ void Game::gameLoop() {
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			
 			this->drawGameOver(graphics);
+			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true 
+				&& this->_gameOver->isRespawnAllowed()) {
+				Mix_ResumeMusic();
+				Mix_RewindMusic();
+				this->loadGame(graphics);
+				this->_player.resetDeath();
+				deathSound = false;
+				GAMEOVER = false;
+				resetGame = false;
+				/* Handle any memory leaks */
+				graphics.unloadImage("data\\graphics\\endGame.png");
+				delete this->_gameOver;
+				this->_gameOver = nullptr;
+			}
 		}
 // Cutscene Loop
 		if (title == false && GAMEOVER == false && activeCutscene == true) {
@@ -259,431 +317,576 @@ void Game::gameLoop() {
 				else if (event.type == SDL_QUIT) {
 					return; // When the game ends or user exits
 				}
-			}
-
-			if (activeSave && input.wasKeyPressed(SDL_SCANCODE_A) && this->_player.getCurrentHealth() > 0) {
-				activeSaveMenu = true;
-			}
-
-			if (activeSaveMenu) {
-				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-					if (saveSelection == 1) {
-						this->saveGame(graphics);
-						this->_player.setEventMessage("SAVED SUCESSFULLY.");
+				else if (event.type == SDL_WINDOWEVENT) {
+					if (event.window.event == SDL_WINDOWEVENT_MOVED) {
+						windowIsBeingDragged = true;
 					}
+					else if (event.window.event == SDL_WINDOWEVENT_EXPOSED) {
+						windowIsBeingDragged = false;
+						// We don't want to update LAST_UPDATE_TIME just yet. So, set this to true and
+						// once we are right before we calculated elapsed time, update LAST_UPDATE_TIME
+						// so that it is up to date with the SDL library. Then set this bool to false.
+						findWindowElapsedTime = true;
+					}
+					if (event.window.event == SDL_WINDOWEVENT_MINIMIZED || event.window.event == SDL_WINDOWEVENT_MAXIMIZED) {
+						windowIsBeingDragged = true;
+					}
+					else if (event.window.event == SDL_WINDOWEVENT_RESTORED || event.window.event == SDL_WINDOWEVENT_EXPOSED) {
+						windowIsBeingDragged = false;
+						// We don't want to update LAST_UPDATE_TIME just yet. So, set this to true and
+						// once we are right before we calculated elapsed time, update LAST_UPDATE_TIME
+						// so that it is up to date with the SDL library. Then set this bool to false.
+						findWindowElapsedTime = true;
+					}
+				}
+			}
+
+			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) && this->_player.getCurrentHealth() > 0 
+				&& activeCutscene == false && activeSaveMenu == false && activeTalk == false 
+				&& activeInventory == false && activeStatMenu == false) {
+				if (pauseBlockTimer == 0) {
+					pauseGame = !pauseGame;
+					pauseBlockTimer++;
+				}
+				else {
+					pauseGame = false;
+				}
+				std::cout << "Game pause state = " << pauseGame << std::endl;
+			} 
+
+			if (!pauseGame) {
+
+				if (activeSave && input.wasKeyPressed(SDL_SCANCODE_A) && this->_player.getCurrentHealth() > 0
+					&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
+					activeSaveMenu = true;
+				}
+
+				if (activeSaveMenu) {
+					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+						if (saveSelection == 1) {
+							this->saveGame(graphics);
+							this->_player.setEventMessage("SAVED SUCESSFULLY.");
+						}
+						activeSaveMenu = false;
+						activeSave = false;
+					}
+					if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
+						if (saveSelection == 1)
+							this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+						else if (saveSelection != 1) {
+							saveSelection--;
+							this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
+						if (saveSelection == 2)
+							this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+						else if (saveSelection != 2) {
+							saveSelection++;
+							this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
+						}
+					}
+				}
+
+				// Bullet
+				if (input.wasKeyPressed(SDL_SCANCODE_X) && input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)
+					&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
+					std::cout << "Bullet right up diag test..." << std::endl;
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
+						this->_level.generateProjectile(graphics, this->_player);
+						Mix_PlayChannel(-1, sBullet, 0);
+					}
+				}
+
+				else if (input.wasKeyPressed(SDL_SCANCODE_X) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false
+						&& !activeSaveMenu) {
+						/*if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)) {
+							this->_level.generateProjectile(graphics, this->_player);
+							Mix_PlayChannel(-1, sBullet, 0);
+						}*/
+						/*else if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_LEFT)) {
+							this->_level.generateProjectile(graphics, this->_player);
+							Mix_PlayChannel(-1, sBullet, 0);
+						}*/
+						this->_level.generateProjectile(graphics, this->_player);
+						Mix_PlayChannel(-1, sBullet, 0);
+					}
+				}
+
+				if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
+					activeInventory = false;
+					inventSelectedItem = 1;
+					inventSelectionColumn = 1;
+					inventSelectionRow = 1;
+					this->_inventory.resetCurrentItem();
+					activeSave = false;
 					activeSaveMenu = false;
-					activeSave = false;	
-				}
-				if (input.wasKeyPressed(SDL_SCANCODE_LEFT) == true) {
-					if (saveSelection == 1)
-						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-					else if (saveSelection != 1) {
-						saveSelection--;
-						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-					}
-				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT) == true) {
-					if (saveSelection == 2)
-						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-					else if (saveSelection != 2) {
-						saveSelection++;
-						this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-					}
-				}
-			}
-
-			// Bullet
-			if (input.wasKeyPressed(SDL_SCANCODE_X) && input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)
-				&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
-				std::cout << "Bullet right up diag test..." << std::endl;
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
-					this->_level.generateProjectile(graphics, this->_player);
-					Mix_PlayChannel(-1, sBullet, 0);
-				}
-			}
-
-			else if (input.wasKeyPressed(SDL_SCANCODE_X) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false
-					&& !activeSaveMenu) {
-					/*if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)) {
-						this->_level.generateProjectile(graphics, this->_player);
-						Mix_PlayChannel(-1, sBullet, 0);
-					}*/
-					/*else if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_LEFT)) {
-						this->_level.generateProjectile(graphics, this->_player);
-						Mix_PlayChannel(-1, sBullet, 0);
-					}*/
-					this->_level.generateProjectile(graphics, this->_player);
-					Mix_PlayChannel(-1, sBullet, 0);
-				}
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
-				activeInventory = false;
-				activeSave = false;
-				activeSaveMenu = false;
-				activeTalk = false;
-				this->_chatBox.setTextStatus(false);
-				this->_npc.setNpcTalk(false);
-				this->_npc.setQuestMenuState(false);
-				this->_npc.setQuestState(false);
-				this->_npc.setQuestDone(false);
-				this->_npc.setNoQuest(false);
-				this->_npc.resetScripts();
-				npcSelection = 1;
-				questSelection = 1;
-				activeStatMenu = false;
-			}
-			// If (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0
-			//	&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
-
-			//	// This->saveGame(graphics);
-			//	// Std::cout << "Quitting Game..." << std::endl;
-			//	// Return; // Quit game if ESC was pressed
-			//}
-			else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.moveLeft();
-					if (this->_player.isGrounded() && walkSound == false) {
-						// Mix_PlayChannel(321, seWalk, -1);
-						Mix_Resume(321);
-						walkSound = true;
-					}
-				}
-				else if (activeTalk == true) {
-					std::cout << "impaired action" << std::endl;
-				}
-			 
-			}
-			else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.moveRight();
-					if (this->_player.isGrounded() && walkSound == false) {
-						Mix_Resume(321);
-						walkSound = true;
-					}
-						
-				}
-				else if (activeTalk == true) {
-					std::cout << "impaired action" << std::endl;
-				}
-			
-			}
-
-			if (input.wasKeyReleased(SDL_SCANCODE_LEFT) == true || input.wasKeyReleased(SDL_SCANCODE_RIGHT) == true) {
-				Mix_Pause(321);
-				walkSound = false;
-			}
-
-			/*if (isClimbing && input.wasKeyPressed(SDL_SCANCODE_UP)) {
-				this->_player.setClimbing(true);
-			}*/
-
-			if (input.isKeyHeld(SDL_SCANCODE_UP) == true &&
-				(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
-					&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
-					&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN)) 
-				&& this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.lookUp();
-					if (isClimbing) {
-						this->_player.setClimbing(true);
-						this->_player.moveUp();
-					}
-				}
-			}
-			if (input.isKeyHeld(SDL_SCANCODE_UP) == true /*&&
-				(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
-					&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
-					&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN))*/
-				&& this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.lookUp();
-				}
-			}
-			else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true && 
-				(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
-				&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
-				&& !input.isKeyHeld(SDL_SCANCODE_UP) && !input.wasKeyPressed(SDL_SCANCODE_UP))
-				&& this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.lookDown();
-					if (isClimbing) {
-						this->_player.setClimbing(true);
-						this->_player.moveDown();
-					}
-				}
-			}
-			if (input.wasKeyReleased(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
-					this->_player.stopLookingUp();
-			}
-			if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
-					this->_player.stopLookingDown();
-			}
-
-			if (input.isKeyHeld(SDL_SCANCODE_SPACE) && jetPack && this->_player.getCurrentHealth() > 0) {
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.useJetPack();
-				}
-			}
-
-			else if (!jetPack && input.isKeyHeld(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0){
-				if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.jump();
-					if (!jumpSound)
-						Mix_PlayChannel(-1, seJump, 0);
-					jumpSound = true;
-				}
-				else if (activeTalk == true) {
-					std::cout << "impaired action" << std::endl;
-				}
-			}
-			if (input.wasKeyReleased(SDL_SCANCODE_SPACE) && this->_player.getCurrentHealth() > 0) {
-				if (this->_player.canShortJump() && activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
-					this->_player.setPlayerDY(0);
-					this->_player.setShortJump(false);
-					jumpSound = false;
-				}
-			}
-			if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT) && this->_player.getCurrentHealth() > 0) {
-				// If player isnt moving left or right(at all) do stopMoving function
-				this->_player.stopMoving();
-			}
-			
-			if (input.wasKeyPressed(SDL_SCANCODE_A) == true && activeInventory == false && activeStatMenu == false 
-				&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
-				if (activeTalk == false && npcName != ""){
-					activeTalk = true;
-					this->_chatBox.setTextStatus(true);
-					this->_chatBox.drawChatBox(graphics, this->_player);
-					this->_npc.setNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
-					this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
-					this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					this->_npc.loadQuests(npcName);
-				}
-				else if (activeTalk == true) {
 					activeTalk = false;
 					this->_chatBox.setTextStatus(false);
-					this->_npc.resetScripts();
-				}
-			}
-
-			if (activeTalk) {
-				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && this->_player.getCurrentHealth() > 0) {
-					// Chat
-					if (this->_npc.getQuestState() == true) {
-						activeTalk = false;
-						this->_chatBox.setTextStatus(false);
-						this->_npc.setNpcTalk(false);
-						this->_npc.setQuestMenuState(false);
-						this->_npc.setQuestState(false);
-						this->_npc.setQuestDone(false);
-						this->_npc.setNoQuest(false);
-						this->_npc.resetScripts();
-						npcSelection = 1;
-						questSelection = 1;
-					}
-					else if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
-						this->_npc.setNpcTalk(true);
-						this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
-					}
-					else if (npcSelection == 1 && this->_npc.getNpcTalk()) {
-						this->_npc.playNext(npcName, graphics, this->_player.getX(), this->_player.getY(), this->_player);
-						if (this->_npc.getChatStatus()) {
-							this->_npc.setNpcTalk(false);
-							activeTalk = false;
-							this->_chatBox.setTextStatus(false);
-							this->_npc.resetScripts();
-						}
-					}
-					// Quests
-					else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
-						this->_npc.setNpcTalk(true);
-						this->_npc.setQuestMenuState(true);
-						this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
-					}
-					else if (npcSelection == 2 && this->_npc.getNpcTalk() && this->_npc.checkNoQuests() == false) {
-						if (questSelection == 1) {
-							this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), 
-								this->_player, questSelection - 1);
-						}
-						else if (questSelection == 2) {
-							this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), 
-								this->_player, questSelection - 1);
-						}
-					}
-					else if (this->_npc.checkNoQuests()) {
-						activeTalk = false;
-						this->_chatBox.setTextStatus(false);
-						this->_npc.setNpcTalk(false);
-						this->_npc.setQuestMenuState(false);
-						this->_npc.setQuestState(false);
-						this->_npc.setQuestDone(false);
-						this->_npc.setNoQuest(false);
-						this->_npc.resetScripts();
-						npcSelection = 1;
-						questSelection = 1;
-					}
-					
-				}
-
-				if (input.wasKeyPressed(SDL_SCANCODE_DELETE) == true) {
 					this->_npc.setNpcTalk(false);
-					this->_chatBox.setTextStatus(false);
-					activeTalk = false;
 					this->_npc.setQuestMenuState(false);
 					this->_npc.resetScripts();
-				}
-
-				if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getNpcTalk() == false 
-					&& this->_npc.getQuestMenuState() == false) {
-					if (npcSelection == 1)
-						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					else if (npcSelection != 1) {
-						npcSelection--;
-						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					}
-				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getNpcTalk() == false 
-					&& this->_npc.getQuestMenuState() == false) {
-					if (npcSelection == 2)
-						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					else if (npcSelection != 2) {
-						npcSelection++;
-						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					}
-				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getQuestMenuState() == true) {
-					if (questSelection == 1)
-						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					else {
-						questSelection--;
-						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					}
-				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getQuestMenuState() == true) {
-					if (questSelection == 2)
-						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					else {
-						questSelection++;
-						this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
-					}
-				}
-			}
-
-			if (input.wasKeyPressed(SDL_SCANCODE_D) == true && this->_player.getCurrentHealth() > 0) {
-				if (!activeStatMenu) {
-					selection = 1;
-					activeStatMenu = true;
-					this->_player.drawStatMenu(graphics, this->_player, selection);
-				}
-				else
+					npcSelection = 1;
+					questSelection = 1;
 					activeStatMenu = false;
-			}
-
-			if (activeStatMenu) {
-				if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
-					this->_player.statChoice(selection);
 				}
-				if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
-					if (selection == 1)
-						this->_player.drawStatMenu(graphics, this->_player, selection);
-					else if (selection != 1) {
-						selection--;
-						this->_player.drawStatMenu(graphics, this->_player, selection);
+				// If (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0
+				//	&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
+
+				//	// This->saveGame(graphics);
+				//	// Std::cout << "Quitting Game..." << std::endl;
+				//	// Return; // Quit game if ESC was pressed
+				//}
+				else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.moveLeft();
+						if (this->_player.isGrounded() && walkSound == false) {
+							// Mix_PlayChannel(321, seWalk, -1);
+							Mix_Resume(321);
+							walkSound = true;
+						}
+					}
+					else if (activeTalk == true) {
+						std::cout << "impaired action" << std::endl;
+					}
+
+				}
+				else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.moveRight();
+						if (this->_player.isGrounded() && walkSound == false) {
+							Mix_Resume(321);
+							walkSound = true;
+						}
+
+					}
+					else if (activeTalk == true) {
+						std::cout << "impaired action" << std::endl;
+					}
+
+				}
+
+				if (input.wasKeyReleased(SDL_SCANCODE_LEFT) == true || input.wasKeyReleased(SDL_SCANCODE_RIGHT) == true) {
+					Mix_Pause(321);
+					walkSound = false;
+				}
+
+				/*if (isClimbing && input.wasKeyPressed(SDL_SCANCODE_UP)) {
+					this->_player.setClimbing(true);
+				}*/
+
+				if (input.isKeyHeld(SDL_SCANCODE_UP) == true &&
+					(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
+						&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
+						&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN))
+					&& this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.lookUp();
+						if (isClimbing) {
+							this->_player.setClimbing(true);
+							this->_player.moveUp();
+						}
 					}
 				}
-				else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
-					if (selection == 3)
-						this->_player.drawStatMenu(graphics, this->_player, selection);
-					else if (selection != 3) {
-						selection++;
-						this->_player.drawStatMenu(graphics, this->_player, selection);
+				if (input.isKeyHeld(SDL_SCANCODE_UP) == true /*&&
+					(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
+						&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
+						&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN))*/
+					&& this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.lookUp();
 					}
 				}
-			}
-
-			if (input.wasKeyPressed(SDL_SCANCODE_S) == true && activeStatMenu == false && activeTalk == false 
-				&& this->_player.getCurrentHealth() > 0) {
-				if (activeInventory == false) {
-					activeInventory = true;
-					this->_inventory.draw(graphics, this->_player);
+				else if (input.isKeyHeld(SDL_SCANCODE_DOWN) == true &&
+					(!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.wasKeyPressed(SDL_SCANCODE_LEFT)
+						&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
+						&& !input.isKeyHeld(SDL_SCANCODE_UP) && !input.wasKeyPressed(SDL_SCANCODE_UP))
+					&& this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.lookDown();
+						if (isClimbing) {
+							this->_player.setClimbing(true);
+							this->_player.moveDown();
+						}
+					}
+				}
+				if (input.wasKeyReleased(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
+						this->_player.stopLookingUp();
+				}
+				if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
+						this->_player.stopLookingDown();
 				}
 
-				else if (activeInventory == true) {
-					activeInventory = false;
+				if (input.isKeyHeld(SDL_SCANCODE_SPACE) && jetPack && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.useJetPack();
+					}
+				}
+
+				else if (!jetPack && input.isKeyHeld(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.jump();
+						if (!Mix_Playing(244))
+							Mix_PlayChannel(244, seJump, 0);
+					}
+					else if (activeTalk == true) {
+						std::cout << "impaired action" << std::endl;
+					}
+				}
+				if (input.wasKeyReleased(SDL_SCANCODE_SPACE) && this->_player.getCurrentHealth() > 0) {
+					if (this->_player.canShortJump() && activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+						this->_player.setPlayerDY(0);
+						this->_player.setShortJump(false);
+					}
+				}
+				if (!input.isKeyHeld(SDL_SCANCODE_LEFT) && !input.isKeyHeld(SDL_SCANCODE_RIGHT) && this->_player.getCurrentHealth() > 0) {
+					// If player isnt moving left or right(at all) do stopMoving function
+					this->_player.stopMoving();
+				}
+
+				if (input.wasKeyPressed(SDL_SCANCODE_A) == true && activeInventory == false && activeStatMenu == false
+					&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
+					if (activeTalk == false && npcName != "") {
+						activeTalk = true;
+						this->_chatBox.setTextStatus(true);
+						this->_chatBox.drawChatBox(graphics, this->_player);
+						this->_npc.setNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
+						this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
+						this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						this->_npc.loadQuests(npcID);
+					}
+					else if (activeTalk == true) {
+						activeTalk = false;
+						this->_chatBox.setTextStatus(false);
+						this->_npc.setNpcTalk(false);
+						this->_npc.setQuestMenuState(false);
+						this->_npc.resetScripts();
+						npcSelection = 1;
+						questSelection = 1;
+						hasSelectedQuest = false;
+					}
+				}
+
+				if (activeTalk) {
+					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && this->_player.getCurrentHealth() > 0) {
+						/* Chat */
+						if (npcSelection == 1 && this->_npc.getNpcTalk() == false) {
+							this->_npc.setNpcTalk(true);
+							this->_npc.playScript(npcID, graphics, this->_player.getX(), this->_player.getY());
+						}
+						else if (npcSelection == 1 && this->_npc.getNpcTalk()) {
+							this->_npc.playNext(npcID, graphics, this->_player.getX(), this->_player.getY(), this->_player);
+							if (this->_npc.getChatStatus()) {
+								this->_npc.setNpcTalk(false);
+								activeTalk = false;
+								this->_chatBox.setTextStatus(false);
+								this->_npc.resetScripts();
+							}
+						}
+						/* Quests */
+						else if (npcSelection == 2 && this->_npc.getNpcTalk() == false) {
+							this->_npc.setNpcTalk(true);
+							this->_npc.setQuestMenuState(true);
+							this->_npc.displayQuests(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player);
+						}
+						else if (npcSelection == 2 && this->_npc.getNpcTalk() && !hasSelectedQuest) {
+								// Here we will call playQuest()
+								// This function is similar to playScript() as it will initialize the dialogue table
+								// How many lines are calculated and the table stores the text(s) and quest name
+								// Quest selection is passed to know which quest name for this NPCID
+
+								// Also check using checkQuestDone(int questSelection...etc) within playQuest()
+								// to see if the quest is complete so we can show the quest finished dialogue instead
+
+								this->_npc.playQuest(npcID, questSelection, graphics, this->_player.getX(), this->_player.getY(),
+									this->_player);
+
+							   if (!this->_npc.checkQuestBlocked())
+								   hasSelectedQuest = true;
+						}
+
+						else if (npcSelection == 2 && this->_npc.getNpcTalk() && hasSelectedQuest) {
+							// Continue to the next quest dialogue (PlayNextQuest() function)
+							// This function will handle showing the next dialogue when pressing enter
+							// Once all dialogue has been displayed, accept the quest within the same call (only once)
+							// It will also read the next line for quest finish dialogue.
+							// Once at the end it can give the rewards and set it to complete
+							this->_npc.playNextQuest(npcID, graphics, this->_player.getX(), this->_player.getY(),
+								this->_player, this->_inventory);
+							if (this->_npc.getChatStatus()) {
+								activeTalk = false;
+								this->_chatBox.setTextStatus(false);
+								this->_npc.setNpcTalk(false);
+								this->_npc.setQuestMenuState(false);
+								this->_npc.resetScripts();
+								npcSelection = 1;
+								questSelection = 1;
+								hasSelectedQuest = false;
+							}
+						}
+					}
+
+					if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getNpcTalk() == false
+						&& this->_npc.getQuestMenuState() == false) {
+						if (npcSelection == 1)
+							this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						else if (npcSelection != 1) {
+							npcSelection--;
+							this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getNpcTalk() == false
+						&& this->_npc.getQuestMenuState() == false) {
+						if (npcSelection == 2)
+							this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						else if (npcSelection != 2) {
+							npcSelection++;
+							this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_UP) == true && this->_npc.getQuestMenuState() == true) {
+						if (questSelection == 1)
+							this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						else {
+							questSelection--;
+							this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true && this->_npc.getQuestMenuState() == true) {
+						if (questSelection == 2)
+							this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						else {
+							questSelection++;
+							this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
+						}
+					}
+				}
+
+				if (input.wasKeyPressed(SDL_SCANCODE_D) == true && this->_player.getCurrentHealth() > 0
+					&& !activeCutscene && !activeInventory && !activeTalk && !activeSaveMenu) {
+					if (!activeStatMenu) {
+						selection = 1;
+						activeStatMenu = true;
+						this->_player.drawStatMenu(graphics, this->_player, selection);
+					}
+					else
+						activeStatMenu = false;
+				}
+
+				if (activeStatMenu) {
+					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+						this->_player.statChoice(selection);
+					}
+					if (input.wasKeyPressed(SDL_SCANCODE_UP) == true) {
+						if (selection == 1)
+							this->_player.drawStatMenu(graphics, this->_player, selection);
+						else if (selection != 1) {
+							selection--;
+							this->_player.drawStatMenu(graphics, this->_player, selection);
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_DOWN) == true) {
+						if (selection == 3)
+							this->_player.drawStatMenu(graphics, this->_player, selection);
+						else if (selection != 3) {
+							selection++;
+							this->_player.drawStatMenu(graphics, this->_player, selection);
+						}
+					}
+				}
+
+				if (input.wasKeyPressed(SDL_SCANCODE_S) == true && this->_player.getCurrentHealth() > 0
+					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene
+					&& this->_player.isGrounded()) {
+					if (activeInventory == false) {
+						activeInventory = true;
+						this->_player.stopMoving();
+						inventSelectionX = this->_player.getX() - 70;
+						inventSelectionY = this->_player.getY() - 105;
+						this->_inventory.draw(graphics, this->_player);
+					}
+					else if (activeInventory == true) {
+						activeInventory = false;
+						inventSelectedItem = 1;
+						inventSelectionColumn = 1;
+						inventSelectionRow = 1;
+						this->_inventory.resetCurrentItem();
+					}
+				}
+
+				if (activeInventory && this->_player.getCurrentHealth() > 0) {
+					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+						// Use item
+						this->_inventory.useItemFromInvent(this->_player);
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_UP)) {
+						// Move selection box sprite up to select item
+						if (inventSelectionRow != 1) {
+							inventSelectionY -= 68;
+							inventSelectionRow -= 1;
+							inventSelectedItem -= 4;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_inventory.checkInventorySlot(inventSelectedItem)) {
+							inventSelectionY += 68;
+							inventSelectionRow += 1;
+							inventSelectedItem += 4;
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_DOWN)) {
+						// Move selection box sprite down to select item
+						if (inventSelectionRow != 4) { // max rows
+							inventSelectionY += 68;
+							inventSelectionRow += 1;
+							inventSelectedItem += 4;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_inventory.checkInventorySlot(inventSelectedItem)) {
+							inventSelectionY -= 68;
+							inventSelectionRow -= 1;
+							inventSelectedItem -= 4;
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_LEFT)) {
+						// Move selection box sprite left to select item
+						if (inventSelectionColumn != 1) {
+							inventSelectionX -= 68;
+							inventSelectionColumn -= 1;
+							inventSelectedItem -= 1;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_inventory.checkInventorySlot(inventSelectedItem)) {
+							inventSelectionX += 68;
+							inventSelectionColumn += 1;
+							inventSelectedItem += 1;
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT)) {
+						// Move selection box sprite right to select item
+						if (inventSelectionColumn != 4) {
+							inventSelectionX += 68;
+							inventSelectionColumn += 1;
+							inventSelectedItem += 1;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_inventory.checkInventorySlot(inventSelectedItem)) {
+							inventSelectionX -= 68;
+							inventSelectionColumn -= 1;
+							inventSelectedItem -= 1;
+						}
+					}
+				}
+
+				if (input.wasKeyPressed(SDL_SCANCODE_Z) == true && this->_player.getCurrentHealth() > 0) {
+					if (pickUp == false) {
+						pickUp = true;
+					}
+					else if (pickUp == true) {
+						pickUp = false;
+					}
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_C) == true && this->_player.getCurrentHealth() > 0
+					&& !activeCutscene && !activeInventory && !activeSaveMenu && !activeStatMenu && !activeTalk) {
+					if (this->_player.hasHpPot()) {
+						_inventory.useItem(0, this->_player);
+					}
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
+					// Add weapon swap here
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
+					// Add weapon swap here
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_3) == true) {
+					if (this->_inventory.checkItem(2100, 1)) {
+						jetPack = !jetPack;
+						std::cout << "JetPack state = " << jetPack << std::endl;
+					}
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_F5) == true) {
+					showPlayerOutline = !showPlayerOutline;
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_F6) == true) {
+					showEnemyOutline = !showEnemyOutline;
+				}
+				if (input.wasKeyPressed(SDL_SCANCODE_F7) == true) {
+					showCollisionOutline = !showCollisionOutline;
+				}
+				if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
+					if (!deathSound) {
+						Mix_PlayChannel(-1, sePlDie, 0);
+						deathSound = true;
+					}
+					this->_player.startDeath();
 				}
 			}
 
-			if (input.wasKeyPressed(SDL_SCANCODE_Z) == true && this->_player.getCurrentHealth() > 0) {
-				if (pickUp == false) {
-					pickUp = true;
+			if (findWindowElapsedTime) {
+				// Window was moved, so update the LAST_UPDATE_TIME to be near the SDL_GetTicks() time.
+				// This prevents the elapsed time from becoming large thus messing with the game logic.
+				LAST_UPDATE_TIME = SDL_GetTicks() - 1;
+				findWindowElapsedTime = false;
+			}
+
+			const int CURRENT_TIME_MS = SDL_GetTicks();
+			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
+			this->_graphics = graphics; // Updated graphics
+			// Take standard min : elapsed time ms and max frame time
+			this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
+			// Loop will go again and current time - new last update will tell us how long next frame will take
+			LAST_UPDATE_TIME = CURRENT_TIME_MS;
+
+			this->draw(graphics);
+
+			// SDL_GetTicks() will still increment while pauseGame = this->_title(...) runs it's own loop.
+			// To account for the time difference, we simply set LAST_UPDATE_TIME = SDL_GetTicks() - 1
+			// This is to ensure a smooth and consistent elapsed time for our next iteration's update/drawing logic.
+			if (pauseGame) {
+				if (this->_title == nullptr) {
+					/* Only create the Title object when needed to reduce memory. */
+					this->_title = new Title(graphics, input, event);
 				}
-				else if (pickUp == true) {
-					pickUp = false;
+
+				Mix_PauseMusic();
+				pauseGame = this->_title->Pause(graphics, input, event, this->_player);
+				this->setSettings();
+				Mix_ResumeMusic();
+
+				LAST_UPDATE_TIME = SDL_GetTicks() - 1;
+				if (_title->getMenuChoice() == 0 && _title->getReload()) {
+					this->loadGame(graphics);
+					this->_title->setReload();
+					Mix_RewindMusic();
 				}
+				/* Free memory to prevent any leaks */
+				graphics.unloadImage("data\\graphics\\dark_clouds.png");
+				delete this->_title;
+				this->_title = nullptr;
 			}
-			if (input.wasKeyPressed(SDL_SCANCODE_C) == true && this->_player.getCurrentHealth() > 0) {
-				_inventory.useItem(0, this->_player);
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
-				// Add weapon swap here
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
-				// Add weapon swap here
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_3) == true) {
-				if (this->_player.checkEquipmentUnlocked("JetPack")) {
-					jetPack = !jetPack;
-					std::cout << "JetPack state = " << jetPack << std::endl;
-				}
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_F5) == true) {
-				showPlayerOutline = !showPlayerOutline;
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_F6) == true) {
-				showEnemyOutline = !showEnemyOutline;
-			}
-			if (input.wasKeyPressed(SDL_SCANCODE_F7) == true) {
-				showCollisionOutline = !showCollisionOutline;
-			}
-			if (this->_player.getCurrentHealth() <= 0 && !this->_player.checkDeathPlayed()) {
-				if (!deathSound) {
-					Mix_PlayChannel(-1, sePlDie, 0);
-					deathSound = true;
-				}
-				this->_player.startDeath();
-			}
-		const int CURRENT_TIME_MS = SDL_GetTicks();
-		int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
-		this->_graphics = graphics; // Updated graphics
-		// Take standard min : elapsed time ms and max frame time
-		this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
-		// Loop will go again and current time - new last update will tell us how long next frame will take
-		LAST_UPDATE_TIME = CURRENT_TIME_MS;
-		this->draw(graphics);
 		}
 	}
 }
 
 void Game::drawTitle(Graphics &graphics) {
 	graphics.clear(); // Clear any drawings MUST do
-	this->_title.draw(graphics);
+	this->_title->draw(graphics);
 	graphics.flip(); 
 }
 
 void Game::updateTitle(float elapsedTime) { 
-	this->_title.update(elapsedTime);
+	this->_title->update(elapsedTime);
 }
 
 void Game::updateGameOver(float elapsedTime) {
-	this->_gameOver.update(elapsedTime);
+	this->_gameOver->update(elapsedTime);
 }
 
 void Game::drawGameOver(Graphics &graphics) {
 	graphics.clear();
-	this->_gameOver.draw(graphics);
+	this->_gameOver->draw(graphics);
 	graphics.flip();
 }
 
@@ -695,14 +898,14 @@ void Game::draw(Graphics &graphics) {
 	this->_chatBox.drawChatBox(graphics, this->_player);
 	if (activeTalk == true) {
 		if (this->_npc.getNpcTalk() && npcSelection == 1) {
-			this->_npc.playScript(npcName, graphics, this->_player.getX(), this->_player.getY());
+			this->_npc.repeatScript(graphics, this->_player.getX(), this->_player.getY());
 		}
-		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && !this->_npc.getQuestState()) {
-			this->_npc.displayQuests(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player);
+		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && !hasSelectedQuest) {
+			this->_npc.displayQuests(graphics, npcID, this->_player.getX(), this->_player.getY(), this->_player);
 			this->_npc.questSelection(graphics, this->_player.getX(), this->_player.getY(), questSelection);
 		}
-		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && this->_npc.getQuestState() && this->_npc.checkNoQuests() == false) {
-			this->_npc.acceptQuest(graphics, npcName, this->_player.getX(), this->_player.getY(), this->_player, questSelection - 1);
+		else if (this->_npc.getNpcTalk() && npcSelection == 2 && this->_npc.getQuestMenuState() && hasSelectedQuest) {
+			this->_npc.repeatQuestScript(graphics, this->_player.getX(), this->_player.getY()); 
 		}
 		else {
 			this->_npc.npcSelection(graphics, this->_player.getX(), this->_player.getY(), npcSelection);
@@ -710,14 +913,14 @@ void Game::draw(Graphics &graphics) {
 		this->_npc.drawNpcIcon(graphics, npcName, this->_player.getX(), this->_player.getY());
 	}
 	this->_hud.draw(graphics, this->_player);
-	if (activeInventory == true)
+	if (activeInventory == true) {
 		this->_inventory.draw(graphics, this->_player);
+		this->_inventory.drawInventSelection(graphics, inventSelectionX, inventSelectionY);
+	}
 	if (activeStatMenu)
 		this->_player.drawStatMenu(graphics, this->_player, selection);
 	if (activeSaveMenu)
 		this->_player.drawSaveMenu(graphics, this->_player, saveSelection);
-	this->_player.drawHPNumbers(graphics);
-	this->_player.drawExpNumbers(graphics);
 	this->_player.drawCurrentMapName(graphics);
 	if (showPlayerOutline)
 		this->_player.drawPlayerOutline(graphics);
@@ -814,6 +1017,8 @@ int Game::saveGame(Graphics & graphics)
 	xml.InsertFirstChild(root);
 	std::cout << "Creating the XML Document..." << std::endl;
 
+	this->_player.setCurrentHealth(this->_player.getMaxHealth());
+
 	// Save player location
 	XMLElement* element = xml.NewElement("Spawn");
 	element->SetAttribute("mapName", this->_level.getMapName().c_str());
@@ -833,6 +1038,8 @@ int Game::saveGame(Graphics & graphics)
 	element->SetAttribute("SoulLevel", this->_player.getSoulLevel());
 	element->SetAttribute("KillCount", this->_player.getKillCount());
 	element->SetAttribute("Celestial", this->_player.getCurrency());
+	element->SetAttribute("hpPot", this->_player.getHpPotCapacity());
+	element->SetAttribute("hpPotStr", this->_player.getHpPotStrength());
 	root->InsertEndChild(element);
 	// Save loot table
 	element = xml.NewElement("Loot");
@@ -848,34 +1055,55 @@ int Game::saveGame(Graphics & graphics)
 	root->InsertEndChild(element);
 	// Save inventory
 	element = xml.NewElement("Inventory");
-	std::vector<std::pair<int, int>> iVec = this->_inventory.getInventoryTable();
+	std::map<Items::ItemID, int> iVec = this->_inventory.getInventoryTable();
 	for (auto iter = iVec.begin(); iter != iVec.end(); iter++) {
 		auto first = iter->first, second = iter->second;
 		XMLElement* ptrElement = xml.NewElement("iTable");
-		ptrElement->SetAttribute("type", second);
-		ptrElement->SetAttribute("quantity", first);
+		ptrElement->SetAttribute("itemID", first);
+		ptrElement->SetAttribute("quantity", second);
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
+	// Save the quest log
 	element = xml.NewElement("QuestLog");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
-	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec = this->_npc.getQuestLog();
+	std::vector<std::tuple<std::string, int, std::string, int, std::vector<std::string>, std::vector<std::string>,
+		int, int, int, int, int, bool>> qVec = this->_npc.getQuestTable();
 	for (int counter = 0; counter < qVec.size(); ++counter) {
 		XMLElement* qElement = xml.NewElement("Quest");
 		qElement->SetAttribute("questName", std::get<0>(qVec[counter]).c_str());
 		qElement->SetAttribute("type", std::get<1>(qVec[counter]));
 		qElement->SetAttribute("object", std::get<2>(qVec[counter]).c_str());
 		qElement->SetAttribute("amount", std::get<3>(qVec[counter]));
-		qElement->SetAttribute("completed", std::get<4>(qVec[counter]));
-		qElement->SetAttribute("rewarded", std::get<5>(qVec[counter]));
-		qElement->SetAttribute("rewardType", std::get<6>(qVec[counter]));
-		qElement->SetAttribute("reward", std::get<7>(qVec[counter]).c_str());
-		qElement->SetAttribute("exp", std::get<8>(qVec[counter]));
-		qElement->SetAttribute("cels", std::get<9>(qVec[counter]));
+		/* 
+		 * Append all the dialogue into one string that is delimited by a tilde (~)
+		 * This is because we want the Attribute to store the entire string vector
+		 * And when we load the save file, we can use the delimiter to make them
+		 * back into their own sentences and store it into the string vector
+		 */
+		std::stringstream qd, fd;
+		for (const auto& qDialogue : std::get<4>(qVec[counter])) {
+			qd << qDialogue << "~";
+		}
+		std::string qDiaStr = qd.str();
+		qElement->SetAttribute("questDialogue", qDiaStr.c_str());
+		/* Do the same for finishDialogue vector */
+		for (const auto& fDialogue : std::get<5>(qVec[counter])) {
+			fd << fDialogue << "~";
+		}
+		std::string fDiaStr = fd.str();
+		qElement->SetAttribute("finishDialogue", fDiaStr.c_str());
+		qElement->SetAttribute("npcID", std::get<6>(qVec[counter]));
+		qElement->SetAttribute("rewardItemID", std::get<7>(qVec[counter]));
+		qElement->SetAttribute("rewardAmount", std::get<8>(qVec[counter]));
+		qElement->SetAttribute("exp", std::get<9>(qVec[counter]));
+		qElement->SetAttribute("cels", std::get<10>(qVec[counter]));
+		qElement->SetAttribute("isCompleted", std::get<11>(qVec[counter]));
 		element->InsertEndChild(qElement);
 	}
 	root->InsertEndChild(element);
+	// Save the kill table
 	element = xml.NewElement("KillTable");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
@@ -889,6 +1117,7 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
+	// Save the boss table
 	element = xml.NewElement("BossTable");
 	if (element == nullptr)
 		return XML_ERROR_PARSING_ELEMENT;
@@ -938,6 +1167,10 @@ int Game::saveGame(Graphics & graphics)
 	nCwd.append("SF-LOC.xml");
 	this->cipher.AESEncrypt(cwd.string(), nCwd.string());
 	XMLCheckResult(result);
+
+	/* Once save is complete, refill the HP Pot and respawn the enemies except bosses */
+	this->_player.refillHpPot();
+	this->_player.clearDespawnTable();
 	return 0;
 }
 
@@ -955,6 +1188,7 @@ int Game::loadGame(Graphics & graphics)
 	XMLNode* root = xml.FirstChild();
 	if (root == nullptr)
 		return XML_ERROR_FILE_READ_ERROR;
+
 	// Load loot table
 	XMLElement* element = root->FirstChildElement("Loot");
 	XMLElement* ptrVec = element->FirstChildElement("Table");
@@ -968,44 +1202,92 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("Table");
 	}
 	this->_inventory.setLootTable(tempVec);
+
 	// Load Inventory
 	element = root->FirstChildElement("Inventory");
 	ptrVec = element->FirstChildElement("iTable");
-	std::vector<std::pair<int, int>> iVec;
+	std::map<Items::ItemID, int> iVec;
 	while (ptrVec != nullptr) {
-		int type, quantity;
-		result = ptrVec->QueryIntAttribute("type", &type);
+		int itemID, quantity;
+		result = ptrVec->QueryIntAttribute("itemID", &itemID);
 		result = ptrVec->QueryIntAttribute("quantity", &quantity);
-		iVec.push_back(std::make_pair(quantity, type));
+		iVec.insert({ itemID, quantity });
 		ptrVec = ptrVec->NextSiblingElement("iTable");
 	}
 	this->_inventory.setInventoryTable(iVec);
+
 	// Load QuestLog
 	element = root->FirstChildElement("QuestLog");
 	ptrVec = element->FirstChildElement("Quest");
-	std::vector<std::tuple<std::string, int, std::string, int, bool, bool, int, std::string, int, int>> qVec;
+	std::vector<std::tuple<std::string, int, std::string, int, std::vector<std::string>, std::vector<std::string>,
+		int, int, int, int, int, bool>> qVec;
 	while (ptrVec != nullptr) {
-		int amount, type, rewardType, exp, cels;
-		const char* textPtr = nullptr, *objPtr = nullptr, *itemPtr = nullptr;
-		std::string qName, objName, itemName;
-		bool completed, rewarded;
+		int amount, type, rewardItemID, rewardAmount, exp, cels, npcID;
+		std::vector<std::string> dialogueText, finishText;
+		std::string qName, objName, dialogueStr;
+		bool isCompleted;
+		const char* textPtr = nullptr, *objPtr = nullptr, *dialoguePtr = nullptr;
+
 		result = ptrVec->QueryIntAttribute("type", &type);
 		result = ptrVec->QueryIntAttribute("amount", &amount);
 		textPtr = ptrVec->Attribute("questName");
 		qName = textPtr;
 		objPtr = ptrVec->Attribute("object");
 		objName = objPtr;
-		result = ptrVec->QueryBoolAttribute("completed", &completed);
-		result = ptrVec->QueryBoolAttribute("rewarded", &rewarded);
-		result = ptrVec->QueryIntAttribute("rewardType", &rewardType);
-		itemPtr = ptrVec->Attribute("reward");
-		itemName = itemPtr;
+		result = ptrVec->QueryBoolAttribute("isCompleted", &isCompleted);
+		result = ptrVec->QueryIntAttribute("rewardItemID", &rewardItemID);
+		result = ptrVec->QueryIntAttribute("rewardAmount", &rewardAmount);
+		result = ptrVec->QueryIntAttribute("npcID", &npcID);
 		result = ptrVec->QueryIntAttribute("exp", &exp);
 		result = ptrVec->QueryIntAttribute("cels", &cels);
-		qVec.push_back(std::make_tuple(qName, type, objName, amount, completed, rewarded, rewardType, itemName, exp, cels));
-		ptrVec = ptrVec->NextSiblingElement("Quests");
+
+		/* 
+		 * Get the "questDialogue" attribute by splitting the string value using the delimiter (~)
+		 * This will allow us to form the sentences back and store them invidiually into the string vector
+		 */
+		const char* questDialogueAttr = ptrVec->Attribute("questDialogue");
+		if (questDialogueAttr) {
+			// Split the attribute value into separate strings using a delimiter (~)
+			std::stringstream ss(questDialogueAttr);
+			std::string line;
+			while (std::getline(ss, line, '~')) {
+				// Trim whitespace from the beginning and end of the string
+				line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) {
+					return !std::isspace(ch);
+					}));
+				line.erase(std::find_if(line.rbegin(), line.rend(), [](int ch) {
+					return !std::isspace(ch);
+					}).base(), line.end());
+
+				// Add the string to the std::vector<std::string>
+				dialogueText.push_back(line);
+			}
+		}
+		/* Do the same for finishDialogue */
+		const char* questFinishDialogueAttr = ptrVec->Attribute("finishDialogue");
+		if (questFinishDialogueAttr) {
+			// Split the attribute value into separate strings using a delimiter (~)
+			std::stringstream ss(questFinishDialogueAttr);
+			std::string line;
+			while (std::getline(ss, line, '~')) {
+				// Trim whitespace from the beginning and end of the string
+				line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) {
+					return !std::isspace(ch);
+					}));
+				line.erase(std::find_if(line.rbegin(), line.rend(), [](int ch) {
+					return !std::isspace(ch);
+					}).base(), line.end());
+
+				// Add the string to the std::vector<std::string>
+				finishText.push_back(line);
+			}
+		}
+		qVec.push_back(std::make_tuple(qName, type, objName, amount, dialogueText, finishText, npcID, rewardItemID,
+			rewardAmount, exp, cels, isCompleted));
+		ptrVec = ptrVec->NextSiblingElement("Quest");
 	}
-	this->_npc.setQuestLog(qVec);
+	this->_npc.setQuestTable(qVec);
+
 	// Load Map
 	element = root->FirstChildElement("Spawn");
 	if (element == nullptr)
@@ -1014,6 +1296,7 @@ int Game::loadGame(Graphics & graphics)
 	textPtr = element->Attribute("mapName");
 	std::string mapName = textPtr;
 	this->_level = Level(mapName, graphics, this->_inventory); // Intialize level: Map name , spawn point, graphics
+
 	// Load coordinates
 	Vector2 spawn;
 	int x, y;
@@ -1021,8 +1304,8 @@ int Game::loadGame(Graphics & graphics)
 	result = element->QueryIntAttribute("yCoordinate", &y);
 	spawn = Vector2((int)std::ceil(x), (int)std::ceil(y));
 	this->_level.generateItems(graphics);
-	// Spawn = this->_level.getPlayerSpawnPoint();
-	this->_player = Player(graphics, spawn);
+	this->_player.setPlayerPosition(spawn.x, spawn.y);
+
 	// Load KillTable
 	element = root->FirstChildElement("KillTable");
 	ptrVec = element->FirstChildElement("kTable");
@@ -1036,6 +1319,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("kTable");
 	}
 	this->_player.setKillTable(kVec);
+
 	// Load BossTable
 	element = root->FirstChildElement("BossTable");
 	ptrVec = element->FirstChildElement("bTable");
@@ -1056,6 +1340,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("bTable");
 	}
 	this->_player.setBossTable(btVec);
+
 	// Load completed cutscenes
 	element = root->FirstChildElement("SceneTable");
 	ptrVec = element->FirstChildElement("csTable");
@@ -1069,6 +1354,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("csTable");
 	}
 	this->_player.setCutsceneTable(csVec);
+
 	// Load unlocked doors
 	element = root->FirstChildElement("LockedDoorTable");
 	ptrVec = element->FirstChildElement("ldTable");
@@ -1082,6 +1368,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("ldTable");
 	}
 	this->_player.setLockedDoorTable(ldVec);
+
 	// Load equipment
 	element = root->FirstChildElement("EquipmentTable");
 	ptrVec = element->FirstChildElement("eqTable");
@@ -1095,6 +1382,7 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("eqTable");
 	}
 	this->_player.setEquipmentTable(eqVec);
+
 	// Load stats
 	element = root->FirstChildElement("Stats");
 	if (element == nullptr)
@@ -1122,182 +1410,208 @@ int Game::loadGame(Graphics & graphics)
 	this->_player.setKillCount(iValue);
 	result = element->QueryIntAttribute("Celestial", &iValue);
 	this->_player.setCurrency(iValue);
+	result = element->QueryIntAttribute("hpPot", &iValue);
+	this->_player.setHpPotCapacity(iValue);
+	result = element->QueryIntAttribute("hpPotStr", &iValue);
+	this->_player.setHpPotStrength(iValue);
 
 	this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
 	if (!cipher.verifyHash(mapName, this->_player)) {
 		std::exit(0);
 	}
+	// Generate map items and effects after level, enemies and inventory has been initialized.
+	// It's also important to do this after the map hash has been verified to prevent any edits appearing by chance.
+	this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
+	this->_level.generateEffects(graphics, this->_player);
 	this->saveGame(graphics);
 	XMLCheckResult(result);
+
+	/* Refill HP Pot on load and respawn enemies */
+	this->_player.refillHpPot();
+	this->_player.clearDespawnTable();
 	return 0;
 }
 
 void Game::setSettings() {
-	// Volume
-	this->_title.getSettings(soundVolume);
-	Mix_VolumeMusic(soundVolume);
+	/* Display settings only need their values updated */
+	this->_title->getSettings(bgmVolume, sfxVolume, globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT);
 
-	// Display
-	// ...
+	// Volume
+	Mix_VolumeMusic(bgmVolume);
+	Mix_Volume(-1, sfxVolume);
+
 }
 
 void Game::update(float elapsedTime, Graphics &graphics) {
-	this->_player.update(elapsedTime); 
-
-	if (this->_player.getCurrentHealth() <= 0 && this->_player.checkDeathPlayed()) {
-		GAMEOVER = true;
-		Mix_PlayChannel(-1, gameOver, 0);
-	}
-	else {
-	if (this->_player.getPlayerHit()) {
-		Mix_PlayChannel(-1, sePlHit, 0);
-		this->_player.setPlayerHit(false);
-	}
-	this->_camera.Update(elapsedTime, this->_player);
-	this->_level.update(elapsedTime, this->_player);
-    // Hud goes on top of everything
-	this->_hud.update(elapsedTime, this->_player);
-
-	if (!this->_level.getMapBGM().empty()) {
-		if (BGM != this->_level.getMapBGM()) {
-			std::string bgmMusic = "data\\sound\\";
-			bgmMusic.append(this->_level.getMapBGM());
-			BGM = this->_level.getMapBGM();
-			gMusic = Mix_LoadMUS(bgmMusic.c_str());
-			Mix_PlayMusic(gMusic, -1);
+	if (!pauseGame && !windowIsBeingDragged) {
+		this->_player.update(elapsedTime);
+		if (pauseBlockTimer != 0) {
+			pauseBlockTimer += elapsedTime;
+			if (pauseBlockTimer >= 2000)
+				pauseBlockTimer = 0;
 		}
-	}
-
-
-	std::vector<Npc*> otherNpc;
-	if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
-		npcName = this->_player.getNpcName(otherNpc, graphics);
-	}
-	// This will ensure when we are no long colliding with npc, set name to blank so we cant talk to an npc far away
-	if (otherNpc.size() == 0) {
-		npcName = "";
-	}
-	
-	// Check collisions
-	std::vector<Rectangle> others;
-	// Set vector = the result of the checkTileCollisions function
-	// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
-	// Against whatever we give it (player bounding box)
-	// If it returns at least 1, handle Tile collision!
-	if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-		// Player collided with atleast 1 tile
-		this->_player.handleTileCollisions(others);
-	}
-
-	if ((others = this->_level.checkBreakableTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-		// Player collided with atleast 1 tile
-		this->_player.setBreakableCollision(true);
-		this->_player.handleTileCollisions(others);
-	}
-	else {
-		this->_player.setBreakableCollision(false);
-	}
-
-	if ((others = this->_level.checkArenaCollisions(this->_player.getBoundingBox())).size() > 0) {
-		// Player collided with atleast 1 tile
-		this->_player.handleArenaCollisions(others);
-	}
-
-	if ((others = this->_level.checkLavaCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleLavaCollisions(others);
-	}
-	else {
-		this->_player.setBurning(false);
-	}
-
-	if ((others = this->_level.checkPoisonCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handlePoisonCollisions(others);
-	}
-	if ((others = this->_level.checkWaterCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleWaterCollisions(others);
-	}
-	else {
-		this->_player.setDrowning(false);
-	}
-	if ((others = this->_level.checkDeadzoneCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleDeadzoneCollisions(others);
-	}
-	if ((others = this->_level.checkLadderCollisions(this->_player.getBoundingBox())).size() > 0) {
-		if (this->_player.handleLadderCollisions(others)) {
-			isClimbing = true;
+		if (this->_player.getCurrentHealth() <= 0 && this->_player.checkDeathPlayed()) {
+			GAMEOVER = true;
+			Mix_PlayChannel(-1, gameOver, 0);
 		}
 		else {
-			isClimbing = false;
-			this->_player.setClimbing(false);
+			if (this->_player.getPlayerHit()) {
+				Mix_PlayChannel(-1, sePlHit, 0);
+				this->_player.setPlayerHit(false);
+			}
+			this->_level.update(elapsedTime, this->_player);
+
+			if (!this->_level.getMapBGM().empty()) {
+				if (BGM != this->_level.getMapBGM()) {
+					std::string bgmMusic = "data\\sound\\";
+					bgmMusic.append(this->_level.getMapBGM());
+					BGM = this->_level.getMapBGM();
+					gMusic = Mix_LoadMUS(bgmMusic.c_str());
+					Mix_PlayMusic(gMusic, -1);
+				}
+			}
+
+
+			std::vector<Npc*> otherNpc;
+			if ((otherNpc = this->_level.checkNpcCollisions(this->_player.getBoundingBox(), graphics)).size() > 0) {
+				npcName = this->_player.getNpcName(otherNpc, graphics);
+				npcID = this->_player.getNpcId(otherNpc, graphics);
+			}
+			// This will ensure when we are no long colliding with npc, set name to blank so we cant talk to an npc far away
+			if (otherNpc.size() == 0) {
+				npcName = "";
+				npcID = 0;
+			}
+
+			// Check collisions
+			std::vector<Rectangle> others;
+			// Set vector = the result of the checkTileCollisions function
+			// CheckTile wants another rectangle to check against. So its going to check all the collisions rect
+			// Against whatever we give it (player bounding box)
+			// If it returns at least 1, handle Tile collision!
 			if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
 				// Player collided with atleast 1 tile
 				this->_player.handleTileCollisions(others);
 			}
+
+			if ((others = this->_level.checkBreakableTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+				// Player collided with atleast 1 tile
+				this->_player.setBreakableCollision(true);
+				this->_player.handleTileCollisions(others);
+			}
+			else {
+				this->_player.setBreakableCollision(false);
+			}
+
+			if ((others = this->_level.checkArenaCollisions(this->_player.getBoundingBox())).size() > 0) {
+				// Player collided with atleast 1 tile
+				this->_player.handleArenaCollisions(others);
+			}
+
+			if ((others = this->_level.checkLavaCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleLavaCollisions(others);
+			}
+			else {
+				this->_player.setBurning(false);
+			}
+
+			if ((others = this->_level.checkPoisonCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handlePoisonCollisions(others);
+			}
+			if ((others = this->_level.checkWaterCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleWaterCollisions(others);
+			}
+			else {
+				this->_player.setDrowning(false);
+			}
+			if ((others = this->_level.checkDeadzoneCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleDeadzoneCollisions(others);
+			}
+			if ((others = this->_level.checkLadderCollisions(this->_player.getBoundingBox())).size() > 0) {
+				if (this->_player.handleLadderCollisions(others)) {
+					isClimbing = true;
+				}
+				else {
+					isClimbing = false;
+					this->_player.setClimbing(false);
+					if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+						// Player collided with atleast 1 tile
+						this->_player.handleTileCollisions(others);
+					}
+				}
+			}
+			else {
+				isClimbing = false;
+				this->_player.setClimbing(false);
+				if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
+					// Player collided with atleast 1 tile
+					this->_player.handleTileCollisions(others);
+				}
+			}
+
+			if ((others = this->_level.checkSaveCollisions(this->_player.getBoundingBox())).size() > 0) {
+				activeSave = true;
+			}
+			else
+				activeSave = false;
+
+			// Check slope
+			std::vector<Slope> otherSlopes;
+			if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleSlopeCollisions(otherSlopes);
+			}
+
+			/*this->_level.checkCollidingSlopes(this->_player);*/
+
+			this->_level.checkEnemyTileCollision().size() > 0;
+			this->_level.checkEnemyProjectileTileCollision().size() > 0;
+			this->_level.checkProjectileCollisions(this->_player);
+			this->_level.checkEnemyHP(this->_player, this->_graphics);
+			if (this->_level.isEnemyDead()) {
+				Mix_PlayChannel(-1, enHurt, 0);
+				this->_level.setEnemyDead(false);
+			}
+			this->_level.checkProjectileBreakableLayer();
+			this->_level.checkProjectileBounds(this->_player);
+			this->_level.checkProjectileTileCollisions();
+
+			if (pickUp == true) {
+				this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics, this->_inventory);
+				pickUp = false;
+			}
+
+			// Check doors
+			std::vector<Door> otherDoors;
+			if ((otherDoors = this->_level.checkDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory, this->_player);
+			}
+			std::vector<Door> lockedDoors;
+			if ((lockedDoors = this->_level.checkLockedDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
+				this->_player.handleLockedDoorCollision(lockedDoors, this->_level, this->_graphics, this->_inventory, this->_player);
+			}
+
+			std::vector<Rectangle> cutScenes;
+			if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
+				std::string cutSceneName = this->_level.getCutscene();
+				if (this->_player.checkCutSceneCompleted(cutSceneName)) {
+					this->_level.removeCutscene("");
+				}
+				else {
+					this->loadCutscene(cutSceneName);
+					sceneName = cutSceneName;
+					sceneX = this->_player.getX();
+					sceneY = this->_player.getY();
+					activeCutscene = true;
+				}
+			}
+			
+			// Update camera last once every object position has been updated to prevent screen shakes 
+			this->_camera.Update(elapsedTime, this->_player);
+
+			// Hud goes on top of everything
+			this->_hud.update(elapsedTime, this->_player, this->_camera);
 		}
 	}
-	else {
-		isClimbing = false;
-		this->_player.setClimbing(false);
-		if ((others = this->_level.checkTileCollisions(this->_player.getBoundingBox())).size() > 0) {
-			// Player collided with atleast 1 tile
-			this->_player.handleTileCollisions(others);
-		}
-	}
-
-	if ((others = this->_level.checkSaveCollisions(this->_player.getBoundingBox())).size() > 0) {
-		activeSave = true;
-	}
-	else
-		activeSave = false;
-
-	// Check slope
-	std::vector<Slope> otherSlopes;
-	if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleSlopeCollisions(otherSlopes);
-	}
-
-	this->_level.checkEnemyTileCollision().size() > 0;
-	this->_level.checkEnemyProjectileTileCollision().size() > 0;
-	this->_level.checkProjectileCollisions(this->_player);
-	this->_level.checkEnemyHP(this->_player, this->_graphics);
-	if (this->_level.isEnemyDead()) {
-		Mix_PlayChannel(-1, enHurt, 0);
-		this->_level.setEnemyDead(false);
-	}
-	this->_level.checkProjectileBreakableLayer();
-	this->_level.checkProjectileBounds(this->_player);
-	this->_level.checkProjectileTileCollisions();
-
-	if (pickUp == true) {
-		this->_level.checkItemCollisions(this->_player, this->_player.getBoundingBox(), graphics, this->_inventory);
-		pickUp = false; 
-	}
-
-	// Check doors
-	std::vector<Door> otherDoors;
-	if ((otherDoors = this->_level.checkDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleDoorCollision(otherDoors, this->_level, this->_graphics, this->_inventory, this->_player);
-	}
-	std::vector<Door> lockedDoors;
-	if ((lockedDoors = this->_level.checkLockedDoorCollisions(this->_player.getBoundingBox())).size() > 0) {
-		this->_player.handleLockedDoorCollision(lockedDoors, this->_level, this->_graphics, this->_inventory, this->_player);
-	}
-
-	std::vector<Rectangle> cutScenes;
-	if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {
-		std::string cutSceneName = this->_level.getCutscene();
-		if (this->_player.checkCutSceneCompleted(cutSceneName)) {
-			this->_level.removeCutscene("");
-		}
-		else {
-			this->loadCutscene(cutSceneName);
-			sceneName = cutSceneName;
-			sceneX = this->_player.getX();
-			sceneY = this->_player.getY();
-			activeCutscene = true;
-		}
-	}
-  }
 }
 
 void Game::updateCutscene(float elapsedTime, Graphics & graphics)
@@ -1382,6 +1696,8 @@ void Game::updateCutscene(float elapsedTime, Graphics & graphics)
 	if ((otherSlopes = this->_level.checkSlopeCollisions(this->_player.getBoundingBox())).size() > 0) {
 		this->_player.handleSlopeCollisions(otherSlopes);
 	}
+
+	// this->_level.checkCollidingSlopes(this->_player);
 
 	std::vector<Rectangle> cutScenes;
 	if ((cutScenes = this->_level.checkCutsceneCollisions(this->_player.getBoundingBox())).size() > 0) {

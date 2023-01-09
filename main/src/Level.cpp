@@ -20,6 +20,8 @@
 #include <set>
 #include <filesystem>
 
+#include "../headers/Inventory.h"
+
 using namespace tinyxml2; // All tinyxml2 is in a namespace because we will use so many features dont wanna write tinyxml:: all the time :D
 
 template<typename T> Items * createInstance(Graphics& graphics, Vector2 spawnPoint) { return new T(graphics, spawnPoint); }
@@ -68,8 +70,9 @@ Level & Level::operator=(const Level & levelMap)
 	this->_projectiles.clear();
 	this->_items.clear();
 	this->_enemies.clear();
-	this->itemType = levelMap.itemType;
+	//this->itemType = levelMap.itemType;
 	this->_npcs = levelMap._npcs;
+	this->_parallaxList = levelMap._parallaxList;
 	this->_animatedTileInfos = levelMap._animatedTileInfos;
 	this->_animatedTileList = levelMap._animatedTileList;
 	this->_backgroundTexture = levelMap._backgroundTexture;
@@ -152,14 +155,51 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	// Load BGM
 	XMLElement* propsNode = mapNode->FirstChildElement("properties");
 	if (propsNode != NULL) {
-		const char* propsName = propsNode->FirstChildElement("property")->Attribute("name");
-		std::stringstream ssProp;
-		ssProp << propsName;
-		if (ssProp.str() == "BGM") {
-			const char* getBGMName = propsNode->FirstChildElement("property")->Attribute("value");
-			this->_mapBGM = getBGMName;
-		}	
+		XMLElement* prop = propsNode->FirstChildElement("property");
+		while (prop) {
+			const char* propsName = prop->Attribute("name");
+			std::stringstream ssProp;
+			ssProp << propsName;
+			if (ssProp.str() == "BGM") {
+				const char* getBGMName = prop->Attribute("value");
+				this->_mapBGM = getBGMName;
+			}
+			else if (ssProp.str() == "PXLayer1") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 1.0f);
+				this->_parallaxList.push_back(std::make_pair(1, pxLayer));
+			}
+			else if (ssProp.str() == "PXLayer2") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 1.0f);
+				this->_parallaxList.push_back(std::make_pair(2, pxLayer));
+			}
+			else if (ssProp.str() == "PXLayer3") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 1.4f);
+				this->_parallaxList.push_back(std::make_pair(3, pxLayer));
+			}
+			else if (ssProp.str() == "PXLayer4") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 2.0f);
+				this->_parallaxList.push_back(std::make_pair(4, pxLayer));
+			}
+			prop = prop->NextSiblingElement("property");
+		}
 	}
+	std::sort(this->_parallaxList.begin(), this->_parallaxList.end());
 
 	// Load the tilesets.
 	XMLElement* pTileset = mapNode->FirstChildElement("tileset"); // If we have more then 1 tile set its a problem, so a work-around is linked list
@@ -695,29 +735,44 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 							while (pProperties) {
 								XMLElement* pProperty = pProperties->FirstChildElement("property");
 								if (pProperty != NULL) {
+									int keyID = 0;
+									bool isLocked = false;
+									std::stringstream ss2;
 									while (pProperty) {
 										const char* name = pProperty->Attribute("name");
 										std::stringstream ss;
 										ss << name;
 										if (ss.str() == "destination") {
 											const char* value = pProperty->Attribute("value");
-											std::stringstream ss2;
+											//std::stringstream ss2;
 											ss2 << value;
-											Door door = Door(rect, ss2.str());
+											Door door = Door(rect, ss2.str(), 0);
 											this->_doorList.push_back(door);
 										}
 										else if (ss.str() == "lockedDoor") {
 											const char* value = pProperty->Attribute("value");
-											std::stringstream ss2;
+											//std::stringstream ss2;
 											ss2 << value;
-											Door lDoor = Door(rect, ss2.str());
-											this->_lockDoor.push_back(lDoor);
+											//Door lDoor = Door(rect, ss2.str());
+											//this->_lockDoor.push_back(lDoor);
+										}
+										else if (ss.str() == "keyID") {
+											int value = pProperty->IntAttribute("value");
+											keyID = value;
+											isLocked = true;
 										}
 										pProperty = pProperty->NextSiblingElement("property");
 									}
+									if (isLocked)
+									{
+										Door lDoor = Door(rect, ss2.str(), keyID);
+										this->_lockDoor.push_back(lDoor);
+									}
+									
 								}
 								pProperties = pProperties->NextSiblingElement("properties");
 							}
+
 						}
 
 						pObject = pObject->NextSiblingElement("object");
@@ -727,6 +782,18 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 			else if (ss.str() == "npc") {
 				float x, y;
 				XMLElement* pObject = pObjectGroup->FirstChildElement("object");
+				int npcID = 0;
+				// Get Custom Properties first
+				XMLElement* propsNode = pObject->FirstChildElement("properties");
+				if (propsNode != NULL) {
+					const char* propsName = propsNode->FirstChildElement("property")->Attribute("name");
+					std::stringstream ssProp;
+					ssProp << propsName;
+					if (ssProp.str() == "NpcID") {
+						const int getNpcId = propsNode->FirstChildElement("property")->IntAttribute("value");
+						npcID = getNpcId;
+					}
+				}
 				if (pObject != NULL) {
 					while (pObject) {
 						x = pObject->FloatAttribute("x");
@@ -735,8 +802,8 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 						std::stringstream ss;
 						ss << name;
 						if (ss.str() == "Luna") {
-							this->_npcs.push_back(new Clock(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE), ss.str()));
+							this->_npcs.push_back(new Luna(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+								std::floor(y) * globals::SPRITE_SCALE), ss.str(), npcID));
 						}
 						pObject = pObject->NextSiblingElement("object");
 					}
@@ -755,6 +822,9 @@ void Level::update(int elapsedTime, Player &player) {
 	if (this->bulletTimer >= this->bulletDelay) {
 		this->canShoot = true;
 		this->bulletTimer = 0;
+	}
+	for (int i = 0; i < this->_parallaxList.size(); i++) {
+		this->_parallaxList.at(i).second->update(elapsedTime, player.getPlayerDX(), player.getPlayerDY());
 	}
 	for (int i = 0; i < this->_animatedTileList.size(); i++) {
 		this->_animatedTileList.at(i).update(elapsedTime);
@@ -790,6 +860,9 @@ void Level::update(int elapsedTime, Player &player) {
 }
 
 void Level::draw(Graphics &graphics, Player &player) {
+	for (int i = 0; i < this->_parallaxList.size(); i++) {
+		this->_parallaxList.at(i).second->draw(graphics);
+	}
 	for (int i = 0; i < this->_tileList.size(); i++) {
 		this->_tileList.at(i).draw(graphics); // Loop thru all tiles and draw them
 	}
@@ -1161,6 +1234,18 @@ std::vector<Slope> Level::checkSlopeCollisions(const Rectangle &other) {
 	return others;
 }
 
+//bool Level::checkCollidingSlopes(Player& player) {
+//	for (int i = 0; i < this->_slopes.size(); i++) {
+//		if (this->_slopes.at(i).checkSlopeCollision(player.getX(), player.getY(), this->_slopes.at(i))) {
+//			player.handlePlayerSlopeCollision(this->_slopes.at(i));
+//			std::cout << "Slope collisions (checkCS in Level)" << std::endl;
+//			return true;
+//		}
+//	}
+//	std::cout << "Return false." << std::endl;
+//	return false;
+//}
+
 std::vector<Door> Level::checkDoorCollisions(const Rectangle &other) {
 	std::vector<Door> others;
 	for (int i = 0; i < this->_doorList.size(); i++) {
@@ -1191,11 +1276,11 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 					this->_enemies.at(i)->setRemoveable();
 					if (dropRate && this->_enemies.at(i)->getEnemyLevel() <= 10 && !this->_enemies.at(i)->isMiniBoss() && !this->_enemies.at(i)->isBoss()) {
 						this->_items.push_back(new BronzeCoin(graphics, Vector2(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY())));
-						this->itemType.push_back(2);
+						//this->itemType.push_back(2);
 					}
 					else if (this->_enemies.at(i)->isMiniBoss() || this->_enemies.at(i)->isBoss()) {
 							this->_items.push_back(new RedCoin(graphics, Vector2(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY())));
-							this->itemType.push_back(2);
+							//this->itemType.push_back(2);
 							player.completeBossTable(this->_enemies.at(i)->getName(), this->_mapName, this->_enemies.at(i)->getStartingX(), this->_enemies.at(i)->getStartingY());
 					}
 					std::string mob = this->_enemies.at(i)->getName();
@@ -1209,7 +1294,7 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 							Items *b = classMap[std::get<1>(this->levelDropTable[cDistance])](graphics, Vector2(this->_enemies.at(i)->getX(),
 								this->_enemies.at(i)->getY()));
 							this->_items.push_back(b);
-							this->itemType.push_back(4);
+							//this->itemType.push_back(4);
 						}
 					}
 					player.gainExpFromEnemy(this->_enemies.at(i)->getEnemyLevel(), this->_enemies.at(i)->enemyExpAmount());
@@ -1223,9 +1308,14 @@ void Level::checkEnemyHP(Player & player, Graphics &graphics) {
 								this->_arenaName.clear();
 							}
 						}
-						delete this->_enemies.at(i);
-						this->_enemies.erase(this->_enemies.begin() + i);
 					}
+					if (!this->_enemies.at(i)->isMiniBoss() || !this->_enemies.at(i)->isBoss()) {
+						/* It is a regular enemy. So, do not allow for respawn until the game is saved, which saving respawns enemies. */
+						player.addDespawnTable(this->_enemies.at(i)->getName(), this->_mapName, this->_enemies.at(i)->getStartingX(),
+							this->_enemies.at(i)->getStartingY());
+					}
+					delete this->_enemies.at(i);
+					this->_enemies.erase(this->_enemies.begin() + i);
 				}
 			}
 		}
@@ -1271,19 +1361,18 @@ void Level::generateMapItems(Graphics & graphics, std::string mapName, Inventory
 							if (!invent.isLooted(mapName, 0)) {
 								this->_items.push_back(new HealthPotion(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
 									std::floor(y) * globals::SPRITE_SCALE)));
-								this->itemType.push_back(0);
 							}
 						}
 						else if (ss.str() == "permHP") {
 							if (!invent.isLooted(mapName, 1)) {
 								this->_items.push_back(new PermHP(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
-								this->itemType.push_back(1);
+								//this->itemType.push_back(1);
 							}
 						}
 						else if (ss.str() == "key") {
-							if (!invent.isLooted(mapName, 3)) {
+							if (!invent.isLooted(mapName, 1001)) {
 								this->_items.push_back(new Key(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)));
-								this->itemType.push_back(3);
+								//this->itemType.push_back(3);
 							}
 						}
 						pObject = pObject->NextSiblingElement("object");
@@ -1370,18 +1459,21 @@ void Level::generateEnemies(Graphics & graphics, std::string mapName, Player &pl
 						ss << name;
 						if (ss.str() == "bat") {
 							std::string mobName = "bat";
-							this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
+							if (!player.checkEnemyDespawn(mobName, mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE))
+								this->_enemies.push_back(new Bat(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE)));
 						}
 						else if (ss.str() == "JellyFish") {
 							std::string mobName = "JellyFish";
-							this->_enemies.push_back(new JellyFish(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
+							if (!player.checkEnemyDespawn(mobName, mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE))
+								this->_enemies.push_back(new JellyFish(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE)));
 						}
 						else if (ss.str() == "Ghost") {
 							std::string mobName = "Ghost";
-							this->_enemies.push_back(new Ghost(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
-								std::floor(y) * globals::SPRITE_SCALE)));
+							if (!player.checkEnemyDespawn(mobName, mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE))
+								this->_enemies.push_back(new Ghost(graphics, Vector2(std::floor(x) * globals::SPRITE_SCALE,
+									std::floor(y) * globals::SPRITE_SCALE)));
 						}
 						else if (ss.str() == "shade") {
 							if (!player.checkBossCompleted(ss.str(), mapName, std::floor(x) * globals::SPRITE_SCALE, std::floor(y) * globals::SPRITE_SCALE)) {
@@ -1505,19 +1597,35 @@ std::vector<Npc*> Level::checkNpcCollisions(const Rectangle &other, Graphics &gr
 void Level::checkItemCollisions(Player & player, const Rectangle &other, Graphics &graphics, Inventory &invent) {
 	for (int i = 0; i < this->_items.size(); i++) {
 		if (this->_items.at(i)->getBoundingBox().collidesWith(other)) {
-			int type = itemType.at(i);
-			std::cout << "type = " << type << std::endl;
-			if (type == 1) // Permanent HP+1 item
+			//int type = itemType.at(i);
+			
+			if (this->_items.at(i)->getID() == 1) {
 				player.gainMaxHealth(5);
-			else if (type == 2)
+				//invent.storeItem(1);
+			}
+			else if (this->_items.at(i)->isCurrency()) {
 				player.gainCurrency(this->_items.at(i)->getAmount());
-			else
-				invent.storeItem(type);
-			if (type != 2)
-				invent.addInstancedLoot(this->_mapName, type);
+			}
+			else {
+				invent.addItem(this->_items.at(i)->getID(), 1, player);
+			}
+
+			if (!this->_items.at(i)->isCurrency()){
+				invent.addInstancedLoot(this->_mapName, this->_items.at(i)->getID());
+			}
+
+			//if (type == 1) // Permanent HP+1 item
+			//	player.gainMaxHealth(5);
+			//else if (type == 2)
+			//	player.gainCurrency(this->_items.at(i)->getAmount());
+			//else
+			//	invent.storeItem(type);
+			//if (type != 2)
+			//	invent.addInstancedLoot(this->_mapName, type);
+
 			delete this->_items.at(i);
 			this->_items.erase(_items.begin() + i);
-			itemType.erase(itemType.begin() + i);
+			//itemType.erase(itemType.begin() + i);
 		}
 	}
 }

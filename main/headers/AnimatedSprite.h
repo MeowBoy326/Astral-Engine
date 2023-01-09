@@ -46,6 +46,7 @@ public:
 	Draws the sprite to the screen
 	*/
 	void draw(Graphics &graphics, int x, int y);
+	void drawPlayer(Graphics &graphics, int x, int y);
 	void drawBoss(Graphics &graphics, int x, int y, float scaleFactor);
 	// void drawTextBox(Graphics & graphics, std::string speech, TTF_Font *font);
 	void drawNpc(Graphics & graphics, int x, int y);
@@ -70,6 +71,10 @@ protected:
 	void addSpecialAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset);
 	void addScript(int frames, int x, int y, std::string name, int width, int height, Vector2 offset);
 	void addBulletAnimation(int frames, int x, int y, std::string name, int width, int height, Vector2 offset, int id);
+
+	void removeAnimation(std::string name);
+	void removeSprite() { this->destroySprite(); }
+
 	/* resetAnimations();
 	* Resets all animations associated with this sprite
 	*/
@@ -100,6 +105,7 @@ protected:
 	*/
 
 	virtual void setupAnimations() = 0; // virtual because we are not actually implementing here in animated sprite, eventually pure virtual until we make player class
+
 
 private:
 	std::map<std::string, std::vector<SDL_Rect>> _animation;
