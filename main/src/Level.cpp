@@ -72,6 +72,7 @@ Level & Level::operator=(const Level & levelMap)
 	this->_enemies.clear();
 	//this->itemType = levelMap.itemType;
 	this->_npcs = levelMap._npcs;
+	this->_parallaxList = levelMap._parallaxList;
 	this->_animatedTileInfos = levelMap._animatedTileInfos;
 	this->_animatedTileList = levelMap._animatedTileList;
 	this->_backgroundTexture = levelMap._backgroundTexture;
@@ -154,14 +155,51 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	// Load BGM
 	XMLElement* propsNode = mapNode->FirstChildElement("properties");
 	if (propsNode != NULL) {
-		const char* propsName = propsNode->FirstChildElement("property")->Attribute("name");
-		std::stringstream ssProp;
-		ssProp << propsName;
-		if (ssProp.str() == "BGM") {
-			const char* getBGMName = propsNode->FirstChildElement("property")->Attribute("value");
-			this->_mapBGM = getBGMName;
-		}	
+		XMLElement* prop = propsNode->FirstChildElement("property");
+		while (prop) {
+			const char* propsName = prop->Attribute("name");
+			std::stringstream ssProp;
+			ssProp << propsName;
+			if (ssProp.str() == "BGM") {
+				const char* getBGMName = prop->Attribute("value");
+				this->_mapBGM = getBGMName;
+			}
+			else if (ssProp.str() == "PXLayer1") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 1.0f);
+				this->_parallaxList.push_back(std::make_pair(1, pxLayer));
+			}
+			else if (ssProp.str() == "PXLayer2") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 1.0f);
+				this->_parallaxList.push_back(std::make_pair(2, pxLayer));
+			}
+			else if (ssProp.str() == "PXLayer3") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 1.4f);
+				this->_parallaxList.push_back(std::make_pair(3, pxLayer));
+			}
+			else if (ssProp.str() == "PXLayer4") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 2.0f);
+				this->_parallaxList.push_back(std::make_pair(4, pxLayer));
+			}
+			prop = prop->NextSiblingElement("property");
+		}
 	}
+	std::sort(this->_parallaxList.begin(), this->_parallaxList.end());
 
 	// Load the tilesets.
 	XMLElement* pTileset = mapNode->FirstChildElement("tileset"); // If we have more then 1 tile set its a problem, so a work-around is linked list
@@ -785,6 +823,9 @@ void Level::update(int elapsedTime, Player &player) {
 		this->canShoot = true;
 		this->bulletTimer = 0;
 	}
+	for (int i = 0; i < this->_parallaxList.size(); i++) {
+		this->_parallaxList.at(i).second->update(elapsedTime, player.getPlayerDX(), player.getPlayerDY());
+	}
 	for (int i = 0; i < this->_animatedTileList.size(); i++) {
 		this->_animatedTileList.at(i).update(elapsedTime);
 	}
@@ -819,6 +860,9 @@ void Level::update(int elapsedTime, Player &player) {
 }
 
 void Level::draw(Graphics &graphics, Player &player) {
+	for (int i = 0; i < this->_parallaxList.size(); i++) {
+		this->_parallaxList.at(i).second->draw(graphics);
+	}
 	for (int i = 0; i < this->_tileList.size(); i++) {
 		this->_tileList.at(i).draw(graphics); // Loop thru all tiles and draw them
 	}
