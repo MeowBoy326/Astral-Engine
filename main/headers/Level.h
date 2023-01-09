@@ -11,6 +11,7 @@
 #include "Slope.h"
 #include "AnimatedTile.h"
 #include "Door.h"
+#include "Parallax.h"
 
 class TextManager;
 class Graphics; // Foward decalre
@@ -64,6 +65,7 @@ public:
 	std::vector<Enemy*> checkEnemyCollisions(const Rectangle &other);
 	std::vector<Enemy*> checkBulletCollisions(const Rectangle & other);
 	std::vector<Npc*> checkNpcCollisions(const Rectangle & other, Graphics &graphics);
+
 	void checkItemCollisions(Player &player, const Rectangle & other, Graphics & graphics, Inventory &invent);
 	void checkItemFloorCollisions(Items* obj);
 	void checkProjectileCollisions(Player &player);
@@ -108,6 +110,7 @@ private:
 
 	SDL_Texture* _backgroundTexture; // BkBlue.png
 
+	std::vector<std::pair<int, Parallax*>> _parallaxList;
 	std::vector<Tile> _tileList;
 	std::vector<Tile> _breakTileList;
 	std::vector<Tileset> _tilesets;
