@@ -226,6 +226,8 @@ void AnimatedSprite::drawPlayer(Graphics& graphics, int x, int y) {
 		destinationRectangle.w = this->_sourceRect.w * globals::PLAYER_SCALE;
 		destinationRectangle.h = this->_sourceRect.h * globals::PLAYER_SCALE;
 
+		if (this->_currentAnimation == "PlayerDead") { SDL_Delay(130); }
+
 		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; // Pull out correct rectangle
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
