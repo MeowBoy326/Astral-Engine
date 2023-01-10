@@ -14,9 +14,13 @@ public:
 	Parallax(SDL_Texture* bgImg, float parallaxSpeed) :
 		bgImg(bgImg),
 		parallaxSpeed(parallaxSpeed),
-		srcPosition({ 0, 0 }),
-		srcPositionCopy({ -globals::SCREEN_WIDTH, srcPosition.y })
-	{}
+		srcPosition({ 0, 0 }) {
+		int imageWidth, imageHeight;
+		SDL_QueryTexture(this->bgImg, nullptr, nullptr, &imageWidth, &imageHeight);
+
+		int new_width = imageWidth * 1;
+		this->srcPositionCopy = { -new_width, 0 };
+	}
 	void update(int elapsedTime, float dx, float dy);
 	void draw(Graphics &graphics);
 private:
