@@ -47,6 +47,7 @@ SDL_Surface* Graphics::loadImage(const std::string &filePath) {
 	
 	if (this->_spriteSheets.count(filePath) == 0) {
 		this->_spriteSheets[filePath] = IMG_Load(filePath.c_str()); // will use SDL to load image, it uses a c-string
+		//printf("IMG_Load: %s\n", IMG_GetError());
 	}
 	return this->_spriteSheets[filePath]; // Regardless we will return sprite if its loaded already or needs to be
 }
