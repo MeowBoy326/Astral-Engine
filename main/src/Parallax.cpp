@@ -1,5 +1,4 @@
 #include "../headers/Parallax.h"
-
 #include "../headers/Graphics.h"
 
 #include <SDL.h>
@@ -13,15 +12,29 @@ void Parallax::update(int elapsedTime, float dx, float dy) {
 		if (this->timeToUpdate >= 100) {
 
 			/* Move in copy image as 1st image is ending and place original image at the start again */
-			int imageWidth, imageHeight;
+			int imageWidth, imageHeight, reposition;
 			SDL_QueryTexture(this->bgImg, nullptr, nullptr, &imageWidth, &imageHeight);
 
 			int new_width = imageWidth * 1;
 			//if (imageWidth < globals::SCREEN_WIDTH) {
 			//	new_width = globals::SCREEN_WIDTH; //imageWidth * 2;
 			//}
+			reposition = 1;
+			if (imageWidth > globals::SCREEN_WIDTH) {
+				reposition = -1;
+			}
 
 			if (dx > 0.0f) {
+				this->srcPosition.x -= (int)((abs(dx) + 1) * this->parallaxSpeed);
+				this->srcPositionCopy.x -= (int)((abs(dx) + 1) * this->parallaxSpeed);
+				if (this->srcPosition.x <= -new_width) { //-globals::SCREEN_WIDTH) {
+					this->srcPosition.x = new_width + reposition;
+				}
+				else if (this->srcPositionCopy.x <= -new_width) { //-globals::SCREEN_WIDTH) {
+					this->srcPositionCopy.x = new_width + reposition;
+				}
+			}
+			else {
 				this->srcPosition.x += (int)((dx + 1) * this->parallaxSpeed);
 				this->srcPositionCopy.x += (int)((dx + 1) * this->parallaxSpeed);
 				if (this->srcPosition.x >= new_width) {
@@ -29,16 +42,6 @@ void Parallax::update(int elapsedTime, float dx, float dy) {
 				}
 				if (this->srcPositionCopy.x >= new_width) {
 					this->srcPositionCopy.x = -new_width;
-				}
-			}
-			else {
-				this->srcPosition.x -= (int) ( (abs(dx) + 1) * this->parallaxSpeed);
-				this->srcPositionCopy.x -= (int)((abs(dx) + 1) * this->parallaxSpeed);
-				if (this->srcPosition.x <= -new_width) { //-globals::SCREEN_WIDTH) {
-					this->srcPosition.x = new_width - 1;
-				}
-				else if (this->srcPositionCopy.x <= -new_width) { //-globals::SCREEN_WIDTH) {
-					this->srcPositionCopy.x = new_width - 1;
 				}
 			}
 
