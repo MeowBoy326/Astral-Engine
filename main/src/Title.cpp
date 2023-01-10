@@ -22,9 +22,9 @@ Title::Title() {}
 
 Title::Title(Graphics &graphics, Input &input, SDL_Event &event) :
 // Graphics, filePath, source x, source y on sprite sheet, width , height of sprite, x, y pos to start player out at (destinationRect), and timetoUpdate 100
-AnimatedSprite(graphics, "data\\graphics\\dark_clouds.png", 0, 0, 640, 480, 0, 0, 140)
+AnimatedSprite(graphics, "data\\graphics\\titleSprite.png", 0, 0, 640, 480, 0, 0, 140)
 {
-	graphics.loadImage("data\\graphics\\dark_clouds.png"); // Loads sprite sheet in
+	graphics.loadImage("data\\graphics\\titleSprite.png"); // Loads sprite sheet in
 
 	this->setupAnimations();
 	this->playAnimation("zero");
@@ -70,11 +70,8 @@ Title::~Title()
 	this->_settingsDisplayRes.destroySprite();
 	this->_exitMenu.destroySprite();
 	this->_selectionBox.destroySprite();
+
 	AnimatedSprite::removeAnimation("zero");
-	AnimatedSprite::removeAnimation("one");
-	AnimatedSprite::removeAnimation("two");
-	AnimatedSprite::removeAnimation("three");
-	AnimatedSprite::removeAnimation("four");
 	AnimatedSprite::removeSprite();
 }
 
@@ -532,38 +529,15 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 }
 
 int Title::getMenuChoice() {
-	std::cout << "Menu Choice = " << this->menuChoice << std::endl;
 	return this->menuChoice;
 }
 
-void Title::playNext(int num) {
-	switch (num) {
-	case 0:
-		this->playAnimation("zero");
-		break;
-	case 1:
-		this->playAnimation("one");
-		break;
-	case 2:
-		this->playAnimation("two");
-		break;
-	case 3:
-		this->playAnimation("three");
-		break;
-	case 4:
-		this->playAnimation("four");
-		break;
-	}
-}
+void Title::playNext(int num) {}
 
 void Title::animationDone(std::string currentAnimation) {}
 
 void Title::setupAnimations() {
-	this->addAnimation(4, 0, 0, "zero", 640, 480, Vector2(0, 0));
-	this->addAnimation(1, 1, 483, "one", 640, 480, Vector2(0, 0)); // we are 16 pixels down now on sprite sheet
-	this->addAnimation(1, 643, 1, "two", 640, 480, Vector2(0, 0)); //# of frames, x, y, name(RunLeft), height, width, offset (no so empty vector)
-	this->addAnimation(1, 643, 483, "three", 640, 480, Vector2(0, 0));
-	this->addAnimation(1, 1, 965, "four", 640, 480, Vector2(0, 0));
+	this->addAnimation(19, 0, 0, "zero", 640, 480, Vector2(0, 0));
 }
 
 void Title::update(float elapsedTime) {
