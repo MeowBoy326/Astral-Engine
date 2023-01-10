@@ -119,5 +119,7 @@ void Graphics::setWindowResolution(int w, int h, bool scaled) {
 		float scale_y = (float)globals::SCREEN_HEIGHT / 480;
 
 		SDL_RenderSetScale(this->_renderer, scale_x, scale_y);
+		/* Change scaling method to show more of the game content */
+		//SDL_RenderSetLogicalSize(this->_renderer, globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT);
 	}
 }
