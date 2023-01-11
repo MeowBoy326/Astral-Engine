@@ -207,7 +207,7 @@ void Game::gameLoop() {
 				this->loadGame(graphics);
 			}
 			/* Free memory to prevent any leaks */
-			graphics.unloadImage("data\\graphics\\dark_clouds.png");
+			graphics.unloadImage("data\\graphics\\titleSprite.png");
 			delete this->_title;
 			this->_title = nullptr;
 		}
@@ -888,7 +888,7 @@ void Game::gameLoop() {
 					Mix_RewindMusic();
 				}
 				/* Free memory to prevent any leaks */
-				graphics.unloadImage("data\\graphics\\dark_clouds.png");
+				graphics.unloadImage("data\\graphics\\titleSprite.png");
 				delete this->_title;
 				this->_title = nullptr;
 			}
