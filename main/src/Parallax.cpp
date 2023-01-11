@@ -1,15 +1,19 @@
 #include "../headers/Parallax.h"
 #include "../headers/Graphics.h"
 
+#include <iostream>
 #include <SDL.h>
 Parallax::Parallax() {}
 
+Parallax::~Parallax() {
+	SDL_DestroyTexture(this->bgImg);
+}
 /* Update by players dx_ and dy_ for the srcPosition.x and srcPosition.y respectively */
-void Parallax::update(int elapsedTime, float dx, float dy) {
+void Parallax::update(float elapsedTime, float dx, float dy) {
 	/* Check if Player is moving */
 	if (dx != 0.0f) {
 		this->timeToUpdate += elapsedTime;
-		if (this->timeToUpdate >= 100) {
+		if (this->timeToUpdate >= 30) {
 
 			/* Move in copy image as 1st image is ending and place original image at the start again */
 			int imageWidth, imageHeight, reposition;
