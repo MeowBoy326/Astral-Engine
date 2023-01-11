@@ -313,6 +313,11 @@ bool Title::Start(Graphics &graphics, Input &input, SDL_Event &event)
 		this->Title::update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
 		LAST_UPDATE_TIME = CURRENT_TIME_MS; // Loop will go again and current time - new last update will tell us how long next frame will take
 		this->Title::draw(graphics);
+		int remaining_time = (1000 / FPS) - ELAPSED_TIME_MS;
+		if (remaining_time > 0) {
+			// CPU usage down by 12-13%
+			SDL_Delay(remaining_time);
+		}
 	}
 	return false;
 }
@@ -524,6 +529,11 @@ bool Title::Pause(Graphics& graphics, Input& input, SDL_Event& event, Player& pl
 		this->Title::update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME));
 		LAST_UPDATE_TIME = CURRENT_TIME_MS; // Loop will go again and current time - new last update will tell us how long next frame will take
 		this->Title::drawPauseMenu(graphics, player);
+		int remaining_time = (1000 / FPS) - ELAPSED_TIME_MS;
+		if (remaining_time > 0) {
+			// CPU usage down by 12-13%
+			SDL_Delay(remaining_time);
+		}
 	}
 	return false;
 }
