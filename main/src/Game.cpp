@@ -28,8 +28,7 @@ using namespace CryptoPP;
 
 namespace {
 	const int FPS = 50;
-	// remove 5 *
-	const int MAX_FRAME_TIME = 5* 1000 / FPS; // Max amount of time a frame is allowed to last
+	const int MAX_FRAME_TIME = 1000 / FPS; // Max amount of time a frame is allowed to last
 	int bgmVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
 	int sfxVolume = 100;
 	int pauseBlockTimer = 0;
@@ -176,7 +175,7 @@ void Game::gameLoop() {
 	}
 		
 
-	int LAST_UPDATE_TIME = SDL_GetTicks(); 
+	int LAST_UPDATE_TIME = SDL_GetTicks();
 	// Above ^ gets the amount of milliseconds since the SDL library was initialized
 	// Must start before loop
 	// Start the game loop
@@ -197,6 +196,7 @@ void Game::gameLoop() {
 				this->_inventory.addItem(0, 1);
 				this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
 				this->_level.generateEffects(graphics, this->_player);
+				this->_level.generateParallax(graphics, this->_level.getMapName(), this->_player);
 				if (!cipher.verifyHash("cave", this->_player)) {
 					std::exit(0);
 				}
@@ -247,6 +247,14 @@ void Game::gameLoop() {
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			
 			this->drawGameOver(graphics);
+
+			/* Don't hog the CPU, delay by regulating the frame rate. If remaining time > 0 this frame took less time than needed */
+			int remaining_time = (1000 / FPS) - ELAPSED_TIME_MS;
+			if (remaining_time > 0) {
+				// CPU usage down by 12-13%
+				SDL_Delay(remaining_time);
+			}
+
 			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true 
 				&& this->_gameOver->isRespawnAllowed()) {
 				Mix_ResumeMusic();
@@ -302,6 +310,13 @@ void Game::gameLoop() {
 			this->updateCutscene(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			this->drawCutscene(graphics);
+
+			/* Don't hog the CPU, delay by regulating the frame rate. If remaining time > 0 this frame took less time than needed */
+			int remaining_time = (1000 / FPS) - ELAPSED_TIME_MS;
+			if (remaining_time > 0) {
+				// CPU usage down by 12-13%
+				SDL_Delay(remaining_time);
+			}
 		}
 // Main Game Loop
 		if (title == false && GAMEOVER == false && activeCutscene == false) {
@@ -833,13 +848,24 @@ void Game::gameLoop() {
 
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
-			this->_graphics = graphics; // Updated graphics
+
+			// Updated graphics
+			this->_graphics = graphics;
+
 			// Take standard min : elapsed time ms and max frame time
 			this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
+
 			// Loop will go again and current time - new last update will tell us how long next frame will take
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 
 			this->draw(graphics);
+
+			/* Don't hog the CPU, delay by regulating the frame rate. If remaining time > 0 this frame took less time than needed */
+			int remaining_time = (1000 / FPS) - ELAPSED_TIME_MS;
+			if (remaining_time > 0) {
+				// CPU usage down by 12-13%
+				SDL_Delay(remaining_time);
+			}
 
 			// SDL_GetTicks() will still increment while pauseGame = this->_title(...) runs it's own loop.
 			// To account for the time difference, we simply set LAST_UPDATE_TIME = SDL_GetTicks() - 1
@@ -1423,6 +1449,7 @@ int Game::loadGame(Graphics & graphics)
 	// It's also important to do this after the map hash has been verified to prevent any edits appearing by chance.
 	this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 	this->_level.generateEffects(graphics, this->_player);
+	this->_level.generateParallax(graphics, this->_level.getMapName(), this->_player);
 	this->saveGame(graphics);
 	XMLCheckResult(result);
 
