@@ -13,7 +13,7 @@
 #include <fstream>
 
 Graphics::Graphics() {
-	SDL_CreateWindowAndRenderer(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, 0, &this->_window, &this->_renderer);
+	SDL_CreateWindowAndRenderer(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED, &this->_window, &this->_renderer);
 	SDL_SetWindowTitle(this->_window, "Astral");
 	SDL_Surface* icon = IMG_Load("icon.png");
 	SDL_SetWindowIcon(this->_window, icon);
