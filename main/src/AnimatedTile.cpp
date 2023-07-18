@@ -10,7 +10,7 @@ AnimatedTile::AnimatedTile(std::vector<Vector2> tilesetPositions, int duration, 
 	_duration(duration),
 	_tileToDraw(0) {}
 
-void AnimatedTile::update(int elapsedTime) {
+void AnimatedTile::update(float elapsedTime) {
 	// Timer code
 	if (this->_amountOfTime <= 0) {
 		if (this->_tileToDraw == this->_tilesetPositions.size() - 1) {
