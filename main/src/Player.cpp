@@ -709,12 +709,14 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 				level = it->second;
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName(), player);
+				level.generateParallax(graphics, level.getMapName(), player);
 				level.generateEffects(graphics, player);
 			}
 			else {
 				level = Level(others.at(i).getDestination(), graphics, invent);
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName(), player);
+				level.generateParallax(graphics, level.getMapName(), player);
 				level.generateEffects(graphics, player);
 				this->storeLevel(level);
 				std::cout << "stored level" << std::endl;
@@ -762,12 +764,14 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 				level = it->second;
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName(), player);
+				level.generateParallax(graphics, level.getMapName(), player);
 				level.generateEffects(graphics, player);
 			}
 			else {
 				level = Level(others.at(i).getDestination(), graphics, invent);
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName(), player);
+				level.generateParallax(graphics, level.getMapName(), player);
 				level.generateEffects(graphics, player);
 				this->storeLevel(level);
 				std::cout << "stored level" << std::endl;
