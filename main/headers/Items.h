@@ -50,7 +50,7 @@ class HealthPotion : public Items {
 public:
 	HealthPotion();
 	HealthPotion(Graphics &graphics, Vector2 spawnPoint);
-	~HealthPotion();
+	~HealthPotion() override;
 	
 	static const ItemID ID = 0;
 
@@ -63,7 +63,8 @@ public:
 		
 	}
 
-	void updateItemStats(Player &player) {
+	
+	void updateItemStats(Player &player) override {
 		this->properties_["Strength"] = player.getHpPotStrength();
 		this->properties_["Capacity"] = player.getHpPotCapacity();
 	}
@@ -73,15 +74,15 @@ public:
 	Items* clone() const override { return new HealthPotion(*this); }
 
 	//void addToInventory();
-	const inline bool isDroppedItem() { return this->wasDropped; }
-	const inline int getAmount() { return this->currencyAmount; }
-	void update(int elapsedTime, Player & player);
+	const inline bool isDroppedItem() override { return this->wasDropped; }
+	const inline int getAmount() override { return this->currencyAmount; }
+	void update(int elapsedTime, Player & player) override;
 
-	void draw(Graphics & graphics);
-	void drawDrops(Graphics &graphics, float x, float y);
+	void draw(Graphics & graphics) override;
+	void drawDrops(Graphics &graphics, float x, float y) override;
 
-	void animationDone(std::string currentAnimation);
-	void setupAnimations();
+	void animationDone(std::string currentAnimation) override;
+	void setupAnimations() override;
 
 	const inline std::string getItemName() override { return this->name; }
 	const inline std::map<std::string, std::variant<int, std::string>> getProperties() override { return this->properties_; }
