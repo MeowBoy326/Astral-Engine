@@ -142,6 +142,7 @@ public:
 	const inline bool getPlayerHit() const { return this->gotHit; }
 	const inline float getMaxHealth() const { return this->_maxHealth; }
 	const inline float getCurrentHealth() const { return this->_currentHealth; }
+	const inline float getRestorableHealth() const { return this->_restorableHealth; }
 	inline void setMaxHealth(float hp) { this->_maxHealth = hp; }
 	inline void setCurrentHealth(float hp) { this->_currentHealth = hp; }
 	inline void subtractHpPot() { this->_hpPotAmount -= 1; }

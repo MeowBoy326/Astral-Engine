@@ -910,7 +910,7 @@ void Player::drawHPPotStrength(Graphics& graphics, int x, int y) {
 
 void Player::handleRestoreableHealth(float damage) {
 	if (isRestorableHealth && this->_currentHealth > 0) {
-		float restoreHealth = (this->_maxHealth * 0.02);
+		float restoreHealth = ((this->_restorableHealth * 1.0f) * 0.002f) + (this->_maxHealth * 0.003f);
 		if (restoreHealth < 0)
 			restoreHealth = 1.0f;
 		this->gainHealth(restoreHealth);
@@ -938,7 +938,7 @@ void Player::gainHealth(float amount) {
 			amount = -1.0f;
 		this->_currentHealth += amount;
 		std::cout << "lost " << amount << std::endl;
-		this->_restorableHealth = amount;
+		this->_restorableHealth = amount * -1.0f;
 		player_constants::iFrame = true;
 		this->isRestorableHealth = true;
 		this->gotHit = true;
@@ -1298,6 +1298,7 @@ void Player::update(float elapsedTime) {
 			if (_timeForRestoreHealth >= 3000) {
 				this->isRestorableHealth = false;
 				this->_timeForRestoreHealth = 0;
+				this->_restorableHealth = 0;
 			}
 		}
 
