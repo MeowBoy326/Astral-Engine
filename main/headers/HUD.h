@@ -21,6 +21,7 @@ private:
 	Sprite _healthBarSprite;
 	Sprite _healthNumber1;
 	Sprite _currentHealthBar;
+	Sprite _restorableHealthBar;
 	Sprite _healthPotion;
 
 	// Exp Sprites
