@@ -914,6 +914,7 @@ void Player::handleRestoreableHealth(float damage) {
 		if (restoreHealth < 0)
 			restoreHealth = 1.0f;
 		this->gainHealth(restoreHealth);
+		this->_restorableHealth -= restoreHealth;
 	}
 }
 
