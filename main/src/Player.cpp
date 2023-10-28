@@ -908,6 +908,15 @@ void Player::drawHPPotStrength(Graphics& graphics, int x, int y) {
 	this->_txt->drawItemQuantity(graphics, 0, 0, "+" + std::to_string(this->_hpPotStrength), x, y, {0, 210, 0, 0});
 }
 
+void Player::handleRestoreableHealth(float damage) {
+	if (isRestorableHealth && this->_currentHealth > 0) {
+		float restoreHealth = (this->_maxHealth * 0.02);
+		if (restoreHealth < 0)
+			restoreHealth = 1.0f;
+		this->gainHealth(restoreHealth);
+	}
+}
+
 void Player::drawExpNumbers(Graphics & graphics, int x, int y)
 {
 	double percent = ((double)this->getCurrentExp() / (double)this->getRequiredExp()) * 100;
@@ -929,7 +938,9 @@ void Player::gainHealth(float amount) {
 			amount = -1.0f;
 		this->_currentHealth += amount;
 		std::cout << "lost " << amount << std::endl;
+		this->_restorableHealth = amount;
 		player_constants::iFrame = true;
+		this->isRestorableHealth = true;
 		this->gotHit = true;
 		// Knock back player
 		if (_facing == LEFT)
@@ -1279,6 +1290,15 @@ void Player::update(float elapsedTime) {
 		}
 		else {
 			this->showBlink(true);
+		}
+
+		// Restorable Health timer
+		if (this->isRestorableHealth && this->_currentHealth > 0) {
+			this->_timeForRestoreHealth += elapsedTime;
+			if (_timeForRestoreHealth >= 3000) {
+				this->isRestorableHealth = false;
+				this->_timeForRestoreHealth = 0;
+			}
 		}
 
 		for (int i = this->battleMessages.size(); i--;) {

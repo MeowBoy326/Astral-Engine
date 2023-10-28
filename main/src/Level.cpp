@@ -1007,6 +1007,7 @@ void Level::checkProjectileCollisions(Player & player) {
 				this->_enemies.at(i)->bulletHit(damage);
 				this->dmgVector.push_back(std::make_tuple(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY(),
 					damage, 0));
+				player.handleRestoreableHealth(damage);
 				delete this->_projectiles.at(j);
 				this->_projectiles.erase(this->_projectiles.begin() + j);
 			}

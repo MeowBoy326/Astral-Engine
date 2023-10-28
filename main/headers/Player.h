@@ -80,6 +80,7 @@ public:
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
+	void handleRestoreableHealth(float damage);
 	void handleHex(float elapsedTime);
 	void applyHex(int hexID, double duration, bool isStackable);
 	void nullifyHex(int hexID);
@@ -192,6 +193,7 @@ private:
 	float previousY = 0;
 	float _maxHealth;
 	float _currentHealth;
+	float _restorableHealth;
 	float _air = 100;
 	float _fuel = 100;
 	float _exp = 0;
@@ -205,6 +207,7 @@ private:
 	bool _lookingUp;
 	bool _lookingDown;
 	bool iFrame;
+	bool isRestorableHealth = false;
 	bool isPoisoned = false;
 	bool isBurning = false;
 	bool isDrowning = false;
@@ -267,6 +270,7 @@ protected:
 	double _timeForMapName = 3000;
 	double _timeForEventMsg = 0;
 	double _timeForBattleMsg = 0;
+	double _timeForRestoreHealth = 0;
 	double _poisonDOTTimer = 0;
 	double _poisonDuration = 0;
 	double _hexDOTTimer = 0;
