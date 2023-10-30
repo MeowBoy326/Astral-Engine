@@ -238,6 +238,7 @@ private:
 	double _dmgMod = 1;
 	double _dmgReduction = 0;
 	double _finalDamage = 0;
+	double _lifeSteal = 0.002;
 	double _timeElapsed = 0; // For timer
 	double _mapTimeElapsed = 0;
 
