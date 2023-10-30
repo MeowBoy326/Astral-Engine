@@ -910,7 +910,7 @@ void Player::drawHPPotStrength(Graphics& graphics, int x, int y) {
 
 void Player::handleRestoreableHealth(float damage) {
 	if (isRestorableHealth && this->_currentHealth > 0) {
-		float restoreHealth = ((this->_restorableHealth * 1.0f) * 0.002f) + (this->_maxHealth * 0.003f);
+		float restoreHealth = ((this->_restorableHealth * 1.1f) * this->_lifeSteal) + (this->_maxHealth * 0.0075f);
 		if (restoreHealth < 0)
 			restoreHealth = 1.0f;
 		this->gainHealth(restoreHealth);
