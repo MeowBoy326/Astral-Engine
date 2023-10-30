@@ -53,6 +53,7 @@ public:
 	void drawTitle(Graphics & graphics, int x, int y);
 	void drawBullet(Graphics &graphics, int x, int y);
 	void drawLoot(Graphics &graphics, int x, int y);
+	void drawSkillIcon(Graphics &graphics, int x, int y);
 
 	void showBlink(bool condition) { this->_visible = condition; }
 	bool getBlink() const { return this->_visible; }
