@@ -109,7 +109,7 @@ public:
 
 	void drawSkillProperties(Graphics &graphics, Player& player, int skillID) {
 		/* Get the map that holds the properties for each skill. */
-		const std::map<std::string, std::variant<int, std::string>> properties = skill_prototypes_[skillID]->getProperties();
+		const std::map<std::string, std::variant<int, float, std::string>> properties = skill_prototypes_[skillID]->getProperties();
 		std::string iName = "NULL";
 
 		skill_prototypes_[skillID]->updateSkillStats(player);
@@ -127,6 +127,16 @@ public:
 				int num = std::get<int>(property.second);
 				std::string text = property.first + ": " + std::to_string(num);
 				/* Convert to string and draw */
+				this->drawInventItem(graphics, x, y, text);
+			}
+			else if (std::holds_alternative<float>(property.second)) {
+				float fnum = std::get<float>(property.second);
+				std::string text = property.first + ": " + std::to_string(fnum);
+				this->drawInventItem(graphics, x, y, text);
+			}
+			else if (std::holds_alternative<int>(property.second)) {
+				int inum = std::get<int>(property.second);
+				std::string text = property.first + ": " + std::to_string(inum);
 				this->drawInventItem(graphics, x, y, text);
 			}
 			else {
