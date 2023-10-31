@@ -28,8 +28,8 @@ public:
 	virtual const inline std::string getSkillName() { return this->name; }
 	virtual void raiseEventMsg(Player &player) = 0;
 	virtual const inline int getSkillLevel() { return this->skillLevel; }
-	virtual inline int setSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
-	virtual inline int raiseSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
+	virtual inline void setSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
+	virtual inline void raiseSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
 	virtual const std::map<std::string, std::variant<int, float, std::string>> getProperties() = 0;
 
 	~Skills();
@@ -62,7 +62,7 @@ public:
 	}
 
 	void updateSkillStats(Player &player) override {
-		this->getLifeSteal();
+		this->updateLifeSteal();
 	}
 
 	Skills* clone() const override { return new LifeSteal(*this); }
@@ -81,11 +81,11 @@ public:
 
 	const inline std::string getSkillName() override { return this->name; }
 	const inline int getSkillLevel() override { return this->skillLevel; }
-	inline int setSkillLevel(int skillLevel) override { this->skillLevel = skillLevel; }
-	inline int raiseSkillLevel(int skillLevel) override { this->skillLevel += skillLevel; setLifeSteal(); getLifeSteal(); }
+	inline void setSkillLevel(int skillLevel) override { this->skillLevel = skillLevel; }
+	inline void raiseSkillLevel(int skillLevel) override { this->skillLevel += skillLevel; setLifeSteal(); updateLifeSteal(); }
 	const inline std::map<std::string, std::variant<int, float, std::string>> getProperties() override { return this->properties_; }
 
-	inline float getLifeSteal() {
+	inline void updateLifeSteal() {
 		auto it = this->properties_.find("Life Steal");
 		if (it != this->properties_.end()) {
 			if (std::holds_alternative<float>(it->second)) {
@@ -100,7 +100,7 @@ public:
 		}
 	}
 
-	inline float setLifeSteal() {
+	inline void setLifeSteal() {
 		auto it = this->properties_.find("Life Steal");
 		if (it != this->properties_.end()) {
 			if (std::holds_alternative<float>(it->second)) {
