@@ -27,8 +27,10 @@ public:
 	virtual void drawSkills(Graphics &graphics, float x, float y);
 	virtual const inline std::string getSkillName() { return this->name; }
 	virtual void raiseEventMsg(Player &player) = 0;
-
-	virtual const std::map<std::string, std::variant<int, std::string>> getProperties() = 0;
+	virtual const inline int getSkillLevel() { return this->skillLevel; }
+	virtual inline int setSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
+	virtual inline int raiseSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
+	virtual const std::map<std::string, std::variant<int, float, std::string>> getProperties() = 0;
 
 	~Skills();
 
@@ -38,7 +40,9 @@ private:
 protected:
 	SkillID _skillID;
 	std::string name;
-	std::map<std::string, std::variant<int, std::string>> properties_;
+	int skillLevel;
+	float skillCost;
+	std::map<std::string, std::variant<int, float, std::string>> properties_;
 };
 
 
@@ -58,8 +62,7 @@ public:
 	}
 
 	void updateSkillStats(Player &player) override {
-		this->properties_["Level"] = player.getHpPotStrength();
-		this->properties_["Life Steal"] = player.getHpPotCapacity();
+		this->getLifeSteal();
 	}
 
 	Skills* clone() const override { return new LifeSteal(*this); }
@@ -77,17 +80,53 @@ public:
 	void setupAnimations() override;
 
 	const inline std::string getSkillName() override { return this->name; }
+	const inline int getSkillLevel() override { return this->skillLevel; }
+	inline int setSkillLevel(int skillLevel) override { this->skillLevel = skillLevel; }
+	inline int raiseSkillLevel(int skillLevel) override { this->skillLevel += skillLevel; setLifeSteal(); getLifeSteal(); }
+	const inline std::map<std::string, std::variant<int, float, std::string>> getProperties() override { return this->properties_; }
 
-	const inline std::map<std::string, std::variant<int, std::string>> getProperties() override { return this->properties_; }
+	inline float getLifeSteal() {
+		auto it = this->properties_.find("Life Steal");
+		if (it != this->properties_.end()) {
+			if (std::holds_alternative<float>(it->second)) {
+				this->lifeSteal = std::get<float>(it->second);
+			}
+		}
+		it = it = this->properties_.find("Cost");
+		if (it != this->properties_.end()) {
+			if (std::holds_alternative<int>(it->second)) {
+				this->skillCost = std::get<int>(it->second);
+			}
+		}
+	}
 
+	inline float setLifeSteal() {
+		auto it = this->properties_.find("Life Steal");
+		if (it != this->properties_.end()) {
+			if (std::holds_alternative<float>(it->second)) {
+				std::get<float>(it->second) = ((static_cast<float>(this->skillLevel) * 0.002f) + 0.003f);
+			}
+		}
+		it = this->properties_.find("Cost");
+		if (it != this->properties_.end()) {
+			if (std::holds_alternative<int>(it->second)) {
+				int currentCost = std::get<int>(it->second);
+				currentCost += this->skillLevel + 2 * 5;
+				it->second = currentCost;
+			}
+		}
+	}
+	
 private:
-	float lifeSteal;
+	float lifeSteal = 0.002f;
 	std::string name = "Life Steal";
-	std::map<std::string, std::variant<int, std::string>> properties_ = {
-		{"Level", 2},
-		{"Life Steal", 4},
-		{"Value", 0},
-		{"Description", std::string("Drain the life from your enemies by >" + std::string("3%") ) }
+	int skillLevel = 0;
+	float skillCost = 5.0f;
+	std::map<std::string, std::variant<int, float, std::string>> properties_ = {
+		{"Level", skillLevel},
+		{"Life Steal", lifeSteal},
+		{"Cost", std::to_string(skillCost) + "% of max health"},
+		{"Description", std::string("Drain the life from your enemies by > Skill LS " + std::to_string((lifeSteal * 1)) + "%" " + Base Life Steal <") }
 	};
 };
 
