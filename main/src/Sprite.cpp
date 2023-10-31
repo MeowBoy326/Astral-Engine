@@ -24,7 +24,15 @@ _y(posY)
 		printf("\nError: Unable to load image \n");
 	}
 
-	this->_boundingBox = Rectangle(this->_x, this->_y, width * globals::SPRITE_SCALE, height * globals::SPRITE_SCALE);
+	
+	if (filePath == "data\\graphics\\Char.png") {
+		this->_boundingBox = Rectangle(this->_x, this->_y, width * globals::SPRITE_SCALE - 3, height * globals::SPRITE_SCALE);
+		this->charSprite = 1;
+	}
+	else {
+		this->_boundingBox = Rectangle(this->_x, this->_y, width * globals::SPRITE_SCALE, height * globals::SPRITE_SCALE);
+	}
+	
 }
 
 Sprite::~Sprite() {
@@ -39,9 +47,17 @@ void Sprite::draw(Graphics &graphics, int x, int y) { // This will do all the dr
 void Sprite::drawScaled(Graphics& graphics, int x, int y, float scale) {
 	SDL_Rect destinationRectangle = { x, y, this->_sourceRect.w, this->_sourceRect.h };
 
-	if (scale > 0) {
+	if (scale >= 0) {
+		if (scale == 0)
+			scale = 1;
 		destinationRectangle.w *= scale;
 		destinationRectangle.h *= scale;
+	}
+
+	else {
+		scale *= -1;
+		destinationRectangle.w /= scale;
+		destinationRectangle.h /= scale;
 	}
 
 	graphics.blitSurface(this->_spriteSheet, &this->_sourceRect, &destinationRectangle);
@@ -146,8 +162,7 @@ void Sprite::addProjectile(int x, int y, int width, int height, int bulletID) {
 
 	SDL_Rect newRect = { x, y, width, height };
 	rectangles.push_back(newRect);
-	// PRect.push_back(newRect);
-	std::cout << "debug: add bulletID# " << bulletID << std::endl;
+
 	this->_bulletMap.insert({ bulletID, newRect });
 	this->_projectiles.insert(std::pair<int, std::vector<SDL_Rect> >(bulletID, rectangles));
 	// This->_offsets.insert(std::pair<std::string, Vector2>(name, offset));
@@ -205,7 +220,12 @@ void Sprite::drawBullet(Graphics &graphics, int x, int y, int bulletID) {
 }
 
 void Sprite::update() {
-	this->_boundingBox = Rectangle(this->_x, this->_y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE);
+	if (this->charSprite == 1) {
+		this->_boundingBox = Rectangle(this->_x, this->_y, this->_sourceRect.w * globals::SPRITE_SCALE - 3, this->_sourceRect.h * globals::SPRITE_SCALE);
+	}
+	else {
+		this->_boundingBox = Rectangle(this->_x, this->_y, this->_sourceRect.w * globals::SPRITE_SCALE, this->_sourceRect.h * globals::SPRITE_SCALE);
+	}
 }
 
 void Sprite::updateBoss(float scaleFactor) {
