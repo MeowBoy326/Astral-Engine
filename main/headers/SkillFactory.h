@@ -115,10 +115,11 @@ public:
 		skill_prototypes_[skillID]->updateSkillStats(player);
 		iName = skill_prototypes_[skillID]->getSkillName();
 
-		this->drawInventItem(graphics, player.getX() - 320, player.getY() - 110, iName);
+		this->drawMultiLine(graphics, player.getX() - 320, player.getY() - 110, iName);
 
 		int x = player.getX() - 320;
 		int y = player.getY() - 95;
+		int newY = 0;
 		int counter = 0;
 		std::string description = "Description: NULL";
 		/* Get each properties of the skill and draw */
@@ -127,17 +128,17 @@ public:
 				int num = std::get<int>(property.second);
 				std::string text = property.first + ": " + std::to_string(num);
 				/* Convert to string and draw */
-				this->drawInventItem(graphics, x, y, text);
+				newY = this->drawMultiLine(graphics, x, y, text);
 			}
 			else if (std::holds_alternative<float>(property.second)) {
 				float fnum = std::get<float>(property.second);
 				std::string text = property.first + ": " + std::to_string(fnum);
-				this->drawInventItem(graphics, x, y, text);
+				newY = this->drawMultiLine(graphics, x, y, text);
 			}
 			else if (std::holds_alternative<int>(property.second)) {
 				int inum = std::get<int>(property.second);
 				std::string text = property.first + ": " + std::to_string(inum);
-				this->drawInventItem(graphics, x, y, text);
+				newY = this->drawMultiLine(graphics, x, y, text);
 			}
 			else {
 				std::string text = property.first + ": " + std::get<std::string>(property.second);
@@ -146,9 +147,9 @@ public:
 					continue;
 				}
 				/* Draw here */
-				this->drawInventItem(graphics, x, y, text);
+				newY = this->drawMultiLine(graphics, x, y, text);
 			}
-			y += 14;
+			y += newY;
 		}
 		this->drawInventItem(graphics, x, y, description);
 	}
