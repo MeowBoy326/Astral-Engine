@@ -46,6 +46,8 @@ public:
 	void drawBattleMessages(Graphics &graphics, int x, int y, std::string &text, SDL_Color color = { 255, 255, 255, 255 });
 	void drawSystemMessages(Graphics &graphics, int x, int y, std::string &text, SDL_Color color = { 255, 255, 255, 255 });
 	void drawSettings(Graphics &graphics, int x, int y, std::string &text, int fontSize, SDL_Color color = { 255, 255, 255, 255 });
+
+	int drawMultiLine(Graphics &graphics, int posX, int posY, const std::string &str, SDL_Color color = { 255, 255, 255, 255 });
 protected:
 	SDL_Rect _textSourceRect; // where on the spritesheet to get the sprite from
 	SDL_Rect _chatRect;
