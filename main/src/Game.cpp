@@ -1199,6 +1199,17 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
+	// Save skills
+	element = xml.NewElement("Skills");
+	std::map<Skills::SkillID, int> skVec = this->_skillFactory.getSkillTable();
+	for (auto iter = skVec.begin(); iter != skVec.end(); iter++) {
+		auto first = iter->first, second = iter->second;
+		XMLElement* ptrElement = xml.NewElement("skTable");
+		ptrElement->SetAttribute("skillID", first);
+		ptrElement->SetAttribute("skillLevel", second);
+		element->InsertEndChild(ptrElement);
+	}
+	root->InsertEndChild(element);
 	// Save the quest log
 	element = xml.NewElement("QuestLog");
 	if (element == nullptr)
@@ -1350,6 +1361,19 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("iTable");
 	}
 	this->_inventory.setInventoryTable(iVec);
+
+	// Load Skills
+	element = root->FirstChildElement("Skills");
+	ptrVec = element->FirstChildElement("skTable");
+	std::map<Skills::SkillID, int> skVec;
+	while (ptrVec != nullptr) {
+		int skillID, skillLevel;
+		result = ptrVec->QueryIntAttribute("skillID", &skillID);
+		result = ptrVec->QueryIntAttribute("skillLevel", &skillLevel);
+		iVec.insert({ skillID, skillLevel });
+		ptrVec = ptrVec->NextSiblingElement("skTable");
+	}
+	this->_skillFactory.setSkillTable(iVec);
 
 	// Load QuestLog
 	element = root->FirstChildElement("QuestLog");
