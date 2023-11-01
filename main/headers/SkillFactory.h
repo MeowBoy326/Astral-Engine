@@ -91,7 +91,7 @@ public:
 	}
 
 	void useSkillFromInvent(Player &player) {
-		this->useSkill(this->currentSkill, player);
+		this->levelSkill(this->currentSkill, player);
 	}
 
 	void bindSkillToKey(int hotkey) {
@@ -108,6 +108,18 @@ public:
 
 	void resetCurrentSkill() { this->currentSkill = 0; }
 
+	void levelSkill(Skills::SkillID id, Player &player) {
+		/* Call the overriden function use that the skill has */
+		auto it = skills.find(id);
+		if (it != skills.end()) {
+			auto itr = skill_prototypes_.find(id);
+			if (itr != skill_prototypes_.end()) {
+				itr->second->raiseSkillLevel(1);
+				it->second = itr->second->getSkillLevel();
+			}
+		}
+	}
+
 	void useSkill(Skills::SkillID id, Player &player) {
 		/* Call the overriden function use that the skill has */
 		auto it = skills.find(id);
@@ -115,7 +127,6 @@ public:
 			auto itr = skill_prototypes_.find(id);
 			if (itr != skill_prototypes_.end()) {
 				itr->second->use(player);
-				it->second = itr->second->getSkillLevel();
 			}
 		}
 	}
