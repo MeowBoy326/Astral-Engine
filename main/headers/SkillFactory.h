@@ -94,6 +94,9 @@ public:
 		this->useSkill(this->currentSkill, player);
 	}
 
+	void bindSkillToKey(Player &player) {
+	}
+
 	void resetCurrentSkill() { this->currentSkill = 0; }
 
 	void useSkill(Skills::SkillID id, Player &player) {
@@ -103,6 +106,7 @@ public:
 			auto itr = skill_prototypes_.find(id);
 			if (itr != skill_prototypes_.end()) {
 				itr->second->use(player);
+				it->second = itr->second->getSkillLevel();
 			}
 		}
 	}
@@ -182,6 +186,7 @@ public:
 	~SkillFactory();
 
 private:
+	// Skill ID, Skill Level
 	std::map<Skills::SkillID, int> skills;
 	std::map<Skills::SkillID, Skills*> skill_prototypes_;
 	std::map<Skills::SkillID, Sprite> skillSprites;
