@@ -94,7 +94,16 @@ public:
 		this->useSkill(this->currentSkill, player);
 	}
 
-	void bindSkillToKey(Player &player) {
+	void bindSkillToKey(int hotkey) {
+		auto it = skillHotkeys.find(hotkey);
+		if (it != skillHotkeys.end()) {
+			// Replace current hotkey with this new skill (rebind)
+			it->second = this->currentSkill;
+		}
+		else if (it == skills.end()) {
+			// Hotkey is not assigned, insert skill bind
+			skillHotkeys.insert(hotkey, this->currentSkill);
+		}
 	}
 
 	void resetCurrentSkill() { this->currentSkill = 0; }
@@ -179,6 +188,8 @@ public:
 	inline void setLootTable(std::vector<std::pair<std::string, int>> table) { this->lootTable = table; }
 	inline const std::map<Skills::SkillID, int> getSkillTable() const { return this->skills; }
 	inline void setSkillTable(std::map<Skills::SkillID, int> table) { this->skills = table; }
+	inline const std::map<int, Skills::SkillID> getSkillHotkeys() const { return this->skillHotkeys; }
+	inline void setSkillHotkeys(std::map<int, Skills::SkillID> table) { this->skillHotkeys = table; }
 	bool isLooted(std::string map, int iType);
 	void storeSkill(int type);
 	bool hasKeyStored(int keyID);
@@ -188,6 +199,7 @@ public:
 private:
 	// Skill ID, Skill Level
 	std::map<Skills::SkillID, int> skills;
+	std::map<int, Skills::SkillID> skillHotkeys;
 	std::map<Skills::SkillID, Skills*> skill_prototypes_;
 	std::map<Skills::SkillID, Sprite> skillSprites;
 

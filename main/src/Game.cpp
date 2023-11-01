@@ -897,6 +897,14 @@ void Game::gameLoop() {
 							skillSelectedItem -= 1;
 						}
 					}
+					else {
+						for (int key = SDL_SCANCODE_1; key <= SDL_SCANCODE_9; key++) {
+							if (input.wasKeyPressed(static_cast<SDL_Scancode>(key))) {
+								int hotkeyNum = key - SDL_SCANCODE_1 + 1;
+								this->_skillFactory.bindSkillToKey(hotkeyNum);
+							}
+						}
+					}
 				}
 
 				if (input.wasKeyPressed(SDL_SCANCODE_Z) == true && this->_player.getCurrentHealth() > 0) {
