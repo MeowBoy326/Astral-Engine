@@ -7,13 +7,15 @@
 #include "../headers/Door.h"
 #include "../headers/Npc.h"
 #include "../headers/Items.h"
+#include "../headers/Inventory.h"
+#include "../headers/Skills.h"
+#include "../headers/SkillFactory.h"
 #include "../headers/AESCipher.h"
 
 #include <time.h>
 #include <sstream>
 #include <iomanip>
 
-#include "../headers/Inventory.h"
 
 namespace player_constants {
 	float WALK_SPEED = 0.2f;
@@ -910,7 +912,7 @@ void Player::drawHPPotStrength(Graphics& graphics, int x, int y) {
 
 void Player::handleRestoreableHealth(float damage) {
 	if (isRestorableHealth && this->_currentHealth > 0) {
-		float restoreHealth = ((this->_restorableHealth * 1.1f) * this->_lifeSteal) + (this->_maxHealth * 0.0075f);
+		float restoreHealth = ((this->_restorableHealth * 1.1f) * this->STAT_LIFESTEAL) + (this->_maxHealth * 0.0075f);
 		if (restoreHealth < 0)
 			restoreHealth = 1.0f;
 		this->gainHealth(restoreHealth);

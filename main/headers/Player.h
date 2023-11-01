@@ -13,6 +13,8 @@ class Graphics;
 class Npc;
 class Items;
 class Inventory;
+class Skills;
+class SkillFactory;
 
 class Player : public AnimatedSprite {
 public:
@@ -181,10 +183,13 @@ public:
 	inline void setDefense(double def) { this->_defense = def; }
 	inline void setStatPoints(int points) { this->_statPoints = points; }
 	inline void setSoulStr(double str) { this->_soulStrength = str; }
+	inline void setLifeSteal(float amt) { this->STAT_LIFESTEAL = amt; }
+	inline void raiseLifeSteal(float amt) { this->STAT_LIFESTEAL += amt; }
 	double getDmgMod();
 	double getDmgReduction() { return this->_dmgReduction; }
 	double getDefense();
 	double getSoulStr();
+	float getLifeSteal() { return this->STAT_LIFESTEAL; }
 	int getStatPoints();
 	int selectX = 0;
 	int selectY = 0;
@@ -201,6 +206,7 @@ private:
 	float STAT_AGIL = 1;
 	float STAT_STR = 1;
 	float STAT_AVOID = 1;
+	float STAT_LIFESTEAL = 0.002f;
 
 	bool _grounded; // True if we are, false if we are in the air
 	bool _canShortJump = true;
@@ -238,7 +244,6 @@ private:
 	double _dmgMod = 1;
 	double _dmgReduction = 0;
 	double _finalDamage = 0;
-	double _lifeSteal = 0.002;
 	double _timeElapsed = 0; // For timer
 	double _mapTimeElapsed = 0;
 

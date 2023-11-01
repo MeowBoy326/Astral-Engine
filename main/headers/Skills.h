@@ -27,6 +27,7 @@ public:
 	virtual void drawSkills(Graphics &graphics, float x, float y);
 	virtual const inline std::string getSkillName() { return this->name; }
 	virtual void raiseEventMsg(Player &player) = 0;
+	virtual void raiseCustomMsg(Player &player, std::string message) = 0;
 	virtual const inline int getSkillLevel() { return this->skillLevel; }
 	virtual inline void setSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
 	virtual inline void raiseSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
@@ -58,9 +59,18 @@ public:
 		// Implement HP pot
 
 		//player.handleLifeSteal
-
-		this->raiseSkillLevel(1);
-
+		float hpReduc = this->skillCost / 100.0f;
+		float lifeStealAdd = this->lifeSteal + this->baseLifeSteal;
+		this->raiseCustomMsg(player, "Life Steal Activated | HP Reduction: " + 
+			globals::to_string_with_precision(hpReduc, 1) +
+			"%, Lifesteal: " +
+			globals::to_string_with_precision(lifeStealAdd, 1) +
+			"%"
+		);
+		player.setMaxHealth(hpReduc);
+		if (player.getCurrentHealth() >= player.getMaxHealth())
+			player.setCurrentHealth(player.getMaxHealth());
+		player.raiseLifeSteal(lifeStealAdd);
 	}
 
 	void updateSkillStats(Player &player) override {
@@ -73,6 +83,8 @@ public:
 	void raiseEventMsg(Player &player) override {
 		player.setEventMessage("Life Steal has been learned");
 	}
+
+	void raiseCustomMsg(Player &player, std::string message) override { player.setEventMessage(message); }
 
 	void update(int elapsedTime, Player & player) override;
 
