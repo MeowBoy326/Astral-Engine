@@ -59,10 +59,13 @@ public:
 
 		//player.handleLifeSteal
 
+		this->raiseSkillLevel(1);
+
 	}
 
 	void updateSkillStats(Player &player) override {
-		this->updateLifeSteal();
+		// Called every update
+		// Use for returning updated values to player class
 	}
 
 	Skills* clone() const override { return new LifeSteal(*this); }
@@ -82,7 +85,7 @@ public:
 	const inline std::string getSkillName() override { return this->name; }
 	const inline int getSkillLevel() override { return this->skillLevel; }
 	inline void setSkillLevel(int skillLevel) override { this->skillLevel = skillLevel; }
-	inline void raiseSkillLevel(int skillLevel) override { this->skillLevel += skillLevel; setLifeSteal(); updateLifeSteal(); }
+	inline void raiseSkillLevel(int skillLevel) override { this->skillLevel += skillLevel; setLifeSteal(); }
 	const inline std::map<std::string, std::variant<int, float, std::string>> getProperties() override { return this->properties_; }
 
 	inline void updateLifeSteal() {
@@ -94,8 +97,20 @@ public:
 		}
 		it = it = this->properties_.find("Cost");
 		if (it != this->properties_.end()) {
+			if (std::holds_alternative<float>(it->second)) {
+				this->skillCost = std::get<float>(it->second);
+			}
+		}
+		it = it = this->properties_.find("Level");
+		if (it != this->properties_.end()) {
 			if (std::holds_alternative<int>(it->second)) {
-				this->skillCost = std::get<int>(it->second);
+				this->skillLevel = std::get<int>(it->second);
+			}
+		}
+		it = it = this->properties_.find("Description");
+		if (it != this->properties_.end()) {
+			if (std::holds_alternative<std::string>(it->second)) {
+				this->description = std::get<std::string>(it->second);
 			}
 		}
 	}
@@ -103,30 +118,58 @@ public:
 	inline void setLifeSteal() {
 		auto it = this->properties_.find("Life Steal");
 		if (it != this->properties_.end()) {
-			if (std::holds_alternative<float>(it->second)) {
-				std::get<float>(it->second) = ((static_cast<float>(this->skillLevel) * 0.002f) + 0.003f);
+			if (std::holds_alternative<std::string>(it->second)) {
+				this->lifeSteal = ((static_cast<float>(this->skillLevel) * 0.002f) + 0.003f);
+				this->lifeStealText = globals::to_string_with_precision(this->lifeSteal * 100, 1) + "%";
+				it->second = this->lifeStealText;
 			}
 		}
 		it = this->properties_.find("Cost");
 		if (it != this->properties_.end()) {
+			if (std::holds_alternative<std::string>(it->second)) {
+				//float currentCost = std::get<float>(it->second);
+				this->skillCost = (static_cast<float>(this->skillLevel) + 2.0f) * 5.0f;
+				if (this->skillLevel == 0)
+					this->skillCost = (static_cast<float>(1) + 2.0f) * 5.0f;
+				this->skillCostText = globals::to_string_with_precision(this->skillCost, 1) + "% of max health";
+				it->second = skillCostText;
+			}
+		}
+		it = this->properties_.find("Level");
+		if (it != this->properties_.end()) {
 			if (std::holds_alternative<int>(it->second)) {
-				int currentCost = std::get<int>(it->second);
-				currentCost += this->skillLevel + 2 * 5;
-				it->second = currentCost;
+				it->second = this->skillLevel;
+			}
+		}
+		it = this->properties_.find("Description");
+		if (it != this->properties_.end()) {
+			if (std::holds_alternative<std::string>(it->second)) {
+				this->description = "Drain the life from your enemies by > Skill LifeSteal " +
+					globals::to_string_with_precision(this->lifeSteal * 100, 1) + "%" " + Base LifeSteal " +
+					globals::to_string_with_precision(this->baseLifeSteal * 100, 1) + "% < " +
+					globals::to_string_with_precision((this->lifeSteal + this->baseLifeSteal) * 100, 1) + "%";
+				it->second = this->description;
 			}
 		}
 	}
 	
 private:
-	float lifeSteal = 0.002f;
-	std::string name = "Life Steal";
+	float lifeSteal = 0.005f;
+	float baseLifeSteal = 0.002f;
+	float skillCost = 15.0f;
 	int skillLevel = 0;
-	float skillCost = 5.0f;
+	std::string name = "Life Steal";
+	std::string lifeStealText = globals::to_string_with_precision(this->lifeSteal * 100, 1) + "%";
+	std::string description = "Drain the life from your enemies by > Skill LifeSteal " + 
+		globals::to_string_with_precision(this->lifeSteal * 100, 1) + "%" " + Base LifeSteal " + 
+		globals::to_string_with_precision(this->baseLifeSteal * 100, 1) +  "% < " +
+		globals::to_string_with_precision((this->lifeSteal + this->baseLifeSteal) * 100, 1) + "%";
+	std::string skillCostText = globals::to_string_with_precision(this->skillCost, 1) + "% of max health";
 	std::map<std::string, std::variant<int, float, std::string>> properties_ = {
 		{"Level", skillLevel},
-		{"Life Steal", lifeSteal},
-		{"Cost", std::to_string(skillCost) + "% of max health"},
-		{"Description", std::string("Drain the life from your enemies by > Skill LS " + std::to_string((lifeSteal * 1)) + "%" " + Base Life Steal <") }
+		{"Life Steal", lifeStealText},
+		{"Cost", skillCostText},
+		{"Description", description}
 	};
 };
 
