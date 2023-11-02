@@ -100,9 +100,16 @@ public:
 			// Replace current hotkey with this new skill (rebind)
 			it->second = this->currentSkill;
 		}
-		else if (it == skills.end()) {
+		else if (it == skillHotkeys.end()) {
 			// Hotkey is not assigned, insert skill bind
 			skillHotkeys.insert({hotkey, this->currentSkill});
+		}
+	}
+
+	void useSkillHotkey(int hotkey, Player &player) {
+		auto it = skillHotkeys.find(hotkey);
+		if (it != skillHotkeys.end()) {
+			useSkill(it->second, player);
 		}
 	}
 
