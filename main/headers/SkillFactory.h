@@ -138,12 +138,22 @@ public:
 		}
 	}
 
+	void updateAllSkillStats(int elapsedTime, Player &player) {
+		for (const auto& skill : skills) {
+			if (skill.second >= 1) {
+				auto it = skill_prototypes_.find(skill.first);
+				if (it != skill_prototypes_.end()) {
+					it->second->updateSkillStats(player, elapsedTime);
+				}
+			}
+		}
+	} 
+
 	void drawSkillProperties(Graphics &graphics, Player& player, int skillID) {
 		/* Get the map that holds the properties for each skill. */
 		const std::map<std::string, std::variant<int, float, std::string>> properties = skill_prototypes_[skillID]->getProperties();
 		std::string iName = "NULL";
 
-		skill_prototypes_[skillID]->updateSkillStats(player);
 		iName = skill_prototypes_[skillID]->getSkillName();
 
 		this->drawMultiLine(graphics, player.getX() - 320, player.getY() - 110, iName);

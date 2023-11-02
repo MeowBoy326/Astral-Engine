@@ -1776,6 +1776,8 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 					activeCutscene = true;
 				}
 			}
+
+			this->_skillFactory.updateAllSkillStats(elapsedTime, this->_player);
 			
 			// Update camera last once every object position has been updated to prevent screen shakes 
 			this->_camera.Update(elapsedTime, this->_player);

@@ -48,7 +48,7 @@ LifeSteal::~LifeSteal() {
 
 void LifeSteal::update(int elapsedTime, Player &player) {
 	this->playAnimation("Blink");
-	this->updateSkillStats(player);
+	this->updateSkillStats(player, elapsedTime);
 	Skills::update(elapsedTime, player);
 }
 

@@ -22,7 +22,7 @@ public:
 	virtual Skills* clone() const = 0;
 	virtual void use(Player &player) = 0;
 	virtual void update(int elapsedTime, Player & player);
-	virtual void updateSkillStats(Player &player) = 0;
+	virtual void updateSkillStats(Player &player, int elapsedTime) = 0;
 	virtual void draw(Graphics & graphics);
 	virtual void drawSkills(Graphics &graphics, float x, float y);
 	virtual const inline std::string getSkillName() { return this->name; }
@@ -31,6 +31,9 @@ public:
 	virtual const inline int getSkillLevel() { return this->skillLevel; }
 	virtual inline void setSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
 	virtual inline void raiseSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
+	virtual inline void setSkillActive(bool active) { this->skillActive = active; }
+	virtual inline bool getSkillActive(bool active) { return this->skillActive; }
+	virtual inline bool checkSkillCooldown() { if (this->skillCooldown == 0) { return true; } return false; }
 	virtual const std::map<std::string, std::variant<int, float, std::string>> getProperties() = 0;
 
 	~Skills();
@@ -43,6 +46,9 @@ protected:
 	std::string name;
 	int skillLevel;
 	float skillCost;
+	bool skillActive;
+	bool skillOffCD;
+	int skillCooldown;
 	std::map<std::string, std::variant<int, float, std::string>> properties_;
 };
 
@@ -56,26 +62,55 @@ public:
 	static const SkillID ID = 0;
 
 	void use(Player &player) override {
-		// Implement HP pot
+		if (!skillActive && skillOffCD) {
+			if (this->skillLevel > 0) {
+				float hpReduc = this->skillCost / 100.0f;
+				float lifeStealAdd = this->lifeSteal + this->baseLifeSteal;
+				this->raiseCustomMsg(player, "Life Steal Activated | HP Reduction: " +
+					globals::to_string_with_precision(hpReduc, 1) +
+					"%, Lifesteal: " +
+					globals::to_string_with_precision(lifeStealAdd, 1) +
+					"%"
+				);
+				player.setMaxHealth(player.getMaxHealth() - (player.getMaxHealth() * hpReduc));
+				if (player.getCurrentHealth() >= player.getMaxHealth())
+					player.setCurrentHealth(player.getMaxHealth());
+				player.raiseLifeSteal(lifeStealAdd);
+				skillActive = !skillActive;
+				skillCooldown = 180000;
+				skillOffCD = !skillOffCD;
+			}
+			else {
+				this->raiseCustomMsg(player, "LifeSteal is not level 1+");
+			}
+		}
+		else if (skillActive && skillOffCD) {
+			float hpReduc = this->skillCost / 100.0f;
+			float lifeStealAdd = this->lifeSteal + this->baseLifeSteal;
+			this->raiseCustomMsg(player, "Life Steal Off");
+			player.setMaxHealth(player.getMaxHealth() + (player.getMaxHealth() * hpReduc));
+			if (player.getCurrentHealth() >= player.getMaxHealth())
+				player.setCurrentHealth(player.getMaxHealth());
+			player.setLifeSteal(0.002f);
+			skillActive = !skillActive;
+			skillCooldown = 180000;
+			skillOffCD = !skillOffCD;
+		}
 
-		//player.handleLifeSteal
-		float hpReduc = this->skillCost / 100.0f;
-		float lifeStealAdd = this->lifeSteal + this->baseLifeSteal;
-		this->raiseCustomMsg(player, "Life Steal Activated | HP Reduction: " + 
-			globals::to_string_with_precision(hpReduc, 1) +
-			"%, Lifesteal: " +
-			globals::to_string_with_precision(lifeStealAdd, 1) +
-			"%"
-		);
-		player.setMaxHealth(player.getMaxHealth() - (player.getMaxHealth() * hpReduc));
-		if (player.getCurrentHealth() >= player.getMaxHealth())
-			player.setCurrentHealth(player.getMaxHealth());
-		player.raiseLifeSteal(lifeStealAdd);
 	}
 
-	void updateSkillStats(Player &player) override {
+	void updateSkillStats(Player &player, int elapsedTime) override {
 		// Called every update
 		// Use for returning updated values to player class
+
+		if (!this->skillOffCD) {
+			this->skillCooldown -= elapsedTime;
+			this->skillOffCD = false;
+			if (this->skillCooldown <= 0) {
+				this->skillCooldown = 0;
+				this->skillOffCD = !this->skillOffCD;
+			}
+		}
 	}
 
 	Skills* clone() const override { return new LifeSteal(*this); }
@@ -166,6 +201,9 @@ public:
 	}
 	
 private:
+	bool skillActive = false;
+	bool skillOffCD = true;
+	int skillCooldown = 0;
 	float lifeSteal = 0.005f;
 	float baseLifeSteal = 0.002f;
 	float skillCost = 15.0f;
@@ -181,6 +219,7 @@ private:
 		{"Level", skillLevel},
 		{"Life Steal", lifeStealText},
 		{"Cost", skillCostText},
+		{"Cooldown (Toggle On/Off)", "180s"},
 		{"Description", description}
 	};
 };
