@@ -922,13 +922,7 @@ void Game::gameLoop() {
 						_inventory.useItem(0, this->_player);
 					}
 				}
-				if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
-					// Add weapon swap here
-				}
-				if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
-					// Add weapon swap here
-				}
-				if (input.wasKeyPressed(SDL_SCANCODE_3) == true) {
+				if (input.wasKeyPressed(SDL_SCANCODE_0) == true) {
 					if (this->_inventory.checkItem(2100, 1)) {
 						jetPack = !jetPack;
 						std::cout << "JetPack state = " << jetPack << std::endl;

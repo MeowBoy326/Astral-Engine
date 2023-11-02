@@ -312,7 +312,7 @@ public:
 	void use(Player &player) override {}
 	void updateItemStats(Player &player) {}
 	void raiseEventMsg(Player &player) override {
-		player.setEventMessage("Press 3 to use the JetPack");
+		player.setEventMessage("Press 0 to use the JetPack");
 	}
 
 	Items* clone() const override { return new JetPack(*this); }
