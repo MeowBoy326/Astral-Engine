@@ -29,8 +29,9 @@ public:
 	virtual void raiseEventMsg(Player &player) = 0;
 	virtual void raiseCustomMsg(Player &player, std::string message) = 0;
 	virtual const inline int getSkillLevel() { return this->skillLevel; }
+	virtual void refreshSkillsFromTable() = 0;
 	virtual inline void setSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
-	virtual inline void raiseSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
+	virtual inline void raiseSkillLevel(int skillLevel) { this->skillLevel += skillLevel; }
 	virtual inline void setSkillActive(bool active) { this->skillActive = active; }
 	virtual inline bool getSkillActive(bool active) { return this->skillActive; }
 	virtual inline bool checkSkillCooldown() { if (this->skillCooldown == 0) { return true; } return false; }
@@ -133,6 +134,7 @@ public:
 
 	const inline std::string getSkillName() override { return this->name; }
 	const inline int getSkillLevel() override { return this->skillLevel; }
+	virtual void refreshSkillsFromTable() override { setLifeSteal(); }
 	inline void setSkillLevel(int skillLevel) override { this->skillLevel = skillLevel; }
 	inline void raiseSkillLevel(int skillLevel) override { this->skillLevel += skillLevel; setLifeSteal(); }
 	const inline std::map<std::string, std::variant<int, float, std::string>> getProperties() override { return this->properties_; }
