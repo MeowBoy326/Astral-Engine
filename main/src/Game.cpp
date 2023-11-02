@@ -1382,10 +1382,11 @@ int Game::loadGame(Graphics & graphics)
 		int skillID, skillLevel;
 		result = ptrVec->QueryIntAttribute("skillID", &skillID);
 		result = ptrVec->QueryIntAttribute("skillLevel", &skillLevel);
-		iVec.insert({ skillID, skillLevel });
+		skVec.insert({ skillID, skillLevel });
 		ptrVec = ptrVec->NextSiblingElement("skTable");
 	}
-	this->_skillFactory.setSkillTable(iVec);
+	this->_skillFactory.setSkillTable(skVec);
+	this->_skillFactory.refreshAcquiredSkills();
 
 	// Load QuestLog
 	element = root->FirstChildElement("QuestLog");
