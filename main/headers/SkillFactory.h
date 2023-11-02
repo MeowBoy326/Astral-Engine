@@ -102,7 +102,7 @@ public:
 		}
 		else if (it == skills.end()) {
 			// Hotkey is not assigned, insert skill bind
-			skillHotkeys.insert(hotkey, this->currentSkill);
+			skillHotkeys.insert({hotkey, this->currentSkill});
 		}
 	}
 
