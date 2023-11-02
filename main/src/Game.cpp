@@ -928,6 +928,16 @@ void Game::gameLoop() {
 						std::cout << "JetPack state = " << jetPack << std::endl;
 					}
 				}
+				if (this->_player.getCurrentHealth() > 0
+					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene 
+					&& !activeInventory && !activeSkillMenu) {
+					for (int key = SDL_SCANCODE_1; key <= SDL_SCANCODE_9; key++) {
+						if (input.wasKeyPressed(static_cast<SDL_Scancode>(key))) {
+							int hotkeyNum = key - SDL_SCANCODE_1 + 1;
+							this->_skillFactory.useSkillHotkey(hotkeyNum, this->_player);
+						}
+					}
+				}
 				if (input.wasKeyPressed(SDL_SCANCODE_F5) == true) {
 					showPlayerOutline = !showPlayerOutline;
 				}
