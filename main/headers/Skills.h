@@ -67,7 +67,7 @@ public:
 			globals::to_string_with_precision(lifeStealAdd, 1) +
 			"%"
 		);
-		player.setMaxHealth(hpReduc);
+		player.setMaxHealth(player.getMaxHealth() - (player.getMaxHealth() * hpReduc));
 		if (player.getCurrentHealth() >= player.getMaxHealth())
 			player.setCurrentHealth(player.getMaxHealth());
 		player.raiseLifeSteal(lifeStealAdd);
