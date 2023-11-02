@@ -34,7 +34,6 @@ void Enemy::handleEnemyTileCollision(std::vector<Rectangle>& others)
 
 void Enemy::bulletHit(float dmg) {
 	this->_currentHealth -= dmg;
-	std::cout << "hit! HP = " << this->_currentHealth << std::endl;
 }
 
 std::string Enemy::getName()
@@ -79,8 +78,8 @@ Bat::Bat(Graphics &graphics, Vector2 spawnPoint) :
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
-	_maxHealth(8),
-	_currentHealth(8)
+	_maxHealth(10.0f),
+	_currentHealth(10.0f)
 {
 	this->setupAnimations();
 	this->playAnimation("FlyLeft");
@@ -137,8 +136,8 @@ void Bat::update(int elapsedTime, Player &player) {
 			this->_fireBall.setY(this->_y);
 		}
 		else {
-			this->_fireBall.addX(player.getX() > this->_x ? .04 : -.04);
-			this->_fireBall.addY(player.getY() > this->_y ? .04 : -.04);
+			this->_fireBall.addX(player.getX() > this->_x ? .399 : -.399);
+			this->_fireBall.addY(player.getY() > this->_y ? .399 : -.399);
 		}
 	}
 	else if (this->getCurrentHealth() <= 0) {
@@ -259,8 +258,8 @@ Shade::Shade(Graphics &graphics, Vector2 spawnPoint) :
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
-	_currentHealth(170),
-	_maxHealth(170)
+	_maxHealth(170.0f),
+	_currentHealth(170.0f)
 {
 	this->setupAnimations();
 	this->playAnimation("shadeRight");
@@ -547,8 +546,8 @@ JellyFish::JellyFish(Graphics &graphics, Vector2 spawnPoint) :
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
-	_maxHealth(10),
-	_currentHealth(10)
+	_maxHealth(28.0f),
+	_currentHealth(28.0f)
 {
 	this->setupAnimations();
 	this->playAnimation("JellyLeft");
@@ -753,8 +752,8 @@ Ghost::Ghost(Graphics &graphics, Vector2 spawnPoint) :
 	_startingX(spawnPoint.x),
 	_startingY(spawnPoint.y),
 	_shouldMoveUp(false),
-	_maxHealth(10),
-	_currentHealth(10)
+	_maxHealth(15.0f),
+	_currentHealth(15.0f)
 {
 	this->setupAnimations();
 	this->playAnimation("GhostLeft");

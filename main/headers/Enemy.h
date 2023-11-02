@@ -51,8 +51,8 @@ protected:
 	Direction _direction;
 
 	float _startingX, _startingY;
-	int _maxHealth;
-	int _currentHealth;
+	float _maxHealth;
+	float _currentHealth;
 	int level;
 	std::string name;
 	std::string coinType;
@@ -123,11 +123,12 @@ private:
 	float _fireX, _fireY;
 	double _deathAnimationTime = 800;
 	double _deathTimeElapsed = 0;
+	float _fireBallSpeed = 0.1f;
 protected:
 	Direction _direction;
 
-	int _maxHealth;
-	int _currentHealth;
+	float _maxHealth;
+	float _currentHealth;
 	int level = 0;
 	std::string name = "bat";
 	std::string coinType = "bronze";
@@ -205,8 +206,8 @@ private:
 	int healCount = 0;
 protected:
 	Direction _direction;
-	int _maxHealth;
-	int _currentHealth;
+	float _maxHealth;
+	float _currentHealth;
 	int level = 4;
 	std::string name = "shade";
 	std::string coinType = "red";
@@ -289,8 +290,8 @@ protected:
 	float _dy = 0;
 	const float GRAVITY = 0.002f;
 	const float GRAVITY_CAP = 0.8f;
-	int _maxHealth;
-	int _currentHealth;
+	float _maxHealth;
+	float _currentHealth;
 	int level = 3;
 	std::string name = "JellyFish";
 	std::string coinType = "bronze";
@@ -364,8 +365,8 @@ protected:
 	float _dy = 0;
 	const float GRAVITY = 0.002f;
 	const float GRAVITY_CAP = 0.8f;
-	int _maxHealth;
-	int _currentHealth;
+	float _maxHealth;
+	float _currentHealth;
 	int level = 5;
 	std::string name = "Ghost";
 	std::string coinType = "bronze";
