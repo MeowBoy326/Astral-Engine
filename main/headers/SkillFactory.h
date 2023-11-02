@@ -139,15 +139,27 @@ public:
 	}
 
 	void updateAllSkillStats(int elapsedTime, Player &player) {
-		for (const auto& skill : skills) {
-			if (skill.second >= 1) {
-				auto it = skill_prototypes_.find(skill.first);
+		for (const auto&[skillID, skillLevel] : skills) {
+			if (skillLevel >= 1) {
+				auto it = skill_prototypes_.find(skillID);
 				if (it != skill_prototypes_.end()) {
 					it->second->updateSkillStats(player, elapsedTime);
 				}
 			}
 		}
-	} 
+	}
+
+	void refreshAcquiredSkills() {
+		for (const auto&[skillID, skillLevel] : skills) {
+			if (skillLevel >= 1) {
+				auto it = skill_prototypes_.find(skillID);
+				if (it != skill_prototypes_.end()) {
+					it->second->setSkillLevel(skillLevel);
+					it->second->refreshSkillsFromTable();
+				}
+			}
+		}
+	}
 
 	void drawSkillProperties(Graphics &graphics, Player& player, int skillID) {
 		/* Get the map that holds the properties for each skill. */
