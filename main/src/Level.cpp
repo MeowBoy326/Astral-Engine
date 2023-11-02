@@ -1008,6 +1008,14 @@ void Level::checkProjectileCollisions(Player & player) {
 				this->dmgVector.push_back(std::make_tuple(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY(),
 					damage, 0));
 				player.handleRestoreableHealth(damage);
+				if (player.hasLifeStealActive()) {
+					if (this->_enemies.at(i)->isBoss() || this->_enemies.at(i)->isMiniBoss()) {
+						player.gainHealth(static_cast<float>(this->_enemies.at(i)->getMaxHealth() / 4 + damage) * player.getLifeSteal());
+					}
+					else {
+						player.gainHealth(static_cast<float>(this->_enemies.at(i)->getMaxHealth() + damage) * player.getLifeSteal());
+					}
+				}
 				delete this->_projectiles.at(j);
 				this->_projectiles.erase(this->_projectiles.begin() + j);
 			}

@@ -76,6 +76,7 @@ public:
 				if (player.getCurrentHealth() >= player.getMaxHealth())
 					player.setCurrentHealth(player.getMaxHealth());
 				player.raiseLifeSteal(lifeStealAdd);
+				player.setLifeStealActive(true);
 				skillActive = !skillActive;
 				skillCooldown = 180000;
 				skillOffCD = !skillOffCD;
@@ -92,6 +93,7 @@ public:
 			if (player.getCurrentHealth() >= player.getMaxHealth())
 				player.setCurrentHealth(player.getMaxHealth());
 			player.setLifeSteal(0.002f);
+			player.setLifeStealActive(false);
 			skillActive = !skillActive;
 			skillCooldown = 180000;
 			skillOffCD = !skillOffCD;

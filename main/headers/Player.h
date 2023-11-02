@@ -184,6 +184,8 @@ public:
 	inline void setStatPoints(int points) { this->_statPoints = points; }
 	inline void setSoulStr(double str) { this->_soulStrength = str; }
 	inline void setLifeSteal(float amt) { this->STAT_LIFESTEAL = amt; }
+	inline bool hasLifeStealActive() { return this->lifeStealActive; }
+	inline void setLifeStealActive(bool active) { this->lifeStealActive = active; }
 	inline void raiseLifeSteal(float amt) { this->STAT_LIFESTEAL += amt; }
 	double getDmgMod();
 	double getDmgReduction() { return this->_dmgReduction; }
@@ -226,6 +228,7 @@ private:
 	bool _playerDeathSound = false;
 	bool deathPlayed = false;
 	bool showEventMsg = false;
+	bool lifeStealActive = false;
 
 	int _hpPotAmount = 2;
 	int _hpPotCapacity = 2;
