@@ -33,7 +33,11 @@ public:
 	virtual inline void setSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
 	virtual inline void raiseSkillLevel(int skillLevel) { this->skillLevel += skillLevel; }
 	virtual inline void setSkillActive(bool active) { this->skillActive = active; }
-	virtual inline bool getSkillActive(bool active) { return this->skillActive; }
+	virtual inline bool getSkillActive() { return this->skillActive; }
+	virtual inline void setSkillOffCD(bool active) { this->skillOffCD = active; }
+	virtual inline bool getSkillOffCD() { return this->skillOffCD; }
+	virtual inline int getSkillCDTimer() { return this->skillCooldown; }
+	virtual inline void setSkillCDTimer(int timer) { this->skillCooldown = timer; }
 	virtual inline bool checkSkillCooldown() { if (this->skillCooldown == 0) { return true; } return false; }
 	virtual const std::map<std::string, std::variant<int, float, std::string>> getProperties() = 0;
 
@@ -137,6 +141,12 @@ public:
 	virtual void refreshSkillsFromTable() override { setLifeSteal(); }
 	inline void setSkillLevel(int skillLevel) override { this->skillLevel = skillLevel; }
 	inline void raiseSkillLevel(int skillLevel) override { this->skillLevel += skillLevel; setLifeSteal(); }
+	inline void setSkillActive(bool active) override { this->skillActive = active; }
+	inline bool getSkillActive() override { return this->skillActive; }
+	inline void setSkillOffCD(bool active) override { this->skillOffCD = active; }
+	inline bool getSkillOffCD() override { return this->skillOffCD; }
+	inline int getSkillCDTimer() override { return this->skillCooldown; }
+	inline void setSkillCDTimer(int timer) override { this->skillCooldown = timer; }
 	const inline std::map<std::string, std::variant<int, float, std::string>> getProperties() override { return this->properties_; }
 
 	inline void updateLifeSteal() {

@@ -109,7 +109,15 @@ public:
 	void useSkillHotkey(int hotkey, Player &player) {
 		auto it = skillHotkeys.find(hotkey);
 		if (it != skillHotkeys.end()) {
-			useSkill(it->second, player);
+			for (auto& cooldown : skillCooldowns) {
+				if (std::get<0>(cooldown) == it->second) {
+					// Skill exists, update the table
+					if (std::get<2>(cooldown) == 0) {
+						useSkill(it->second, player);
+					}
+					break;
+				}
+			}
 		}
 	}
 
@@ -147,6 +155,34 @@ public:
 				}
 			}
 		}
+		this->checkAllSkillCooldowns();
+	}
+
+	void checkAllSkillCooldowns() {
+		for (const auto&[skillID, skillLevel] : skills) {
+			if (skillLevel >= 1) {
+				auto it = skill_prototypes_.find(skillID);
+				if (it != skill_prototypes_.end()) {
+					bool skillExists = false;
+					for (auto& cooldown : skillCooldowns) {
+						if (std::get<0>(cooldown) == skillID) {
+							// Skill exists, update the table
+							skillExists = true;
+							std::cout << "Skill Existed, Added! XD" << std::endl;
+							std::get<1>(cooldown) = it->second->getSkillActive();
+							std::get<2>(cooldown) = it->second->getSkillCDTimer();
+							std::cout << "Skill CD At Add Time: " << it->second->getSkillCDTimer();
+							break;
+						}
+					}
+					if (!skillExists) {
+						// Skill doesn't exist, insert new element to the table
+						skillCooldowns.emplace_back(skillID, it->second->getSkillActive(), it->second->getSkillCDTimer());
+						std::cout << "NOT EXISTED Skill CD At Add Time: " << it->second->getSkillCDTimer();
+					}
+				}
+			}
+		}
 	}
 
 	void refreshAcquiredSkills() {
@@ -156,6 +192,18 @@ public:
 				if (it != skill_prototypes_.end()) {
 					it->second->setSkillLevel(skillLevel);
 					it->second->refreshSkillsFromTable();
+					for (auto& cooldown : skillCooldowns) {
+						if (std::get<0>(cooldown) == it->first) {
+							// Skill exists, update the table
+							it->second->setSkillCDTimer(std::get<2>(cooldown));
+							if (std::get<2>(cooldown) > 0)
+								it->second->setSkillOffCD(false);
+							else
+								it->second->setSkillOffCD(true);
+							it->second->setSkillActive(std::get<1>(cooldown));
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -230,6 +278,8 @@ public:
 	inline void setSkillTable(std::map<Skills::SkillID, int> table) { this->skills = table; }
 	inline const std::map<int, Skills::SkillID> getSkillHotkeys() const { return this->skillHotkeys; }
 	inline void setSkillHotkeys(std::map<int, Skills::SkillID> table) { this->skillHotkeys = table; }
+	inline const std::vector<std::tuple<Skills::SkillID, bool, int>> getSkillCooldowns() const { return this->skillCooldowns; }
+	inline void setSkillCooldowns(std::vector<std::tuple<Skills::SkillID, bool, int>> table) { this->skillCooldowns = table; }
 	bool isLooted(std::string map, int iType);
 	void storeSkill(int type);
 	bool hasKeyStored(int keyID);
@@ -240,6 +290,8 @@ private:
 	// Skill ID, Skill Level
 	std::map<Skills::SkillID, int> skills;
 	std::map<int, Skills::SkillID> skillHotkeys;
+	//std::map<bool, int, Skills::SkillID> skillCooldowns;
+	std::vector<std::tuple<Skills::SkillID, bool, int>> skillCooldowns;
 	std::map<Skills::SkillID, Skills*> skill_prototypes_;
 	std::map<Skills::SkillID, Sprite> skillSprites;
 
