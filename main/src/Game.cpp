@@ -1222,6 +1222,29 @@ int Game::saveGame(Graphics & graphics)
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
+	// Save skill hotkeys
+	element = xml.NewElement("SkillHotkeys");
+	std::map<int, Skills::SkillID> skhVec = this->_skillFactory.getSkillHotkeys();
+	for (auto iter = skhVec.begin(); iter != skhVec.end(); iter++) {
+		auto first = iter->first, second = iter->second;
+		XMLElement* ptrElement = xml.NewElement("skhTable");
+		ptrElement->SetAttribute("hotKeyID", first);
+		ptrElement->SetAttribute("skillID", second);
+		element->InsertEndChild(ptrElement);
+	}
+	root->InsertEndChild(element);
+	// Save skill cooldowns
+	this->_skillFactory.checkAllSkillCooldowns();
+	element = xml.NewElement("SkillCooldowns");
+	std::vector<std::tuple<Skills::SkillID, bool, int>> skcdVec = this->_skillFactory.getSkillCooldowns();
+	for (int counter = 0; counter < skcdVec.size(); ++counter) {
+		XMLElement* ptrElement = xml.NewElement("skcdTable");
+		ptrElement->SetAttribute("skillID", std::get<0>(skcdVec[counter]));
+		ptrElement->SetAttribute("skillActive", std::get<1>(skcdVec[counter]));
+		ptrElement->SetAttribute("skillCD", std::get<2>(skcdVec[counter]));
+		element->InsertEndChild(ptrElement);
+	}
+	root->InsertEndChild(element);
 	// Save the quest log
 	element = xml.NewElement("QuestLog");
 	if (element == nullptr)
@@ -1386,6 +1409,34 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("skTable");
 	}
 	this->_skillFactory.setSkillTable(skVec);
+
+	// Load Skill Hotkeys
+	element = root->FirstChildElement("SkillHotkeys");
+	ptrVec = element->FirstChildElement("skhTable");
+	std::map<int, Skills::SkillID> skhVec;
+	while (ptrVec != nullptr) {
+		int hotKeyID, skillID;
+		result = ptrVec->QueryIntAttribute("hotKeyID", &hotKeyID);
+		result = ptrVec->QueryIntAttribute("skillID", &skillID);
+		skhVec.insert({ hotKeyID, skillID });
+		ptrVec = ptrVec->NextSiblingElement("skhTable");
+	}
+	this->_skillFactory.setSkillHotkeys(skhVec);
+
+	// Load Skill Cooldowns
+	element = root->FirstChildElement("SkillCooldowns");
+	ptrVec = element->FirstChildElement("skcdTable");
+	std::vector<std::tuple<Skills::SkillID, bool, int>> skcdVec;
+	while (ptrVec != nullptr) {
+		int skillCD, skillID; bool skillActive;
+		result = ptrVec->QueryIntAttribute("skillID", &skillID);
+		result = ptrVec->QueryBoolAttribute("skillActive", &skillActive);
+		result = ptrVec->QueryIntAttribute("skillCD", &skillCD);
+		skcdVec.push_back(std::make_tuple(skillID, skillActive, skillCD));
+		ptrVec = ptrVec->NextSiblingElement("skcdTable");
+	}
+	this->_skillFactory.setSkillCooldowns(skcdVec);
+
 	this->_skillFactory.refreshAcquiredSkills();
 
 	// Load QuestLog
