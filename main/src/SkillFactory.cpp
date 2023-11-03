@@ -65,10 +65,10 @@ void SkillFactory::draw(Graphics & graphics, Player & player) {
 	int y = player.getY() - 105;
 	int counter = 0;
 
-	for (const auto&[skillID, skillCount] : skills) {
+	for (const auto&[skillID, skillLevel] : skills) {
 		// Draw the skill sprite at the current x and y position
 		skillSprites[skillID].drawScaled(graphics, x, y, -1.3);
-		this->drawQuantity(graphics, x + 6, y + 27, skillCount);
+		this->drawQuantity(graphics, x + 6, y + 27, skillLevel);
 
 		// Increment the counter and update the x and y positions as necessary
 		counter++;
