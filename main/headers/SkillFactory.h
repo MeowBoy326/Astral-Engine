@@ -20,6 +20,19 @@ public:
 		skill_prototypes_[LifeSteal::ID] = new LifeSteal();
 	}
 
+	void addNewGameSkills() {
+		// New game was called so add all of the skills that are available to new game
+		// When Quest/Event only skills are added, will update function to check a std::map and exclude them
+		for (const auto&[skillID, skill] : skill_prototypes_) {
+			// Add logic here to check for skills that shouldn't be added to new game
+			// ...
+			// continue;
+
+			// Continue adding all new game skills otherwise with level = 0
+			skills.insert({ skillID, 0 });
+		}
+	}
+
 	void addSkill(Skills::SkillID id, int quantity, Player &player) {
 		/* Find the skill in the prototype map and clone into the inventory map skills */
 		std::cout << "Adding Skill: " << id << std::endl;

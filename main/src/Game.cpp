@@ -201,7 +201,7 @@ void Game::gameLoop() {
 				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				this->_inventory.addItem(0, 1);
-				this->_skillFactory.addSkill(0, 1);
+				this->_skillFactory.addNewGameSkills();
 				this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
 				this->_level.generateEffects(graphics, this->_player);
 				this->_level.generateParallax(graphics, this->_level.getMapName(), this->_player);
