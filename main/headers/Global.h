@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sstream>
+
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
@@ -19,6 +21,14 @@ namespace globals {
 	const float PROJECTILE_SCALE = 1.2f;
 
 	extern bool SCALED_MODE;
+
+	template <typename T>
+	std::string to_string_with_precision(const T a_value, const int n = 6) {
+		std::ostringstream out;
+		out.precision(n);
+		out << std::fixed << a_value;
+		return std::move(out).str();
+	}
 }
 
 enum Surface {

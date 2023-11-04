@@ -16,7 +16,7 @@ public:
 	Projectile(Graphics &graphics, std::string filePath, int sourceX, int sourceY, int width, int height, Vector2 spawnPoint, int timeToUpdate);
 	virtual ~Projectile();
 
-	virtual void update(int elapsedTime, Player &player);
+	virtual void update(float elapsedTime, Player &player);
 	virtual void draw(Graphics &graphics);
 
 	virtual Direction getProjectileDirection() { return this->_direction; }
@@ -36,7 +36,7 @@ public:
 	SilverBullet(Graphics & graphics, Vector2 spawnPoint, Direction dir);
 	~SilverBullet();
 
-	void update(int elapsedTime, Player &player);
+	void update(float elapsedTime, Player &player);
 	void draw(Graphics &graphics);
 
 	Direction getProjectileDirection() { return this->_direction; }

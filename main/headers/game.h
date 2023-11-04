@@ -25,6 +25,8 @@
 #include "Npc.h"
 #include "Inventory.h"
 #include "Items.h"
+#include "SkillFactory.h"
+#include "Skills.h"
 #include "GameOver.h"
 #include <stdlib.h>
 #include <cryptoPP/aes.h>
@@ -64,6 +66,7 @@ private:
 	GameOver* _gameOver;
 	TextManager _chatBox;
 	Inventory _inventory;
+	SkillFactory _skillFactory;
 	Npc _npc;
 	Graphics _graphics;
 	AESCipher cipher;

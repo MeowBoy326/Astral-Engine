@@ -28,8 +28,7 @@ using namespace CryptoPP;
 
 namespace {
 	const int FPS = 50;
-	// remove 5 *
-	const int MAX_FRAME_TIME = 5* 1000 / FPS; // Max amount of time a frame is allowed to last
+	const int MAX_FRAME_TIME = 1000 / FPS; // Max amount of time a frame is allowed to last
 	int bgmVolume = 100; // Refers to all types of sounds (BGM/Effects/etc.)
 	int sfxVolume = 100;
 	int pauseBlockTimer = 0;
@@ -42,6 +41,11 @@ namespace {
 	int inventSelectedItem = 1;
 	int inventSelectionX;
 	int inventSelectionY;
+	int skillSelectionRow = 1;
+	int skillSelectionColumn = 1;
+	int skillSelectedItem = 1;
+	int skillSelectionX;
+	int skillSelectionY;
 	int lineNum = 0;
 	int currentLine = 0;
 	int sceneTimer = 0;
@@ -56,6 +60,7 @@ namespace {
 	bool GAMEOVER = false;
 	bool activeTalk = false;
 	bool activeInventory = false;
+	bool activeSkillMenu = false;
 	bool activeStatMenu = false;
 	bool activeProjectile = false;
 	bool activeCutscene = false;
@@ -156,6 +161,7 @@ void Game::gameLoop() {
 	this->_chatBox = TextManager(graphics, this->_player);
 	this->_hud = HUD(graphics, this->_player);
 	this->_inventory = Inventory(graphics, this->_player);
+	this->_skillFactory = SkillFactory(graphics, this->_player);
 
 	this->setSettings();
 	if (globals::SCREEN_WIDTH != 640 && globals::SCREEN_HEIGHT != 480)
@@ -176,7 +182,7 @@ void Game::gameLoop() {
 	}
 		
 
-	int LAST_UPDATE_TIME = SDL_GetTicks(); 
+	int LAST_UPDATE_TIME = SDL_GetTicks();
 	// Above ^ gets the amount of milliseconds since the SDL library was initialized
 	// Must start before loop
 	// Start the game loop
@@ -195,8 +201,10 @@ void Game::gameLoop() {
 				this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 				this->_player = Player(graphics, this->_level.getPlayerSpawnPoint());
 				this->_inventory.addItem(0, 1);
+				this->_skillFactory.addNewGameSkills();
 				this->_level.generateEnemies(graphics, this->_level.getMapName(), this->_player);
 				this->_level.generateEffects(graphics, this->_player);
+				this->_level.generateParallax(graphics, this->_level.getMapName(), this->_player);
 				if (!cipher.verifyHash("cave", this->_player)) {
 					std::exit(0);
 				}
@@ -207,7 +215,7 @@ void Game::gameLoop() {
 				this->loadGame(graphics);
 			}
 			/* Free memory to prevent any leaks */
-			graphics.unloadImage("data\\graphics\\dark_clouds.png");
+			graphics.unloadImage("data\\graphics\\titleSprite.png");
 			delete this->_title;
 			this->_title = nullptr;
 		}
@@ -247,6 +255,14 @@ void Game::gameLoop() {
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			
 			this->drawGameOver(graphics);
+
+			/* Don't hog the CPU, delay by regulating the frame rate. If remaining time > 0 this frame took less time than needed */
+			int remaining_time = (1000 / FPS) - ELAPSED_TIME_MS;
+			if (remaining_time > 0) {
+				// CPU usage down by 12-13%
+				SDL_Delay(remaining_time);
+			}
+
 			if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true && GAMEOVER == true 
 				&& this->_gameOver->isRespawnAllowed()) {
 				Mix_ResumeMusic();
@@ -302,6 +318,13 @@ void Game::gameLoop() {
 			this->updateCutscene(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 			this->drawCutscene(graphics);
+
+			/* Don't hog the CPU, delay by regulating the frame rate. If remaining time > 0 this frame took less time than needed */
+			int remaining_time = (1000 / FPS) - ELAPSED_TIME_MS;
+			if (remaining_time > 0) {
+				// CPU usage down by 12-13%
+				SDL_Delay(remaining_time);
+			}
 		}
 // Main Game Loop
 		if (title == false && GAMEOVER == false && activeCutscene == false) {
@@ -343,7 +366,7 @@ void Game::gameLoop() {
 
 			if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) && this->_player.getCurrentHealth() > 0 
 				&& activeCutscene == false && activeSaveMenu == false && activeTalk == false 
-				&& activeInventory == false && activeStatMenu == false) {
+				&& activeInventory == false && activeStatMenu == false && activeSkillMenu == false) {
 				if (pauseBlockTimer == 0) {
 					pauseGame = !pauseGame;
 					pauseBlockTimer++;
@@ -357,7 +380,8 @@ void Game::gameLoop() {
 			if (!pauseGame) {
 
 				if (activeSave && input.wasKeyPressed(SDL_SCANCODE_A) && this->_player.getCurrentHealth() > 0
-					&& !activeCutscene && !activeInventory && !activeStatMenu && !activeTalk) {
+					&& !activeCutscene && !activeInventory && !activeStatMenu 
+					&& !activeTalk && activeSkillMenu == false) {
 					activeSaveMenu = true;
 				}
 
@@ -392,7 +416,8 @@ void Game::gameLoop() {
 				if (input.wasKeyPressed(SDL_SCANCODE_X) && input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)
 					&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
 					std::cout << "Bullet right up diag test..." << std::endl;
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false
+						&& activeSkillMenu == false) {
 						this->_level.generateProjectile(graphics, this->_player);
 						Mix_PlayChannel(-1, sBullet, 0);
 					}
@@ -400,7 +425,7 @@ void Game::gameLoop() {
 
 				else if (input.wasKeyPressed(SDL_SCANCODE_X) == true && this->_player.getCurrentHealth() > 0) {
 					if (activeTalk == false && activeInventory == false && activeStatMenu == false && activeCutscene == false
-						&& !activeSaveMenu) {
+						&& !activeSaveMenu && activeSkillMenu == false) {
 						/*if (input.isKeyHeld(SDL_SCANCODE_UP) && input.isKeyHeld(SDL_SCANCODE_RIGHT)) {
 							this->_level.generateProjectile(graphics, this->_player);
 							Mix_PlayChannel(-1, sBullet, 0);
@@ -416,6 +441,7 @@ void Game::gameLoop() {
 
 				if (input.wasKeyPressed(SDL_SCANCODE_ESCAPE) == true && this->_player.getCurrentHealth() > 0) {
 					activeInventory = false;
+					activeSkillMenu = false;
 					inventSelectedItem = 1;
 					inventSelectionColumn = 1;
 					inventSelectionRow = 1;
@@ -439,7 +465,8 @@ void Game::gameLoop() {
 				//	// Return; // Quit game if ESC was pressed
 				//}
 				else if (input.isKeyHeld(SDL_SCANCODE_LEFT) == true && this->_player.getCurrentHealth() > 0) {
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false) {
 						this->_player.moveLeft();
 						if (this->_player.isGrounded() && walkSound == false) {
 							// Mix_PlayChannel(321, seWalk, -1);
@@ -453,7 +480,8 @@ void Game::gameLoop() {
 
 				}
 				else if (input.isKeyHeld(SDL_SCANCODE_RIGHT) == true && this->_player.getCurrentHealth() > 0) {
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false) {
 						this->_player.moveRight();
 						if (this->_player.isGrounded() && walkSound == false) {
 							Mix_Resume(321);
@@ -481,7 +509,8 @@ void Game::gameLoop() {
 						&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
 						&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN))
 					&& this->_player.getCurrentHealth() > 0) {
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false) {
 						this->_player.lookUp();
 						if (isClimbing) {
 							this->_player.setClimbing(true);
@@ -494,7 +523,8 @@ void Game::gameLoop() {
 						&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
 						&& !input.isKeyHeld(SDL_SCANCODE_DOWN) && !input.wasKeyPressed(SDL_SCANCODE_DOWN))*/
 					&& this->_player.getCurrentHealth() > 0) {
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false) {
 						this->_player.lookUp();
 					}
 				}
@@ -503,7 +533,8 @@ void Game::gameLoop() {
 						&& !input.isKeyHeld(SDL_SCANCODE_RIGHT) && !input.wasKeyPressed(SDL_SCANCODE_RIGHT)
 						&& !input.isKeyHeld(SDL_SCANCODE_UP) && !input.wasKeyPressed(SDL_SCANCODE_UP))
 					&& this->_player.getCurrentHealth() > 0) {
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false) {
 						this->_player.lookDown();
 						if (isClimbing) {
 							this->_player.setClimbing(true);
@@ -512,22 +543,26 @@ void Game::gameLoop() {
 					}
 				}
 				if (input.wasKeyReleased(SDL_SCANCODE_UP) == true && this->_player.getCurrentHealth() > 0) {
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false)
 						this->_player.stopLookingUp();
 				}
 				if (input.wasKeyReleased(SDL_SCANCODE_DOWN) == true && this->_player.getCurrentHealth() > 0) {
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu)
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false)
 						this->_player.stopLookingDown();
 				}
 
 				if (input.isKeyHeld(SDL_SCANCODE_SPACE) && jetPack && this->_player.getCurrentHealth() > 0) {
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false) {
 						this->_player.useJetPack();
 					}
 				}
 
 				else if (!jetPack && input.isKeyHeld(SDL_SCANCODE_SPACE) == true && this->_player.getCurrentHealth() > 0) {
-					if (activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					if (activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false) {
 						this->_player.jump();
 						if (!Mix_Playing(244))
 							Mix_PlayChannel(244, seJump, 0);
@@ -537,7 +572,8 @@ void Game::gameLoop() {
 					}
 				}
 				if (input.wasKeyReleased(SDL_SCANCODE_SPACE) && this->_player.getCurrentHealth() > 0) {
-					if (this->_player.canShortJump() && activeTalk == false && activeInventory == false && activeStatMenu == false && !activeSaveMenu) {
+					if (this->_player.canShortJump() && activeTalk == false && activeInventory == false && activeStatMenu == false 
+						&& !activeSaveMenu && activeSkillMenu == false) {
 						this->_player.setPlayerDY(0);
 						this->_player.setShortJump(false);
 					}
@@ -548,7 +584,7 @@ void Game::gameLoop() {
 				}
 
 				if (input.wasKeyPressed(SDL_SCANCODE_A) == true && activeInventory == false && activeStatMenu == false
-					&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu) {
+					&& this->_player.getCurrentHealth() > 0 && !activeSaveMenu && activeSkillMenu == false) {
 					if (activeTalk == false && npcName != "") {
 						activeTalk = true;
 						this->_chatBox.setTextStatus(true);
@@ -666,7 +702,8 @@ void Game::gameLoop() {
 				}
 
 				if (input.wasKeyPressed(SDL_SCANCODE_D) == true && this->_player.getCurrentHealth() > 0
-					&& !activeCutscene && !activeInventory && !activeTalk && !activeSaveMenu) {
+					&& !activeCutscene && !activeInventory && !activeTalk 
+					&& !activeSaveMenu && activeSkillMenu == false) {
 					if (!activeStatMenu) {
 						selection = 1;
 						activeStatMenu = true;
@@ -700,7 +737,7 @@ void Game::gameLoop() {
 
 				if (input.wasKeyPressed(SDL_SCANCODE_S) == true && this->_player.getCurrentHealth() > 0
 					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene
-					&& this->_player.isGrounded()) {
+					&& this->_player.isGrounded() && activeSkillMenu == false) {
 					if (activeInventory == false) {
 						activeInventory = true;
 						this->_player.stopMoving();
@@ -780,6 +817,96 @@ void Game::gameLoop() {
 					}
 				}
 
+				if (input.wasKeyPressed(SDL_SCANCODE_Q) == true && this->_player.getCurrentHealth() > 0
+					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene && !activeInventory
+					&& this->_player.isGrounded()) {
+					if (activeSkillMenu == false) {
+						activeSkillMenu = true;
+						this->_player.stopMoving();
+						skillSelectionX = this->_player.getX() - 70;
+						skillSelectionY = this->_player.getY() - 105;
+						this->_skillFactory.draw(graphics, this->_player);
+					}
+					else if (activeSkillMenu == true) {
+						activeSkillMenu = false;
+						skillSelectedItem = 1;
+						skillSelectionColumn = 1;
+						skillSelectionRow = 1;
+						this->_skillFactory.resetCurrentSkill();
+					}
+				}
+
+				if (activeSkillMenu && this->_player.getCurrentHealth() > 0) {
+					if (input.wasKeyPressed(SDL_SCANCODE_RETURN) == true) {
+						// Use item
+						this->_skillFactory.useSkillFromInvent(this->_player);
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_UP)) {
+						// Move selection box sprite up to select item
+						if (skillSelectionRow != 1) {
+							skillSelectionY -= 68;
+							skillSelectionRow -= 1;
+							skillSelectedItem -= 4;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_skillFactory.checkSkillSlot(skillSelectedItem)) {
+							skillSelectionY += 68;
+							skillSelectionRow += 1;
+							skillSelectedItem += 4;
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_DOWN)) {
+						// Move selection box sprite down to select item
+						if (skillSelectionRow != 4) { // max rows
+							skillSelectionY += 68;
+							skillSelectionRow += 1;
+							skillSelectedItem += 4;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_skillFactory.checkSkillSlot(skillSelectedItem)) {
+							skillSelectionY -= 68;
+							skillSelectionRow -= 1;
+							skillSelectedItem -= 4;
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_LEFT)) {
+						// Move selection box sprite left to select item
+						if (skillSelectionColumn != 1) {
+							skillSelectionX -= 68;
+							skillSelectionColumn -= 1;
+							skillSelectedItem -= 1;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_skillFactory.checkSkillSlot(skillSelectedItem)) {
+							skillSelectionX += 68;
+							skillSelectionColumn += 1;
+							skillSelectedItem += 1;
+						}
+					}
+					else if (input.wasKeyPressed(SDL_SCANCODE_RIGHT)) {
+						// Move selection box sprite right to select item
+						if (skillSelectionColumn != 4) {
+							skillSelectionX += 68;
+							skillSelectionColumn += 1;
+							skillSelectedItem += 1;
+						}
+						// Check if there is an item in the slot otherwise undo
+						if (!this->_skillFactory.checkSkillSlot(skillSelectedItem)) {
+							skillSelectionX -= 68;
+							skillSelectionColumn -= 1;
+							skillSelectedItem -= 1;
+						}
+					}
+					else {
+						for (int key = SDL_SCANCODE_1; key <= SDL_SCANCODE_9; key++) {
+							if (input.wasKeyPressed(static_cast<SDL_Scancode>(key))) {
+								int hotkeyNum = key - SDL_SCANCODE_1 + 1;
+								this->_skillFactory.bindSkillToKey(hotkeyNum);
+							}
+						}
+					}
+				}
+
 				if (input.wasKeyPressed(SDL_SCANCODE_Z) == true && this->_player.getCurrentHealth() > 0) {
 					if (pickUp == false) {
 						pickUp = true;
@@ -789,21 +916,26 @@ void Game::gameLoop() {
 					}
 				}
 				if (input.wasKeyPressed(SDL_SCANCODE_C) == true && this->_player.getCurrentHealth() > 0
-					&& !activeCutscene && !activeInventory && !activeSaveMenu && !activeStatMenu && !activeTalk) {
+					&& !activeCutscene && !activeInventory && !activeSaveMenu && !activeStatMenu 
+					&& !activeTalk && !activeSkillMenu) {
 					if (this->_player.hasHpPot()) {
 						_inventory.useItem(0, this->_player);
 					}
 				}
-				if (input.wasKeyPressed(SDL_SCANCODE_1) == true) {
-					// Add weapon swap here
-				}
-				if (input.wasKeyPressed(SDL_SCANCODE_2) == true) {
-					// Add weapon swap here
-				}
-				if (input.wasKeyPressed(SDL_SCANCODE_3) == true) {
+				if (input.wasKeyPressed(SDL_SCANCODE_0) == true) {
 					if (this->_inventory.checkItem(2100, 1)) {
 						jetPack = !jetPack;
 						std::cout << "JetPack state = " << jetPack << std::endl;
+					}
+				}
+				if (this->_player.getCurrentHealth() > 0
+					&& !activeStatMenu && !activeTalk && !activeSaveMenu && !activeCutscene 
+					&& !activeInventory && !activeSkillMenu) {
+					for (int key = SDL_SCANCODE_1; key <= SDL_SCANCODE_9; key++) {
+						if (input.wasKeyPressed(static_cast<SDL_Scancode>(key))) {
+							int hotkeyNum = key - SDL_SCANCODE_1 + 1;
+							this->_skillFactory.useSkillHotkey(hotkeyNum, this->_player);
+						}
 					}
 				}
 				if (input.wasKeyPressed(SDL_SCANCODE_F5) == true) {
@@ -833,13 +965,24 @@ void Game::gameLoop() {
 
 			const int CURRENT_TIME_MS = SDL_GetTicks();
 			int ELAPSED_TIME_MS = CURRENT_TIME_MS - LAST_UPDATE_TIME;
-			this->_graphics = graphics; // Updated graphics
+
+			// Updated graphics
+			this->_graphics = graphics;
+
 			// Take standard min : elapsed time ms and max frame time
 			this->update(std::min(ELAPSED_TIME_MS, MAX_FRAME_TIME), graphics);
+
 			// Loop will go again and current time - new last update will tell us how long next frame will take
 			LAST_UPDATE_TIME = CURRENT_TIME_MS;
 
 			this->draw(graphics);
+
+			/* Don't hog the CPU, delay by regulating the frame rate. If remaining time > 0 this frame took less time than needed */
+			int remaining_time = (1000 / FPS) - ELAPSED_TIME_MS;
+			if (remaining_time > 0) {
+				// CPU usage down by 12-13%
+				SDL_Delay(remaining_time);
+			}
 
 			// SDL_GetTicks() will still increment while pauseGame = this->_title(...) runs it's own loop.
 			// To account for the time difference, we simply set LAST_UPDATE_TIME = SDL_GetTicks() - 1
@@ -862,7 +1005,7 @@ void Game::gameLoop() {
 					Mix_RewindMusic();
 				}
 				/* Free memory to prevent any leaks */
-				graphics.unloadImage("data\\graphics\\dark_clouds.png");
+				graphics.unloadImage("data\\graphics\\titleSprite.png");
 				delete this->_title;
 				this->_title = nullptr;
 			}
@@ -916,6 +1059,10 @@ void Game::draw(Graphics &graphics) {
 	if (activeInventory == true) {
 		this->_inventory.draw(graphics, this->_player);
 		this->_inventory.drawInventSelection(graphics, inventSelectionX, inventSelectionY);
+	}
+	if (activeSkillMenu) {
+		this->_skillFactory.draw(graphics, this->_player);
+		this->_skillFactory.drawSkillSelection(graphics, skillSelectionX, skillSelectionY);
 	}
 	if (activeStatMenu)
 		this->_player.drawStatMenu(graphics, this->_player, selection);
@@ -1061,6 +1208,40 @@ int Game::saveGame(Graphics & graphics)
 		XMLElement* ptrElement = xml.NewElement("iTable");
 		ptrElement->SetAttribute("itemID", first);
 		ptrElement->SetAttribute("quantity", second);
+		element->InsertEndChild(ptrElement);
+	}
+	root->InsertEndChild(element);
+	// Save skills
+	element = xml.NewElement("Skills");
+	std::map<Skills::SkillID, int> skVec = this->_skillFactory.getSkillTable();
+	for (auto iter = skVec.begin(); iter != skVec.end(); iter++) {
+		auto first = iter->first, second = iter->second;
+		XMLElement* ptrElement = xml.NewElement("skTable");
+		ptrElement->SetAttribute("skillID", first);
+		ptrElement->SetAttribute("skillLevel", second);
+		element->InsertEndChild(ptrElement);
+	}
+	root->InsertEndChild(element);
+	// Save skill hotkeys
+	element = xml.NewElement("SkillHotkeys");
+	std::map<int, Skills::SkillID> skhVec = this->_skillFactory.getSkillHotkeys();
+	for (auto iter = skhVec.begin(); iter != skhVec.end(); iter++) {
+		auto first = iter->first, second = iter->second;
+		XMLElement* ptrElement = xml.NewElement("skhTable");
+		ptrElement->SetAttribute("hotKeyID", first);
+		ptrElement->SetAttribute("skillID", second);
+		element->InsertEndChild(ptrElement);
+	}
+	root->InsertEndChild(element);
+	// Save skill cooldowns
+	this->_skillFactory.checkAllSkillCooldowns();
+	element = xml.NewElement("SkillCooldowns");
+	std::vector<std::tuple<Skills::SkillID, bool, int>> skcdVec = this->_skillFactory.getSkillCooldowns();
+	for (int counter = 0; counter < skcdVec.size(); ++counter) {
+		XMLElement* ptrElement = xml.NewElement("skcdTable");
+		ptrElement->SetAttribute("skillID", std::get<0>(skcdVec[counter]));
+		ptrElement->SetAttribute("skillActive", std::get<1>(skcdVec[counter]));
+		ptrElement->SetAttribute("skillCD", std::get<2>(skcdVec[counter]));
 		element->InsertEndChild(ptrElement);
 	}
 	root->InsertEndChild(element);
@@ -1215,6 +1396,48 @@ int Game::loadGame(Graphics & graphics)
 		ptrVec = ptrVec->NextSiblingElement("iTable");
 	}
 	this->_inventory.setInventoryTable(iVec);
+
+	// Load Skills
+	element = root->FirstChildElement("Skills");
+	ptrVec = element->FirstChildElement("skTable");
+	std::map<Skills::SkillID, int> skVec;
+	while (ptrVec != nullptr) {
+		int skillID, skillLevel;
+		result = ptrVec->QueryIntAttribute("skillID", &skillID);
+		result = ptrVec->QueryIntAttribute("skillLevel", &skillLevel);
+		skVec.insert({ skillID, skillLevel });
+		ptrVec = ptrVec->NextSiblingElement("skTable");
+	}
+	this->_skillFactory.setSkillTable(skVec);
+
+	// Load Skill Hotkeys
+	element = root->FirstChildElement("SkillHotkeys");
+	ptrVec = element->FirstChildElement("skhTable");
+	std::map<int, Skills::SkillID> skhVec;
+	while (ptrVec != nullptr) {
+		int hotKeyID, skillID;
+		result = ptrVec->QueryIntAttribute("hotKeyID", &hotKeyID);
+		result = ptrVec->QueryIntAttribute("skillID", &skillID);
+		skhVec.insert({ hotKeyID, skillID });
+		ptrVec = ptrVec->NextSiblingElement("skhTable");
+	}
+	this->_skillFactory.setSkillHotkeys(skhVec);
+
+	// Load Skill Cooldowns
+	element = root->FirstChildElement("SkillCooldowns");
+	ptrVec = element->FirstChildElement("skcdTable");
+	std::vector<std::tuple<Skills::SkillID, bool, int>> skcdVec;
+	while (ptrVec != nullptr) {
+		int skillCD, skillID; bool skillActive;
+		result = ptrVec->QueryIntAttribute("skillID", &skillID);
+		result = ptrVec->QueryBoolAttribute("skillActive", &skillActive);
+		result = ptrVec->QueryIntAttribute("skillCD", &skillCD);
+		skcdVec.push_back(std::make_tuple(skillID, skillActive, skillCD));
+		ptrVec = ptrVec->NextSiblingElement("skcdTable");
+	}
+	this->_skillFactory.setSkillCooldowns(skcdVec);
+
+	this->_skillFactory.refreshAcquiredSkills();
 
 	// Load QuestLog
 	element = root->FirstChildElement("QuestLog");
@@ -1423,6 +1646,7 @@ int Game::loadGame(Graphics & graphics)
 	// It's also important to do this after the map hash has been verified to prevent any edits appearing by chance.
 	this->_level.generateMapItems(graphics, this->_level.getMapName(), this->_inventory);
 	this->_level.generateEffects(graphics, this->_player);
+	this->_level.generateParallax(graphics, this->_level.getMapName(), this->_player);
 	this->saveGame(graphics);
 	XMLCheckResult(result);
 
@@ -1604,6 +1828,8 @@ void Game::update(float elapsedTime, Graphics &graphics) {
 					activeCutscene = true;
 				}
 			}
+
+			this->_skillFactory.updateAllSkillStats(elapsedTime, this->_player);
 			
 			// Update camera last once every object position has been updated to prevent screen shakes 
 			this->_camera.Update(elapsedTime, this->_player);

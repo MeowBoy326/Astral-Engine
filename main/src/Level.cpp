@@ -66,13 +66,19 @@ Level & Level::operator=(const Level & levelMap)
 			p = NULL;
 		}
 	}
+	for (auto & p : this->_parallaxList) {
+		if (p.second != nullptr) {
+			delete p.second;
+			p.second = NULL;
+		}
+	}
 	this->_effects.clear();
 	this->_projectiles.clear();
 	this->_items.clear();
 	this->_enemies.clear();
+	this->_parallaxList.clear();
 	//this->itemType = levelMap.itemType;
 	this->_npcs = levelMap._npcs;
-	this->_parallaxList = levelMap._parallaxList;
 	this->_animatedTileInfos = levelMap._animatedTileInfos;
 	this->_animatedTileList = levelMap._animatedTileList;
 	this->_backgroundTexture = levelMap._backgroundTexture;
@@ -164,42 +170,42 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 				const char* getBGMName = prop->Attribute("value");
 				this->_mapBGM = getBGMName;
 			}
-			else if (ssProp.str() == "PXLayer1") {
-				const char* bgValue = prop->Attribute("value");
-				std::stringstream bgFileName;
-				bgFileName << "data/maps/" << bgValue << ".png";
-				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
-				Parallax* pxLayer = new Parallax(tex, 1.0f);
-				this->_parallaxList.push_back(std::make_pair(1, pxLayer));
-			}
-			else if (ssProp.str() == "PXLayer2") {
-				const char* bgValue = prop->Attribute("value");
-				std::stringstream bgFileName;
-				bgFileName << "data/maps/" << bgValue << ".png";
-				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
-				Parallax* pxLayer = new Parallax(tex, 1.0f);
-				this->_parallaxList.push_back(std::make_pair(2, pxLayer));
-			}
-			else if (ssProp.str() == "PXLayer3") {
-				const char* bgValue = prop->Attribute("value");
-				std::stringstream bgFileName;
-				bgFileName << "data/maps/" << bgValue << ".png";
-				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
-				Parallax* pxLayer = new Parallax(tex, 1.4f);
-				this->_parallaxList.push_back(std::make_pair(3, pxLayer));
-			}
-			else if (ssProp.str() == "PXLayer4") {
-				const char* bgValue = prop->Attribute("value");
-				std::stringstream bgFileName;
-				bgFileName << "data/maps/" << bgValue << ".png";
-				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
-				Parallax* pxLayer = new Parallax(tex, 2.0f);
-				this->_parallaxList.push_back(std::make_pair(4, pxLayer));
-			}
+			//else if (ssProp.str() == "PXLayer1") {
+			//	const char* bgValue = prop->Attribute("value");
+			//	std::stringstream bgFileName;
+			//	bgFileName << "data/maps/" << bgValue << ".png";
+			//	SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+			//	Parallax* pxLayer = new Parallax(tex, 1.0f);
+			//	this->_parallaxList.push_back(std::make_pair(1, pxLayer));
+			//}
+			//else if (ssProp.str() == "PXLayer2") {
+			//	const char* bgValue = prop->Attribute("value");
+			//	std::stringstream bgFileName;
+			//	bgFileName << "data/maps/" << bgValue << ".png";
+			//	SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+			//	Parallax* pxLayer = new Parallax(tex, 1.0f);
+			//	this->_parallaxList.push_back(std::make_pair(2, pxLayer));
+			//}
+			//else if (ssProp.str() == "PXLayer3") {
+			//	const char* bgValue = prop->Attribute("value");
+			//	std::stringstream bgFileName;
+			//	bgFileName << "data/maps/" << bgValue << ".png";
+			//	SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+			//	Parallax* pxLayer = new Parallax(tex, 1.4f);
+			//	this->_parallaxList.push_back(std::make_pair(3, pxLayer));
+			//}
+			//else if (ssProp.str() == "PXLayer4") {
+			//	const char* bgValue = prop->Attribute("value");
+			//	std::stringstream bgFileName;
+			//	bgFileName << "data/maps/" << bgValue << ".png";
+			//	SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+			//	Parallax* pxLayer = new Parallax(tex, 2.0f);
+			//	this->_parallaxList.push_back(std::make_pair(4, pxLayer));
+			//}
 			prop = prop->NextSiblingElement("property");
 		}
 	}
-	std::sort(this->_parallaxList.begin(), this->_parallaxList.end());
+	//std::sort(this->_parallaxList.begin(), this->_parallaxList.end());
 
 	// Load the tilesets.
 	XMLElement* pTileset = mapNode->FirstChildElement("tileset"); // If we have more then 1 tile set its a problem, so a work-around is linked list
@@ -814,7 +820,7 @@ void Level::loadMap(std::string mapName, Graphics &graphics, Inventory &invent) 
 	}
 }
 
-void Level::update(int elapsedTime, Player &player) {
+void Level::update(float elapsedTime, Player &player) {
 	// Allowing the timer to elapse without checking if canShoot == false 
 	// Actually provides a more stable DPS. If using a check, it creates
 	// A wider variety towards DPS. So, keep it like this.
@@ -1001,6 +1007,15 @@ void Level::checkProjectileCollisions(Player & player) {
 				this->_enemies.at(i)->bulletHit(damage);
 				this->dmgVector.push_back(std::make_tuple(this->_enemies.at(i)->getX(), this->_enemies.at(i)->getY(),
 					damage, 0));
+				player.handleRestoreableHealth(damage);
+				if (player.hasLifeStealActive()) {
+					if (this->_enemies.at(i)->isBoss() || this->_enemies.at(i)->isMiniBoss()) {
+						player.gainHealth(static_cast<float>(this->_enemies.at(i)->getMaxHealth() / 4 + damage) * player.getLifeSteal());
+					}
+					else {
+						player.gainHealth(static_cast<float>(this->_enemies.at(i)->getMaxHealth() + damage) * player.getLifeSteal());
+					}
+				}
 				delete this->_projectiles.at(j);
 				this->_projectiles.erase(this->_projectiles.begin() + j);
 			}
@@ -1545,6 +1560,62 @@ void Level::generateEffects(Graphics & graphics, Player & player)
 		this->_effects.push_back(new ArenaEffect(graphics, Vector2(std::floor(this->_arenaRects.at(0).getRight()),
 			std::floor(this->_arenaRects.at(0).getTop()))));
 	}
+}
+
+void Level::generateParallax(Graphics& graphics, std::string mapName, Player& player) {
+	// Parse the .tmx file
+	XMLDocument doc; // Represents entire xml document
+	std::stringstream ss;
+	ss << mapName << ".tmx"; // Ss << "content/maps" << mapName << ".tmx"; Pass in Map 1, we get content/maps/Map 1.tmx
+	std::filesystem::path cwd = std::filesystem::current_path() / "data" / "maps";
+	cwd.append(mapName + ".tmx");
+	doc.LoadFile(cwd.string().c_str());  // Ss,.str convers stringstream into stream then string function called c_str converts string to c-string
+	XMLElement* mapNode = doc.FirstChildElement("map"); // Doc is the root of the xml doc, the first child element from the root called map we are selecting
+
+
+	XMLElement* propsNode = mapNode->FirstChildElement("properties");
+	if (propsNode != NULL) {
+		XMLElement* prop = propsNode->FirstChildElement("property");
+		while (prop) {
+			const char* propsName = prop->Attribute("name");
+			std::stringstream ssProp;
+			ssProp << propsName;
+			if (ssProp.str() == "PXLayer1") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 1.0f);
+				this->_parallaxList.push_back(std::make_pair(1, pxLayer));
+			}
+			else if (ssProp.str() == "PXLayer2") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 1.0f);
+				this->_parallaxList.push_back(std::make_pair(2, pxLayer));
+			}
+			else if (ssProp.str() == "PXLayer3") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 1.4f);
+				this->_parallaxList.push_back(std::make_pair(3, pxLayer));
+			}
+			else if (ssProp.str() == "PXLayer4") {
+				const char* bgValue = prop->Attribute("value");
+				std::stringstream bgFileName;
+				bgFileName << "data/maps/" << bgValue << ".png";
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(graphics.getRenderer(), graphics.loadImage(bgFileName.str()));
+				Parallax* pxLayer = new Parallax(tex, 2.0f);
+				this->_parallaxList.push_back(std::make_pair(4, pxLayer));
+			}
+			prop = prop->NextSiblingElement("property");
+		}
+	}
+	std::sort(this->_parallaxList.begin(), this->_parallaxList.end());
 }
 
 std::vector<Enemy*> Level::checkEnemyCollisions(const Rectangle &other) {

@@ -33,7 +33,7 @@ Projectile::~Projectile()
 {
 }
 
-void Projectile::update(int elapsedTime, Player & player)
+void Projectile::update(float elapsedTime, Player & player)
 {
 	AnimatedSprite::update(elapsedTime);
 }
@@ -62,23 +62,23 @@ SilverBullet::~SilverBullet()
 	this->destroySprite();
 }
 
-void SilverBullet::update(int elapsedTime, Player & player)
+void SilverBullet::update(float elapsedTime, Player & player)
 {
 	if (_direction == LEFT) {
 		this->playAnimation("ShootLeft");
-		this->_x -= 0.83;
+		this->_x -= 0.40f * elapsedTime;
 	}
 	else if (_direction == RIGHT) {
 		this->playAnimation("ShootRight");
-		this->_x += 0.83;
+		this->_x += 0.40f * elapsedTime;
 	}
 	else if (_direction == UP) {
 		this->playAnimation("ShootUp");
-		this->_y -= 0.83;
+		this->_y -= 0.40f * elapsedTime;
 	}
 	else if (_direction == DOWN) {
 		this->playAnimation("ShootDown");
-		this->_y += 0.83;
+		this->_y += 0.40f * elapsedTime;
 	}
 
 	Projectile::update(elapsedTime, player);

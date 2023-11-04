@@ -10,6 +10,7 @@ HUD::HUD(Graphics &graphics, Player &player) {
 	// This->_healthBarSprite = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 40, 76, 8, 35, 70); // x, y, width, height, screen pos x, screen pos y
 	this->_healthBarSprite = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 162, 76, 19, 35, 70);
 	this->_currentHealthBar = Sprite(graphics, "data\\graphics\\TextBox.png", 19, 183, 56, 5, 83, 72);
+	this->_restorableHealthBar = Sprite(graphics, "data\\graphics\\TextBox.png", 19, 189, 56, 5, 83, 72);
 	this->_healthPotion = Sprite(graphics, "data\\graphics\\hpFlask.png", 0, 0, 8, 11, 35, 90);
 	// This->_currentHealthBar = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 25, 40, 5, 83, 72);
 	// This->_healthNumber1 = Sprite(graphics, "data\\graphics\\TextBox.png", 0, 56, 8, 8, 66, 70);
@@ -32,6 +33,9 @@ void HUD::update(int ElapsedTime, Player &player, Camera &camera) {
 	float hpNum = (float)player.getCurrentHealth() / player.getMaxHealth();
 	this->_currentHealthBar.setSourceRectW(std::floor(hpNum * 56));
 
+	float restoreNum = ((float)player.getCurrentHealth() + (float)player.getRestorableHealth()) / (float)player.getMaxHealth();
+	this->_restorableHealthBar.setSourceRectW(std::floor(restoreNum * 56));
+
 	// Exp & Level bars
 	int expNum = (player.getCurrentExp() / player.getRequiredExp()) * 84;
 	this->_expBarValue.setSourceRectW(expNum);
@@ -49,6 +53,7 @@ void HUD::draw(Graphics &graphics, Player &player) {
 	// This->_healthNumber1.draw(graphics, player.getX() - 285, player.getY() - 185);
 
 	this->_healthBarSprite.drawHPBar(graphics, this->posX, this->posY);
+	this->_restorableHealthBar.drawHPBar(graphics, this->posX + 57, this->posY + 24);
 	this->_currentHealthBar.drawHPBar(graphics, this->posX + 57, this->posY + 24);
 	player.drawHPNumbers(graphics, this->posX + 70, this->posY + 25);
 	this->_healthPotion.drawHPBar(graphics, this->posX, this->posY + 80);

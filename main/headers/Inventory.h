@@ -117,6 +117,7 @@ public:
 		const std::map<std::string, std::variant<int, std::string>> properties = item_prototypes_[itemID]->getProperties();
 		std::string iName = "NULL";
 
+		item_prototypes_[itemID]->updateItemStats(player);
 		iName = item_prototypes_[itemID]->getItemName();
 
 		this->drawInventItem(graphics, player.getX() - 320, player.getY() - 110, iName);

@@ -7,7 +7,7 @@
 class AnimatedTile : public Tile {
 public:
 	AnimatedTile(std::vector<Vector2> tilesetPositions, int duration, SDL_Texture* tileset, Vector2 size, Vector2 position);
-	void update(int elapsedTime);
+	void update(float elapsedTime);
 	void draw(Graphics &graphics);
 protected:
 	int _amountOfTime = 0;

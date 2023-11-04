@@ -35,7 +35,7 @@ public:
 	Level(const Level&);
 	~Level();
 
-	void update(int elapsedTime, Player &player);
+	void update(float elapsedTime, Player &player);
 	void draw(Graphics &graphics, Player &player);
 	void drawEnemyOutline(Graphics &graphics);
 	void drawCollisionOutline(Graphics &graphics);
@@ -45,6 +45,7 @@ public:
 	void generateEnemies(Graphics &graphics, std::string mapName, Player &player);
 	void generateProjectile(Graphics &graphics, Player &player);
 	void generateEffects(Graphics &graphics, Player &player);
+	void generateParallax(Graphics &graphics, std::string mapName, Player &player);
 
 	std::vector<Rectangle> checkTileCollisions(const Rectangle &other);
 	std::vector<Rectangle> checkBreakableTileCollisions(const Rectangle &other);
@@ -92,8 +93,8 @@ private:
 	bool enemyDead = false;
 	bool arenaActive = false;
 
-	double bulletTimer = 0;
-	double bulletDelay = 200;
+	float bulletTimer = 0;
+	float bulletDelay = 200;
 	bool canShoot = true;
 
 	std::string _mapName; 

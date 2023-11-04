@@ -13,6 +13,8 @@ class Graphics;
 class Npc;
 class Items;
 class Inventory;
+class Skills;
+class SkillFactory;
 
 class Player : public AnimatedSprite {
 public:
@@ -80,6 +82,7 @@ public:
 	void handleDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleLockedDoorCollision(std::vector<Door> &others, Level &level, Graphics &graphics, Inventory &invent, Player &player);
 	void handleEnemyCollisions(std::vector<Enemy*> &others);
+	void handleRestoreableHealth(float damage);
 	void handleHex(float elapsedTime);
 	void applyHex(int hexID, double duration, bool isStackable);
 	void nullifyHex(int hexID);
@@ -141,6 +144,7 @@ public:
 	const inline bool getPlayerHit() const { return this->gotHit; }
 	const inline float getMaxHealth() const { return this->_maxHealth; }
 	const inline float getCurrentHealth() const { return this->_currentHealth; }
+	const inline float getRestorableHealth() const { return this->_restorableHealth; }
 	inline void setMaxHealth(float hp) { this->_maxHealth = hp; }
 	inline void setCurrentHealth(float hp) { this->_currentHealth = hp; }
 	inline void subtractHpPot() { this->_hpPotAmount -= 1; }
@@ -179,10 +183,15 @@ public:
 	inline void setDefense(double def) { this->_defense = def; }
 	inline void setStatPoints(int points) { this->_statPoints = points; }
 	inline void setSoulStr(double str) { this->_soulStrength = str; }
+	inline void setLifeSteal(float amt) { this->STAT_LIFESTEAL = amt; }
+	inline bool hasLifeStealActive() { return this->lifeStealActive; }
+	inline void setLifeStealActive(bool active) { this->lifeStealActive = active; }
+	inline void raiseLifeSteal(float amt) { this->STAT_LIFESTEAL += amt; }
 	double getDmgMod();
 	double getDmgReduction() { return this->_dmgReduction; }
 	double getDefense();
 	double getSoulStr();
+	float getLifeSteal() { return this->STAT_LIFESTEAL; }
 	int getStatPoints();
 	int selectX = 0;
 	int selectY = 0;
@@ -192,12 +201,14 @@ private:
 	float previousY = 0;
 	float _maxHealth;
 	float _currentHealth;
+	float _restorableHealth;
 	float _air = 100;
 	float _fuel = 100;
 	float _exp = 0;
 	float STAT_AGIL = 1;
 	float STAT_STR = 1;
 	float STAT_AVOID = 1;
+	float STAT_LIFESTEAL = 0.002f;
 
 	bool _grounded; // True if we are, false if we are in the air
 	bool _canShortJump = true;
@@ -205,6 +216,7 @@ private:
 	bool _lookingUp;
 	bool _lookingDown;
 	bool iFrame;
+	bool isRestorableHealth = false;
 	bool isPoisoned = false;
 	bool isBurning = false;
 	bool isDrowning = false;
@@ -216,6 +228,7 @@ private:
 	bool _playerDeathSound = false;
 	bool deathPlayed = false;
 	bool showEventMsg = false;
+	bool lifeStealActive = false;
 
 	int _hpPotAmount = 2;
 	int _hpPotCapacity = 2;
@@ -267,6 +280,7 @@ protected:
 	double _timeForMapName = 3000;
 	double _timeForEventMsg = 0;
 	double _timeForBattleMsg = 0;
+	double _timeForRestoreHealth = 0;
 	double _poisonDOTTimer = 0;
 	double _poisonDuration = 0;
 	double _hexDOTTimer = 0;
@@ -276,14 +290,14 @@ protected:
 
 
 	std::map<std::string, std::string> mapHash = {
-		{"cave depths",				"8904AD542CFC9BB400F14A090111AD635CC0E26CCE6793DD17B56120F933C431"},
-		{"cave",					"E081B6F917DFF9FF0F8A7FF0AC553906007790068F86571FD70D8505917FE84C"},
-		{"caveFork",				"F3C053043D66A537F7B4F0749D5D47E48C1AA248B54159FF7C71BD3B0ECC2AB8"},
-		{"caverns",					"E4D4EF86D92722162F939C4B09374DDF97DA58060DB90126904D85863885E9E2"},
-		{"Collapsed Cave",			"839543BA70275648F126A47B8839964C3793257B3966CB9C9ED4C786869F124D"},
-		{"Profaned Capital",		"AC75BD79B413F458D9F8E1BCD6535AC6216620FFFEDDA86FCBA83A29B1A78F76"},
+		{"cave depths",				"7DE64BB85B2390D2059057A20DDEAC9A9892C1D2EC78C9FEEF02303B38AFD455"},
+		{"cave",					"8360B397746A75B5FA02588532590E2D2FAAF5A2F3858B5FC61B7EB84463766B"},
+		{"caveFork",				"B799B724E27A1364475C3AC3065F266AD01D5AF50E1518D9BADE68403DB0FF43"},
+		{"caverns",					"9B3CF0FF7808927BCDD776DE33364FE43B57B57FAB45CFFF7F8023CDEA82CCA0"},
+		{"Collapsed Cave",			"9E872647A4662F99D73C442B733D3ADCA56A602B1F229E27E735E19EDEDB64BB"},
+		{"Profaned Capital",		"FD53C70E2D45BC6122328A6309A6D560D355319D147FB2017FA33D495A63CC1F"},
 		{"Up To The Forest",		"C991610C4B5A585142456B012AFC435E090B745DF9A01936326651DC072D5436"},
-		{"New York",				"B5E27439DA36A2AA2C90366B6F074202A592A1D4F58BD7607E020DDB1F9F0906"},
+		{"New York",				"547313162592760B5D648D09D1291FA55E5418A88459FF8AF0571FBFC1308BBB"},
 		{"The Mines",				"6D377F741AF307288022D864B1D3F53E873F60974C0E39554AF9FCD703A78B1D"}
 	};
 };

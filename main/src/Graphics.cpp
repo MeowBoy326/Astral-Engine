@@ -13,7 +13,7 @@
 #include <fstream>
 
 Graphics::Graphics() {
-	SDL_CreateWindowAndRenderer(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, 0, &this->_window, &this->_renderer);
+	SDL_CreateWindowAndRenderer(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED, &this->_window, &this->_renderer);
 	SDL_SetWindowTitle(this->_window, "Astral");
 	SDL_Surface* icon = IMG_Load("icon.png");
 	SDL_SetWindowIcon(this->_window, icon);
@@ -47,6 +47,7 @@ SDL_Surface* Graphics::loadImage(const std::string &filePath) {
 	
 	if (this->_spriteSheets.count(filePath) == 0) {
 		this->_spriteSheets[filePath] = IMG_Load(filePath.c_str()); // will use SDL to load image, it uses a c-string
+		//printf("IMG_Load: %s\n", IMG_GetError());
 	}
 	return this->_spriteSheets[filePath]; // Regardless we will return sprite if its loaded already or needs to be
 }
@@ -119,5 +120,7 @@ void Graphics::setWindowResolution(int w, int h, bool scaled) {
 		float scale_y = (float)globals::SCREEN_HEIGHT / 480;
 
 		SDL_RenderSetScale(this->_renderer, scale_x, scale_y);
+		/* Change scaling method to show more of the game content */
+		//SDL_RenderSetLogicalSize(this->_renderer, globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT);
 	}
 }

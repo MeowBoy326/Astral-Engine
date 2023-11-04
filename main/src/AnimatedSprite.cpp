@@ -226,6 +226,8 @@ void AnimatedSprite::drawPlayer(Graphics& graphics, int x, int y) {
 		destinationRectangle.w = this->_sourceRect.w * globals::PLAYER_SCALE;
 		destinationRectangle.h = this->_sourceRect.h * globals::PLAYER_SCALE;
 
+		if (this->_currentAnimation == "PlayerDead") { SDL_Delay(130); }
+
 		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; // Pull out correct rectangle
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
@@ -316,6 +318,22 @@ void AnimatedSprite::drawLoot(Graphics & graphics, int x, int y)
 		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
 	}
 }
+
+void AnimatedSprite::drawSkillIcon(Graphics & graphics, int x, int y) {
+	if (this->_visible) { // Only draw when visible
+		SDL_Rect destinationRectangle; // Temp where we draw on screen
+		destinationRectangle.x = x + this->_offsets[this->_currentAnimation].x;
+		// This will push it over to whatever we set from offset when we draw (doesnt change postion) but drawn in different position with offset
+		destinationRectangle.y = y + this->_offsets[this->_currentAnimation].y;
+		destinationRectangle.w = this->_sourceRect.w * 1.2;
+		destinationRectangle.h = this->_sourceRect.h * 1.2;
+
+		SDL_Rect sourceRect = this->_animation[this->_currentAnimation][this->_frameIndex]; // Pull out correct rectangle
+		graphics.blitSurface(this->_spriteSheet, &sourceRect, &destinationRectangle);
+	}
+}
+
+
 /*
 void AnimatedSprite::updateBullet(int elapsedTime) { // Timer checks when to go to next frame in animation
 	Sprite::updateBullet(); // Since we extend we can call like this

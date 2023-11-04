@@ -7,13 +7,15 @@
 #include "../headers/Door.h"
 #include "../headers/Npc.h"
 #include "../headers/Items.h"
+#include "../headers/Inventory.h"
+#include "../headers/Skills.h"
+#include "../headers/SkillFactory.h"
 #include "../headers/AESCipher.h"
 
 #include <time.h>
 #include <sstream>
 #include <iomanip>
 
-#include "../headers/Inventory.h"
 
 namespace player_constants {
 	float WALK_SPEED = 0.2f;
@@ -709,12 +711,14 @@ void Player::handleDoorCollision(std::vector<Door> &others, Level &level, Graphi
 				level = it->second;
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName(), player);
+				level.generateParallax(graphics, level.getMapName(), player);
 				level.generateEffects(graphics, player);
 			}
 			else {
 				level = Level(others.at(i).getDestination(), graphics, invent);
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName(), player);
+				level.generateParallax(graphics, level.getMapName(), player);
 				level.generateEffects(graphics, player);
 				this->storeLevel(level);
 				std::cout << "stored level" << std::endl;
@@ -762,12 +766,14 @@ void Player::handleLockedDoorCollision(std::vector<Door>& others, Level & level,
 				level = it->second;
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName(), player);
+				level.generateParallax(graphics, level.getMapName(), player);
 				level.generateEffects(graphics, player);
 			}
 			else {
 				level = Level(others.at(i).getDestination(), graphics, invent);
 				level.generateMapItems(graphics, level.getMapName(), invent);
 				level.generateEnemies(graphics, level.getMapName(), player);
+				level.generateParallax(graphics, level.getMapName(), player);
 				level.generateEffects(graphics, player);
 				this->storeLevel(level);
 				std::cout << "stored level" << std::endl;
@@ -904,6 +910,16 @@ void Player::drawHPPotStrength(Graphics& graphics, int x, int y) {
 	this->_txt->drawItemQuantity(graphics, 0, 0, "+" + std::to_string(this->_hpPotStrength), x, y, {0, 210, 0, 0});
 }
 
+void Player::handleRestoreableHealth(float damage) {
+	if (isRestorableHealth && this->_currentHealth > 0) {
+		float restoreHealth = ((this->_restorableHealth * 1.1f) * this->STAT_LIFESTEAL) + (this->_maxHealth * 0.0075f);
+		if (restoreHealth < 0)
+			restoreHealth = 1.0f;
+		this->gainHealth(restoreHealth);
+		this->_restorableHealth -= restoreHealth;
+	}
+}
+
 void Player::drawExpNumbers(Graphics & graphics, int x, int y)
 {
 	double percent = ((double)this->getCurrentExp() / (double)this->getRequiredExp()) * 100;
@@ -925,7 +941,9 @@ void Player::gainHealth(float amount) {
 			amount = -1.0f;
 		this->_currentHealth += amount;
 		std::cout << "lost " << amount << std::endl;
+		this->_restorableHealth = amount * -1.0f;
 		player_constants::iFrame = true;
+		this->isRestorableHealth = true;
 		this->gotHit = true;
 		// Knock back player
 		if (_facing == LEFT)
@@ -1275,6 +1293,16 @@ void Player::update(float elapsedTime) {
 		}
 		else {
 			this->showBlink(true);
+		}
+
+		// Restorable Health timer
+		if (this->isRestorableHealth && this->_currentHealth > 0) {
+			this->_timeForRestoreHealth += elapsedTime;
+			if (_timeForRestoreHealth >= 3000) {
+				this->isRestorableHealth = false;
+				this->_timeForRestoreHealth = 0;
+				this->_restorableHealth = 0;
+			}
 		}
 
 		for (int i = this->battleMessages.size(); i--;) {
