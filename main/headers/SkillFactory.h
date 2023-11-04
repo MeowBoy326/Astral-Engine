@@ -42,13 +42,9 @@ public:
 			/* Now check to see if the player has one already */
 			auto itr = skills.find(id);
 			if (itr != skills.end()) {
-				std::cout << "Skill exist already, so increasing quantity" << std::endl;
-				std::cout << "Pre-Quantity: " << itr->second << std::endl;
 				skills[id] += quantity;
-				std::cout << "Post-Quantity: " << itr->second << std::endl;
 			}
 			else {
-				std::cout << "Skill did not exist. Adding it now" << std::endl;
 				skills.insert({ id, quantity });
 				skill_prototypes_[id]->raiseEventMsg(player);
 			}
@@ -64,13 +60,9 @@ public:
 			/* Now check to see if the player has one already */
 			auto itr = skills.find(id);
 			if (itr != skills.end()) {
-				std::cout << "Skill exist already, so increasing quantity" << std::endl;
-				std::cout << "Pre-Quantity: " << itr->second << std::endl;
 				skills[id] += quantity;
-				std::cout << "Post-Quantity: " << itr->second << std::endl;
 			}
 			else {
-				std::cout << "Skill did not exist. Adding it now" << std::endl;
 				skills.insert({ id, quantity });
 			}
 		}
@@ -128,9 +120,20 @@ public:
 					if (std::get<2>(cooldown) == 0) {
 						useSkill(it->second, player);
 					}
+					else {
+						auto itr = skill_prototypes_.find(it->second);
+						if (itr != skill_prototypes_.end()) {
+							this->raiseSkillMessage(player, "Skill is still on Cooldown: " +
+								std::to_string(itr->second->getSkillCDTimer() / 1000) + " seconds");
+						}
+					}
 					break;
 				}
 			}
+		}
+		else if (it == skillHotkeys.end()) {
+			// Skill not found (edge case, player loaded game after leveling skill and/or did not save)
+			useSkillAndAddCD(it->second, player);
 		}
 	}
 
@@ -144,6 +147,21 @@ public:
 			if (itr != skill_prototypes_.end()) {
 				itr->second->raiseSkillLevel(1);
 				it->second = itr->second->getSkillLevel();
+			}
+		}
+	}
+
+	void useSkillAndAddCD(Skills::SkillID id, Player &player) {
+		/* Call the overriden function use that the skill has */
+		auto it = skills.find(id);
+		if (it != skills.end()) {
+			auto itr = skill_prototypes_.find(id);
+			if (itr != skill_prototypes_.end()) {
+				if (itr->second->getSkillLevel() >= 1) {
+					itr->second->use(player);
+					this->skillCooldowns.emplace_back(id, true, itr->second->getSkillCDTimer());
+					itr->second->setSkillOffCD(false);
+				}
 			}
 		}
 	}
@@ -168,7 +186,6 @@ public:
 				}
 			}
 		}
-		this->checkAllSkillCooldowns();
 	}
 
 	void checkAllSkillCooldowns() {
@@ -181,17 +198,14 @@ public:
 						if (std::get<0>(cooldown) == skillID) {
 							// Skill exists, update the table
 							skillExists = true;
-							std::cout << "Skill Existed, Added! XD" << std::endl;
 							std::get<1>(cooldown) = it->second->getSkillActive();
 							std::get<2>(cooldown) = it->second->getSkillCDTimer();
-							std::cout << "Skill CD At Add Time: " << it->second->getSkillCDTimer();
 							break;
 						}
 					}
 					if (!skillExists) {
 						// Skill doesn't exist, insert new element to the table
 						skillCooldowns.emplace_back(skillID, it->second->getSkillActive(), it->second->getSkillCDTimer());
-						std::cout << "NOT EXISTED Skill CD At Add Time: " << it->second->getSkillCDTimer();
 					}
 				}
 			}
@@ -200,9 +214,10 @@ public:
 
 	void refreshAcquiredSkills() {
 		for (const auto&[skillID, skillLevel] : skills) {
-			if (skillLevel >= 1) {
+			if (skillLevel >= 0) {
 				auto it = skill_prototypes_.find(skillID);
 				if (it != skill_prototypes_.end()) {
+					it->second->resetSkillDefault();
 					it->second->setSkillLevel(skillLevel);
 					it->second->refreshSkillsFromTable();
 					for (auto& cooldown : skillCooldowns) {
@@ -285,6 +300,8 @@ public:
 	void drawSkillSelection(Graphics &graphics, int x, int y);
 	void drawQuantity(Graphics &graphics, int x, int y, int quantity);
 	void addInstancedLoot(std::string mapName, int type);
+	void raiseSkillMessage(Player &player, std::string message) { player.setEventMessage(message); }
+
 	inline const std::vector<std::pair<std::string, int>> getLootTable() const { return this->lootTable; }
 	inline void setLootTable(std::vector<std::pair<std::string, int>> table) { this->lootTable = table; }
 	inline const std::map<Skills::SkillID, int> getSkillTable() const { return this->skills; }
@@ -293,6 +310,7 @@ public:
 	inline void setSkillHotkeys(std::map<int, Skills::SkillID> table) { this->skillHotkeys = table; }
 	inline const std::vector<std::tuple<Skills::SkillID, bool, int>> getSkillCooldowns() const { return this->skillCooldowns; }
 	inline void setSkillCooldowns(std::vector<std::tuple<Skills::SkillID, bool, int>> table) { this->skillCooldowns = table; }
+
 	bool isLooted(std::string map, int iType);
 	void storeSkill(int type);
 	bool hasKeyStored(int keyID);

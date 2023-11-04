@@ -30,6 +30,7 @@ public:
 	virtual void raiseCustomMsg(Player &player, std::string message) = 0;
 	virtual const inline int getSkillLevel() { return this->skillLevel; }
 	virtual void refreshSkillsFromTable() = 0;
+	virtual void resetSkillDefault() = 0;
 	virtual inline void setSkillLevel(int skillLevel) { this->skillLevel = skillLevel; }
 	virtual inline void raiseSkillLevel(int skillLevel) { this->skillLevel += skillLevel; }
 	virtual inline void setSkillActive(bool active) { this->skillActive = active; }
@@ -103,6 +104,10 @@ public:
 			skillCooldown = 180000;
 			skillOffCD = !skillOffCD;
 		}
+		else if (!skillOffCD && skillCooldown > 0) {
+			this->raiseCustomMsg(player, "Skill is still on Cooldown: " +
+				std::to_string(this->getSkillCDTimer() / 1000) + " seconds");
+		}
 
 	}
 
@@ -118,6 +123,17 @@ public:
 				this->skillOffCD = !this->skillOffCD;
 			}
 		}
+	}
+
+	virtual void resetSkillDefault() override {
+		this->skillActive = false;
+		this->skillOffCD = true;
+		this->skillCooldown = 0;
+		this->skillCost = 15.0f;
+		this->skillLevel = 0;
+
+		this->baseLifeSteal = 0.002f;
+		this->lifeSteal = 0.005f;
 	}
 
 	Skills* clone() const override { return new LifeSteal(*this); }
